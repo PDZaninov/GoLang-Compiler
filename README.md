@@ -6,4 +6,4 @@ Petar Zaninovich
 Trevor Ching
 Vincent Kim
 
-Creating Truffle Nodes for GoLang.
+Creating Truffle Nodes/GraalVM for GoLang.
