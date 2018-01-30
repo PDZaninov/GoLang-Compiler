@@ -1,3 +1,8 @@
 # GoLang-Compiler
+Baiwen Huang
+Cristian Gonzales
+Kyle Remmert 
 Petar Zaninovich
-Kyle Remmert
+Trevor Ching
+Vincent Kim
+
