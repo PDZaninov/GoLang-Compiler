@@ -39,6 +39,7 @@
  * SOFTWARE.
  */
 
+package com.oracle.app.nodes;
 
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -51,10 +52,10 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
  * The annotation {@link TypeSystemReference} specifies the SL types. Specifying it here defines the
  * type system for all subclasses.
  */
-@TypeSystemReference(SLTypes.class)
-@NodeInfo(description = "The abstract base node for all expressions")
-@Instrumentable(factory = SLExpressionNodeWrapper.class)
-public abstract class GoExpressionNode extends SLStatementNode {
+//@TypeSystemReference(SLTypes.class)
+//@NodeInfo(description = "The abstract base node for all expressions")
+//@Instrumentable(factory = SLExpressionNodeWrapper.class)
+public abstract class GoExpressionNode extends GoStatementNode {
 
     /**
      * The execute method when no specialization is possible. This is the most general case,
@@ -63,10 +64,10 @@ public abstract class GoExpressionNode extends SLStatementNode {
     public abstract Object executeGeneric(VirtualFrame frame);
 
     /**
-     * When we use an expression at places where a {@link SLStatementNode statement} is already
+     * When we use an expression at places where a {@link GoStatementNode statement} is already
      * sufficient, the return value is just discarded.
      */
-    @Override
+    //@Override
     public void executeVoid(VirtualFrame frame) {
         executeGeneric(frame);
     }
@@ -76,12 +77,12 @@ public abstract class GoExpressionNode extends SLStatementNode {
      * generic execution method and then expect a result of their return type. Type-specialized
      * subclasses overwrite the appropriate methods.
      */
-
+/*
     public long executeLong(VirtualFrame frame) throws UnexpectedResultException {
         return SLTypesGen.expectLong(executeGeneric(frame));
     }
 
     public boolean executeBoolean(VirtualFrame frame) throws UnexpectedResultException {
         return SLTypesGen.expectBoolean(executeGeneric(frame));
-    }
+    }*/
 }
