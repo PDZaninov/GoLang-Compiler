@@ -1,4 +1,4 @@
-package com.oracle.app.parser;
+package com.oracle.app;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

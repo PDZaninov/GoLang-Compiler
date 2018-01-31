@@ -12,8 +12,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import com.oracle.app.parser;
-import com.oracle.app.parser.GoBasicNode;
+import com.oracle.app.parser.parser;
+import com.oracle.app.parser.parser.GoBasicNode;
 import com.oracle.runtime.GoNull;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.vm.PolyglotEngine;
@@ -25,9 +25,10 @@ import com.oracle.truffle.api.vm.PolyglotEngine.Value;
  */
 public class GoMain 
 {
-    public static void main(String[] args)
+    public static void main(String[] args) throws java.io.IOException
     {
-      Source source;
+    	/*
+     	Source source;
         if(args.length == 0){
         	System.out.println("Don't know about standard input quite yet");
         	source = Source.newBuilder(new InputStreamReader(System.in)).
@@ -40,7 +41,7 @@ public class GoMain
         }
         
         executeSource(source, System.in, System.out);
-      
+        */
         System.out.println( "Hello World!" );
         System.out.println("---------------------------------------------");
 		try {
@@ -64,7 +65,8 @@ public class GoMain
 			e.printStackTrace();
 		}
     }
-  private static void executeSource(Source source, InputStream in, PrintStream out){
+
+  	private static void executeSource(Source source, InputStream in, PrintStream out){
     	PolyglotEngine engine = PolyglotEngine.newBuilder().setIn(in).setOut(out).build();
     	//Don't know about this yet
     	//assert engine.getLanguages().containsKey(GoLanguage.MIME_TYPE);
