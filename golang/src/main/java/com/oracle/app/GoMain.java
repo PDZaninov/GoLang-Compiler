@@ -48,13 +48,6 @@ public class GoMain
 			GoBasicNode root = new GoBasicNode("root");
 			root = root.parseFile("HelloGo.ast");
 			root.printSelf(0);
-			root.children[0].printSelf(1);
-			root.children[0].children[0].printSelf(2);
-			root.children[0].children[1].printSelf(2);
-			root.children[0].children[1].children[0].printSelf(3);
-			root.children[0].children[1].children[1].printSelf(3);
-			root.children[0].children[2].printSelf(2);
-			root.children[0].children[3].printSelf(2);
 			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 			root.printTree(root, 0);
 		} catch (FileNotFoundException e) {
