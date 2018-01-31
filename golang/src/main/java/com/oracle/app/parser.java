@@ -41,12 +41,14 @@ public class parser {
 				}
 
 			}
-			theChosenOne.parent = this;
+			theChosenOne.setParent(this);
 			return i;
 		}
 		
 		public void printSelf(int spacing) {
+			//System.out.print(spacing);
 			Spacing(spacing);
+			
 			System.out.println("Name: " + name);
 			if(name != "root") {
 				Spacing(spacing);
@@ -72,13 +74,14 @@ public class parser {
 		}
 		
 		public void printTree(Bnode root, int spacing) {
-
 			root.printSelf(spacing);
 			spacing += 1;
-			for(int x = 0; x < children.length; x++) {
-				if(children[x] != null) {
-					root.printTree(children[x], spacing);
+			for(int x = 0; x < root.children.length; x++) {
+				if(root.children[x] != null) {
+					root.printTree(root.children[x], spacing);
 					
+				}else {
+					break;
 				}
 			}
 		}
@@ -94,23 +97,25 @@ public class parser {
 			try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
 			    String line;
 			    while ((line = br.readLine()) != null) {
+			    	//System.out.println(line);
 			    	if(line.indexOf('}') != -1) {
 			    		tracker = tracker.parent;
-			    		System.out.println("...." + tracker.name);
+			    		//System.out.println("...." + tracker.name);
 			    	}
 			    	else if(line.indexOf('{') != -1) {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
-			    		cindex = tracker.addChildren(new Bnode(line.substring(bindex, line.length()-1)));
-			    		System.out.println("******"+tracker.name);
-			    		tracker = tracker.children[cindex];
+			    		Bnode child = new Bnode(line.substring(bindex, line.length()-1));
+			    		cindex = tracker.addChildren(child);
+			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
+			    		tracker = child;
 			    	}else {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
 			    		tracker.addData(line.substring(bindex,line.length()));
-			    		System.out.println("attrs1: " + line.substring(bindex,line.length()));
+			    		//.out.println("attrs1: " + line.substring(bindex,line.length()));
 			    		
 			    	}
 			    	
@@ -132,7 +137,16 @@ public class parser {
 		try {
 			Bnode root = new Bnode("root");
 			root = root.parseFile("HelloGo.ast");
-			//root.printTree(root, 0);
+			root.printSelf(0);
+			root.children[0].printSelf(1);
+			root.children[0].children[0].printSelf(2);
+			root.children[0].children[1].printSelf(2);
+			root.children[0].children[1].children[0].printSelf(3);
+			root.children[0].children[1].children[1].printSelf(3);
+			root.children[0].children[2].printSelf(2);
+			root.children[0].children[3].printSelf(2);
+			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+			root.printTree(root, 0);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
