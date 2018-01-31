@@ -10,15 +10,13 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.SourceSection;
 
 /**
- * The base class of all Truffle nodes for Go. All nodes (even expressions) can be used as
+ * The base class of all Truffle nodes for SL. All nodes (even expressions) can be used as
  * statements, i.e., without returning a value. The {@link VirtualFrame} provides access to the
  * local variables.
  */
-//@NodeInfo(language = "Go", description = "The abstract base node for all Go statements")
+@NodeInfo(language = "Go", description = "The abstract base node for all SL statements")
 //@Instrumentable(factory = GoStatementNodeWrapper.class)
 public abstract class GoStatementNode extends Node {
-
-    /*
 
     private SourceSection sourceSection;
 
@@ -35,21 +33,21 @@ public abstract class GoStatementNode extends Node {
         this.sourceSection = section;
     }
 
-    **
+    /**
      * Execute this node as as statement, where no return value is necessary.
-     *
+     */
     public abstract void executeVoid(VirtualFrame frame);
 
     /**
      * Marks this node as being a {@link StandardTags.StatementTag} for instrumentation purposes.
-     *
+     */
     public final void addStatementTag() {
         hasStatementTag = true;
     }
 
     /**
      * Marks this node as being a {@link StandardTags.RootTag} for instrumentation purposes.
-     *
+     */
     public final void addRootTag() {
         hasRootTag = true;
     }
@@ -76,7 +74,7 @@ public abstract class GoStatementNode extends Node {
      *
      * @param node the node to format.
      * @return a formatted source section string
-     *
+     */
     public static String formatSourceSection(Node node) {
         if (node == null) {
             return "<unknown>";
@@ -95,6 +93,6 @@ public abstract class GoStatementNode extends Node {
             int startLine = section.getStartLine();
             return String.format("%s:%d%s", sourceName, startLine, estimated ? "~" : "");
         }
-    } */
+    }
 
 }
