@@ -1,4 +1,4 @@
-package com.oracle.truffle.Go.nodes;
+package com.oracle.app.nodes;
 
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.frame.FrameDescriptor;
