@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import com.oracle.app.parser.Parser;
-import com.oracle.app.parser.parser.GoBasicNode;
+import com.oracle.app.parser.Parser.GoBasicNode;
 import com.oracle.runtime.GoNull;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.vm.PolyglotEngine;
