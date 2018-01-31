@@ -9,13 +9,13 @@ import java.util.regex.Pattern;
 
 public class parser {
 
-	public static class Bnode{
-		private String name;
-		private String[] attr = new String[25];
-		private Bnode parent;
-		private Bnode[] children = new Bnode[7];
+	public static class GoBasicNode{
+		String name;
+		String[] attr = new String[25];
+		GoBasicNode parent;
+		GoBasicNode[] children = new GoBasicNode[7];
 		
-		public Bnode(String named) {
+		public GoBasicNode(String named) {
 			name = named;
 			
 		}
@@ -27,12 +27,12 @@ public class parser {
 				}
 			}
 		}
-		public Bnode setParent(Bnode someNode) {
+		public GoBasicNode setParent(GoBasicNode someNode) {
 			parent = someNode;
 			return parent;
 		}
 
-		public int addChildren(Bnode theChosenOne) {
+		public int addChildren(GoBasicNode theChosenOne) {
 			int i;
 			for(i = 0; i < children.length;i++) {
 				if(children[i]== null) {
@@ -73,7 +73,7 @@ public class parser {
 			}
 		}
 		
-		public void printTree(Bnode root, int spacing) {
+		public void printTree(GoBasicNode root, int spacing) {
 			root.printSelf(spacing);
 			spacing += 1;
 			for(int x = 0; x < root.children.length; x++) {
@@ -86,9 +86,9 @@ public class parser {
 			}
 		}
 		
-		public Bnode parseFile(String fileName) throws FileNotFoundException, IOException {
-			Bnode root = new Bnode("root");
-			Bnode tracker = root;
+		public GoBasicNode parseFile(String fileName) throws FileNotFoundException, IOException {
+			GoBasicNode root = new GoBasicNode("root");
+			GoBasicNode tracker = root;
 			// has to begin with a letter or number, can't end with { 
 			Pattern pattern = Pattern.compile("[a-zA-Z][.]*");
 			Matcher matched;
@@ -106,7 +106,7 @@ public class parser {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
-			    		Bnode child = new Bnode(line.substring(bindex, line.length()-1));
+			    		GoBasicNode child = new GoBasicNode(line.substring(bindex, line.length()-1));
 			    		cindex = tracker.addChildren(child);
 			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
 			    		tracker = child;
@@ -128,33 +128,6 @@ public class parser {
 		}
 		
 		
-	}
-
-
-	
-	public static void main(String[] args) {
-		System.out.println("---------------------------------------------");
-		try {
-			Bnode root = new Bnode("root");
-			root = root.parseFile("HelloGo.ast");
-			root.printSelf(0);
-			root.children[0].printSelf(1);
-			root.children[0].children[0].printSelf(2);
-			root.children[0].children[1].printSelf(2);
-			root.children[0].children[1].children[0].printSelf(3);
-			root.children[0].children[1].children[1].printSelf(3);
-			root.children[0].children[2].printSelf(2);
-			root.children[0].children[3].printSelf(2);
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			root.printTree(root, 0);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
 	}
 
 }
