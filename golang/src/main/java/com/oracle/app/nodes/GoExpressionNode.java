@@ -52,9 +52,8 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
  * The annotation {@link TypeSystemReference} specifies the SL types. Specifying it here defines the
  * type system for all subclasses.
  */
-//@TypeSystemReference(SLTypes.class)
-//@NodeInfo(description = "The abstract base node for all expressions")
-//@Instrumentable(factory = SLExpressionNodeWrapper.class)
+@TypeSystemReference(GoTypes.class)
+@NodeInfo(description = "The abstract base node for all expressions")
 public abstract class GoExpressionNode extends GoStatementNode {
 
     /**
@@ -64,10 +63,10 @@ public abstract class GoExpressionNode extends GoStatementNode {
     public abstract Object executeGeneric(VirtualFrame frame);
 
     /**
-     * When we use an expression at places where a {@link GoStatementNode statement} is already
+     * When we use an expression at places where a {@link SLStatementNode statement} is already
      * sufficient, the return value is just discarded.
      */
-    //@Override
+    @Override
     public void executeVoid(VirtualFrame frame) {
         executeGeneric(frame);
     }
@@ -77,12 +76,12 @@ public abstract class GoExpressionNode extends GoStatementNode {
      * generic execution method and then expect a result of their return type. Type-specialized
      * subclasses overwrite the appropriate methods.
      */
-/*
+
     public long executeLong(VirtualFrame frame) throws UnexpectedResultException {
-        return SLTypesGen.expectLong(executeGeneric(frame));
+        return GoTypesGen.expectLong(executeGeneric(frame));
     }
 
     public boolean executeBoolean(VirtualFrame frame) throws UnexpectedResultException {
-        return SLTypesGen.expectBoolean(executeGeneric(frame));
-    }*/
+        return GoTypesGen.expectBoolean(executeGeneric(frame));
+    }
 }
