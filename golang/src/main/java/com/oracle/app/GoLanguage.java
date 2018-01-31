@@ -7,12 +7,12 @@ import com.oracle.truffle.api.frame.Frame;
 import com.oracle.truffle.api.metadata.ScopeProvider;
 import com.oracle.truffle.api.nodes.Node;
 
-@TruffleLanguage.Registration(id = "go", name = "GO",version = "1.6.2", mimeType = GoLanguage.MIME_TYPE)
+@TruffleLanguage.Registration(id = "go", name = "Go	",version = "0.1", mimeType = GoLanguage.MIME_TYPE)
 public final class GoLanguage extends TruffleLanguage<GoContext> implements ScopeProvider<GoContext>{
 
 	public static volatile int counter;
 	
-	public static final String MIME_TYPE = "application/x-go";
+	public static final String MIME_TYPE = "text/plain";
 	
 	public GoLanguage(){
 		counter++;
@@ -36,6 +36,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 	 */
 	@Override
 	protected CallTarget parse(ParsingRequest request) throws Exception{
+		//MAiN PARSiNG STUFF
 		System.out.println("PARSE FUNC");
 		return null;
 	}
@@ -50,6 +51,10 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 	protected boolean isObjectOfLanguage(Object object) {
 		//Returns whether or not the object is a TruffleObject
 		return false;
+	}
+	
+	public static GoContext getCurrentContext(){
+		return getCurrentContext(GoLanguage.class);
 	}
 
 }
