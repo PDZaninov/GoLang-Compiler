@@ -1,13 +1,19 @@
 package com.oracle.app;
 
+import java.util.Map;
+
+import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.parser.Parser;
 import com.oracle.runtime.GoContext;
 import com.oracle.truffle.api.CallTarget;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
 import com.oracle.truffle.api.frame.Frame;
 import com.oracle.truffle.api.metadata.ScopeProvider;
 import com.oracle.truffle.api.nodes.Node;
+import com.oracle.truffle.api.source.Source;
 
-@TruffleLanguage.Registration(id = "go", name = "Go	",version = "0.1", mimeType = GoLanguage.MIME_TYPE)
+@TruffleLanguage.Registration(id = "go", name = "Go",version = "0.1", mimeType = GoLanguage.MIME_TYPE)
 public final class GoLanguage extends TruffleLanguage<GoContext> implements ScopeProvider<GoContext>{
 
 	public static volatile int counter;
@@ -33,12 +39,18 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 	/*
 	 * Call the parse function here. Set the calltarget to the rootnode found
 	 * while parsing then return it
+	 * Needs to be able to find a main function and return it
 	 */
 	@Override
 	protected CallTarget parse(ParsingRequest request) throws Exception{
-		//MAiN PARSiNG STUFF
-		System.out.println("PARSE FUNC");
-		return null;
+		Source source = request.getSource();
+		Map<String, GoRootNode> function;
+		
+		function = Parser.parseGo(this, source);
+		
+		GoRootNode main = function.get("main");
+
+		return Truffle.getRuntime().createCallTarget(main);
 	}
 
 	@Override
