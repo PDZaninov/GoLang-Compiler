@@ -25,9 +25,9 @@ import com.oracle.truffle.api.vm.PolyglotEngine.Value;
  */
 public class GoMain 
 {
-    public static void main(String[] args) throws java.io.IOException
+    public static void main(String[] args) throws IOException
     {
-    	/*
+    	
      	Source source;
         if(args.length == 0){
         	System.out.println("Don't know about standard input quite yet");
@@ -41,7 +41,7 @@ public class GoMain
         }
         
         executeSource(source, System.in, System.out);
-        */
+        /*
         System.out.println( "Hello World!" );
         System.out.println("---------------------------------------------");
 		try {
@@ -57,6 +57,7 @@ public class GoMain
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
     }
 
   	private static void executeSource(Source source, InputStream in, PrintStream out){
@@ -77,6 +78,7 @@ public class GoMain
     	//A Parse error goes here
     	catch (Throwable ex){
     		//Other error catching stuff, refer to SLMain....
+    		ex.printStackTrace(out);
     	}
     	
     	engine.dispose();

@@ -4,8 +4,14 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoRootNode;
+import com.oracle.truffle.api.source.Source;
 
 public class Parser {
 
@@ -128,6 +134,12 @@ public class Parser {
 		}
 		
 		
+	}
+	
+	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
+		Map<String, GoRootNode> function = new HashMap<>();
+		function.put("main", new GoRootNode(language,null,null,null,"main"));
+		return function;
 	}
 
 }
