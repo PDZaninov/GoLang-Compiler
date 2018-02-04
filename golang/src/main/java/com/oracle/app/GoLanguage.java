@@ -59,7 +59,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 			evalMain = new GoEvalRootNode(this, null, null, null, "[no_main]", function);
 		}
 
-		return Truffle.getRuntime().createCallTarget(main);
+		return Truffle.getRuntime().createCallTarget(evalMain);
 	}
 
 	@Override
