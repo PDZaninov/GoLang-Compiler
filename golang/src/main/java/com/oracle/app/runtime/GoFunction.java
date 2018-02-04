@@ -1,4 +1,4 @@
-package com.oracle.runtime;
+package com.oracle.app.runtime;
 
 import com.oracle.truffle.api.Assumption;
 import com.oracle.truffle.api.RootCallTarget;

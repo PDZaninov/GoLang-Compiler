@@ -1,6 +1,6 @@
-package com.oracle.runtime;
+package com.oracle.app.runtime;
 
-import static com.oracle.runtime.GoContext.fromForeignValue;
+import static com.oracle.app.runtime.GoContext.fromForeignValue;
 
 import com.oracle.truffle.api.interop.CanResolve;
 import com.oracle.truffle.api.interop.MessageResolution;

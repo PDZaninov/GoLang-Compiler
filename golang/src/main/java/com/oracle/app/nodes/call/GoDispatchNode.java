@@ -20,8 +20,8 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.app.nodes.GoTypes;
 import com.oracle.app.nodes.interop.GoForeignToGoTypeNode;
 import com.oracle.app.nodes.interop.GoForeignToGoTypeNodeGen;
-import com.oracle.runtime.GoFunction;
-import com.oracle.runtime.GoUndefinedNameException;
+import com.oracle.app.runtime.GoFunction;
+import com.oracle.app.runtime.GoUndefinedNameException;
 
 @TypeSystemReference(GoTypes.class)
 public abstract class GoDispatchNode extends Node {

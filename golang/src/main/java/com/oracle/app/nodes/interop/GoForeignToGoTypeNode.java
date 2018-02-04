@@ -9,8 +9,8 @@ import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.interop.UnsupportedMessageException;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.app.nodes.GoTypes;
-import com.oracle.runtime.GoContext;
-import com.oracle.runtime.GoNull;
+import com.oracle.app.runtime.GoContext;
+import com.oracle.app.runtime.GoNull;
 
 /**
  * The node for converting a foreign primitive or boxed primitive value to an SL value.

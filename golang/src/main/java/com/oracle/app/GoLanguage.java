@@ -4,7 +4,9 @@ import java.util.Map;
 
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.Parser;
-import com.oracle.runtime.GoContext;
+import com.oracle.app.nodes.GoEvalRootNode;
+
+import com.oracle.app.runtime.GoContext;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
@@ -49,8 +51,15 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		function = Parser.parseGo(this, source);
 		
 		GoRootNode main = function.get("main");
+		GoRootNode evalMain;
+		if(main != null) {
+			evalMain = new GoEvalRootNode(this, main.getFrameDescriptor(), main.getBodyNode(), main.getSourceSection(), main.getName(), function);
+		}
+		else {
+			evalMain = new GoEvalRootNode(this, null, null, null, "[no_main]", function);
+		}
 
-		return Truffle.getRuntime().createCallTarget(main);
+		return Truffle.getRuntime().createCallTarget(evalMain);
 	}
 
 	@Override

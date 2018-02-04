@@ -14,7 +14,7 @@ import java.io.PrintStream;
 
 import com.oracle.app.parser.Parser;
 import com.oracle.app.parser.Parser.GoBasicNode;
-import com.oracle.runtime.GoNull;
+import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.vm.PolyglotEngine;
 import com.oracle.truffle.api.vm.PolyglotEngine.Value;

@@ -6,7 +6,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.oracle.runtime.GoFunction;
+import com.oracle.app.runtime.GoFunction;
 
 /**
  * The node for function invocation in SL. Since SL has first class functions, the {@link SLFunction

@@ -1,4 +1,4 @@
-package com.oracle.runtime;
+package com.oracle.app.runtime;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,7 +26,7 @@ public final class GoContext {
 	private final Env env;
 	private final BufferedReader input;
 	private final PrintWriter output;
-	//GoFunctionRegistry
+	private final GoFunctionRegistry functionRegistry;
 	//private final Shape emptyShape;
 	private final GoLanguage language;
 	
@@ -35,6 +35,7 @@ public final class GoContext {
 		this.input = new BufferedReader(new InputStreamReader(env.in()));
 		this.output = new PrintWriter(env.out(), true);
 		this.language = language;
+		this.functionRegistry = new GoFunctionRegistry(language);
 		//this.allocationReporter = env.lookup(AllocationReporter.class;
 		
 		
@@ -67,6 +68,10 @@ public final class GoContext {
 	public PrintWriter getOutput(){
 		return output;
 	}
+
+	public GoFunctionRegistry getFunctionRegistry() {
+        return functionRegistry;
+    }
 	
 	public CallTarget parse(Source source){
 		return env.parse(source);
