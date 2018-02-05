@@ -96,7 +96,7 @@ public class Parser {
 			GoBasicNode root = new GoBasicNode("root");
 			GoBasicNode tracker = root;
 			// has to begin with a letter or number, can't end with { 
-			Pattern pattern = Pattern.compile("[a-zA-Z][.]*");
+			Pattern pattern = Pattern.compile("[a][s][t][\\.][a-zA-Z]*[\\s]");
 			Matcher matched;
 			int bindex;
 			int cindex;
@@ -112,7 +112,10 @@ public class Parser {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
+			    		getNodeType(line.substring(bindex, line.length()-1));
 			    		GoBasicNode child = new GoBasicNode(line.substring(bindex, line.length()-1));
+			    		
+			    		
 			    		cindex = tracker.addChildren(child);
 			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
 			    		tracker = child;
@@ -135,11 +138,87 @@ public class Parser {
 		
 		
 	}
+	//written by Petar, we need this owrking asap, im not sorry.
+	public static void getNodeType(String nodeType) {
+		if(nodeType.compareTo("File") == 0) {
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("Ident") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("Decl") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("Spec") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("ImportSpec") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("BasicLit") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("FuncDecl") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("Object") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("FuncType") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("BlockStmt") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("Stmt") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("ExprStmt") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("CallExpr") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("SelectorExpr") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("Expr") == 0){
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("GenDecl") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("FieldList") == 0) {
+
+			System.out.println(nodeType);
+		}
+		else if(nodeType.compareTo("Scope") == 0) {
+
+			System.out.println(nodeType);
+		}
+
+	}
 	
 	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
 		Map<String, GoRootNode> function = new HashMap<>();
 		function.put("main", new GoRootNode(language,null,null,null,"main"));
 		return function;
 	}
+	
 
 }
