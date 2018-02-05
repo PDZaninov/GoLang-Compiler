@@ -112,7 +112,14 @@ public class Parser {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
-			    		getNodeType(line.substring(bindex+1, line.length()-2));
+			    		
+			    		//It works
+			    		String nodeType = line.substring(bindex+1, line.length()-2);
+			    		if(nodeType.contains("(len")) {
+			    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
+			    		}
+			    		
+			    		getNodeType(nodeType);
 			    		GoBasicNode child = new GoBasicNode(line.substring(bindex, line.length()-1));
 			    		
 			    		
