@@ -96,7 +96,7 @@ public class Parser {
 			GoBasicNode root = new GoBasicNode("root");
 			GoBasicNode tracker = root;
 			// has to begin with a letter or number, can't end with { 
-			Pattern pattern = Pattern.compile("[a][s][t][\\.][a-zA-Z]*[\\s]");
+			Pattern pattern = Pattern.compile("[\\.][a-zA-Z]+");
 			Matcher matched;
 			int bindex;
 			int cindex;
@@ -108,25 +108,27 @@ public class Parser {
 			    		tracker = tracker.parent;
 			    		//System.out.println("...." + tracker.name);
 			    	}
-			    	else if(line.indexOf('{') != -1) {
+			    	else if(line.indexOf('{') >= 0) {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
-			    		getNodeType(line.substring(bindex, line.length()-1));
+			    		getNodeType(line.substring(bindex+1, line.length()-2));
 			    		GoBasicNode child = new GoBasicNode(line.substring(bindex, line.length()-1));
 			    		
 			    		
 			    		cindex = tracker.addChildren(child);
 			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
 			    		tracker = child;
-			    	}else {
+			    		
+			    	}
+			    	/*else {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
 			    		tracker.addData(line.substring(bindex,line.length()));
 			    		//.out.println("attrs1: " + line.substring(bindex,line.length()));
 			    		
-			    	}
+			    	}*/
 			    	
 			    }
 			}

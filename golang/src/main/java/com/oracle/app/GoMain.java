@@ -30,6 +30,7 @@ public class GoMain
 		GoBasicNode man = new GoBasicNode("root");
 		
 		man.parseFile("HelloGo.ast");
+		
      	Source source;
         if(args.length == 0){
         	System.out.println("Don't know about standard input quite yet");
