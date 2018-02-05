@@ -97,6 +97,7 @@ public class Parser {
 			GoBasicNode tracker = root;
 			// has to begin with a letter or number, can't end with { 
 			Pattern pattern = Pattern.compile("[\\.][a-zA-Z]+");
+			Pattern attr    = Pattern.compile("[a-zA-Z][.]*");
 			Matcher matched;
 			int bindex;
 			int cindex;
@@ -128,14 +129,14 @@ public class Parser {
 			    		tracker = child;
 			    		
 			    	}
-			    	/*else {
-			    		matched = pattern.matcher(line);
+			    	else {
+			    		matched = attr.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
 			    		tracker.addData(line.substring(bindex,line.length()));
-			    		//.out.println("attrs1: " + line.substring(bindex,line.length()));
+			    		System.out.println("attrs1: " + line.substring(bindex,line.length()));
 			    		
-			    	}*/
+			    	}
 			    	
 			    }
 			}
@@ -148,6 +149,7 @@ public class Parser {
 		
 	}
 	//written by Petar, we need this owrking asap, im not sorry.
+	//TO-DO: ADD A FACTORY INSTEAD
 	public static void getNodeType(String nodeType) {
 		switch(nodeType) {
 			case "File":
