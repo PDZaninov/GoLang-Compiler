@@ -10,21 +10,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.Source;
 
 public class Parser {
 
-	public static class GoBasicNode{
+	public static class GoBasicNode extends GoExpressionNode{
 		String name;
 		String[] attr = new String[25];
 		GoBasicNode parent;
-		GoBasicNode[] children = new GoBasicNode[7];
+		public GoBasicNode[] children = new GoBasicNode[7];
 		
 		public GoBasicNode(String named) {
 			name = named;
 			
 		}
+		
+		
+		public void executeVoid(VirtualFrame frame){
+			printSelf(0);
+			System.out.println("Void\n");
+		}
+		
 		public void addData(String someData) {
 			for(int i = 0; i < attr.length; i++) {
 				if(attr[i] == null) {
@@ -120,7 +129,7 @@ public class Parser {
 			    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
 			    		}
 			    		
-			    		getNodeType(nodeType);
+			    		//getNodeType(nodeType);
 			    		GoBasicNode child = new GoBasicNode(line.substring(bindex, line.length()-1));
 			    		
 			    		
@@ -134,7 +143,7 @@ public class Parser {
 			    		matched.find();
 			    		bindex = matched.start();
 			    		tracker.addData(line.substring(bindex,line.length()));
-			    		System.out.println("attrs1: " + line.substring(bindex,line.length()));
+			    		//System.out.println("attrs1: " + line.substring(bindex,line.length()));
 			    		
 			    	}
 			    	
@@ -144,6 +153,15 @@ public class Parser {
 			
 		     
 			return root;
+		}
+
+
+		@Override
+		public Object executeGeneric(VirtualFrame frame) {
+			// TODO Auto-generated method stub
+			printSelf(0);
+			System.out.println("Generic\n");
+			return null;
 		}
 		
 		

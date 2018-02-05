@@ -27,9 +27,7 @@ public class GoMain
 {
     public static void main(String[] args) throws IOException
     {
-		GoBasicNode man = new GoBasicNode("root");
 		
-		man.parseFile("HelloGo.ast");
 		
      	Source source;
         if(args.length == 0){
