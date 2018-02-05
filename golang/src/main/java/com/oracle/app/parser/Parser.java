@@ -140,76 +140,63 @@ public class Parser {
 	}
 	//written by Petar, we need this owrking asap, im not sorry.
 	public static void getNodeType(String nodeType) {
-		if(nodeType.compareTo("File") == 0) {
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("Ident") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("Decl") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("Spec") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("ImportSpec") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("BasicLit") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("FuncDecl") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("Object") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("FuncType") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("BlockStmt") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("Stmt") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("ExprStmt") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("CallExpr") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("SelectorExpr") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("Expr") == 0){
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("GenDecl") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("FieldList") == 0) {
-
-			System.out.println(nodeType);
-		}
-		else if(nodeType.compareTo("Scope") == 0) {
-
-			System.out.println(nodeType);
+		switch(nodeType) {
+			case "File":
+				System.out.println(nodeType);
+				break;
+			case "Ident":
+				System.out.println(nodeType);
+				break;
+			case "Decl":
+				System.out.println(nodeType);
+				break;
+			case "Spec":
+				System.out.println(nodeType);
+				break;
+			case "ImportSpec":
+				System.out.println(nodeType);
+				break;
+			case "BasicLit":
+				System.out.println(nodeType);
+				break;
+			case "FuncDecl":
+				System.out.println(nodeType);
+				break;
+			case "Object":
+				System.out.println(nodeType);
+				break;
+			case "FuncType":
+				System.out.println(nodeType);
+				break;
+			case "BlockStmt":
+				System.out.println(nodeType);
+				break;
+			case "Stmt":
+				System.out.println(nodeType);
+				break;
+			case "ExprStmt":
+				System.out.println(nodeType);
+				break;
+			case "CallExpr":
+				System.out.println(nodeType);
+				break;
+			case "SelectorExpr":
+				System.out.println(nodeType);
+				break;
+			case "Expr":
+				System.out.println(nodeType);
+				break;
+			case "GenDecl":
+				System.out.println(nodeType);
+				break;
+			case "FieldList":
+				System.out.println(nodeType);
+				break;
+			case "Scope":
+				System.out.println(nodeType);
+				break;
+			default:
+				System.out.println("Error, in default: " + nodeType);
 		}
 
 	}
