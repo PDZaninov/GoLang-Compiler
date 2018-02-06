@@ -21,7 +21,7 @@ public class Parser {
 		String name;
 		String[] attr = new String[25];
 		GoBasicNode parent;
-		public GoBasicNode[] children = new GoBasicNode[7];
+		@Children private final GoBasicNode[] children = new GoBasicNode[7];
 		
 		public GoBasicNode(String named) {
 			name = named;
@@ -130,9 +130,9 @@ public class Parser {
 			    		}
 			    		
 			    		//getNodeType(nodeType);
-			    		GoBasicNode child = new GoBasicNode(line.substring(bindex, line.length()-1));
+			    		GoBasicNode child = new GoBasicNode(nodeType);
 			    		
-			    		
+			    		tracker.insert(child);
 			    		cindex = tracker.addChildren(child);
 			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
 			    		tracker = child;
@@ -161,6 +161,12 @@ public class Parser {
 			// TODO Auto-generated method stub
 			printSelf(0);
 			System.out.println("Generic\n");
+			for(GoBasicNode child : children){
+				if(child != null){
+					child.executeGeneric(frame);
+			
+				}
+			}
 			return null;
 		}
 		
