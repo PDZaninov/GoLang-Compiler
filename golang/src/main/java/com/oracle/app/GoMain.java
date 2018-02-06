@@ -27,7 +27,8 @@ public class GoMain
 {
     public static void main(String[] args) throws IOException
     {
-    	
+		
+		
      	Source source;
         if(args.length == 0){
         	System.out.println("Don't know about standard input quite yet");

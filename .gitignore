@@ -8,4 +8,5 @@ target/
 ./.project
 /bin/
 bin/
-
+.recommenders/
+/.metadata/

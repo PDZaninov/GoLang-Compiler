@@ -10,21 +10,30 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.Source;
 
 public class Parser {
 
-	public static class GoBasicNode{
+	public static class GoBasicNode extends GoExpressionNode{
 		String name;
 		String[] attr = new String[25];
 		GoBasicNode parent;
-		GoBasicNode[] children = new GoBasicNode[7];
+		@Children private final GoBasicNode[] children = new GoBasicNode[7];
 		
 		public GoBasicNode(String named) {
 			name = named;
 			
 		}
+		
+		
+		public void executeVoid(VirtualFrame frame){
+			printSelf(0);
+			System.out.println("Void\n");
+		}
+		
 		public void addData(String someData) {
 			for(int i = 0; i < attr.length; i++) {
 				if(attr[i] == null) {
@@ -96,7 +105,8 @@ public class Parser {
 			GoBasicNode root = new GoBasicNode("root");
 			GoBasicNode tracker = root;
 			// has to begin with a letter or number, can't end with { 
-			Pattern pattern = Pattern.compile("[a-zA-Z][.]*");
+			Pattern pattern = Pattern.compile("[\\.][a-zA-Z]+");
+			Pattern attr    = Pattern.compile("[a-zA-Z][.]*");
 			Matcher matched;
 			int bindex;
 			int cindex;
@@ -108,20 +118,32 @@ public class Parser {
 			    		tracker = tracker.parent;
 			    		//System.out.println("...." + tracker.name);
 			    	}
-			    	else if(line.indexOf('{') != -1) {
+			    	else if(line.indexOf('{') >= 0) {
 			    		matched = pattern.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
-			    		GoBasicNode child = new GoBasicNode(line.substring(bindex, line.length()-1));
+			    		
+			    		//It works
+			    		String nodeType = line.substring(bindex+1, line.length()-2);
+			    		if(nodeType.contains("(len")) {
+			    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
+			    		}
+			    		
+			    		//getNodeType(nodeType);
+			    		GoBasicNode child = new GoBasicNode(nodeType);
+			    		
+			    		tracker.insert(child);
 			    		cindex = tracker.addChildren(child);
 			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
 			    		tracker = child;
-			    	}else {
-			    		matched = pattern.matcher(line);
+			    		
+			    	}
+			    	else {
+			    		matched = attr.matcher(line);
 			    		matched.find();
 			    		bindex = matched.start();
 			    		tracker.addData(line.substring(bindex,line.length()));
-			    		//.out.println("attrs1: " + line.substring(bindex,line.length()));
+			    		//System.out.println("attrs1: " + line.substring(bindex,line.length()));
 			    		
 			    	}
 			    	
@@ -132,8 +154,86 @@ public class Parser {
 		     
 			return root;
 		}
+
+
+		@Override
+		public Object executeGeneric(VirtualFrame frame) {
+			// TODO Auto-generated method stub
+			printSelf(0);
+			System.out.println("Generic\n");
+			for(GoBasicNode child : children){
+				if(child != null){
+					child.executeGeneric(frame);
+			
+				}
+			}
+			return null;
+		}
 		
 		
+	}
+	//written by Petar, we need this owrking asap, im not sorry.
+	//TO-DO: ADD A FACTORY INSTEAD
+	public static void getNodeType(String nodeType) {
+		switch(nodeType) {
+			case "File":
+				System.out.println(nodeType);
+				break;
+			case "Ident":
+				System.out.println(nodeType);
+				break;
+			case "Decl":
+				System.out.println(nodeType);
+				break;
+			case "Spec":
+				System.out.println(nodeType);
+				break;
+			case "ImportSpec":
+				System.out.println(nodeType);
+				break;
+			case "BasicLit":
+				System.out.println(nodeType);
+				break;
+			case "FuncDecl":
+				System.out.println(nodeType);
+				break;
+			case "Object":
+				System.out.println(nodeType);
+				break;
+			case "FuncType":
+				System.out.println(nodeType);
+				break;
+			case "BlockStmt":
+				System.out.println(nodeType);
+				break;
+			case "Stmt":
+				System.out.println(nodeType);
+				break;
+			case "ExprStmt":
+				System.out.println(nodeType);
+				break;
+			case "CallExpr":
+				System.out.println(nodeType);
+				break;
+			case "SelectorExpr":
+				System.out.println(nodeType);
+				break;
+			case "Expr":
+				System.out.println(nodeType);
+				break;
+			case "GenDecl":
+				System.out.println(nodeType);
+				break;
+			case "FieldList":
+				System.out.println(nodeType);
+				break;
+			case "Scope":
+				System.out.println(nodeType);
+				break;
+			default:
+				System.out.println("Error, in default: " + nodeType);
+		}
+
 	}
 	
 	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
@@ -141,5 +241,6 @@ public class Parser {
 		function.put("main", new GoRootNode(language,null,null,null,"main"));
 		return function;
 	}
+	
 
 }
