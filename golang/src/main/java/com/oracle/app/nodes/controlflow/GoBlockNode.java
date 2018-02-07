@@ -72,6 +72,7 @@ public final class GoBlockNode extends GoStatementNode {
      * the loop during compilation. This allows the {@link GoStatementNode#executeVoid} method of
      * all children to be inlined.
      */
+    
     @Override
     @ExplodeLoop
     public void executeVoid(VirtualFrame frame) {
