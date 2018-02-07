@@ -58,7 +58,7 @@ import com.oracle.app.runtime.GoNull;
  * conversion methods for all types. In this class, we only cover types where the automatically
  * generated ones would not be sufficient.
  */
-@TypeSystem({long.class, BigInteger.class, boolean.class, String.class, GoFunction.class, GoNull.class})
+@TypeSystem({int.class, float.class, long.class, BigInteger.class, boolean.class, String.class, GoFunction.class, GoNull.class})
 public abstract class GoTypes {
 
     /**
