@@ -1,8 +1,9 @@
-package com.oracle.app.nodes;
+package com.oracle.app.nodes.SpecDecl;
 
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class GoSpec extends GoExpressionNode {
+public abstract class GoSpec extends GoExpressionNode {
 
 	@Children GoImportSpec[] nodes;
 	
