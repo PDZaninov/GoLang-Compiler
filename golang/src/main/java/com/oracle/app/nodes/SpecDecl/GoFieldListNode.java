@@ -5,8 +5,6 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 // probably should extend something else
 public class GoFieldListNode extends GoExpressionNode {
 
-	int Opening;
-	int Closing;
 	@Children GoFieldNode[] nodes;
 	
 	
@@ -16,19 +14,9 @@ public class GoFieldListNode extends GoExpressionNode {
 		return null;
 	}
 	
-	public GoFieldListNode(int o, int c, GoFieldNode[] g) {
-		Opening = o;
-		Closing = c;
-		nodes = g;
-	}
-	
-	public int End(GoFieldListNode g) {
-		return Closing;
-	}
 
-	public int Pos(GoFieldListNode g) {
-		return Opening;
-	}
+	
+
 	
 	
 }

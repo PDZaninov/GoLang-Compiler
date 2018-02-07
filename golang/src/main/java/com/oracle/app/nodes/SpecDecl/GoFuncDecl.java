@@ -1,12 +1,18 @@
 package com.oracle.app.nodes.SpecDecl;
 
 import com.oracle.app.nodes.controlflow.GoBlockNode;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node.Child;
 
-public class GoFuncDecl extends GoDecl {
-	String Name;
-	String Type;
+public class GoFuncDecl extends GoDeclNode {
+
 	@Child GoBlockNode Body;
+	
+	@Override
+	public Object executeGeneric(VirtualFrame frame) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }

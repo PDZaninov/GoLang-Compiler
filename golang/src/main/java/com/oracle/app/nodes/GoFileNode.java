@@ -1,5 +1,6 @@
 package com.oracle.app.nodes;
 
+import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
