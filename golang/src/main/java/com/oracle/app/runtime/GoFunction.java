@@ -77,13 +77,10 @@ public final class GoFunction implements TruffleObject {
         return name;
     }
 
-    /**
-     * In case you want some of your objects to co-operate with other languages, you need to make
-     * them implement {@link TruffleObject} and provide additional
-     * {@link SLFunctionMessageResolution foreign access implementation}.
-     */
-    @Override
-    public ForeignAccess getForeignAccess() {
-        return GoFunctionMessageResolutionForeign.ACCESS;
-    }
+	@Override
+	public ForeignAccess getForeignAccess() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -1,12 +1,12 @@
 package com.oracle.app.nodes.call;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.oracle.app.runtime.GoFunction;
 
 /**
  * The node for function invocation in SL. Since SL has first class functions, the {@link SLFunction
@@ -16,16 +16,16 @@ import com.oracle.app.runtime.GoFunction;
  * inline cache.
  */
 @NodeInfo(shortName = "invoke")
-public final class GoInvokeNode extends GoExpressionNode {
+public class GoInvokeNode extends GoExpressionNode {
 
-    @Child private GoExpressionNode functionNode;
-    @Children private final GoExpressionNode[] argumentNodes;
-    @Child private GoDispatchNode dispatchNode;
+    @Child protected GoExpressionNode functionNode;
+    @Children protected final GoExpressionNode[] argumentNodes;
+    @Child protected GoDispatchNode dispatchNode;
 
     public GoInvokeNode(GoExpressionNode functionNode, GoExpressionNode[] argumentNodes) {
         this.functionNode = functionNode;
         this.argumentNodes = argumentNodes;
-        this.dispatchNode = GoDispatchNodeGen.create();
+        this.dispatchNode = new GoUninitializedDispatchNode();
     }
 
     @ExplodeLoop
@@ -38,6 +38,9 @@ public final class GoInvokeNode extends GoExpressionNode {
          * unrolled and the execute methods of all arguments are inlined. This is triggered by the
          * ExplodeLoop annotation on the method. The compiler assertion below illustrates that the
          * array length is really constant.
+         * 
+         * Loops through function parameters and gets the value of each variable and stores it
+         * inside the argumentValues array and passes it to dispatch
          */
         CompilerAsserts.compilationConstant(argumentNodes.length);
 
@@ -45,7 +48,7 @@ public final class GoInvokeNode extends GoExpressionNode {
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
-        return dispatchNode.executeDispatch(function, argumentValues);
+        return dispatchNode.executeDispatch((CallTarget) function, argumentValues);
     }
 
     @Override
