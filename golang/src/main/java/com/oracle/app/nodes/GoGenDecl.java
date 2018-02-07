@@ -5,6 +5,17 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class GoGenDecl extends GoExpressionNode {
 	
 	@Children GoSpec[] spec;
+	int Lparen;
+	int Rparen;
+	String type;//        Tok    token.Token   // IMPORT, CONST, TYPE, VAR
+	int TokPos;
+	
+	public GoGenDecl(int l, int r, String t, int pos) {
+		Lparen = l;
+		Rparen = r;
+		type = t;
+		TokPos = pos;
+	}
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
@@ -12,7 +23,16 @@ public class GoGenDecl extends GoExpressionNode {
 		return null;
 	}
 	
-//	A GenDecl node (generic declaration node) represents an import, constant, type or variable declaration. A valid Lparen position (Lparen.IsValid()) indicates a parenthesized declaration.
+	public int End(GoGenDecl d) {
+		return Rparen;
+	}
+	
+	public int Pos(GoGenDecl d) {
+		return Lparen;
+	}
+	
+//	A GenDecl node (generic declaration node) represents an import, constant, type or variable declaration.
+	//A valid Lparen position (Lparen.IsValid()) indicates a parenthesized declaration.
 //
 //	Relationship between Tok value and Specs element type:
 //
@@ -24,7 +44,7 @@ public class GoGenDecl extends GoExpressionNode {
 //	type GenDecl struct {
 //        Doc    *CommentGroup // associated documentation; or nil
 //        TokPos token.Pos     // position of Tok
-//        Tok    token.Token   // IMPORT, CONST, TYPE, VAR
+//  Tok    token.Token   // IMPORT, CONST, TYPE, VAR
 //        Lparen token.Pos     // position of '(', if any
 //        Specs  []Spec
 //        Rparen token.Pos // position of ')', if any
