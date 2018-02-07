@@ -1,4 +1,4 @@
-package com.oracle.app.nodes;
+package com.oracle.app.nodes.SpecDecl;
 
 public class GoImportSpec extends GoSpec{
 	
