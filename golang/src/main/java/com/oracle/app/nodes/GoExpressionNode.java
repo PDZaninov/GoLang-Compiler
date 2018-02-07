@@ -41,6 +41,8 @@
 
 package com.oracle.app.nodes;
 
+import java.math.BigInteger;
+
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.Instrumentable;
@@ -85,4 +87,20 @@ public abstract class GoExpressionNode extends GoStatementNode {
     public boolean executeBoolean(VirtualFrame frame) throws UnexpectedResultException {
         return GoTypesGen.expectBoolean(executeGeneric(frame));
     }
+    
+    public int executeInteger(VirtualFrame frame) throws UnexpectedResultException {
+    	return GoTypesGen.expectInteger(executeGeneric(frame));
+    }
+
+	public String executeString(VirtualFrame frame) throws UnexpectedResultException {
+		return GoTypesGen.expectString(executeGeneric(frame));
+	}
+
+	public BigInteger executeBigInteger(VirtualFrame frame) throws UnexpectedResultException {
+		return GoTypesGen.expectBigInteger(executeGeneric(frame));
+	}
+
+	public float executeFloat(VirtualFrame frame) throws UnexpectedResultException {
+		return GoTypesGen.expectFloat(executeGeneric(frame));
+	}
 }
