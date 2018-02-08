@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -17,161 +18,71 @@ import com.oracle.truffle.api.source.Source;
 
 public class Parser {
 
-	public static class GoBasicNode extends GoExpressionNode{
-		String name;
-		String[] attr = new String[25];
-		GoBasicNode parent;
-		@Children private final GoBasicNode[] children = new GoBasicNode[7];
-		
-		public GoBasicNode(String named) {
-			name = named;
-			
-		}
-		
-		
-		public void executeVoid(VirtualFrame frame){
-			printSelf(0);
-			System.out.println("Void\n");
-		}
-		
-		public void addData(String someData) {
-			for(int i = 0; i < attr.length; i++) {
-				if(attr[i] == null) {
-					attr[i] = someData;
-					break;
-				}
-			}
-		}
-		public GoBasicNode setParent(GoBasicNode someNode) {
-			parent = someNode;
-			return parent;
-		}
 
-		public int addChildren(GoBasicNode theChosenOne) {
-			int i;
-			for(i = 0; i < children.length;i++) {
-				if(children[i]== null) {
-					children[i] = theChosenOne;
-					break;
-				}
+	public Parser(String string) {
+		// TODO Auto-generated constructor stub
+	}
 
-			}
-			theChosenOne.setParent(this);
-			return i;
+
+
+
+	public GoBasicNode parseFile(String fileName) throws FileNotFoundException, IOException {
+		GoBasicNode root = new GoBasicNode("root");
+		GoBasicNode tracker = root;
+		// has to begin with a letter or number, can't end with { 
+		Pattern pattern = Pattern.compile("[\\.][a-zA-Z]+");
+		Pattern attr    = Pattern.compile("[a-zA-Z][.]*");
+		Matcher matched;
+		int bindex;
+		int cindex;
+		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		    	//System.out.println(line);
+		    	if(line.indexOf('}') != -1) {
+		    		tracker = tracker.parent;
+		    		//System.out.println("...." + tracker.name);
+		    	}
+		    	else if(line.indexOf('{') >= 0) {
+		    		matched = pattern.matcher(line);
+		    		matched.find();
+		    		bindex = matched.start();
+		    		
+		    		//It works
+		    		String nodeType = line.substring(bindex+1, line.length()-2);
+		    		if(nodeType.contains("(len")) {
+		    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
+		    		}
+		    		
+		    		//getNodeType(nodeType);
+		    		GoBasicNode child = new GoBasicNode(nodeType);
+		    		
+		    		tracker.trufflechildren(child);
+		    		cindex = tracker.addChildren(child);
+		    		//System.out.println("******"+tracker.name + " ||| " + child.name);
+		    		tracker = child;
+		    		
+		    	}
+		    	else {
+		    		matched = attr.matcher(line);
+		    		matched.find();
+		    		bindex = matched.start();
+		    		tracker.addData(line.substring(bindex,line.length()));
+		    		//System.out.println("attrs1: " + line.substring(bindex,line.length()));
+		    		
+		    	}
+		    	
+		    }
 		}
-		
-		public void printSelf(int spacing) {
-			//System.out.print(spacing);
-			Spacing(spacing);
-			
-			System.out.println("Name: " + name);
-			if(name != "root") {
-				Spacing(spacing);
-				System.out.println("Parent: " + parent.name);
-			}
-/*			for(int x = 0; x < children.length; x++) {
-				if(children[x] == null)
-					break;
-				Spacing(spacing);
-				System.out.println("Children: " + children[x].name);
-			}*/
-			for(int x = 0; x < attr.length; x++) {
-				if(attr[x] == null)
-					break;
-				Spacing(spacing);
-				System.out.println("Attr: " + attr[x]);
-			}
-		}
-		public void Spacing(int spacing) {
-			for(int x = 0; x < spacing; x++) {
-				System.out.print(" . ");
-			}
-		}
-		
-		public void printTree(GoBasicNode root, int spacing) {
-			root.printSelf(spacing);
-			spacing += 1;
-			for(int x = 0; x < root.children.length; x++) {
-				if(root.children[x] != null) {
-					root.printTree(root.children[x], spacing);
-					
-				}else {
-					break;
-				}
-			}
-		}
-		
-		public GoBasicNode parseFile(String fileName) throws FileNotFoundException, IOException {
-			GoBasicNode root = new GoBasicNode("root");
-			GoBasicNode tracker = root;
-			// has to begin with a letter or number, can't end with { 
-			Pattern pattern = Pattern.compile("[\\.][a-zA-Z]+");
-			Pattern attr    = Pattern.compile("[a-zA-Z][.]*");
-			Matcher matched;
-			int bindex;
-			int cindex;
-			try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-			    String line;
-			    while ((line = br.readLine()) != null) {
-			    	//System.out.println(line);
-			    	if(line.indexOf('}') != -1) {
-			    		tracker = tracker.parent;
-			    		//System.out.println("...." + tracker.name);
-			    	}
-			    	else if(line.indexOf('{') >= 0) {
-			    		matched = pattern.matcher(line);
-			    		matched.find();
-			    		bindex = matched.start();
-			    		
-			    		//It works
-			    		String nodeType = line.substring(bindex+1, line.length()-2);
-			    		if(nodeType.contains("(len")) {
-			    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
-			    		}
-			    		
-			    		//getNodeType(nodeType);
-			    		GoBasicNode child = new GoBasicNode(nodeType);
-			    		
-			    		tracker.insert(child);
-			    		cindex = tracker.addChildren(child);
-			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
-			    		tracker = child;
-			    		
-			    	}
-			    	else {
-			    		matched = attr.matcher(line);
-			    		matched.find();
-			    		bindex = matched.start();
-			    		tracker.addData(line.substring(bindex,line.length()));
-			    		//System.out.println("attrs1: " + line.substring(bindex,line.length()));
-			    		
-			    	}
-			    	
-			    }
-			}
 			
 			
 		     
 			return root;
 		}
 
-
-		@Override
-		public Object executeGeneric(VirtualFrame frame) {
-			// TODO Auto-generated method stub
-			printSelf(0);
-			System.out.println("Generic\n");
-			for(GoBasicNode child : children){
-				if(child != null){
-					child.executeGeneric(frame);
-			
-				}
-			}
-			return null;
-		}
 		
 		
-	}
+	
 	//written by Petar, we need this owrking asap, im not sorry.
 	//TO-DO: ADD A FACTORY INSTEAD
 	public static void getNodeType(String nodeType) {
