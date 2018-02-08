@@ -58,13 +58,13 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		Source source = request.getSource();
 		Map<String, GoRootNode> function;
 		
-		Parser parsenodes = new Parser("root");
+		//Parser parsenodes = new Parser("root");
 		
-		GoBasicNode man = parsenodes.parseFile("HelloGo.ast");
+		//GoBasicNode man = parsenodes.parseFile("HelloGo.ast");
 		
-		GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
+		//GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
 		
-		/*
+		
 		function = Parser.parseGo(this, source);
 		
 		GoRootNode main = function.get("main");
@@ -75,7 +75,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		else {
 			evalMain = new GoEvalRootNode(this, null, null, null, "[no_main]", function);
 		}
-		*/
+		
 		return Truffle.getRuntime().createCallTarget(evalMain);
 	}
 

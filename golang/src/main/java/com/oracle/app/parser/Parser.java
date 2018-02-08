@@ -17,10 +17,11 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.Source;
 
 public class Parser {
-
-
-	public Parser(String string) {
-		// TODO Auto-generated constructor stub
+	
+	private final GoNodeFactory factory;
+	
+	public Parser(GoLanguage language, Source source) {
+		this.factory = new GoNodeFactory(language, source);
 	}
 
 
@@ -144,11 +145,19 @@ public class Parser {
 
 	}
 	
-	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
-		Map<String, GoRootNode> function = new HashMap<>();
-		function.put("main", new GoRootNode(language,null,null,null,"main"));
-		return function;
+	private void Parse() {
+		
+		
 	}
 	
+	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
+		/*Map<String, GoRootNode> function = new HashMap<>();
+		function.put("main", new GoRootNode(language,null,null,null,"main"));
+		return function;*/
+		
+		Parser parser = new Parser(language, source);
+        parser.Parse();
+        return parser.factory.getAllFunctions();
+	}
 
 }
