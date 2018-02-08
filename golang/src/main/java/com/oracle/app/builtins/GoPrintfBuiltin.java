@@ -5,7 +5,8 @@ import java.math.BigInteger;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-@NodeInfo(shortName = "println")
+//TODO - change to actual printf later instead of print.
+@NodeInfo(shortName = "printf")
 public abstract class GoPrintfBuiltin extends GoBuiltinNode {
 
     @Specialization
