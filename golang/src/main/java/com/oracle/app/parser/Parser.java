@@ -10,22 +10,39 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.GoBasicNode;
-import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
-import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.app.nodes.SpecDecl.GoDeclNode;
+import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 
 public class Parser {
+	private final String file;
+	private static BufferedReader reader;
+	private static String currentLine;
+	private static Matcher matchedTerm; 
+	private static Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+");
 
-
-	public Parser(String string) {
-		// TODO Auto-generated constructor stub
+	public Parser(String file) throws FileNotFoundException {
+		this.file = file;
+		reader = new BufferedReader(new FileReader(this.file));
 	}
 
-
-
-
+	public void beginParse() throws IOException{
+		String type;
+		
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
+			
+				type = matchedTerm.group();
+				getNodeType(type.substring(1));
+			}
+		}
+		
+	}
+	
+/*
 	public GoBasicNode parseFile(String fileName) throws FileNotFoundException, IOException {
 		GoBasicNode root = new GoBasicNode("root");
 		GoBasicNode tracker = root;
@@ -76,21 +93,37 @@ public class Parser {
 		     
 			return root;
 		}
-
+*/
 		
 		
 	
 	//written by Petar, we need this owrking asap, im not sorry.
 	//TO-DO: ADD A FACTORY INSTEAD
-	public static void getNodeType(String nodeType) {
+	public static Node getNodeType(String nodeType) throws IOException{
+		String type;
 		switch(nodeType) {
 			case "File":
+				while((currentLine = reader.readLine()) != null){
+					matchedTerm = astPattern.matcher(currentLine);
+					type = matchedTerm.group();
+					if(type.equals(".Decl")){
+						GoDeclNode bodyNode = (GoDeclNode) getNodeType(type.substring(1));
+						return new GoFileNode(bodyNode);
+					}
+				}
 				System.out.println(nodeType);
 				break;
 			case "Ident":
 				System.out.println(nodeType);
 				break;
 			case "Decl":
+				while((currentLine = reader.readLine()) != null){
+					matchedTerm = astPattern.matcher(currentLine);
+					type = matchedTerm.group();
+					//Find out how to add multiple children when you dont know them yet...
+					GoDeclNode node = new GoDeclNode();
+					getNodeType(type);
+				}
 				System.out.println(nodeType);
 				break;
 			case "Spec":
@@ -140,7 +173,9 @@ public class Parser {
 				break;
 			default:
 				System.out.println("Error, in default: " + nodeType);
+				
 		}
+		return null;
 
 	}
 	

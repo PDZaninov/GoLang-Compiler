@@ -57,12 +57,11 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 	protected CallTarget parse(ParsingRequest request) throws Exception{
 		Source source = request.getSource();
 		Map<String, GoRootNode> function;
+		Parser parseNodes = new Parser(source.getName());
+		parseNodes.beginParse();
+		//GoBasicNode man = parsenodes.parseFile("HelloGo.ast");
 		
-		Parser parsenodes = new Parser("root");
-		
-		GoBasicNode man = parsenodes.parseFile("HelloGo.ast");
-		
-		GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
+		GoRootNode evalMain = new GoRootNode(this,null,null,null,"main");
 		
 		/*
 		function = Parser.parseGo(this, source);
