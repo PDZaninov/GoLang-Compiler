@@ -71,11 +71,8 @@ public class Parser {
 		    		//System.out.println("attrs1: " + line.substring(bindex,line.length()));
 		    		
 		    	}
-		    	
 		    }
 		}
-			
-			
 		     
 			return root;
 		}
