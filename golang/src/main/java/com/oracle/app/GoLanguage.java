@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.Parser;
-import com.oracle.app.parser.Parser.GoBasicNode;
+import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.nodes.GoEvalRootNode;
 //import com.oracle.app.nodes.local.GoLexicalScope
 import com.oracle.app.runtime.GoNull;
@@ -58,9 +58,9 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		Source source = request.getSource();
 		Map<String, GoRootNode> function;
 		
-		GoBasicNode man = new GoBasicNode("root");
+		Parser parsenodes = new Parser("root");
 		
-		man = man.parseFile("HelloGo.ast");
+		GoBasicNode man = parsenodes.parseFile("HelloGo.ast");
 		
 		GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
 		
