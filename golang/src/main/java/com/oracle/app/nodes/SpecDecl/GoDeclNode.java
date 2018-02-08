@@ -6,5 +6,5 @@ import com.oracle.truffle.api.nodes.Node.Children;
 public abstract class GoDeclNode extends GoExpressionNode {
 
 	@Children GoGenDecl[] genDecl;
-	//@Children GoFuncDecl[] genDecl;
+	@Children GoFuncDecl[] funcnDecl;
 }
