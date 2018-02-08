@@ -96,6 +96,14 @@ public class GoBasicNode extends GoExpressionNode{
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		// TODO Auto-generated method stub
+		printSelf(0);
+		System.out.println("Generic\n");
+		for(GoBasicNode child : children){
+			if(child != null){
+				child.executeGeneric(frame);
+		
+			}
+		}
 		return null;
 	}
 }
