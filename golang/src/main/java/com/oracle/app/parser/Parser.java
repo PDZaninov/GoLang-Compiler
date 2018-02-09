@@ -12,17 +12,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
+import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
+import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
+import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 
 public class Parser {
 	private final String file;
-	private static GoLanguage lang;
+	private static GoLanguage language;
 	private static BufferedReader reader;
 	private static String currentLine;
 	private static Matcher matchedTerm; 
@@ -30,11 +34,11 @@ public class Parser {
 	private static GoNodeFactory factory;
 	private static Map<String, GoRootNode> allFunctions;
 
-	public Parser(GoLanguage lang, Source source) throws FileNotFoundException {
+	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
 		this.file = source.getName();
-		this.lang = lang;
+		this.language = language;
 		reader = new BufferedReader(new FileReader(this.file));
-		factory = new GoNodeFactory(lang,source);
+		factory = new GoNodeFactory(language,source);
 		allFunctions = new HashMap<>();
 	}
 
@@ -46,7 +50,9 @@ public class Parser {
 			if(matchedTerm.find()){
 			
 				type = matchedTerm.group();
-				getNodeType(type.substring(1));
+				if(type.equals(".File")){
+					getNodeType(type.substring(1));
+				}
 			}
 		}
 		return allFunctions;
@@ -57,7 +63,7 @@ public class Parser {
 	//written by Petar, we need this owrking asap, im not sorry.
 	//TO-DO: ADD A FACTORY INSTEAD
 	public static Node getNodeType(String nodeType) throws IOException{
-		String type, num;
+		String type;
 		switch(nodeType) {
 			case "File":
 				while((currentLine = reader.readLine()) != null){
@@ -73,8 +79,12 @@ public class Parser {
 				System.out.println(nodeType);
 				break;
 			case "Ident":
-				System.out.println(nodeType);
-				break;
+				//Definitely will need changing but is going to be used for call expr for now
+				//without chained calls
+				//TEMPORARY PLS CHANGE
+				reader.readLine();
+				currentLine = reader.readLine();
+				return new GoFunctionLiteralNode(language, currentLine.split("\"")[1]);
 				
 			case "Decl":
 				System.out.println(nodeType);
@@ -90,8 +100,7 @@ public class Parser {
 				break;
 				
 			case "BasicLit":
-				System.out.println(nodeType);
-				break;
+				return basicLit();
 				
 			case "FuncDecl":
 				//Start a new lexical scope
@@ -116,19 +125,17 @@ public class Parser {
 				break;
 				
 			case "ExprStmt":
-				System.out.println(nodeType);
-				break;
+				//Needs changing
+				currentLine = reader.readLine();
+				matchedTerm = astPattern.matcher(currentLine);
+				if(matchedTerm.find()){
+					type = matchedTerm.group();
+					return getNodeType(type.substring(1));
+				}
 				
 			case "CallExpr":
-				while((currentLine = reader.readLine()) != null){
-					matchedTerm = astPattern.matcher(currentLine);
-					if(matchedTerm.find()){
-						type = matchedTerm.group();
-						getNodeType(type);
-					}
-				}
-				System.out.println(nodeType);
-				break;
+				//Create invoke node
+				return createInvoke();
 				
 			case "SelectorExpr":
 				System.out.println(nodeType);
@@ -159,6 +166,36 @@ public class Parser {
 
 	}
 	
+	static GoExpressionNode basicLit() throws IOException{
+		reader.readLine();
+		reader.readLine(); //This one hold the kind of basic lit the node is
+		currentLine = reader.readLine();
+		return new GoStringNode(currentLine.split("\"")[2]);
+	}
+	
+	static GoInvokeNode createInvoke() throws IOException{
+		String type;
+		GoFunctionLiteralNode function = null;
+		List<GoExpressionNode> argumentNodes = new ArrayList<>();
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
+				type = matchedTerm.group();
+				//Temporary way to get the function call
+				if(type.equals(".Ident")){
+					function = (GoFunctionLiteralNode) getNodeType(type.substring(1));
+				}
+				else if(!type.equals(".Expr")){
+					//Need to track how many arguments were reading in instead of breaking on the first one
+					argumentNodes.add((GoExpressionNode) getNodeType(type.substring(1)));
+					break;
+				}
+			}
+		}
+		GoInvokeNode invokeNode = new GoInvokeNode(function,argumentNodes.toArray(new GoExpressionNode[argumentNodes.size()]));
+		return invokeNode;
+	}
+	
 	/*
 	 * Create a block of statements. Currently only specific to function blocks
 	 */
@@ -170,7 +207,9 @@ public class Parser {
 			if(matchedTerm.find()){
 				type = matchedTerm.group();
 				if(!type.equals(".Stmt")){
-					bodyNodes.add((GoStatementNode) getNodeType(type)); 
+					//Also need to keep track of how many statmeents to process
+					bodyNodes.add((GoStatementNode) getNodeType(type.substring(1))); 
+					break;
 				}
 			}
 		}
@@ -217,7 +256,7 @@ public class Parser {
 				else if(type.equals(".BlockStmt")){
 					//body nodes Might be able to just create a block node
 					GoBlockNode bodyNode = (GoBlockNode) getNodeType(type.substring(1));
-					GoRootNode root = new GoRootNode(lang,null,bodyNode,null,name);
+					GoRootNode root = new GoRootNode(language,null,bodyNode,null,name);
 					allFunctions.put(name,root);
 					return;
 				}
@@ -249,7 +288,9 @@ public class Parser {
 			matchedTerm = astPattern.matcher(currentLine);
 			if(matchedTerm.find()){
 				type = matchedTerm.group();
+				//Keep track of how many statements to process also
 				bodyNodes.add((GoStatementNode) getNodeType(type.substring(1)));
+				break;
 			}
 		}
 		GoDeclNode node = new GoDeclNode(bodyNodes.toArray(new GoStatementNode[bodyNodes.size()]));

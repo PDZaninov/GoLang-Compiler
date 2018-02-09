@@ -11,7 +11,7 @@ public class GoStringNode extends GoExpressionNode {
     }
 
     @Override
-    public String executeString(VirtualFrame virtualFrame) {
+    public String executeString(VirtualFrame frame) {
         return this.str;
     }
 
@@ -19,5 +19,12 @@ public class GoStringNode extends GoExpressionNode {
 	public Object executeGeneric(VirtualFrame frame) {
 		return this.str;
 	}
+
+	@Override
+	public String toString() {
+		return "String Node " + str;
+	}
+
+	
 
 }

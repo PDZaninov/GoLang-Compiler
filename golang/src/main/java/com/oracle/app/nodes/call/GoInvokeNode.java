@@ -38,11 +38,11 @@ public class GoInvokeNode extends GoExpressionNode {
         GoFunction function = (GoFunction) functionNode.executeGeneric(frame);
 
         CompilerAsserts.compilationConstant(argumentNodes.length);
-
         Object[] argumentValues = new Object[argumentNodes.length];
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
+
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 

@@ -14,6 +14,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 /**
  * A statement node that just executes a list of other statements.
+ * Should be extending off of GoStatementNode i believe???
  */
 @NodeInfo(shortName = "block", description = "The node implementing a source code block")
 public final class GoBlockNode extends GoExpressionNode {
@@ -54,7 +55,11 @@ public final class GoBlockNode extends GoExpressionNode {
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		System.out.println("This block node needs to call them body nodes.....");
+		for (GoStatementNode statement : bodyNodes) {
+			if(statement != null){
+				statement.executeVoid(frame);
+			}
+        }
 		return null;
 	}
 }
