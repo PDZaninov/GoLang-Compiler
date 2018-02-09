@@ -1,59 +1,16 @@
 package com.oracle.app.parser;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.GoLanguage;
-
+import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.source.Source;
-import com.oracle.truffle.api.source.SourceSection;
-import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.nodes.GoStatementNode;
-//import com.oracle.app.nodes.access.GoReadPropertyNode;
-//import com.oracle.app.nodes.access.GoReadPropertyNodeGen;
-//import com.oracle.app.nodes.access.GoWritePropertyNode;
-//import com.oracle.app.nodes.access.GoWritePropertyNodeGen;
-import com.oracle.app.nodes.call.GoInvokeNode;
-//import com.oracle.app.nodes.controlflow.GoBlockNode;
-//import com.oracle.app.nodes.controlflow.GoBreakNode;
-//import com.oracle.app.nodes.controlflow.GoContinueNode;
-//import com.oracle.app.nodes.controlflow.GoDebuggerNode;
-//import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
-//import com.oracle.app.nodes.controlflow.GoIfNode;
-//import com.oracle.app.nodes.controlflow.GoReturnNode;
-//import com.oracle.app.nodes.controlflow.GoWhileNode;
-//import com.oracle.app.nodes.expression.GoAddNodeGen;
-//import com.oracle.app.nodes.expression.GoBigIntegerLiteralNode;
-//import com.oracle.app.nodes.expression.GoDivNodeGen;
-//import com.oracle.app.nodes.expression.GoEqualNodeGen;
-//import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
-//import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
-//import com.oracle.app.nodes.expression.GoLessThanNodeGen;
-//import com.oracle.app.nodes.expression.GoLogicalAndNode;
-//import com.oracle.app.nodes.expression.GoLogicalNotNodeGen;
-//import com.oracle.app.nodes.expression.GoLogicalOrNode;
-//import com.oracle.app.nodes.expression.GoLongLiteralNode;
-//import com.oracle.app.nodes.expression.GoMulNodeGen;
-//import com.oracle.app.nodes.expression.GoParenExpressionNode;
-//import com.oracle.app.nodes.expression.GoStringLiteralNode;
-//import com.oracle.app.nodes.expression.GoSubNodeGen;
-//import com.oracle.app.nodes.local.GoReadArgumentNode;
-//import com.oracle.app.nodes.local.GoReadLocalVariableNode;
-//import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
-//import com.oracle.app.nodes.local.GoWriteLocalVariableNode;
-//import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
-//import com.oracle.app.parser.Token;
-import com.oracle.app.parser.GoNodeFactory.LexicalScope;
 
 
 public class GoNodeFactory {
@@ -99,6 +56,20 @@ public class GoNodeFactory {
 
     public Map<String, GoRootNode> getAllFunctions() {
         return allFunctions;
+    }
+    
+    public void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flattenedNodes) {
+        for (GoStatementNode n : bodyNodes) {
+            if (n instanceof GoBlockNode) {
+                flattenBlocks(((GoBlockNode) n).getStatements(), flattenedNodes);
+            } else {
+                flattenedNodes.add(n);
+            }
+        }
+    }
+    
+    public void startBlock() {
+        lexicalScope = new LexicalScope(lexicalScope);
     }
 
 //    public void startFunction(Token nameToken, int bodyStartPos) {
@@ -154,9 +125,7 @@ public class GoNodeFactory {
 //        lexicalScope = null;
 //    }
 //
-//    public void startBlock() {
-//        lexicalScope = new LexicalScope(lexicalScope);
-//    }
+    
 //
 //    public GoStatementNode finishBlock(List<GoStatementNode> bodyNodes, int startPos, int length) {
 //        lexicalScope = lexicalScope.outer;
@@ -182,15 +151,7 @@ public class GoNodeFactory {
 //        return (statement instanceof GoIfNode) || (statement instanceof GoWhileNode);
 //    }
 //
-//    private void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flattenedNodes) {
-//        for (GoStatementNode n : bodyNodes) {
-//            if (n instanceof GoBlockNode) {
-//                flattenBlocks(((GoBlockNode) n).getStatements(), flattenedNodes);
-//            } else {
-//                flattenedNodes.add(n);
-//            }
-//        }
-//    }
+    
 //
 //    /**
 //     * Returns an {@link GoDebuggerNode} for the given token.

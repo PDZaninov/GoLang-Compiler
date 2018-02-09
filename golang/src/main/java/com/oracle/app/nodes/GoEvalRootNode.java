@@ -49,6 +49,7 @@ public final class GoEvalRootNode extends GoRootNode {
 
         if (getBodyNode() == null) {
             /* The source code did not have a "main" function, so nothing to execute. */
+        	System.out.println("FAILURE NO BODYNODE");
             return GoNull.SINGLETON;
         }
 

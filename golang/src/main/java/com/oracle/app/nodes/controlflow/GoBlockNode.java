@@ -4,17 +4,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
+import com.oracle.truffle.api.nodes.Node.Children;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.oracle.app.nodes.GoStatementNode;
 
 /**
  * A statement node that just executes a list of other statements.
  */
 @NodeInfo(shortName = "block", description = "The node implementing a source code block")
-public final class GoBlockNode extends GoStatementNode {
+public final class GoBlockNode extends GoExpressionNode {
 
     /**
      * The array of child nodes. The annotation {@link com.oracle.truffle.api.nodes.Node.Children
@@ -49,4 +51,10 @@ public final class GoBlockNode extends GoStatementNode {
     public List<GoStatementNode> getStatements() {
         return Collections.unmodifiableList(Arrays.asList(bodyNodes));
     }
+
+	@Override
+	public Object executeGeneric(VirtualFrame frame) {
+		System.out.println("This block node needs to call them body nodes.....");
+		return null;
+	}
 }
