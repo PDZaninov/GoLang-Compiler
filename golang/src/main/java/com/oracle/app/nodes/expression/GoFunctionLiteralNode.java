@@ -24,15 +24,6 @@ public final class GoFunctionLiteralNode extends GoExpressionNode {
     /** The name of the function. */
     private final String functionName;
 
-    /**
-     * The resolved function. During parsing (in the constructor of this node), we do not have the
-     * {@link SLContext} available yet, so the lookup can only be done at {@link #executeGeneric
-     * first execution}. The {@link CompilationFinal} annotation ensures that the function can still
-     * be constant folded during compilation.
-     */
-    @CompilationFinal
-    private GoFunction cachedFunction;
-
     private final ContextReference<GoContext> reference;
 
     public GoFunctionLiteralNode(GoLanguage language, String functionName) {
@@ -40,16 +31,12 @@ public final class GoFunctionLiteralNode extends GoExpressionNode {
         this.reference = language.getContextReference();
     }
 
+    /*
+     * No cache stuff to do here so only need to retrieve the function reference
+     */
     @Override
     public GoFunction executeGeneric(VirtualFrame frame) {
-        if (cachedFunction == null) {
-            CompilerDirectives.transferToInterpreterAndInvalidate();
-            /* We are about to change a @CompilationFinal field. */
-            CompilerDirectives.transferToInterpreterAndInvalidate();
-            /* First execution of the node: lookup the function in the function registry. */
-            cachedFunction = reference.get().getFunctionRegistry().lookup(functionName, true);
-        }
-        return cachedFunction;
+    	return reference.get().getFunctionRegistry().lookup(functionName, true);
     }
 
 }

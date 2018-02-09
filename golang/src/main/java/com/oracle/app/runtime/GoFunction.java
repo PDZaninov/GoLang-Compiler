@@ -34,17 +34,10 @@ public final class GoFunction implements TruffleObject {
     /** The current implementation of this function. */
     private RootCallTarget callTarget;
 
-    /**
-     * Manages the assumption that the {@link #callTarget} is stable. We use the utility class
-     * {@link CyclicAssumption}, which automatically creates a new {@link Assumption} when the old
-     * one gets invalidated.
-     */
-    private final CyclicAssumption callTargetStable;
 
     protected GoFunction(GoLanguage language, String name) {
         this.name = name;
         this.callTarget = Truffle.getRuntime().createCallTarget(new GoUndefinedFunctionRootNode(language, name));
-        this.callTargetStable = new CyclicAssumption(name);
     }
 
     public String getName() {
@@ -53,20 +46,13 @@ public final class GoFunction implements TruffleObject {
 
     protected void setCallTarget(RootCallTarget callTarget) {
         this.callTarget = callTarget;
-        /*
-         * We have a new call target. Invalidate all code that speculated that the old call target
-         * was stable.
-         */
-        callTargetStable.invalidate();
+
     }
 
     public RootCallTarget getCallTarget() {
         return callTarget;
     }
 
-    public Assumption getCallTargetStable() {
-        return callTargetStable.getAssumption();
-    }
 
     /**
      * This method is, e.g., called when using a function literal in a string concatenation. So

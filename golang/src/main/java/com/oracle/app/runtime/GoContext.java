@@ -6,11 +6,20 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.builtins.GoBuiltinNode;
+import com.oracle.app.builtins.GoPrintfBuiltinFactory;
+import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
+import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage.Env;
+import com.oracle.truffle.api.dsl.NodeFactory;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.interop.TruffleObject;
+import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.object.Layout;
 import com.oracle.truffle.api.source.Source;
 
@@ -37,7 +46,7 @@ public final class GoContext {
 		this.language = language;
 		this.functionRegistry = new GoFunctionRegistry(language);
 		//this.allocationReporter = env.lookup(AllocationReporter.class;
-		
+		installBuiltins();
 		
 	}
     public static Object fromForeignValue(Object a) {
@@ -81,4 +90,42 @@ public final class GoContext {
 	/*
 	 * Builtin functions get installed in this class
 	 */
+	private void installBuiltins(){
+		installBuiltin(GoPrintfBuiltinFactory.getInstance());
+		installBuiltin(GoPrintlnBuiltinFactory.getInstance());
+	}
+	
+	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){
+		int argumentCount = factory.getExecutionSignature().size();
+		GoExpressionNode[] argumentNodes = new GoExpressionNode[argumentCount];
+		//Gets the parameters of the function, Need GoReadArgumentNode
+		for(int i = 0; i < argumentCount; i++){
+			argumentNodes[i] = new GoReadArgumentsNode(i);
+		}
+		
+		
+		GoBuiltinNode builtinBodyNode = factory.createNode((Object) argumentNodes);
+		builtinBodyNode.addRootTag();
+		String name = lookupNodeInfo(builtinBodyNode.getClass()).shortName();
+		//Source section goes here and into the rootnode where null is at
+		
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), builtinBodyNode, null, name);
+		getFunctionRegistry().register(name, rootNode);
+	}
+	
+	/*
+	 * Gets the shorthand name of the builtin function
+	 */
+	public static NodeInfo lookupNodeInfo(Class<?> clazz){
+		if(clazz == null){
+			return null;
+		}
+		NodeInfo info = clazz.getAnnotation(NodeInfo.class);
+		if(info != null){
+			return info;
+		}
+		else{
+			return lookupNodeInfo(clazz.getSuperclass());
+		}
+	}
 }

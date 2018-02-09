@@ -13,8 +13,9 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 
 import com.oracle.app.parser.Parser;
-import com.oracle.app.parser.Parser.GoBasicNode;
+import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.runtime.GoNull;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.vm.PolyglotEngine;
 import com.oracle.truffle.api.vm.PolyglotEngine.Value;
@@ -40,7 +41,6 @@ public class GoMain
         else{
         	source = Source.newBuilder(new File(args[0])).build();
         }
-        
         executeSource(source, System.in, System.out);
         /*
         System.out.println( "Hello World!" );
@@ -62,10 +62,10 @@ public class GoMain
     }
 
   	private static void executeSource(Source source, InputStream in, PrintStream out){
+  		out.println("== running on " + Truffle.getRuntime().getName());
     	PolyglotEngine engine = PolyglotEngine.newBuilder().setIn(in).setOut(out).build();
     	//Don't know about this yet
     	//assert engine.getLanguages().containsKey(GoLanguage.MIME_TYPE);
-    	
     	try {
     		Value result = engine.eval(source);
     		

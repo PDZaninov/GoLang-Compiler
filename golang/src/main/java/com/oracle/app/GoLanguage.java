@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.Parser;
-import com.oracle.app.parser.Parser.GoBasicNode;
+import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.nodes.GoEvalRootNode;
 //import com.oracle.app.nodes.local.GoLexicalScope
 import com.oracle.app.runtime.GoNull;
@@ -43,6 +43,11 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		return null;
 	}
 
+	/*
+	 * Creates the global variable frames and global function registry
+	 * Builtin functions are registered in GoContext
+	 */
+	
 	@Override
 	protected GoContext createContext(Env env) {
 		return new GoContext(this, env);                    
@@ -57,15 +62,20 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 	protected CallTarget parse(ParsingRequest request) throws Exception{
 		Source source = request.getSource();
 		Map<String, GoRootNode> function;
+		Parser parseNodes = new Parser(this, source);
+		function = parseNodes.beginParse();
+		//GoBasicNode man = parsenodes.parseFile("HelloGo.ast");
 		
-		GoBasicNode man = new GoBasicNode("root");
+
+		//Parser parsenodes = new Parser("root");
 		
-		man = man.parseFile("HelloGo.ast");
+		//GoBasicNode man = parsenodes.parseFile("HelloGo.ast");
 		
-		GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
+		//GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
 		
-		/*
-		function = Parser.parseGo(this, source);
+
+		
+		//function = Parser.parseGo(this, source);
 		
 		GoRootNode main = function.get("main");
 		GoRootNode evalMain;
@@ -75,7 +85,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		else {
 			evalMain = new GoEvalRootNode(this, null, null, null, "[no_main]", function);
 		}
-		*/
+		
 		return Truffle.getRuntime().createCallTarget(evalMain);
 	}
 

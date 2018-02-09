@@ -56,11 +56,12 @@ public final class GoFunctionRegistry {
             register(entry.getKey(), entry.getValue());
         }
     }
-
+    
+/*Used to redefine builtin functions
     public void register(Source newFunctions) {
         register(Parser.parseGo(language, newFunctions));
     }
-
+*/
     /**
      * Returns the sorted list of all functions, for printing purposes only.
      */

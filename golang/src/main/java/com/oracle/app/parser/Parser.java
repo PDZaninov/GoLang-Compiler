@@ -4,236 +4,297 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
-import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.nodes.SpecDecl.GoDeclNode;
+import com.oracle.app.nodes.call.GoInvokeNode;
+import com.oracle.app.nodes.controlflow.GoBlockNode;
+import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
+import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
+import com.oracle.app.nodes.types.GoStringNode;
+import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 
 public class Parser {
+	private final String file;
+	private GoLanguage language;
+	private BufferedReader reader;
+	private String currentLine;
+	private Matcher matchedTerm; 
+	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+");
+	private GoNodeFactory factory;
+	private Map<String, GoRootNode> allFunctions;
 
-	public static class GoBasicNode extends GoExpressionNode{
-		String name;
-		String[] attr = new String[25];
-		GoBasicNode parent;
-		@Children private final GoBasicNode[] children = new GoBasicNode[7];
+	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
+		this.file = source.getName();
+		this.language = language;
+		reader = new BufferedReader(new FileReader(this.file));
+		factory = new GoNodeFactory(language,source);
+		allFunctions = new HashMap<>();
+	}
+
+	public Map<String, GoRootNode> beginParse() throws IOException{
+		String type;
 		
-		public GoBasicNode(String named) {
-			name = named;
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
 			
-		}
-		
-		
-		public void executeVoid(VirtualFrame frame){
-			printSelf(0);
-			System.out.println("Void\n");
-		}
-		
-		public void addData(String someData) {
-			for(int i = 0; i < attr.length; i++) {
-				if(attr[i] == null) {
-					attr[i] = someData;
-					break;
+				type = matchedTerm.group();
+				if(type.equals(".File")){
+					getNodeType(type.substring(1));
 				}
 			}
 		}
-		public GoBasicNode setParent(GoBasicNode someNode) {
-			parent = someNode;
-			return parent;
-		}
-
-		public int addChildren(GoBasicNode theChosenOne) {
-			int i;
-			for(i = 0; i < children.length;i++) {
-				if(children[i]== null) {
-					children[i] = theChosenOne;
-					break;
-				}
-
-			}
-			theChosenOne.setParent(this);
-			return i;
-		}
-		
-		public void printSelf(int spacing) {
-			//System.out.print(spacing);
-			Spacing(spacing);
-			
-			System.out.println("Name: " + name);
-			if(name != "root") {
-				Spacing(spacing);
-				System.out.println("Parent: " + parent.name);
-			}
-/*			for(int x = 0; x < children.length; x++) {
-				if(children[x] == null)
-					break;
-				Spacing(spacing);
-				System.out.println("Children: " + children[x].name);
-			}*/
-			for(int x = 0; x < attr.length; x++) {
-				if(attr[x] == null)
-					break;
-				Spacing(spacing);
-				System.out.println("Attr: " + attr[x]);
-			}
-		}
-		public void Spacing(int spacing) {
-			for(int x = 0; x < spacing; x++) {
-				System.out.print(" . ");
-			}
-		}
-		
-		public void printTree(GoBasicNode root, int spacing) {
-			root.printSelf(spacing);
-			spacing += 1;
-			for(int x = 0; x < root.children.length; x++) {
-				if(root.children[x] != null) {
-					root.printTree(root.children[x], spacing);
-					
-				}else {
-					break;
-				}
-			}
-		}
-		
-		public GoBasicNode parseFile(String fileName) throws FileNotFoundException, IOException {
-			GoBasicNode root = new GoBasicNode("root");
-			GoBasicNode tracker = root;
-			// has to begin with a letter or number, can't end with { 
-			Pattern pattern = Pattern.compile("[\\.][a-zA-Z]+");
-			Pattern attr    = Pattern.compile("[a-zA-Z][.]*");
-			Matcher matched;
-			int bindex;
-			int cindex;
-			try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-			    String line;
-			    while ((line = br.readLine()) != null) {
-			    	//System.out.println(line);
-			    	if(line.indexOf('}') != -1) {
-			    		tracker = tracker.parent;
-			    		//System.out.println("...." + tracker.name);
-			    	}
-			    	else if(line.indexOf('{') >= 0) {
-			    		matched = pattern.matcher(line);
-			    		matched.find();
-			    		bindex = matched.start();
-			    		
-			    		//It works
-			    		String nodeType = line.substring(bindex+1, line.length()-2);
-			    		if(nodeType.contains("(len")) {
-			    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
-			    		}
-			    		
-			    		//getNodeType(nodeType);
-			    		GoBasicNode child = new GoBasicNode(nodeType);
-			    		
-			    		tracker.insert(child);
-			    		cindex = tracker.addChildren(child);
-			    		//System.out.println("******"+tracker.name + " ||| " + child.name);
-			    		tracker = child;
-			    		
-			    	}
-			    	else {
-			    		matched = attr.matcher(line);
-			    		matched.find();
-			    		bindex = matched.start();
-			    		tracker.addData(line.substring(bindex,line.length()));
-			    		//System.out.println("attrs1: " + line.substring(bindex,line.length()));
-			    		
-			    	}
-			    	
-			    }
-			}
-			
-			
-		     
-			return root;
-		}
-
-
-		@Override
-		public Object executeGeneric(VirtualFrame frame) {
-			// TODO Auto-generated method stub
-			printSelf(0);
-			System.out.println("Generic\n");
-			for(GoBasicNode child : children){
-				if(child != null){
-					child.executeGeneric(frame);
-			
-				}
-			}
-			return null;
-		}
-		
+		return allFunctions;
 		
 	}
+		
+	
 	//written by Petar, we need this owrking asap, im not sorry.
 	//TO-DO: ADD A FACTORY INSTEAD
-	public static void getNodeType(String nodeType) {
+	public Node getNodeType(String nodeType) throws IOException{
+		String type;
 		switch(nodeType) {
 			case "File":
+				while((currentLine = reader.readLine()) != null){
+					matchedTerm = astPattern.matcher(currentLine);
+					if(matchedTerm.find()){
+						type = matchedTerm.group();
+						if(type.equals(".Decl")){
+							GoDeclNode bodyNode = (GoDeclNode) getNodeType(type.substring(1));
+							return new GoFileNode(bodyNode);
+						}
+					}
+				}
 				System.out.println(nodeType);
 				break;
 			case "Ident":
-				System.out.println(nodeType);
-				break;
+				//Definitely will need changing but is going to be used for call expr for now
+				//without chained calls
+				//TEMPORARY PLS CHANGE
+				reader.readLine();
+				currentLine = reader.readLine();
+				return new GoFunctionLiteralNode(language, currentLine.split("\"")[1]);
+				
 			case "Decl":
-				System.out.println(nodeType);
-				break;
+				//Start a new lexical scope for decls
+				return decl();
+				
 			case "Spec":
 				System.out.println(nodeType);
 				break;
+				
 			case "ImportSpec":
 				System.out.println(nodeType);
 				break;
+				
 			case "BasicLit":
-				System.out.println(nodeType);
-				break;
+				return basicLit();
+				
 			case "FuncDecl":
-				System.out.println(nodeType);
+				//Start a new lexical scope
+				createFunction();
 				break;
+				
 			case "Object":
 				System.out.println(nodeType);
 				break;
+				
 			case "FuncType":
 				System.out.println(nodeType);
 				break;
+				
 			case "BlockStmt":
-				System.out.println(nodeType);
-				break;
+				//needs to return a block node
+				return createFunctionBlock();
+				
 			case "Stmt":
-				System.out.println(nodeType);
+				System.out.println("Skip " + nodeType);
 				break;
+				
 			case "ExprStmt":
-				System.out.println(nodeType);
-				break;
+				//Needs changing
+				currentLine = reader.readLine();
+				matchedTerm = astPattern.matcher(currentLine);
+				if(matchedTerm.find()){
+					type = matchedTerm.group();
+					return getNodeType(type.substring(1));
+				}
+				
 			case "CallExpr":
-				System.out.println(nodeType);
-				break;
+				//Create invoke node
+				return createInvoke();
+				
 			case "SelectorExpr":
 				System.out.println(nodeType);
 				break;
+				
 			case "Expr":
 				System.out.println(nodeType);
 				break;
+				
 			case "GenDecl":
+				genDecl();
 				System.out.println(nodeType);
 				break;
+				
 			case "FieldList":
 				System.out.println(nodeType);
 				break;
+				
 			case "Scope":
 				System.out.println(nodeType);
 				break;
+				
 			default:
 				System.out.println("Error, in default: " + nodeType);
+				
 		}
+		return null;
 
+	}
+	
+	public GoExpressionNode basicLit() throws IOException{
+		reader.readLine();
+		reader.readLine(); //This one hold the kind of basic lit the node is
+		currentLine = reader.readLine();
+		return new GoStringNode(currentLine.split("\"")[2]);
+	}
+	
+	public GoInvokeNode createInvoke() throws IOException{
+		String type;
+		GoFunctionLiteralNode function = null;
+		List<GoExpressionNode> argumentNodes = new ArrayList<>();
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
+				type = matchedTerm.group();
+				//Temporary way to get the function call
+				if(type.equals(".Ident")){
+					function = (GoFunctionLiteralNode) getNodeType(type.substring(1));
+				}
+				else if(!type.equals(".Expr")){
+					//Need to track how many arguments were reading in instead of breaking on the first one
+					argumentNodes.add((GoExpressionNode) getNodeType(type.substring(1)));
+					break;
+				}
+			}
+		}
+		GoInvokeNode invokeNode = new GoInvokeNode(function,argumentNodes.toArray(new GoExpressionNode[argumentNodes.size()]));
+		return invokeNode;
+	}
+	
+	/*
+	 * Create a block of statements. Currently only specific to function blocks
+	 */
+	public GoFunctionBodyNode createFunctionBlock() throws IOException{
+		String type;
+		List<GoStatementNode> bodyNodes = new ArrayList<>();
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
+				type = matchedTerm.group();
+				if(!type.equals(".Stmt")){
+					//Also need to keep track of how many statmeents to process
+					bodyNodes.add((GoStatementNode) getNodeType(type.substring(1))); 
+					break;
+				}
+			}
+		}
+		//Something about flattening nodes
+		//Experimental flattening tactics
+		List<GoStatementNode> flatNodes = new ArrayList<>(bodyNodes.size());
+		flattenBlocks(bodyNodes, flatNodes);
+		//Loop around to give source section to each node
+		GoBlockNode blockNode = new GoBlockNode(flatNodes.toArray(new GoStatementNode[flatNodes.size()]));
+		GoFunctionBodyNode functionBlockNode = new GoFunctionBodyNode(blockNode);
+		//Blocknode source section
+		return functionBlockNode;
+	}
+	
+	private void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flatNodes){
+		for(GoStatementNode node : bodyNodes){
+			if(node instanceof GoBlockNode){
+				flattenBlocks(((GoBlockNode) node).getStatements(), flatNodes);
+			}
+			else{
+				flatNodes.add(node);
+			}
+		}
+	}
+	
+	/*
+	 * Creates a function node and adds it to the function hashmap
+	 * Needs to still add in paramters and return types/parameters
+	 * and lexical scope is needed too
+	 */
+	public void createFunction() throws IOException{
+		String name = "", type;
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
+				type = matchedTerm.group();
+				if(type.equals(".Ident")){
+					//Get the name
+					name = ident();
+				}
+				else if(type.equals(".FuncType")){
+					//fill in paramters and function return type
+					//Might just skip this for now LUL
+				}
+				else if(type.equals(".BlockStmt")){
+					//body nodes Might be able to just create a block node
+					GoFunctionBodyNode bodyNode = (GoFunctionBodyNode) getNodeType(type.substring(1));
+					GoRootNode root = new GoRootNode(language,null,bodyNode,null,name);
+					allFunctions.put(name,root);
+					return;
+				}
+			}
+			//Create function node out here and add it to the allFunctions hashmap
+			//and maybe break out of this loop somewhere
+		}
+	}
+	
+	/*
+	 * Currently only used by createFunction to get the function name
+	 * Working only off of the assumption of a HelloWorld main function
+	 * A BUNCH OF ASSUMPTIONS BUT EH..... jk should be fixed
+	 */
+	public String ident() throws IOException{
+		reader.readLine();
+		currentLine = reader.readLine();
+		return currentLine.split("\"")[1];
+	}
+	
+	public GoStatementNode[] genDecl() throws IOException{
+		return null;
+	}
+	
+	public GoDeclNode decl() throws IOException{
+		String type;
+		ArrayList<GoStatementNode> bodyNodes = new ArrayList<>();
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
+				type = matchedTerm.group();
+				//Keep track of how many statements to process also
+				bodyNodes.add((GoStatementNode) getNodeType(type.substring(1)));
+				break;
+			}
+		}
+		GoDeclNode node = new GoDeclNode(bodyNodes.toArray(new GoStatementNode[bodyNodes.size()]));
+		return node;
 	}
 	
 	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
