@@ -1,33 +1,40 @@
 package com.oracle.app.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.nodes.SpecDecl.GoDeclNode;
-import com.oracle.truffle.api.nodes.Node;
+import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.Source;
 
 public class Parser {
-	private final String file;
-	private static BufferedReader reader;
-	private static String currentLine;
-	private static Matcher matchedTerm; 
-	private static Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+");
+	
+	private final GoNodeFactory factory;
+	
+	private String[] StringFile;
 
-	public Parser(String file) throws FileNotFoundException {
-		this.file = file;
-		reader = new BufferedReader(new FileReader(this.file));
+	Pattern pattern = Pattern.compile("[\\.][a-zA-Z]+");
+	Pattern attr    = Pattern.compile("[a-zA-Z][.]*");
+	Matcher matched;
+	
+	
+	public Parser(GoLanguage language, Source source) {
+		this.factory = new GoNodeFactory(language, source);
 	}
-
+	/*
 	public void beginParse() throws IOException{
 		String type;
 		
@@ -42,7 +49,7 @@ public class Parser {
 		
 	}
 	
-/*
+
 	public GoBasicNode parseFile(String fileName) throws FileNotFoundException, IOException {
 		GoBasicNode root = new GoBasicNode("root");
 		GoBasicNode tracker = root;
@@ -99,8 +106,8 @@ public class Parser {
 	
 	//written by Petar, we need this owrking asap, im not sorry.
 	//TO-DO: ADD A FACTORY INSTEAD
-	public static Node getNodeType(String nodeType) throws IOException{
-		String type;
+	public GoStatementNode getNodeType(String nodeType,List<String> attrs ,List<GoStatementNode> body) {
+		GoStatementNode result = null;
 		switch(nodeType) {
 			case "File":
 				while((currentLine = reader.readLine()) != null){
@@ -175,15 +182,97 @@ public class Parser {
 				System.out.println("Error, in default: " + nodeType);
 				
 		}
-		return null;
+		return result;
 
 	}
 	
-	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
-		Map<String, GoRootNode> function = new HashMap<>();
-		function.put("main", new GoRootNode(language,null,null,null,"main"));
-		return function;
+	private void function() {
+		
 	}
 	
+	private GoStatementNode block() {
+		
+		return null;
+		
+	}
+	
+	private GoStatementNode getGoType() {
+		return null;
+		
+	}
+	
+	private void Parse(String filename) {
+		
+		// has to begin with a letter or number, can't end with { 
+		
+		//GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
+		
+		
+		Scanner sc = new Scanner(new File(filename));
+		List<String> lines = new ArrayList<String>();
+		while (sc.hasNextLine()) {
+		  lines.add(sc.nextLine());
+		}
+
+		StringFile = lines.toArray(new String[0]);
+		
+
+		this.factory.put();
+		
+		
+		
+	}
+	
+	private GoStatementNode recParse(int lineNumber,String currNode) {
+		List<GoStatementNode> body = new ArrayList<>();
+		List<String> attrs = new ArrayList<>();
+		String nodeName = currNode;
+		int bindex;
+		int cindex;
+		
+		if(StringFile[lineNumber].indexOf('}') != -1) {
+    		//System.out.println("...." + tracker.name);
+    		
+    		
+    		//create Node here
+			return getNodeType(nodeName,attrs,body);
+    	}
+    	else if(StringFile[lineNumber].indexOf('{') >= 0) {
+    		matched = pattern.matcher(StringFile[lineNumber]);
+    		matched.find();
+    		bindex = matched.start();
+    		
+    		//It works
+    		String nodeType = StringFile[lineNumber].substring(bindex+1, StringFile[lineNumber].length()-2);
+    		if(nodeType.contains("(len")) {
+    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
+    		}
+    		
+    		
+    		body.add(recParse(lineNumber+1,nodeType));
+    		
+    		
+    	}
+    	else {
+    		matched = attr.matcher(StringFile[lineNumber]);
+    		matched.find();
+    		bindex = matched.start();
+
+    		attrs.add(StringFile[lineNumber].substring(bindex));
+    		
+    	}
+
+		return null;
+	}
+	
+	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source){
+		/*Map<String, GoRootNode> function = new HashMap<>();
+		function.put("main", new GoRootNode(language,null,null,null,"main"));
+		return function;*/
+		
+		Parser parser = new Parser(language, source);
+        parser.Parse(source.getName());
+        return parser.factory.getAllFunctions();
+	}
 
 }
