@@ -19,6 +19,7 @@ import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
+import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.nodes.Node;
@@ -116,7 +117,7 @@ public class Parser {
 				
 			case "BlockStmt":
 				//needs to return a block node
-				return createBlock();
+				return createFunctionBlock();
 				
 			case "Stmt":
 				System.out.println("Skip " + nodeType);
@@ -197,7 +198,7 @@ public class Parser {
 	/*
 	 * Create a block of statements. Currently only specific to function blocks
 	 */
-	static GoBlockNode createBlock() throws IOException{
+	static GoFunctionBodyNode createFunctionBlock() throws IOException{
 		String type;
 		List<GoStatementNode> bodyNodes = new ArrayList<>();
 		while((currentLine = reader.readLine()) != null){
@@ -217,8 +218,9 @@ public class Parser {
 		flattenBlocks(bodyNodes, flatNodes);
 		//Loop around to give source section to each node
 		GoBlockNode blockNode = new GoBlockNode(flatNodes.toArray(new GoStatementNode[flatNodes.size()]));
+		GoFunctionBodyNode functionBlockNode = new GoFunctionBodyNode(blockNode);
 		//Blocknode source section
-		return blockNode;
+		return functionBlockNode;
 	}
 	
 	private static void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flatNodes){
@@ -253,7 +255,7 @@ public class Parser {
 				}
 				else if(type.equals(".BlockStmt")){
 					//body nodes Might be able to just create a block node
-					GoBlockNode bodyNode = (GoBlockNode) getNodeType(type.substring(1));
+					GoFunctionBodyNode bodyNode = (GoFunctionBodyNode) getNodeType(type.substring(1));
 					GoRootNode root = new GoRootNode(language,null,bodyNode,null,name);
 					allFunctions.put(name,root);
 					return;
