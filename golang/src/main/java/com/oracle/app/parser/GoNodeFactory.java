@@ -71,6 +71,8 @@ public class GoNodeFactory {
     public void startBlock() {
         lexicalScope = new LexicalScope(lexicalScope);
     }
+    
+    
 
 //    public void startFunction(Token nameToken, int bodyStartPos) {
 //        assert functionStartPos == 0;
