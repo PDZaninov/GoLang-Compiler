@@ -103,4 +103,9 @@ public abstract class GoExpressionNode extends GoStatementNode {
 	public float executeFloat(VirtualFrame frame) throws UnexpectedResultException {
 		return GoTypesGen.expectFloat(executeGeneric(frame));
 	}
+
+	public void printSelf(int spacing) {
+		// TODO Auto-generated method stub
+		
+	}
 }

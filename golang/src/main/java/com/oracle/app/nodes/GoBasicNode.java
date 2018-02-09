@@ -8,16 +8,15 @@ public class GoBasicNode extends GoExpressionNode{
 	String name;
 	String[] attr = new String[25];
 	public GoBasicNode parent;
-	@Children private final GoBasicNode[] children = new GoBasicNode[7];
+	@Children final private GoExpressionNode[] children;
 	
-	public GoBasicNode(String named) {
+	public GoBasicNode(String named, GoExpressionNode[] children) {
 		name = named;
-		
+		this.children = children;
 	}
 	
 	
 	public void executeVoid(VirtualFrame frame){
-		printSelf(0);
 		System.out.println("Void\n");
 	}
 	
@@ -51,60 +50,18 @@ public class GoBasicNode extends GoExpressionNode{
 		this.insert(m);
 	}
 	
-	public void printSelf(int spacing) {
-		//System.out.print(spacing);
-		Spacing(spacing);
-		
-		System.out.println("Name: " + name);
-		if(name != "root") {
-			Spacing(spacing);
-			System.out.println("Parent: " + parent.name);
-		}
-/*			for(int x = 0; x < children.length; x++) {
-			if(children[x] == null)
-				break;
-			Spacing(spacing);
-			System.out.println("Children: " + children[x].name);
-		}*/
-		for(int x = 0; x < attr.length; x++) {
-			if(attr[x] == null)
-				break;
-			Spacing(spacing);
-			System.out.println("Attr: " + attr[x]);
-		}
-	}
 	public void Spacing(int spacing) {
 		for(int x = 0; x < spacing; x++) {
 			System.out.print(" . ");
 		}
 	}
 	
-	public void printTree(GoBasicNode root, int spacing) {
-		root.printSelf(spacing);
-		spacing += 1;
-		for(int x = 0; x < root.children.length; x++) {
-			if(root.children[x] != null) {
-				root.printTree(root.children[x], spacing);
-				
-			}else {
-				break;
-			}
-		}
-	}
+
 
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		// TODO Auto-generated method stub
-		printSelf(0);
-		System.out.println("Generic\n");
-		for(GoBasicNode child : children){
-			if(child != null){
-				child.executeGeneric(frame);
-		
-			}
-		}
-		return null;
+		return "string";
 	}
 }
 	
