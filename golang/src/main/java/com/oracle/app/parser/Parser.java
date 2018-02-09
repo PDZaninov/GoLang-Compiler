@@ -27,13 +27,13 @@ import com.oracle.truffle.api.source.Source;
 
 public class Parser {
 	private final String file;
-	private static GoLanguage language;
-	private static BufferedReader reader;
-	private static String currentLine;
-	private static Matcher matchedTerm; 
-	private static Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+");
-	private static GoNodeFactory factory;
-	private static Map<String, GoRootNode> allFunctions;
+	private GoLanguage language;
+	private BufferedReader reader;
+	private String currentLine;
+	private Matcher matchedTerm; 
+	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+");
+	private GoNodeFactory factory;
+	private Map<String, GoRootNode> allFunctions;
 
 	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
 		this.file = source.getName();
@@ -63,7 +63,7 @@ public class Parser {
 	
 	//written by Petar, we need this owrking asap, im not sorry.
 	//TO-DO: ADD A FACTORY INSTEAD
-	public static Node getNodeType(String nodeType) throws IOException{
+	public Node getNodeType(String nodeType) throws IOException{
 		String type;
 		switch(nodeType) {
 			case "File":
@@ -165,14 +165,14 @@ public class Parser {
 
 	}
 	
-	static GoExpressionNode basicLit() throws IOException{
+	public GoExpressionNode basicLit() throws IOException{
 		reader.readLine();
 		reader.readLine(); //This one hold the kind of basic lit the node is
 		currentLine = reader.readLine();
 		return new GoStringNode(currentLine.split("\"")[2]);
 	}
 	
-	static GoInvokeNode createInvoke() throws IOException{
+	public GoInvokeNode createInvoke() throws IOException{
 		String type;
 		GoFunctionLiteralNode function = null;
 		List<GoExpressionNode> argumentNodes = new ArrayList<>();
@@ -198,7 +198,7 @@ public class Parser {
 	/*
 	 * Create a block of statements. Currently only specific to function blocks
 	 */
-	static GoFunctionBodyNode createFunctionBlock() throws IOException{
+	public GoFunctionBodyNode createFunctionBlock() throws IOException{
 		String type;
 		List<GoStatementNode> bodyNodes = new ArrayList<>();
 		while((currentLine = reader.readLine()) != null){
@@ -223,7 +223,7 @@ public class Parser {
 		return functionBlockNode;
 	}
 	
-	private static void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flatNodes){
+	private void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flatNodes){
 		for(GoStatementNode node : bodyNodes){
 			if(node instanceof GoBlockNode){
 				flattenBlocks(((GoBlockNode) node).getStatements(), flatNodes);
@@ -239,7 +239,7 @@ public class Parser {
 	 * Needs to still add in paramters and return types/parameters
 	 * and lexical scope is needed too
 	 */
-	static void createFunction() throws IOException{
+	public void createFunction() throws IOException{
 		String name = "", type;
 		while((currentLine = reader.readLine()) != null){
 			matchedTerm = astPattern.matcher(currentLine);
@@ -271,17 +271,17 @@ public class Parser {
 	 * Working only off of the assumption of a HelloWorld main function
 	 * A BUNCH OF ASSUMPTIONS BUT EH..... jk should be fixed
 	 */
-	static String ident() throws IOException{
+	public String ident() throws IOException{
 		reader.readLine();
 		currentLine = reader.readLine();
 		return currentLine.split("\"")[1];
 	}
 	
-	static GoStatementNode[] genDecl() throws IOException{
+	public GoStatementNode[] genDecl() throws IOException{
 		return null;
 	}
 	
-	static GoDeclNode decl() throws IOException{
+	public GoDeclNode decl() throws IOException{
 		String type;
 		ArrayList<GoStatementNode> bodyNodes = new ArrayList<>();
 		while((currentLine = reader.readLine()) != null){
