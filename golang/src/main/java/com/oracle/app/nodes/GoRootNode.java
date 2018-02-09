@@ -50,7 +50,7 @@ public class GoRootNode extends RootNode {
         
         return bodyNode.executeGeneric(frame);
     }
-
+        
     public GoExpressionNode getBodyNode() {
         return bodyNode;
     }

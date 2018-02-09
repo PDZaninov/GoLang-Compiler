@@ -33,7 +33,7 @@ public class GoInvokeNode extends GoExpressionNode {
     public Object executeGeneric(VirtualFrame frame) {
         Object function = functionNode.executeGeneric(frame);
 
-        /*
+        /* 
          * The number of arguments is constant for one invoke node. During compilation, the loop is
          * unrolled and the execute methods of all arguments are inlined. This is triggered by the
          * ExplodeLoop annotation on the method. The compiler assertion below illustrates that the

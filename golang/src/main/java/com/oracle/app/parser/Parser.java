@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -95,11 +96,6 @@ public class Parser {
 			case "FuncDecl":
 				//Start a new lexical scope
 				createFunction();
-				//Starts with name
-				//Parameters and fucntion type
-				//Then block statement
-				
-				//At the end add to allFunctions with name
 				System.out.println(nodeType);
 				break;
 				
@@ -112,11 +108,11 @@ public class Parser {
 				break;
 				
 			case "BlockStmt":
-				System.out.println(nodeType);
-				break;
+				//needs to return a block node
+				return createBlock();
 				
 			case "Stmt":
-				System.out.println(nodeType);
+				System.out.println("Skip " + nodeType);
 				break;
 				
 			case "ExprStmt":
@@ -124,6 +120,13 @@ public class Parser {
 				break;
 				
 			case "CallExpr":
+				while((currentLine = reader.readLine()) != null){
+					matchedTerm = astPattern.matcher(currentLine);
+					if(matchedTerm.find()){
+						type = matchedTerm.group();
+						getNodeType(type);
+					}
+				}
 				System.out.println(nodeType);
 				break;
 				
@@ -157,8 +160,45 @@ public class Parser {
 	}
 	
 	/*
+	 * Create a block of statements. Currently only specific to function blocks
+	 */
+	static GoBlockNode createBlock() throws IOException{
+		String type;
+		List<GoStatementNode> bodyNodes = new ArrayList<>();
+		while((currentLine = reader.readLine()) != null){
+			matchedTerm = astPattern.matcher(currentLine);
+			if(matchedTerm.find()){
+				type = matchedTerm.group();
+				if(!type.equals(".Stmt")){
+					bodyNodes.add((GoStatementNode) getNodeType(type)); 
+				}
+			}
+		}
+		//Something about flattening nodes
+		//Experimental flattening tactics
+		List<GoStatementNode> flatNodes = new ArrayList<>(bodyNodes.size());
+		flattenBlocks(bodyNodes, flatNodes);
+		//Loop around to give source section to each node
+		GoBlockNode blockNode = new GoBlockNode(flatNodes.toArray(new GoStatementNode[flatNodes.size()]));
+		//Blocknode source section
+		return blockNode;
+	}
+	
+	private static void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flatNodes){
+		for(GoStatementNode node : bodyNodes){
+			if(node instanceof GoBlockNode){
+				flattenBlocks(((GoBlockNode) node).getStatements(), flatNodes);
+			}
+			else{
+				flatNodes.add(node);
+			}
+		}
+	}
+	
+	/*
 	 * Creates a function node and adds it to the function hashmap
 	 * Needs to still add in paramters and return types/parameters
+	 * and lexical scope is needed too
 	 */
 	static void createFunction() throws IOException{
 		String name = "", type;
