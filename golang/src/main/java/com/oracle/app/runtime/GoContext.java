@@ -11,6 +11,7 @@ import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
@@ -97,11 +98,11 @@ public final class GoContext {
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){
 		int argumentCount = factory.getExecutionSignature().size();
 		GoExpressionNode[] argumentNodes = new GoExpressionNode[argumentCount];
-		/*Gets the parameters of the function, Need GoReadArgumentNode
+		//Gets the parameters of the function, Need GoReadArgumentNode
 		for(int i = 0; i < argumentCount; i++){
-			argumentNodes[i] = new GoReadArgumentNode(i);
+			argumentNodes[i] = new GoReadArgumentsNode(i);
 		}
-		*/
+		
 		
 		GoBuiltinNode builtinBodyNode = factory.createNode((Object) argumentNodes);
 		builtinBodyNode.addRootTag();

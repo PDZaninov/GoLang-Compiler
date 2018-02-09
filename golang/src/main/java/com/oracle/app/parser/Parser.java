@@ -87,7 +87,6 @@ public class Parser {
 				return new GoFunctionLiteralNode(language, currentLine.split("\"")[1]);
 				
 			case "Decl":
-				System.out.println(nodeType);
 				//Start a new lexical scope for decls
 				return decl();
 				
@@ -105,7 +104,6 @@ public class Parser {
 			case "FuncDecl":
 				//Start a new lexical scope
 				createFunction();
-				System.out.println(nodeType);
 				break;
 				
 			case "Object":
