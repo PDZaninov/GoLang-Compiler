@@ -27,6 +27,7 @@ public class GoInvokeNode extends GoExpressionNode {
         this.argumentNodes = argumentNodes;
         this.dispatchNode = new GoGenericDispatchNode();
     }
+    
 
     /*
      * Executes only the generic function call. So only the slow route is available for function calls
