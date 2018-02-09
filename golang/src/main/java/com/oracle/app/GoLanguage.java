@@ -43,6 +43,11 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		return null;
 	}
 
+	/*
+	 * Creates the global variable frames and global function registry
+	 * Builtin functions are registered in GoContext
+	 */
+	
 	@Override
 	protected GoContext createContext(Env env) {
 		return new GoContext(this, env);                    
