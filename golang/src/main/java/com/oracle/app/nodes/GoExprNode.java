@@ -56,16 +56,8 @@ public final class GoExprNode extends GoExpressionNode {
     
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		for (GoExpressionNode statement : bodyNodes) {
-			if(statement != null){
-				statement.executeGeneric(frame);
-			}
-        }
-		System.out.println("in Expr Node executeGeneric");
-		if(bodyNodes[0] instanceof GoStringNode)
-			System.out.println("Instance of GoStringNode is child");
-		System.out.println(bodyNodes[0].toString());
-		return null;
+		
+		return bodyNodes[0].executeGeneric(frame);
 	}
 	
 }
