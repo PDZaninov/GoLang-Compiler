@@ -1,13 +1,21 @@
 package com.oracle.app.parser;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoExprNode;
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.nodes.SpecDecl.GoDeclNode;
+import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
+import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
+import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.source.Source;
@@ -58,19 +66,77 @@ public class GoNodeFactory {
         return allFunctions;
     }
     
-    public void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flattenedNodes) {
-        for (GoStatementNode n : bodyNodes) {
-            if (n instanceof GoBlockNode) {
-                flattenBlocks(((GoBlockNode) n).getStatements(), flattenedNodes);
-            } else {
-                flattenedNodes.add(n);
-            }
-        }
-    }
+    /*
+     * *************************************************************************
+     * All the create*() methods. Here we create the nodes from the information
+     * we get from the parser.
+     * *************************************************************************
+     */
+    
+    public GoExpressionNode createBasicLit(String name) throws IOException{
+		return new GoStringNode(name);
+	}
+	
+	public GoExpressionNode createExpr(ArrayList<GoStatementNode> body) throws IOException{
+		return new GoExprNode((GoExpressionNode) body.get(0));
+	}
+	
+	public GoInvokeNode createInvoke(ArrayList<GoStatementNode> body) throws IOException{
+		GoExpressionNode function = (GoExpressionNode) body.remove(0);
+		GoInvokeNode invokeNode = new GoInvokeNode(function, body.toArray(new GoExpressionNode[body.size()]));
+		return invokeNode;
+	}
+	
+	/*
+	 * Create a block of statements. Currently only specific to function blocks
+	 */
+	public GoFunctionBodyNode createFunctionBlock(ArrayList<GoStatementNode> body) throws IOException{
+		
+		GoBlockNode blockNode = new GoBlockNode(body.toArray(new GoStatementNode[body.size()]));
+		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
+		return bodyNode;
+	} 
+	
+	/*
+	 * Creates a function node and adds it to the function hashmap
+	 * Needs to still add in paramters and return types/parameters
+	 * and lexical scope is needed too
+	 */
+	
+	//TODO : fix the fact that the function name is off. Putting the name variable there breaks it.
+	public void createFunction(String name, ArrayList<GoStatementNode> body) throws IOException{
+		GoRootNode root = new GoRootNode(language,null,(GoFunctionBodyNode)body.get(2),null,"main");
+		allFunctions.put("main",root);
+	}
+	
+	//TODO
+	public GoStatementNode[] createGenDecl() throws IOException{
+		return null;
+	}
+	
+	public GoDeclNode createDecl(ArrayList<GoStatementNode> body) throws IOException{
+		GoDeclNode node = new GoDeclNode(body.toArray(new GoStatementNode[body.size()]));
+		return node;
+	}
+	
+	
+	
+	private void flattenBlocks(Iterable<? extends GoStatementNode> bodyNodes, List<GoStatementNode> flatNodes){
+		for(GoStatementNode node : bodyNodes){
+			if(node instanceof GoBlockNode){
+				flattenBlocks(((GoBlockNode) node).getStatements(), flatNodes);
+			}
+			else{
+				flatNodes.add(node);
+			}
+		}
+	}
     
     public void startBlock() {
         lexicalScope = new LexicalScope(lexicalScope);
     }
+    
+    
 
 //    public void startFunction(Token nameToken, int bodyStartPos) {
 //        assert functionStartPos == 0;
