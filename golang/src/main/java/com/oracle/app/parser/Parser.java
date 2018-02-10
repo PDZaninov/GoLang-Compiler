@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoBasicNode;
+import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
@@ -107,12 +108,12 @@ public class Parser {
 
 
 	public GoStatementNode getNodeType(String nodeType, ArrayList<String> attrs, ArrayList<GoStatementNode> body) throws IOException{
+		//System.out.println(nodeType + " " + body.size());
 		String name = searchAttr("Name: ", attrs);
 		String value = searchAttr("Value: ", attrs);
 		switch(nodeType) {
 			case "File":
-				System.out.println(nodeType);
-				break;
+				return new GoBasicNode(nodeType, body.toArray(new GoStatementNode[body.size()]));
 			case "Ident":
 				//Definitely will need changing but is going to be used for call expr for now
 				//without chained calls
@@ -162,8 +163,7 @@ public class Parser {
 				break;
 				
 			case "Expr":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
+				return createExpr(body);
 			case "GenDecl":
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
 				
@@ -200,9 +200,12 @@ public class Parser {
 		return new GoStringNode(name);
 	}
 	
+	public GoExpressionNode createExpr(ArrayList<GoStatementNode> body) throws IOException{
+		return new GoExprNode(body.toArray(new GoExpressionNode[body.size()]));
+	}
+	
 	public GoInvokeNode createInvoke(ArrayList<GoStatementNode> body) throws IOException{
 		GoExpressionNode function = (GoExpressionNode) body.remove(0);
-
 		GoInvokeNode invokeNode = new GoInvokeNode(function, body.toArray(new GoExpressionNode[body.size()]));
 		return invokeNode;
 	}

@@ -104,8 +104,4 @@ public abstract class GoExpressionNode extends GoStatementNode {
 		return GoTypesGen.expectFloat(executeGeneric(frame));
 	}
 
-	public void printSelf(int spacing) {
-		// TODO Auto-generated method stub
-		
-	}
 }

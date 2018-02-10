@@ -1,6 +1,7 @@
 package com.oracle.app.nodes;
 
 import com.oracle.app.nodes.GoBasicNode;
+import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node.Children;
 
@@ -8,16 +9,20 @@ public class GoBasicNode extends GoExpressionNode{
 	String name;
 	String[] attr = new String[25];
 	public GoBasicNode parent;
-	@Children final private GoExpressionNode[] children;
+	@Children final private GoStatementNode[] children;
 	
-	public GoBasicNode(String named, GoExpressionNode[] children) {
+	public GoBasicNode(String named, GoStatementNode[] children) {
 		name = named;
 		this.children = children;
 	}
 	
 	
 	public void executeVoid(VirtualFrame frame){
-		System.out.println("Void\n");
+		CompilerAsserts.compilationConstant(children.length);
+
+        for (GoStatementNode statement : children) {
+            statement.executeVoid(frame);
+        }
 	}
 	
 	public void addData(String someData) {
@@ -61,7 +66,7 @@ public class GoBasicNode extends GoExpressionNode{
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return "string";
+		return "string " + this.name;
 	}
 }
 	
