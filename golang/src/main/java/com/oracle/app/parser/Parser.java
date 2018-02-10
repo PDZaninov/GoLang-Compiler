@@ -27,18 +27,24 @@ import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 
+// Parses a go file ast dump
 public class Parser {
-	private final String file;
-	private GoLanguage language;
-	private BufferedReader reader;
-	private String currentLine;
-	private Matcher matchedTerm; 
-	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+");
-	private Pattern attr	   = Pattern.compile("[a-zA-Z][.]*");
-	private GoNodeFactory factory;
-	private Map<String, GoRootNode> allFunctions;
+	
+	private final String file; // the file we open
+	private GoLanguage language; // language we are passed
+	private BufferedReader reader; // used to read file
+	private String currentLine; // String of the current line we are on
+	private Matcher matchedTerm; // used for regex/parsing of file
+	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+"); //for getting the type of node
+	private Pattern attr	   = Pattern.compile("[a-zA-Z][.]*"); //for getting the attributes
+	private GoNodeFactory factory; //used to call functions to create nodes
+	private Map<String, GoRootNode> allFunctions; //hashmap of function names , go node trees
 	
 
+	/*Constructor
+	 * Gets the file we open, language...
+	 * Opens factory and creates the hashmap
+	 */
 	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
 		this.file = source.getName();
 		this.language = language;
@@ -46,7 +52,14 @@ public class Parser {
 		factory = new GoNodeFactory(language,source);
 		allFunctions = new HashMap<>();
 	}
-	
+	/* TODO wtf are we doing the .File
+	 * Purpose:
+	 * Start the parse process. Also returns the hashmap with the nodes inside.
+	 * We use this that map to execute. For now ignores the .file
+	 * Input:
+	 * Output:
+	 * Hashmap of <string function name, Go node tree for that function>
+	 */
 	public Map<String, GoRootNode> beginParse() throws IOException{
 		String type;
 		
@@ -63,25 +76,39 @@ public class Parser {
 		return factory.getAllFunctions();
 	}
 	
+	/*Purpose: 
+	 * Parse the ast dump. It does this by creating all the children
+	 * before the parent. Depth first. Gets all attributes and children
+	 * and once it hits the closing } it creates itself. Does this by recursion.
+	 * Input:
+	 * String currNode: a string of the current node type
+	 * Output:
+	 * the first node it tried to parse.
+	 * Not sure if needed.
+	 */
 	private GoStatementNode recParse(String currNode) throws IOException {
 		ArrayList<GoStatementNode> body = new ArrayList<>();
 		ArrayList<String> attrs = new ArrayList<>();
 		String nodeName = currNode;
 		int bindex;
 		
-		//while statement
+		//while statement reading the file
+		
 		while((currentLine = reader.readLine()) != null) {
 			if(currentLine.indexOf('}') != -1) {
-	    		
+				
+	    		//creating itself, going up
 				return getNodeType(nodeName,attrs,body);
 
 	    	}
 	    	else if(currentLine.indexOf('{') >= 0) {
+	    		//going deeper into the tree creating children first
+	    		
 	    		matchedTerm = astPattern.matcher(currentLine);
 	    		matchedTerm.find();
 	    		bindex = matchedTerm.start();
 	    		
-	    		//It works
+	    		//gets rid of the (len  = 1 ) part
 	    		String nodeType = currentLine.substring(bindex+1, currentLine.length()-2);
 	    		if(nodeType.contains("(len")) {
 	    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
@@ -92,6 +119,7 @@ public class Parser {
 	    			body.add(par);
 	    	}
 	    	else {
+	    		//adding attributes
 	    		matchedTerm = attr.matcher(currentLine);
 	    		matchedTerm.find();
 	    		bindex = matchedTerm.start();
@@ -100,7 +128,23 @@ public class Parser {
 		}
 		return null;
 	}
-
+/*
+ * TODO
+ * eventually replace with map[nodetype] = new node
+ * or something like that i believe
+ * and maybe get rid of the place holder GoBasicNode
+ * Purpose:
+ * create and return the creation of the node of type nodeType
+ *  with body for children and attrs for attributes
+ *  with parse makes a structure of function -> body -> lots of children 
+ * Input: 
+ * String nodeType: a string of the nodeType for the switch case
+ * ArrayList attrs: an arraylist of the attributed for the
+ * ArrayList body: contains children if any
+ * Output:
+ * the creation of the node
+ * may do GoBasicNode if no good mapping is avaible.
+ */
 	public GoStatementNode getNodeType(String nodeType, ArrayList<String> attrs, ArrayList<GoStatementNode> body) throws IOException{
 
 		String name = searchAttr("Name: ", attrs);
@@ -174,7 +218,9 @@ public class Parser {
 		}
 		return null;
 	}
-	/*Input: 
+	/* Purpose:
+	 * To find a string within an array list then return whatever comes after :
+	 * Input: 
 	 * String attr - search for the string attr in the arraylist...
 	 * ArrayList<String> attrs - Arraylist of attributes of a node
 	 * Output:
@@ -197,7 +243,12 @@ public class Parser {
 		}
 		return name;
 	}
-	
+	/*
+	 * This is what is called to start building the ast.
+	 * Called from GoLanguage.java
+	 * Output:
+	 * returns the hashmap of function names, go node trees
+	 */
 	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source) throws IOException{
 		Parser parser = new Parser(language, source);
 		return parser.beginParse();
