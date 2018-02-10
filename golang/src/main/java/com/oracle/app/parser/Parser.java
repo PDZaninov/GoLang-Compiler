@@ -174,7 +174,16 @@ public class Parser {
 		}
 		return null;
 	}
-	
+	/*Input: 
+	 * String attr - search for the string attr in the arraylist...
+	 * ArrayList<String> attrs - Arraylist of attributes of a node
+	 * Output:
+	 * -String of the value attached to the given input
+	 * Example:
+	 * searchAttr("Value: ", attrs);
+	 * will find the line with "Value: "hello""
+	 * and return hello
+	 */
 	public String searchAttr(String attr, ArrayList<String> attrs) {
 		String name = "";
 		for(int i = 0; i < attrs.size(); i++) {
