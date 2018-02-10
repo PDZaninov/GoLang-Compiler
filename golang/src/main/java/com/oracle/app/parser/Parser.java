@@ -29,7 +29,6 @@ public class Parser {
 	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+"); //for getting the type of node
 	private Pattern attr	   = Pattern.compile("[a-zA-Z][.]*"); //for getting the attributes
 	private GoNodeFactory factory; //used to call functions to create nodes
-	private Map<String, GoRootNode> allFunctions; //hashmap of function names , go node trees
 	
 
 	/*Constructor
@@ -41,9 +40,8 @@ public class Parser {
 		this.language = language;
 		reader = new BufferedReader(new FileReader(this.file));
 		factory = new GoNodeFactory(language,source);
-		allFunctions = new HashMap<>();
 	}
-	/* TODO wtf are we doing the .File
+	/* TODO what are we doing to the .File
 	 * Purpose:
 	 * Start the parse process. Also returns the hashmap with the nodes inside.
 	 * We use this that map to execute. For now ignores the .file
