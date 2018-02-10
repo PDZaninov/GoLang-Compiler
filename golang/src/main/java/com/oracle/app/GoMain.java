@@ -1,35 +1,26 @@
 package com.oracle.app;
 
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 
-import com.oracle.app.parser.Parser;
-import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.vm.PolyglotEngine;
 import com.oracle.truffle.api.vm.PolyglotEngine.Value;
 
-/**
- * Hello world!
- *
- */
+
 public class GoMain 
 {
     public static void main(String[] args) throws IOException
     {
 		
 		System.out.println(args[0]);
+		
      	Source source;
         if(args.length == 0){
         	System.out.println("Don't know about standard input quite yet");
@@ -42,23 +33,7 @@ public class GoMain
         	source = Source.newBuilder(new File(args[0])).build();
         }
         executeSource(source, System.in, System.out);
-        /*
-        System.out.println( "Hello World!" );
-        System.out.println("---------------------------------------------");
-		try {
-			GoBasicNode root = new GoBasicNode("root");
-			root = root.parseFile("HelloGo.ast");
-			root.printSelf(0);
-			System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-			root.printTree(root, 0);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
+
     }
 
   	private static void executeSource(Source source, InputStream in, PrintStream out){
@@ -78,7 +53,7 @@ public class GoMain
     	}
     	//A Parse error goes here
     	catch (Throwable ex){
-    		//Other error catching stuff, refer to SLMain....
+    		//Other error catching stuff, refer to GoMain....
     		ex.printStackTrace(out);
     	}
     	

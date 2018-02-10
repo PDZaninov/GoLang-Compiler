@@ -6,25 +6,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoBasicNode;
-import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
-import com.oracle.app.nodes.SpecDecl.GoDeclNode;
-import com.oracle.app.nodes.call.GoInvokeNode;
-import com.oracle.app.nodes.controlflow.GoBlockNode;
-import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
-import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
 
 // Parses a go file ast dump
@@ -90,7 +81,7 @@ public class Parser {
 		ArrayList<GoStatementNode> body = new ArrayList<>();
 		ArrayList<String> attrs = new ArrayList<>();
 		String nodeName = currNode;
-		int bindex;
+		int bindex;//used to get start of the match of the reg ex.
 		
 		//while statement reading the file
 		
