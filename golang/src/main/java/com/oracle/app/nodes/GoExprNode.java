@@ -24,10 +24,10 @@ public final class GoExprNode extends GoExpressionNode {
      * Children} informs Truffle that the field contains multiple children. It is a Truffle
      * requirement that the field is {@code final} and an array of nodes.
      */
-    @Children private final GoExpressionNode[] bodyNodes;
+    @Child private GoExpressionNode bodyNode;
 
-    public GoExprNode(GoExpressionNode[] bodyNodes) {
-        this.bodyNodes = bodyNodes;
+    public GoExprNode(GoExpressionNode bodyNode) {
+        this.bodyNode = bodyNode;
     }
 
     /**
@@ -42,22 +42,13 @@ public final class GoExprNode extends GoExpressionNode {
         /*
          * This assertion illustrates that the array length is really a constant during compilation.
          */
-        CompilerAsserts.compilationConstant(bodyNodes.length);
-
-        for (GoExpressionNode statement : bodyNodes) {
-            statement.executeVoid(frame);
-        }
+        bodyNode.executeVoid(frame);
     }
-
-    public List<GoStatementNode> getStatements() {
-        return Collections.unmodifiableList(Arrays.asList(bodyNodes));
-    }
-
     
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		
-		return bodyNodes[0].executeGeneric(frame);
+		return bodyNode.executeGeneric(frame);
 	}
 	
 }

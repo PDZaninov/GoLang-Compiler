@@ -78,7 +78,7 @@ public class GoNodeFactory {
 	}
 	
 	public GoExpressionNode createExpr(ArrayList<GoStatementNode> body) throws IOException{
-		return new GoExprNode(body.toArray(new GoExpressionNode[body.size()]));
+		return new GoExprNode((GoExpressionNode) body.get(0));
 	}
 	
 	public GoInvokeNode createInvoke(ArrayList<GoStatementNode> body) throws IOException{
@@ -102,6 +102,8 @@ public class GoNodeFactory {
 	 * Needs to still add in paramters and return types/parameters
 	 * and lexical scope is needed too
 	 */
+	
+	//TODO : fix the fact that the function name is off. Putting the name variable there breaks it.
 	public void createFunction(String name, ArrayList<GoStatementNode> body) throws IOException{
 		GoRootNode root = new GoRootNode(language,null,(GoFunctionBodyNode)body.get(2),null,"main");
 		allFunctions.put("main",root);
