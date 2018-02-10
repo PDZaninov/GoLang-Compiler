@@ -10,11 +10,14 @@ import (
 
 func main() {
 	// src is the input for which we want to print the AST.
+	x:=1
+	println(x)
 	src := `
 package main
 
 func main() {
-	println("Hello, Golang\n")
+	x:=1
+	println(x)
 }
 `
 
@@ -27,7 +30,7 @@ func main() {
 
 	// Print the AST.
 	// ast.Print(fset, f)
-	f2, err2 := os.Create("HelloGo.ast")
+	f2, err2 := os.Create("XequalsOne.ast")
 	if err2 != nil {
 		panic(err2)
 	}

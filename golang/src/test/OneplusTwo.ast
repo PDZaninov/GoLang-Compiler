@@ -1,0 +1,67 @@
+     0  *ast.File {
+     1  .  Package: 2:1
+     2  .  Name: *ast.Ident {
+     3  .  .  NamePos: 2:9
+     4  .  .  Name: "main"
+     5  .  }
+     6  .  Decls: []ast.Decl (len = 1) {
+     7  .  .  0: *ast.FuncDecl {
+     8  .  .  .  Name: *ast.Ident {
+     9  .  .  .  .  NamePos: 4:6
+    10  .  .  .  .  Name: "main"
+    11  .  .  .  }
+    12  .  .  .  Type: *ast.FuncType {
+    13  .  .  .  .  Func: 4:1
+    14  .  .  .  .  Params: *ast.FieldList {
+    15  .  .  .  .  .  Opening: 4:10
+    16  .  .  .  .  .  Closing: 4:11
+    17  .  .  .  .  }
+    18  .  .  .  }
+    19  .  .  .  Body: *ast.BlockStmt {
+    20  .  .  .  .  Lbrace: 4:13
+    21  .  .  .  .  List: []ast.Stmt (len = 1) {
+    22  .  .  .  .  .  0: *ast.ExprStmt {
+    23  .  .  .  .  .  .  X: *ast.CallExpr {
+    24  .  .  .  .  .  .  .  Fun: *ast.Ident {
+    25  .  .  .  .  .  .  .  .  NamePos: 5:2
+    26  .  .  .  .  .  .  .  .  Name: "println"
+    27  .  .  .  .  .  .  .  }
+    28  .  .  .  .  .  .  .  Lparen: 5:9
+    29  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+    30  .  .  .  .  .  .  .  .  0: *ast.BinaryExpr {
+    31  .  .  .  .  .  .  .  .  .  X: *ast.BasicLit {
+    32  .  .  .  .  .  .  .  .  .  .  ValuePos: 5:10
+    33  .  .  .  .  .  .  .  .  .  .  Kind: INT
+    34  .  .  .  .  .  .  .  .  .  .  Value: "1"
+    35  .  .  .  .  .  .  .  .  .  }
+    36  .  .  .  .  .  .  .  .  .  OpPos: 5:11
+    37  .  .  .  .  .  .  .  .  .  Op: +
+    38  .  .  .  .  .  .  .  .  .  Y: *ast.BasicLit {
+    39  .  .  .  .  .  .  .  .  .  .  ValuePos: 5:12
+    40  .  .  .  .  .  .  .  .  .  .  Kind: INT
+    41  .  .  .  .  .  .  .  .  .  .  Value: "2"
+    42  .  .  .  .  .  .  .  .  .  }
+    43  .  .  .  .  .  .  .  .  }
+    44  .  .  .  .  .  .  .  }
+    45  .  .  .  .  .  .  .  Ellipsis: -
+    46  .  .  .  .  .  .  .  Rparen: 5:13
+    47  .  .  .  .  .  .  }
+    48  .  .  .  .  .  }
+    49  .  .  .  .  }
+    50  .  .  .  .  Rbrace: 6:1
+    51  .  .  .  }
+    52  .  .  }
+    53  .  }
+    54  .  Scope: *ast.Scope {
+    55  .  .  Objects: map[string]*ast.Object (len = 1) {
+    56  .  .  .  "main": *ast.Object {
+    57  .  .  .  .  Kind: func
+    58  .  .  .  .  Name: "main"
+    59  .  .  .  .  Decl: *(obj @ 7)
+    60  .  .  .  }
+    61  .  .  }
+    62  .  }
+    63  .  Unresolved: []*ast.Ident (len = 1) {
+    64  .  .  0: *(obj @ 24)
+    65  .  }
+    66  }
