@@ -58,6 +58,7 @@ public class Parser {
 			
 				type = matchedTerm.group();
 				if(type.equals(".File")){
+					factory.startFunction();
 					recParse(type.substring(1));
 				}
 			}
@@ -94,7 +95,13 @@ public class Parser {
 	    		//going deeper into the tree creating children first
 	    		
 	    		matchedTerm = astPattern.matcher(currentLine);
-	    		matchedTerm.find();
+	    		if(matchedTerm.find()){
+	    			String nodeType = matchedTerm.group().substring(1);
+	    			if(nodeType.equals("FuncDecl")){
+	    				factory.startBlock();
+	    			}
+	    		
+	    		/*
 	    		bindex = matchedTerm.start();
 	    		
 	    		//gets rid of the (len  = 1 ) part
@@ -102,10 +109,11 @@ public class Parser {
 	    		if(nodeType.contains("(len")) {
 	    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
 	    		}
-	    		
-	    		GoStatementNode par = recParse(nodeType);
-	    		if(par != null)
-	    			body.add(par);
+	    		*/
+	    			GoStatementNode par = recParse(nodeType);
+	    			if(par != null)
+	    				body.add(par);
+	    		}
 	    	}
 	    	else {
 	    		//adding attributes
@@ -139,7 +147,7 @@ public class Parser {
 		String value = searchAttr("Value: ", attrs);
 		switch(nodeType) {
 			case "File":
-				return new GoBasicNode(nodeType, body.toArray(new GoStatementNode[body.size()]));
+				return factory.createFileNode(nodeType,body.toArray(new GoStatementNode[body.size()]));
 				
 			case "Ident":
 				//Should also cover cases of having an object attatched
