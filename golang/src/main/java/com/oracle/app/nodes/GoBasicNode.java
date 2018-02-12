@@ -11,8 +11,8 @@ public class GoBasicNode extends GoExpressionNode{
 	public GoBasicNode parent;
 	@Children final private GoStatementNode[] children;
 	
-	public GoBasicNode(String named, GoStatementNode[] children) {
-		name = named;
+	public GoBasicNode(String name, GoStatementNode[] children) {
+		this.name = name;
 		this.children = children;
 	}
 	
@@ -61,7 +61,10 @@ public class GoBasicNode extends GoExpressionNode{
 		}
 	}
 	
-
+	@Override
+	public String toString() {
+		return name;
+	}
 
 
 	@Override

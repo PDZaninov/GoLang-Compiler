@@ -132,10 +132,9 @@ public class Parser {
  * ArrayList body: contains children if any
  * Output:
  * the creation of the node
- * may do GoBasicNode if no good mapping is avaible.
+ * may do GoBasicNode if no good mapping is available.
  */
 	public GoStatementNode getNodeType(String nodeType, ArrayList<String> attrs, ArrayList<GoStatementNode> body) throws IOException{
-
 		String name = searchAttr("Name: ", attrs);
 		String value = searchAttr("Value: ", attrs);
 		switch(nodeType) {
@@ -143,7 +142,8 @@ public class Parser {
 				return new GoBasicNode(nodeType, body.toArray(new GoStatementNode[body.size()]));
 				
 			case "Ident":
-				return new GoFunctionLiteralNode(language, name);
+				//Should also cover cases of having an object attatched
+				return factory.createIdentNode(name,body);
 				
 			case "Decl":
 				//Start a new lexical scope for decls
@@ -158,11 +158,13 @@ public class Parser {
 				break;
 				
 			case "BasicLit":
+				
 				return factory.createBasicLit(value);
 				
 			case "FuncDecl":
 				//Start a new lexical scope
-				factory.createFunction(name, body);
+				//System.out.println(nodeType+" "+body);
+				factory.createFunction(body);
 				break;
 				
 			case "Object":
