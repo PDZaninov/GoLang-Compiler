@@ -37,7 +37,7 @@ public abstract class GoAddNode extends GoBinaryNode {
      * operand are {@code long} values.
      */
     @Specialization(rewriteOn = ArithmeticException.class)
-    protected long add(long left, long right) {
+    protected int add(int left, int right) {
         return Math.addExact(left, right);
     }
 

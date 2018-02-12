@@ -15,11 +15,15 @@ import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
-import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
 import com.oracle.truffle.api.source.Source;
 
 // Parses a go file ast dump
 public class Parser {
+	//Magic number eraser
+	private final int stringAttr  = 1;
+	private final int stringVal   = 2;
+	private final int regularAttr = 3;
+	private final int regularVal  = 4;
 	
 	private final String file; // the file we open
 	private GoLanguage language; // language we are passed
@@ -27,7 +31,7 @@ public class Parser {
 	private String currentLine; // String of the current line we are on
 	private Matcher matchedTerm; // used for regex/parsing of file
 	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+"); //for getting the type of node
-	private Pattern attr	   = Pattern.compile("[a-zA-Z][.]*"); //for getting the attributes
+	private Pattern attrPattern= Pattern.compile("(\\w+): \"(.+)\"|(\\w+): (.+)"); //for getting the attributes
 	private GoNodeFactory factory; //used to call functions to create nodes
 	
 
@@ -78,7 +82,7 @@ public class Parser {
 	 */
 	private GoStatementNode recParse(String currNode) throws IOException {
 		ArrayList<GoStatementNode> body = new ArrayList<>();
-		ArrayList<String> attrs = new ArrayList<>();
+		Map<String, String> attrs = new HashMap<>();
 		String nodeName = currNode;
 		int bindex;//used to get start of the match of the reg ex.
 		
@@ -100,16 +104,6 @@ public class Parser {
 	    			if(nodeType.equals("FuncDecl")){
 	    				factory.startBlock();
 	    			}
-	    		
-	    		/*
-	    		bindex = matchedTerm.start();
-	    		
-	    		//gets rid of the (len  = 1 ) part
-	    		String nodeType = currentLine.substring(bindex+1, currentLine.length()-2);
-	    		if(nodeType.contains("(len")) {
-	    			nodeType = nodeType.substring(0, nodeType.indexOf("(") - 1);
-	    		}
-	    		*/
 	    			GoStatementNode par = recParse(nodeType);
 	    			if(par != null)
 	    				body.add(par);
@@ -117,10 +111,16 @@ public class Parser {
 	    	}
 	    	else {
 	    		//adding attributes
-	    		matchedTerm = attr.matcher(currentLine);
-	    		matchedTerm.find();
-	    		bindex = matchedTerm.start();
-	    		attrs.add(currentLine.substring(bindex));
+	    		matchedTerm = attrPattern.matcher(currentLine);
+	    		if(matchedTerm.find()){
+	    			//TO-DO: Maybe shouldnt be hardcoded?????
+	    			if(matchedTerm.group(stringAttr) == null){
+	    				attrs.put(matchedTerm.group(regularAttr), matchedTerm.group(regularVal));
+	    			}
+	    			else{
+	    				attrs.put(matchedTerm.group(stringAttr), matchedTerm.group(stringVal));
+	    			}
+	    		}
 	    	}
 		}
 		return null;
@@ -142,75 +142,56 @@ public class Parser {
  * the creation of the node
  * may do GoBasicNode if no good mapping is available.
  */
-	public GoStatementNode getNodeType(String nodeType, ArrayList<String> attrs, ArrayList<GoStatementNode> body) throws IOException{
-		String name = searchAttr("Name: ", attrs);
-		String value = searchAttr("Value: ", attrs);
+	public GoStatementNode getNodeType(String nodeType, Map<String,String> attrs, ArrayList<GoStatementNode> body) throws IOException{
 		switch(nodeType) {
-			case "File":
-				return factory.createFileNode(nodeType,body.toArray(new GoStatementNode[body.size()]));
-				
-			case "Ident":
-				//Should also cover cases of having an object attatched
-				return factory.createIdentNode(name,body);
-				
+			case "BasicLit":
+				return factory.createBasicLit(attrs.get("Value"),attrs.get("Kind"));
+			case "BinaryExpr":
+				return factory.createBinaryExprNode(attrs.get("Op"),body);
+			case "BlockStmt":
+				//needs to return a block node
+				return factory.createFunctionBlock(body);
+			case "CallExpr":
+				//Create invoke node
+				return factory.createInvoke(body);
 			case "Decl":
 				//Start a new lexical scope for decls
 				return factory.createDecl(body);
-				
-			case "Spec":
-				System.out.println(nodeType);
-				break;
-				
-			case "ImportSpec":
-				System.out.println(nodeType);
-				break;
-				
-			case "BasicLit":
-				
-				return factory.createBasicLit(value);
-				
+			case "Expr":
+				return factory.createExpr(body);
+			case "ExprStmt":
+				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+			case "FieldList":
+				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+			case "File":
+				return factory.createFileNode(nodeType,body.toArray(new GoStatementNode[body.size()]));
 			case "FuncDecl":
 				//Start a new lexical scope
 				//System.out.println(nodeType+" "+body);
 				factory.createFunction(body);
 				break;
-				
-			case "Object":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
 			case "FuncType":
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
-			case "BlockStmt":
-				//needs to return a block node
-				return factory.createFunctionBlock(body);
-				
-			case "Stmt":
+			case "GenDecl":
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
-			case "ExprStmt":
+			case "Ident":
+				//Should also cover cases of having an object attatched
+				return factory.createIdentNode(attrs.get("Name"),body);
+			case "ImportSpec":
+				System.out.println(nodeType);
+				break;
+			case "Object":
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
-			case "CallExpr":
-				//Create invoke node
-				return factory.createInvoke(body);
-				
+			case "Scope":
+				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
 			case "SelectorExpr":
 				System.out.println(nodeType);
 				break;
-				
-			case "Expr":
-				return factory.createExpr(body);
-				
-			case "GenDecl":
+			case "Spec":
+				System.out.println(nodeType);
+				break;
+			case "Stmt":
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
-			case "FieldList":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
-			case "Scope":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-				
 			default:
 				System.out.println("Error, in default: " + nodeType);
 				
@@ -230,6 +211,7 @@ public class Parser {
 	 * and return hello
 	 */
 	public String searchAttr(String attr, ArrayList<String> attrs) {
+		
 		String name = "";
 		for(int i = 0; i < attrs.size(); i++) {
 			if(attrs.get(i).contains(attr)) {
@@ -241,6 +223,7 @@ public class Parser {
 			name = name.substring(1, name.length()-1);
 		}
 		return name;
+		
 	}
 	/*
 	 * This is what is called to start building the ast.

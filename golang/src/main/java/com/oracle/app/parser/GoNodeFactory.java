@@ -17,6 +17,11 @@ import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
+import com.oracle.app.nodes.expression.GoAddNodeGen;
+import com.oracle.app.nodes.expression.GoDivNodeGen;
+import com.oracle.app.nodes.expression.GoMulNodeGen;
+import com.oracle.app.nodes.expression.GoSubNodeGen;
+import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -96,8 +101,30 @@ public class GoNodeFactory {
     	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
     }
     
-    public GoExpressionNode createBasicLit(String name) throws IOException{
-		return new GoStringNode(name);
+    public GoExpressionNode createBasicLit(String value, String kind) throws IOException{
+    	final GoExpressionNode result;
+    	//Still need to change FLOAT IMAG CHAR to proper nodes
+    	//And need to catch for bigger numbers
+    	switch(kind){
+    		case "INT":
+    			result = new GoIntNode(Integer.parseInt(value));
+    			break;
+    		case "FLOAT":
+    			result = new GoIntNode(Integer.parseInt(value));
+    			break;
+    		case "IMAG":
+    			result = new GoIntNode(Integer.parseInt(value));
+    			break;
+    		case "CHAR":
+    			result = new GoIntNode(Integer.parseInt(value));
+    			break;
+    		case "STRING":
+    			result = new GoStringNode(value);
+    			break;
+    		default:
+    			throw new RuntimeException("Undefined type: "+kind);
+    	}
+		return result;
 	}
 	
 	public GoExpressionNode createExpr(ArrayList<GoStatementNode> body) throws IOException{
@@ -119,6 +146,30 @@ public class GoNodeFactory {
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
 		return bodyNode;
 	} 
+	
+	public GoExpressionNode createBinaryExprNode(String op, ArrayList<GoStatementNode> body){
+		if(body.size() != 2){
+			return null;
+		}
+		final GoExpressionNode result;
+		switch(op){
+			case"+":
+				result = GoAddNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"-":
+				result = GoSubNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"*":
+				result = GoMulNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"/":
+				result = GoDivNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			default:
+				throw new RuntimeException("Unexpected Operation: "+op);
+		}
+		return result;
+	}
 	
 	/*
 	 * Creates a function node and adds it to the function hashmap
