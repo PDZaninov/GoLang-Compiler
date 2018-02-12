@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
@@ -70,12 +71,26 @@ public class GoNodeFactory {
         return allFunctions;
     }
     
+    public void startFunction(){
+    	startBlock();
+    	frameDescriptor = new FrameDescriptor();
+    }
+    
     /*
      * *************************************************************************
      * All the create*() methods. Here we create the nodes from the information
      * we get from the parser.
      * *************************************************************************
      */
+    
+    /*
+     * Create file node should be the last node created in the entire tree so
+     * it finishes off the lexical scope.
+     */
+    public GoExpressionNode createFileNode(String name, GoStatementNode[] body){
+    	lexicalScope = null;
+    	return new GoBasicNode(name, body);
+    }
     
     public GoExpressionNode createIdentNode(String name, ArrayList<GoStatementNode> body){
     	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
@@ -108,15 +123,19 @@ public class GoNodeFactory {
 	/*
 	 * Creates a function node and adds it to the function hashmap
 	 * Needs to still add in paramters and return types/parameters
-	 * and lexical scope is needed too
+	 * Switches to the outer lexical scope because this is the end of the function
 	 */
 	
 	//Assumes the first value is the ident node, but i did see there might be a case
 	//where the first one is not ident. But that is also something for the future
 	public void createFunction(ArrayList<GoStatementNode> body) throws IOException{
 		String name = body.get(0).toString();
-		GoRootNode root = new GoRootNode(language,null,(GoFunctionBodyNode)body.get(2),null,name);
+		
+		GoRootNode root = new GoRootNode(language,frameDescriptor,(GoFunctionBodyNode)body.get(2),null,name);
 		allFunctions.put(name,root);
+		
+		frameDescriptor = null;
+		lexicalScope = lexicalScope.outer;
 	}
 	
 	//TODO
