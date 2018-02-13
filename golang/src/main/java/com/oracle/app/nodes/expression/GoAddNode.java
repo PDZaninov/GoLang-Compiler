@@ -18,10 +18,14 @@ public abstract class GoAddNode extends GoBinaryNode {
         return Math.addExact(left, right);
     }
     
-    @Specialization
-    @TruffleBoundary
+    @Specialization(rewriteOn = ArithmeticException.class)
     protected long add(long left, long right) {
         return Math.addExact(left, right);
+    }
+    
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected float add(float left, float right) {
+        return left + right;
     }
 
     @Specialization
