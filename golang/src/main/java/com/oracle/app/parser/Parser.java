@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoBasicNode;
+import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
@@ -182,6 +183,8 @@ public class Parser {
 				break;
 			case "Object":
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+			case "ParenExpr":
+				return new GoExprNode((GoExpressionNode) body.get(0));
 			case "Scope":
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
 			case "SelectorExpr":
