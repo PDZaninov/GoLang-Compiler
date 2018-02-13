@@ -17,6 +17,16 @@ public abstract class GoMulNode extends GoBinaryNode {
     protected long mul(long left, long right) {
         return Math.multiplyExact(left, right);
     }
+    
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected int mul(int left, int right) {
+        return Math.multiplyExact(left, right);
+    }
+    
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected float mul(float left, float right) {
+        return left * right;
+    }
 
     @Specialization
     @TruffleBoundary
