@@ -26,6 +26,27 @@ public abstract class GoDivNode extends GoBinaryNode {
         }
         return result;
     }
+    
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected int div(int left, int right) throws ArithmeticException {
+        int result = left / right;
+
+        if ((left & right & result) < 0) {
+            throw new ArithmeticException("integer overflow");
+        }
+        return result;
+    }
+    
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected float div(float left, float right) throws ArithmeticException {
+        float result = left / right;
+        
+        /*//TODO
+        if ((left & right & result) < 0) {
+            throw new ArithmeticException("float overflow");
+        }*/
+        return result;
+    }
 
     @Specialization
     @TruffleBoundary

@@ -40,6 +40,16 @@ public abstract class GoAddNode extends GoBinaryNode {
     protected int add(int left, int right) {
         return Math.addExact(left, right);
     }
+    
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected long add(long left, long right) {
+        return Math.addExact(left, right);
+    }
+    
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected float add(float left, float right) {
+        return left + right;
+    }
 
     /**
      * This is the slow path of the arbitrary-precision arithmetic. The {@link BigInteger} type of
