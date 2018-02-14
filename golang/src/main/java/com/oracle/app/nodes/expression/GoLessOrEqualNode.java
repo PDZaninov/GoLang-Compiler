@@ -6,7 +6,6 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.app.nodes.GoBinaryNode;
-
 /**
  * This class is similar to the {@link SLLessThanNode}.
  */
