@@ -19,6 +19,7 @@ import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
+import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
@@ -177,7 +178,7 @@ public class GoNodeFactory {
 				result = GoLessOrEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
 				break;
 			case"==":
-				result = GoLessOrEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				result = GoEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
 				break;
 			case">":
 				result = GoGreaterThanNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
