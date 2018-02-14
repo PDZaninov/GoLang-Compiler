@@ -19,6 +19,8 @@ import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
+import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
+import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNode;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
@@ -173,6 +175,15 @@ public class GoNodeFactory {
 				break;
 			case"<=":
 				result = GoLessOrEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"==":
+				result = GoLessOrEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case">":
+				result = GoGreaterThanNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case">=":
+				result = GoGreaterOrEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);

@@ -26,6 +26,10 @@ public abstract class GoEqualNode extends GoBinaryNode {
     protected boolean equal(long left, long right) {
         return left == right;
     }
+    @Specialization
+    protected boolean equal(int left, int right) {
+        return left == right;
+    }
 
     @Specialization
     @TruffleBoundary
