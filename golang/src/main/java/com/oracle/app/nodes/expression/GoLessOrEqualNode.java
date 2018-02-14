@@ -22,4 +22,19 @@ public abstract class GoLessOrEqualNode extends GoBinaryNode {
     protected boolean lessOrEqual(BigInteger left, BigInteger right) {
         return left.compareTo(right) <= 0;
     }
+    
+    @Specialization
+    protected boolean lessOrEqual(int left, int right) {
+        return left <= right;
+    }
+    
+    @Specialization
+    protected boolean lessOrEqual(float left, float right) {
+        return left <= right;
+    }
+    
+    @Specialization
+    protected boolean lessOrEqual(String left, String right) {
+        return left.compareTo(right) <= 0;
+    }
 }
