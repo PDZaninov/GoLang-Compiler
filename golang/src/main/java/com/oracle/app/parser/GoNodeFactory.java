@@ -195,10 +195,22 @@ public class GoNodeFactory {
 				result = GoNotEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
 				break;
 			case"&&":
+				System.out.println("body");
+				System.out.println(body.get(0).toString());
+				System.out.println(body.get(1).toString());
+				System.out.println("body");
 				result = new GoLogicalAndNode((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				System.out.println("Done");
+				System.out.println("Done");
 				break;
 			case"||":
+				System.out.println("Or");
+				System.out.println(body.get(0).toString());
+				System.out.println(body.get(1).toString());
+				System.out.println("Or");
 				result = new GoLogicalOrNode((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				System.out.println("D2");
+				System.out.println("D2");
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
