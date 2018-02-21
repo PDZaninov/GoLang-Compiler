@@ -9,6 +9,7 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.builtins.GoBuiltinNode;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
+import com.oracle.app.builtins.GoTrueEqualsTrueFactory;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
@@ -93,6 +94,7 @@ public final class GoContext {
 	private void installBuiltins(){
 		installBuiltin(GoPrintfBuiltinFactory.getInstance());
 		installBuiltin(GoPrintlnBuiltinFactory.getInstance());
+		installBuiltin(GoTrueEqualsTrueFactory.getInstance());
 	}
 	
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){
