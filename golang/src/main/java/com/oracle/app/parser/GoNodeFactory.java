@@ -13,6 +13,7 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.nodes.GoUnaryNode;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
@@ -25,7 +26,11 @@ import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNode;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
+import com.oracle.app.nodes.expression.GoLogicalAndNode;
+import com.oracle.app.nodes.expression.GoLogicalNotNodeGen;
+import com.oracle.app.nodes.expression.GoLogicalOrNode;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
+import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
@@ -186,12 +191,34 @@ public class GoNodeFactory {
 			case">=":
 				result = GoGreaterOrEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
 				break;
+			case"!=":
+				result = GoNotEqualNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"&&":
+				result = new GoLogicalAndNode((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"||":
+				result = new GoLogicalOrNode((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
 		}
 		return result;
 	}
-	
+	public GoExpressionNode createUnaryExprNode(String op, ArrayList<GoStatementNode> body){
+		if(body.size() != 1){
+			return null;
+		}
+		final GoExpressionNode result;
+		switch(op){
+			case"!":
+				result = GoLogicalNotNodeGen.create((GoExpressionNode)body.get(0));
+				break;
+			default:
+				throw new RuntimeException("Unexpected Operation: "+op);
+		}
+		return result;
+	}
 	/*
 	 * Creates a function node and adds it to the function hashmap
 	 * Needs to still add in paramters and return types/parameters
