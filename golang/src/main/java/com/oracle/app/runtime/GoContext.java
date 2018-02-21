@@ -94,7 +94,7 @@ public final class GoContext {
 	private void installBuiltins(){
 		installBuiltin(GoPrintfBuiltinFactory.getInstance());
 		installBuiltin(GoPrintlnBuiltinFactory.getInstance());
-		installBuiltin(GoTrueValueBuiltinFactory.getInstance());
+		//installBuiltin(GoTrueValueBuiltinFactory.getInstance());
 	}
 	
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){

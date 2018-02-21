@@ -206,13 +206,13 @@ public class GoNodeFactory {
 		return result;
 	}
 	public GoExpressionNode createUnaryExprNode(String op, ArrayList<GoStatementNode> body){
-		if(body.size() != 2){
+		if(body.size() != 1){
 			return null;
 		}
 		final GoExpressionNode result;
 		switch(op){
 			case"!":
-				result = GoLogicalNotNodeGen.create((GoUnaryNode)body.get(0));
+				result = GoLogicalNotNodeGen.create((GoExpressionNode)body.get(0));
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);

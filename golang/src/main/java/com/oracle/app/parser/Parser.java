@@ -144,6 +144,7 @@ public class Parser {
  * may do GoBasicNode if no good mapping is available.
  */
 	public GoStatementNode getNodeType(String nodeType, Map<String,String> attrs, ArrayList<GoStatementNode> body) throws IOException{
+
 		switch(nodeType) {
 			case "BasicLit":
 				return factory.createBasicLit(attrs.get("Value"),attrs.get("Kind"));

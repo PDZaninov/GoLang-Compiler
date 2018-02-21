@@ -16,7 +16,7 @@ package main
 
 
 func main() {
-	println("True")
+	println("True, everything below should be")
 	println(true)
 	println("1<2 ")
 	println(1<2)
@@ -36,8 +36,9 @@ func main() {
 	println(4>0&&5>0)
 	println("true||false : 3>1||5<2")
 	println(3>1||5<2)
-	println("False")
-	println(false)
+	println("!(1>2)")
+	println(!(1>2))
+	println("False , everything below should be")
 	println("2<2 ")
 	println(2<2)
 	println("10<=2 ")
@@ -56,6 +57,8 @@ func main() {
 	println(2>1&&3>4)
 	println("false||false : 2<1||1<0")
 	println(2<1||1<0)
+	println("!(1<2)")
+	println(!(1<2))
 	println("Done")
 
 }

@@ -10,7 +10,6 @@ import com.oracle.app.nodes.GoUnaryNode;
  * Example of a simple unary node that uses type specialization. See {@link SLAddNode} for
  * information on specializations.
  */
-@NodeChild("valueNode")
 @NodeInfo(shortName = "!")
 public abstract class GoLogicalNotNode extends GoUnaryNode {
 
