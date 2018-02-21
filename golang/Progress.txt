@@ -1,0 +1,13 @@
+To Do:
+-Bit operators
+-Skeleton IR
+-variables
+-if/else
+-toolchain (run from go source code)
+
+Done:
+-Math(addition, subtraction, multiplication, divide)
+-Comparison(less than, less than or equal, greater than, greater than or equal, equals, not equals)
+-Logic(and, or, not)
+-Builtin functions (println)
+-Basic Types (String, int, boolean)

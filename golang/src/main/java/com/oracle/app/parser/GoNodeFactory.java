@@ -21,6 +21,7 @@ import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
+import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
@@ -33,6 +34,7 @@ import com.oracle.app.nodes.expression.GoModNodeGen;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
+import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -110,6 +112,22 @@ public class GoNodeFactory {
     }
     
     public GoExpressionNode createIdentNode(String name, ArrayList<GoStatementNode> body){
+    	if(name == null) {
+        	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
+    	}
+    	//can't differentiate between identifiers for functions or variables.
+    	if(body.isEmpty() && name.compareTo("main")!=0&&name.compareTo("println")!=0) {
+            final GoExpressionNode result;
+            final FrameSlot frameSlot = lexicalScope.locals.get(name);
+            if (frameSlot != null) {
+                /* Read of a local variable. */
+                result = GoReadLocalVariableNodeGen.create(frameSlot);
+            } else {
+                /* Read of a global name. In our language, the only global names are functions. */
+                result = new GoFunctionLiteralNode(language, name);
+            }
+            return result;
+    	}
     	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
     }
     
