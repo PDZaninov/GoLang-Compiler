@@ -149,6 +149,8 @@ public class Parser {
 				return factory.createBasicLit(attrs.get("Value"),attrs.get("Kind"));
 			case "BinaryExpr":
 				return factory.createBinaryExprNode(attrs.get("Op"),body);
+			case "UnaryExpr":
+				return factory.createUnaryExprNode(attrs.get("Op"),body);
 			case "BlockStmt":
 				//needs to return a block node
 				return factory.createFunctionBlock(body);
