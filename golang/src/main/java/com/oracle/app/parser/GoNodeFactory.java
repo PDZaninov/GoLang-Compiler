@@ -111,12 +111,11 @@ public class GoNodeFactory {
     }
     
     public GoExpressionNode createIdentNode(String name, ArrayList<GoStatementNode> body){
-    	System.out.println(" , " + name + " , ");
     	if(name == null) {
         	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
     	}
+    	//can't differentiate between identifiers for functions or variables.
     	if(body.isEmpty() && name.compareTo("main")!=0&&name.compareTo("println")!=0) {
-    		System.out.println("**************************");
             final GoExpressionNode result;
             final FrameSlot frameSlot = lexicalScope.locals.get(name);
             if (frameSlot != null) {

@@ -180,7 +180,6 @@ public class Parser {
 				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
 			case "Ident":
 				//Should also cover cases of having an object attatched
-				System.out.print(body.toString());
 				String fname =attrs.get("Name");
 				return factory.createIdentNode(fname,body);
 			case "ImportSpec":
