@@ -16,50 +16,13 @@ package main
 
 
 func main() {
-	println("True, everything below should be")
-	println(true)
-	println("1<2 ")
-	println(1<2)
-	println("1<=2 ")
-	println(1<=2)
-	println("2<=2 ")
-	println(2<=2)
-	println("3>2 ")
-	println(3>2)
 	println("3>=2 ")
+	println(3>=2)
+	println("3>=3 ")
 	println(3>=3)
-	println("1==1 ")
-	println(1==1)
-	println("1!=2 ")
-	println(1!=2)
-	println("true&&true : 4>0&&5>0")
-	println(4>0&&5>0)
-	println("true||false : 3>1||5<2")
-	println(3>1||5<2)
-	println("!(1>2)")
-	println(!(1>2))
-	println("False , everything below should be")
-	println("2<2 ")
-	println(2<2)
-	println("10<=2 ")
-	println(10<=2)
-	println("5<=2 ")
-	println(5<=2)
-	println("1>2 ")
-	println(1>2)
 	println("1>=3 ")
 	println(1>=3)
-	println("1==2 ")
-	println(1==2)
-	println("1!=1 ")
-	println(1!=1)
-	println("true&&false : 2>1&&3>4")
-	println(2>1&&3>4)
-	println("false||false : 2<1||1<0")
-	println(2<1||1<0)
-	println("!(1<2)")
-	println(!(1<2))
-	println("Done")
+	
 
 }
 `
@@ -73,7 +36,7 @@ func main() {
 
 	// Print the AST.
 	// ast.Print(fset, f)
-	f2, err2 := os.Create("comparison.ast")
+	f2, err2 := os.Create("GreaterOrEqualThan.ast")
 	if err2 != nil {
 		panic(err2)
 	}
