@@ -17,8 +17,12 @@ package main
 
 func main() {
 
-	println("true")
-	println(true)
+	println("1>0||2>1")
+	println(1>0||2>1)
+	println("0>0||2>1")
+	println(0>0||2>1)
+	println("0>0||0>1")
+	println(0>0||0>1)
 
 }
 `
@@ -32,7 +36,7 @@ func main() {
 
 	// Print the AST.
 	// ast.Print(fset, f)
-	f2, err2 := os.Create("PrintTrue.ast")
+	f2, err2 := os.Create("LogicalOr.ast")
 	if err2 != nil {
 		panic(err2)
 	}
