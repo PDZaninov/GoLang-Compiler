@@ -36,7 +36,7 @@ public class GreaterOrEqualThanTest
      */
     public void testApp() throws IOException
     {	String[] args = new String[1];
-		args[0] = "GreaterOrEqualThanTest.ast";
+		args[0] = "GreaterOrEqualThan.ast";
         GoMain.main(args);
     }
 }
