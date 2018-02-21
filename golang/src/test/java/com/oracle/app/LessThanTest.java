@@ -9,7 +9,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class ComparisonsTest 
+public class LessThanTest 
     extends TestCase
 {
     /**
@@ -17,7 +17,7 @@ public class ComparisonsTest
      *
      * @param testName name of the test case
      */
-    public ComparisonsTest( String testName )
+    public LessThanTest( String testName )
     {
         super( testName );
     }
@@ -27,7 +27,7 @@ public class ComparisonsTest
      */
     public static Test suite()
     {
-        return new TestSuite( ComparisonsTest.class );
+        return new TestSuite( LessThanTest.class );
     }
 
     /**
@@ -36,7 +36,7 @@ public class ComparisonsTest
      */
     public void testApp() throws IOException
     {	String[] args = new String[1];
-		args[0] = "comparison.ast";
+		args[0] = "LessThan.ast";
         GoMain.main(args);
     }
 }
