@@ -29,6 +29,7 @@ import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
 import com.oracle.app.nodes.expression.GoLogicalNotNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalOrNode;
+import com.oracle.app.nodes.expression.GoModNodeGen;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
@@ -175,6 +176,9 @@ public class GoNodeFactory {
 				break;
 			case"/":
 				result = GoDivNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"%":
+				result = GoModNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
 				break;
 			case"<":
 				result = GoLessThanNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
