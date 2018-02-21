@@ -17,6 +17,7 @@ package main
 
 func main() {
 	println("True")
+	println(true)
 	println("1<2 ")
 	println(1<2)
 	println("1<=2 ")
@@ -36,6 +37,7 @@ func main() {
 	println("true||false : 3>1||5<2")
 	println(3>1||5<2)
 	println("False")
+	println(false)
 	println("2<2 ")
 	println(2<2)
 	println("10<=2 ")

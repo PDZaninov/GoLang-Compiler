@@ -212,7 +212,7 @@ public class GoNodeFactory {
 		final GoExpressionNode result;
 		switch(op){
 			case"!":
-				result = GoLogicalNotNodeGen.create((GoUnaryNode) body.get(0));
+				result = GoLogicalNotNodeGen.create((GoUnaryNode)body.get(0));
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
