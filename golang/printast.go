@@ -52,8 +52,8 @@ func main() {
 	println(1!=1)
 	println("true&&false : 2>1&&3>4")
 	println(2>1&&3>4)
-	println("false||false : 2>1||1>0")
-	println(2>1||1>0)
+	println("false||false : 2<1||1<0")
+	println(2<1||1<0)
 	println("Done")
 
 }
