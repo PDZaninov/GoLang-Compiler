@@ -19,6 +19,12 @@ import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
+import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
+import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
@@ -218,6 +224,21 @@ public class GoNodeFactory {
 			case"||":
 				result = new GoLogicalOrNode((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
 				break;
+			case"<<":
+				result = GoBinaryLeftShiftNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case">>":
+				result = GoBinaryRightShiftNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"&":
+				result = GoBitwiseAndNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"|":
+				result = GoBitwiseOrNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
+			case"^":
+				result = GoBitwiseXORNodeGen.create((GoExpressionNode)body.get(0), (GoExpressionNode)body.get(1));
+				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
 		}
@@ -231,6 +252,9 @@ public class GoNodeFactory {
 		switch(op){
 			case"!":
 				result = GoLogicalNotNodeGen.create((GoExpressionNode)body.get(0));
+				break;
+			case"^":
+				result = GoBitwiseComplementNodeGen.create((GoExpressionNode)body.get(0));
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
