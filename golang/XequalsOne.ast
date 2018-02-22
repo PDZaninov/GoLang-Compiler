@@ -7,31 +7,31 @@
      6  .  Decls: []ast.Decl (len = 1) {
      7  .  .  0: *ast.FuncDecl {
      8  .  .  .  Name: *ast.Ident {
-     9  .  .  .  .  NamePos: 4:6
+     9  .  .  .  .  NamePos: 6:6
     10  .  .  .  .  Name: "main"
     11  .  .  .  }
     12  .  .  .  Type: *ast.FuncType {
-    13  .  .  .  .  Func: 4:1
+    13  .  .  .  .  Func: 6:1
     14  .  .  .  .  Params: *ast.FieldList {
-    15  .  .  .  .  .  Opening: 4:10
-    16  .  .  .  .  .  Closing: 4:11
+    15  .  .  .  .  .  Opening: 6:10
+    16  .  .  .  .  .  Closing: 6:11
     17  .  .  .  .  }
     18  .  .  .  }
     19  .  .  .  Body: *ast.BlockStmt {
-    20  .  .  .  .  Lbrace: 4:13
+    20  .  .  .  .  Lbrace: 6:13
     21  .  .  .  .  List: []ast.Stmt (len = 2) {
     22  .  .  .  .  .  0: *ast.AssignStmt {
     23  .  .  .  .  .  .  Lhs: []ast.Expr (len = 1) {
     24  .  .  .  .  .  .  .  0: *ast.Ident {
-    25  .  .  .  .  .  .  .  .  NamePos: 5:2
+    25  .  .  .  .  .  .  .  .  NamePos: 7:2
     26  .  .  .  .  .  .  .  .  Name: "x"
     27  .  .  .  .  .  .  .  }
     28  .  .  .  .  .  .  }
-    29  .  .  .  .  .  .  TokPos: 5:3
+    29  .  .  .  .  .  .  TokPos: 7:4
     30  .  .  .  .  .  .  Tok: :=
     31  .  .  .  .  .  .  Rhs: []ast.Expr (len = 1) {
     32  .  .  .  .  .  .  .  0: *ast.BasicLit {
-    33  .  .  .  .  .  .  .  .  ValuePos: 5:5
+    33  .  .  .  .  .  .  .  .  ValuePos: 7:7
     34  .  .  .  .  .  .  .  .  Kind: INT
     35  .  .  .  .  .  .  .  .  Value: "1"
     36  .  .  .  .  .  .  .  }
@@ -40,22 +40,22 @@
     39  .  .  .  .  .  1: *ast.ExprStmt {
     40  .  .  .  .  .  .  X: *ast.CallExpr {
     41  .  .  .  .  .  .  .  Fun: *ast.Ident {
-    42  .  .  .  .  .  .  .  .  NamePos: 6:2
+    42  .  .  .  .  .  .  .  .  NamePos: 8:2
     43  .  .  .  .  .  .  .  .  Name: "println"
     44  .  .  .  .  .  .  .  }
-    45  .  .  .  .  .  .  .  Lparen: 6:9
+    45  .  .  .  .  .  .  .  Lparen: 8:9
     46  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
     47  .  .  .  .  .  .  .  .  0: *ast.Ident {
-    48  .  .  .  .  .  .  .  .  .  NamePos: 6:10
+    48  .  .  .  .  .  .  .  .  .  NamePos: 8:10
     49  .  .  .  .  .  .  .  .  .  Name: "x"
     50  .  .  .  .  .  .  .  .  }
     51  .  .  .  .  .  .  .  }
     52  .  .  .  .  .  .  .  Ellipsis: -
-    53  .  .  .  .  .  .  .  Rparen: 6:11
+    53  .  .  .  .  .  .  .  Rparen: 8:11
     54  .  .  .  .  .  .  }
     55  .  .  .  .  .  }
     56  .  .  .  .  }
-    57  .  .  .  .  Rbrace: 7:1
+    57  .  .  .  .  Rbrace: 10:1
     58  .  .  .  }
     59  .  .  }
     60  .  }

@@ -16,14 +16,8 @@ package main
 
 
 func main() {
-	println("+3 is equal to 3")
-	println(+3)
-	println("+-3 is equal to -3")
-	println(+-3)
-	println("-+3 is equal to -3")
-	println(-+3)
-	println("^+3 is equal to -4")
-	println(^+3)
+	x := 1
+	println(x)
 
 }
 `
@@ -37,7 +31,7 @@ func main() {
 
 	// Print the AST.
 	// ast.Print(fset, f)
-	f2, err2 := os.Create("PositiveSign.ast")
+	f2, err2 := os.Create("XequalsOne.ast")
 	if err2 != nil {
 		panic(err2)
 	}
