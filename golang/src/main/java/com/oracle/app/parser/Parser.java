@@ -146,6 +146,8 @@ public class Parser {
 	public GoStatementNode getNodeType(String nodeType, Map<String,String> attrs, ArrayList<GoStatementNode> body) throws IOException{
 
 		switch(nodeType) {
+			case "AssignStmt":
+				return factory.createGoWriteLocalVariableNode(body);
 			case "BasicLit":
 				return factory.createBasicLit(attrs.get("Value"),attrs.get("Kind"));
 			case "BinaryExpr":

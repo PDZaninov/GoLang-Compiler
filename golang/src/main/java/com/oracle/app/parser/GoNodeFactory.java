@@ -43,6 +43,7 @@ import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -120,22 +121,7 @@ public class GoNodeFactory {
     }
     
     public GoExpressionNode createIdentNode(String name, ArrayList<GoStatementNode> body){
-    	if(name == null) {
-        	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
-    	}
-    	//can't differentiate between identifiers for functions or variables.
-    	if(body.isEmpty() && name.compareTo("main")!=0&&name.compareTo("println")!=0) {
-            final GoExpressionNode result;
-            final FrameSlot frameSlot = lexicalScope.locals.get(name);
-            if (frameSlot != null) {
-                /* Read of a local variable. */
-                result = GoReadLocalVariableNodeGen.create(frameSlot);
-            } else {
-                /* Read of a global name. In our language, the only global names are functions. */
-                result = new GoFunctionLiteralNode(language, name);
-            }
-            return result;
-    	}
+
     	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
     }
     
@@ -166,6 +152,21 @@ public class GoNodeFactory {
 	}
 	
 	public GoExpressionNode createExpr(ArrayList<GoStatementNode> body) throws IOException{
+		String name = body.get(0).toString();
+//		System.out.println("********: " + name);
+    	if(body.get(0) instanceof GoIdentNode) {
+	        final GoExpressionNode result;
+	        final FrameSlot frameSlot = lexicalScope.locals.get(name);
+	        if (frameSlot != null) {
+	            /* Read of a local variable. */
+	            result = GoReadLocalVariableNodeGen.create(frameSlot);
+	        } else {
+	            /* Read of a global name. In our language, the only global names are functions. */
+	            result = new GoFunctionLiteralNode(language, name);
+	        }
+	        return result;
+    	}
+
 		return new GoExprNode((GoExpressionNode) body.get(node));
 	}
 	
@@ -317,4 +318,16 @@ public class GoNodeFactory {
     public void startBlock() {
         lexicalScope = new LexicalScope(lexicalScope);
     }
+
+	public GoStatementNode createGoWriteLocalVariableNode(ArrayList<GoStatementNode> body) {
+
+		System.out.println("writing local variable");
+        String name = body.get(0).toString();
+        FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+        lexicalScope.locals.put(name, frameSlot);
+        final GoExpressionNode result = GoWriteLocalVariableNodeGen.create((GoExpressionNode) body.get(1), frameSlot);
+
+
+        return result;
+	}
 }

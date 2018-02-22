@@ -1,11 +1,11 @@
 To Do:
--Bit operators
 -Skeleton IR
 -variables
 -if/else
 -toolchain (run from go source code)
 
 Done:
+-Bitwise operators, Binary left/right shift. Positive/Negative.
 -Math(addition, subtraction, multiplication, divide)
 -Comparison(less than, less than or equal, greater than, greater than or equal, equals, not equals)
 -Logic(&&, ||, !)
