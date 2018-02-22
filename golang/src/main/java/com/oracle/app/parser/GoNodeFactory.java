@@ -37,7 +37,9 @@ import com.oracle.app.nodes.expression.GoLogicalAndNode;
 import com.oracle.app.nodes.expression.GoLogicalNotNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalOrNode;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
+import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
+import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -255,6 +257,12 @@ public class GoNodeFactory {
 				break;
 			case"^":
 				result = GoBitwiseComplementNodeGen.create((GoExpressionNode)body.get(0));
+				break;
+			case"+":
+				result = GoPositiveSignNodeGen.create((GoExpressionNode)body.get(0));
+				break;
+			case"-":
+				result = GoNegativeSignNodeGen.create((GoExpressionNode)body.get(0));
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);

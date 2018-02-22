@@ -16,9 +16,14 @@ package main
 
 
 func main() {
-
-	println("16>>2 is equal to 4")
-	println(16>>2)
+	println("+3 is equal to 3")
+	println(+3)
+	println("+-3 is equal to -3")
+	println(+-3)
+	println("-+3 is equal to -3")
+	println(-+3)
+	println("^+3 is equal to -4")
+	println(^+3)
 
 }
 `
@@ -32,7 +37,7 @@ func main() {
 
 	// Print the AST.
 	// ast.Print(fset, f)
-	f2, err2 := os.Create("BinaryRightShift.ast")
+	f2, err2 := os.Create("PositiveSign.ast")
 	if err2 != nil {
 		panic(err2)
 	}
