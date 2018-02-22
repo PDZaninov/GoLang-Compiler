@@ -8,6 +8,6 @@ To Do:
 Done:
 -Math(addition, subtraction, multiplication, divide)
 -Comparison(less than, less than or equal, greater than, greater than or equal, equals, not equals)
--Logic(and, or, not)
+-Logic(&&, ||, !)
 -Builtin functions (println)
 -Basic Types (String, int, boolean)
