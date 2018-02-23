@@ -1,17 +1,23 @@
 package com.oracle.app.parser.ir;
 
-public class GoBaseIRNode {
+public abstract class GoBaseIRNode {
 	
-	private String name;
+	protected String name;
 
-	private GoBaseIRNode parent;
+    protected GoBaseIRNode parent;
 	
 	public GoBaseIRNode(String name) {
 		this.name = name;
 	}
 	
+	public abstract void setChildParent();
+	
 	public GoBaseIRNode getParent() {
 		return parent;
+	}
+	
+	public void setParent(GoBaseIRNode node) {
+		this.parent = node;
 	}
 	
 	public Object accept(GoVisitor visitor, Object value) {
