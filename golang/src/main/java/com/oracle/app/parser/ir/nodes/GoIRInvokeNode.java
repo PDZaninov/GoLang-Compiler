@@ -6,28 +6,23 @@ import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
 import com.oracle.app.parser.ir.GoVisitor;
 
-public class GoIRBasicLitNode extends GoBaseIRNode {
+public class GoIRInvokeNode extends GoBaseIRNode {
 
-	String type;
-	String value;
+	GoBaseIRNode functionNode;
+	GoBaseIRNode[] argumentNodes;
+	GoIRGenericDispatchNode dispatchNode;
 	
-	public GoIRBasicLitNode(String type, String value) {
-		super("Basic Lit Node");
-		this.type = type;
-		this.value = value;
+	public GoIRInvokeNode(GoBaseIRNode functionNode, GoBaseIRNode[] argumentNodes) {
+		super("Call Expr (Invoke)");
+		this.functionNode = functionNode;
+		this.argumentNodes = argumentNodes;
+		this.dispatchNode = new GoIRGenericDispatchNode();
 	}
 	
-	public String getType() {
-		return type;
-	}
-	
-	public String getValue() {
-		return value;
-	}
 
 	@Override
 	public void setChildParent() {
-		// Do nothing :^)
+		//TODO 
 	}
 
 	@Override
@@ -37,12 +32,12 @@ public class GoIRBasicLitNode extends GoBaseIRNode {
 	
 	@Override
 	public void accept(GoVisitor visitor) { 
-		visitor.visitBasicLit(this); 
+		visitor.visitInvoke(this); 
 	}
 	
 	@Override
 	public void accept(GoTruffle visitor) { 
-		visitor.visitBasicLit(this); 
+		visitor.visitInvoke(this); 
 	}
 
 }
