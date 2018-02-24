@@ -48,11 +48,11 @@ public class Parser {
 		reader = new BufferedReader(new FileReader(this.file));
 		factory = new GoNodeFactory(language,source);
 	}
-	//Constructor for testing
-	public Parser(String filename) throws FileNotFoundException {
-		file = filename;
-		reader = new BufferedReader(new FileReader(this.file));
-	}
+//	Constructor for testing
+//	public Parser(String filename) throws FileNotFoundException {
+//		file = filename;
+//		reader = new BufferedReader(new FileReader(this.file));
+//	}
 	
 	/* TODO what are we doing to the .File
 	 * Purpose:
@@ -64,15 +64,15 @@ public class Parser {
 	 */
 	public Map<String, GoRootNode> beginParse() throws IOException{
 		String type;
-		GoTempIRNode k = null;
+		GoBaseIRNode k = null;
 		while((currentLine = reader.readLine()) != null){
 			matchedTerm = astPattern.matcher(currentLine);
 			if(matchedTerm.find()){
 			
 				type = matchedTerm.group();
 				if(type.equals(".File")){
-					factory.startFunction();
-					k = (GoTempIRNode) recParse(type.substring(1));
+					//factory.startFunction();
+					k = recParse(type.substring(1));
 				}
 			}
 		}
@@ -112,7 +112,7 @@ public class Parser {
 	    		if(matchedTerm.find()){
 	    			String nodeType = matchedTerm.group().substring(1);
 	    			if(nodeType.equals("FuncDecl")){
-	    				factory.startBlock();
+	    				//factory.startBlock();
 	    			}
 	    			GoBaseIRNode par = recParse(nodeType);
 	    			if(par != null)

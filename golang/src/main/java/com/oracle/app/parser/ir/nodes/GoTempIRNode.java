@@ -32,14 +32,7 @@ public class GoTempIRNode extends GoBaseIRNode {
 		return children;
 		
 	}
-	
-	public void dumpInfo(int spacing) {
-		for(int v = 0; v < spacing; v++) {
-			System.out.print(". ");
-		}
-		System.out.println(name);
-		
-	}
+
 
 
 }
