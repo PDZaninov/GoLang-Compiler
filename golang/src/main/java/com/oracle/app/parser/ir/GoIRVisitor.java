@@ -3,6 +3,7 @@ package com.oracle.app.parser.ir;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
@@ -22,4 +23,6 @@ public interface GoIRVisitor {
 	void visitGenericDispatch(GoIRGenericDispatchNode node);
 
 	void visitFuncDecl(GoIRFuncDeclNode goIRFuncDeclNode);
+	
+	void visitDecl(GoIRDeclNode node);
 }
