@@ -3,6 +3,9 @@ To Do:
     -BasicLit
     -[]Expressions
     -FuncDecl
+    -Ident
+    -Invoke
+    -Decl
 -variables
 -if/else
 -toolchain (run from go source code)

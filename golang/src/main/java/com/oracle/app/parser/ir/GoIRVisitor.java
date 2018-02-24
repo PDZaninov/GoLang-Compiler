@@ -3,7 +3,9 @@ package com.oracle.app.parser.ir;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
@@ -28,5 +30,9 @@ public interface GoIRVisitor {
 	void visitArrayListExpr(GoIRArrayListExprNode goIRArrayListExprNode);
 
 	void visitDecl(GoIRDeclNode node);
+
+	void visitBlockStmt(GoIRBlockStmtNode goIRBlockStmtNode);
+
+	void visitExprStmt(GoIRExprStmtNode goIRExprStmtNode);
 
 }
