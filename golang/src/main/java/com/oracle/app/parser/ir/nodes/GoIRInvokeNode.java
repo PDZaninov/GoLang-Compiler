@@ -8,13 +8,12 @@ import com.oracle.app.parser.ir.GoVisitor;
 
 public class GoIRInvokeNode extends GoBaseIRNode {
 
-	GoBaseIRNode functionNode;
 	GoBaseIRNode[] argumentNodes;
 	GoIRGenericDispatchNode dispatchNode;
 	
 	public GoIRInvokeNode(GoBaseIRNode functionNode, GoBaseIRNode[] argumentNodes) {
 		super("Call Expr (Invoke)");
-		this.functionNode = functionNode;
+		this.setChild(functionNode);
 		this.argumentNodes = argumentNodes;
 		this.dispatchNode = new GoIRGenericDispatchNode();
 	}

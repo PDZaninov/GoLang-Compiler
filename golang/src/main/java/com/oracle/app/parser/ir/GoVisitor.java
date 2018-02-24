@@ -2,6 +2,7 @@ package com.oracle.app.parser.ir;
 
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 
@@ -12,9 +13,8 @@ public class GoVisitor implements GoIRVisitor {
 	}
 
 	@Override
-	public Object visitObject(GoBaseIRNode node) {
+	public void visitObject(GoBaseIRNode node) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -37,6 +37,12 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public void visitInvoke(GoIRInvokeNode node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visitGenericDispatch(GoIRGenericDispatchNode node) {
 		// TODO Auto-generated method stub
 		
 	}
