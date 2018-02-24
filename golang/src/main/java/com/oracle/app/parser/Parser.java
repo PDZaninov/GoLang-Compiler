@@ -17,7 +17,13 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -162,7 +168,7 @@ public class Parser {
 			case "BasicLit":
 				return new GoIRBasicLitNode(attrs.get("Type"),attrs.get("Value"));
 			case "BinaryExpr":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRBinaryExprNode(attrs.get("Op"),body.get(0),body.get(1));
 			case "UnaryExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "BlockStmt":
@@ -170,23 +176,23 @@ public class Parser {
 			case "CallExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "Decl":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRDeclNode((GoBaseIRNode[]) body.toArray());
 			case "Expr":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRArrayListExprNode(body);
 			case "ExprStmt":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "FieldList":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "File":
 				return new GoTempIRNode(nodeType,attrs,body);
-			case "FuncDecl":
-				return new GoTempIRNode(nodeType,attrs,body);
+			case "FuncDecl"://(GoBaseIRNode receiver, GoBaseIRNode name, GoBaseIRNode type, GoBaseIRNode body)
+				return new GoIRFuncDeclNode(null,body.get(0),body.get(1),body.get(2));
 			case "FuncType":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "GenDecl":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRGenericDispatchNode();
 			case "Ident":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRIdentNode(attrs.get("Name"),null);
 			case "ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "Object":
