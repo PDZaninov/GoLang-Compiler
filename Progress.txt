@@ -1,5 +1,8 @@
 To Do:
 -Skeleton IR
+    -BasicLit
+    -[]Expressions
+    -FuncDecl
 -variables
 -if/else
 -toolchain (run from go source code)
