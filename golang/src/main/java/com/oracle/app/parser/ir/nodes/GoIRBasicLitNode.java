@@ -24,14 +24,6 @@ public class GoIRBasicLitNode extends GoBaseIRNode {
 	public String getValue() {
 		return value;
 	}
-
-	public String getType(){
-		return type;
-	}
-	
-	public String getValue(){
-		return value;
-	}
 	
 	@Override
 	public void setChildParent() {
