@@ -7,33 +7,26 @@ public abstract class GoBaseIRNode {
 	protected String name;
 
     protected GoBaseIRNode parent;
+    
+    protected GoBaseIRNode child;
 	
-	public GoBaseIRNode(String name) {
-		this.name = name;
-	}
+	public GoBaseIRNode(String name) { this.name = name; }
 	
 	public abstract void setChildParent();
 	
 	public abstract ArrayList<GoBaseIRNode> getChildren();
 	
-	public GoBaseIRNode getParent() {
-		return parent;
-	}
+	public GoBaseIRNode getParent() { return parent; }
 	
-	public void setParent(GoBaseIRNode node) {
-		this.parent = node;
-	}
+	public GoBaseIRNode getChild() { return child; }
 	
+	public void setParent(GoBaseIRNode node) { this.parent = node; }
 	
-	public Object accept(GoVisitor visitor, Object value) {
-		return visitor.visitObject(this, value);
-	}
+	public void setChild(GoBaseIRNode node) { this.child = node; }
 	
-	public Object accept(GoTruffle visitor, Object value) {
-		return visitor.visitObject(this, value);
-	}
+	public void accept(GoVisitor visitor) { visitor.visitObject(this); }
 	
-	public String toString() {
-		return name;
-	}
+	public void accept(GoTruffle visitor) { visitor.visitObject(this); }
+	
+	public String toString() { return name; }
 }

@@ -3,6 +3,8 @@ package com.oracle.app.parser.ir.nodes;
 import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoTruffle;
+import com.oracle.app.parser.ir.GoVisitor;
 
 public class GoIRBasicLitNode extends GoBaseIRNode {
 
@@ -15,7 +17,13 @@ public class GoIRBasicLitNode extends GoBaseIRNode {
 		this.value = value;
 	}
 	
-	//some accept function
+	public String getType() {
+		return type;
+	}
+	
+	public String getValue() {
+		return value;
+	}
 
 	public String getType(){
 		return type;
@@ -28,12 +36,21 @@ public class GoIRBasicLitNode extends GoBaseIRNode {
 	@Override
 	public void setChildParent() {
 		// Do nothing :^)
-
 	}
 
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
 		return null;
+	}
+	
+	@Override
+	public void accept(GoVisitor visitor) { 
+		visitor.visitBasicLit(this); 
+	}
+	
+	@Override
+	public void accept(GoTruffle visitor) { 
+		visitor.visitBasicLit(this); 
 	}
 
 }

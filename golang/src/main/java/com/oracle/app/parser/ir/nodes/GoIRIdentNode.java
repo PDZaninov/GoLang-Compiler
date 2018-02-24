@@ -6,24 +6,20 @@ import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
 import com.oracle.app.parser.ir.GoVisitor;
 
-public class GoIRBinaryExprNode extends GoBaseIRNode {
+public class GoIRIdentNode extends GoBaseIRNode {
 	
-	private String op;
+	private String ident;
 	
-	private GoBaseIRNode left;
-	private GoBaseIRNode right;
-	
-	public GoIRBinaryExprNode(String op, GoBaseIRNode left, GoBaseIRNode right) {
-		super("BinaryExpr");
-		this.op = op;
-		this.left = left;
-		this.right = right;
+	public GoIRIdentNode(String ident, GoBaseIRNode child) {
+		super("Ident");
+		this.ident = ident;
+		this.setChild(child); 
+		setChildParent();
 	}
 	
 	@Override
 	public void setChildParent() {
-		left.setParent(this);
-		right.setParent(this);
+		child.setParent(this);
 	}
 	
 	@Override
@@ -32,17 +28,18 @@ public class GoIRBinaryExprNode extends GoBaseIRNode {
 		return null;
 	}
 	
-	public String getOp() {
-		return op;
+	public String getIdent() {
+		return ident;
 	}
 	
 	@Override
 	public void accept(GoVisitor visitor) { 
-		visitor.visitBinaryExpr(this); 
+		visitor.visitIdent(this); 
 	}
 	
 	@Override
 	public void accept(GoTruffle visitor) { 
-		visitor.visitBinaryExpr(this); 
+		visitor.visitIdent(this); 
 	}
+	
 }
