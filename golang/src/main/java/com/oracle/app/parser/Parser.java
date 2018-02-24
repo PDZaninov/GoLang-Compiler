@@ -17,6 +17,7 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -159,7 +160,7 @@ public class Parser {
 			case "AssignStmt":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "BasicLit":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRBasicLitNode(attrs.get("Type"),attrs.get("Value"));
 			case "BinaryExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "UnaryExpr":
@@ -207,87 +208,6 @@ public class Parser {
 		return new GoTempIRNode(nodeType,attrs,body);
 	}
 	
-/*
- * TODO
- * eventually replace with map[nodetype] = new node
- * or something like that i believe
- * and maybe get rid of the place holder GoBasicNode
- * Purpose:
- * create and return the creation of the node of type nodeType
- *  with body for children and attrs for attributes
- *  with parse makes a structure of function -> body -> lots of children 
- * Input: 
- * String nodeType: a string of the nodeType for the switch case
- * ArrayList attrs: an arraylist of the attributed for the
- * ArrayList body: contains children if any
- * Output:
- * the creation of the node
- * may do GoBasicNode if no good mapping is available.
- */
-	public GoStatementNode getNodeType(String nodeType, Map<String,String> attrs, ArrayList<GoStatementNode> body) throws IOException{
-
-		switch(nodeType) {
-			case "AssignStmt":
-				return factory.createGoWriteLocalVariableNode(body);
-			case "BasicLit":
-				return factory.createBasicLit(attrs.get("Value"),attrs.get("Kind"));
-			case "BinaryExpr":
-				return factory.createBinaryExprNode(attrs.get("Op"),body);
-			case "UnaryExpr":
-				return factory.createUnaryExprNode(attrs.get("Op"),body);
-			case "BlockStmt":
-				//needs to return a block node
-				return factory.createFunctionBlock(body);
-			case "CallExpr":
-				//Create invoke node
-				return factory.createInvoke(body);
-			case "Decl":
-				//Start a new lexical scope for decls
-				return factory.createDecl(body);
-			case "Expr":
-				return factory.createExpr(body);
-			case "ExprStmt":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-			case "FieldList":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-			case "File":
-				return factory.createFileNode(nodeType,body.toArray(new GoStatementNode[body.size()]));
-			case "FuncDecl":
-				//Start a new lexical scope
-				//System.out.println(nodeType+" "+body);
-				factory.createFunction(body);
-				break;
-			case "FuncType":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-			case "GenDecl":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-			case "Ident":
-				//Should also cover cases of having an object attatched
-				String fname =attrs.get("Name");
-				return factory.createIdentNode(fname,body);
-			case "ImportSpec":
-				System.out.println(nodeType);
-				break;
-			case "Object":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-			case "ParenExpr":
-				return new GoExprNode((GoExpressionNode) body.get(0));
-			case "Scope":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-			case "SelectorExpr":
-				System.out.println(nodeType);
-				break;
-			case "Spec":
-				System.out.println(nodeType);
-				break;
-			case "Stmt":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
-			default:
-				System.out.println("Error, in default: " + nodeType);
-				
-		}
-		return null;
-	}
 	/* Purpose:
 	 * To find a string within an array list then return whatever comes after :
 	 * Input: 
