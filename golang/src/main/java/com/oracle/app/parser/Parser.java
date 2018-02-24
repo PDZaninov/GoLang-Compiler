@@ -16,6 +16,8 @@ import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
 // Parses a go file ast dump
@@ -46,6 +48,12 @@ public class Parser {
 		reader = new BufferedReader(new FileReader(this.file));
 		factory = new GoNodeFactory(language,source);
 	}
+	//Constructor for testing
+	public Parser(String filename) throws FileNotFoundException {
+		file = filename;
+		reader = new BufferedReader(new FileReader(this.file));
+	}
+	
 	/* TODO what are we doing to the .File
 	 * Purpose:
 	 * Start the parse process. Also returns the hashmap with the nodes inside.
@@ -56,7 +64,7 @@ public class Parser {
 	 */
 	public Map<String, GoRootNode> beginParse() throws IOException{
 		String type;
-		
+		GoTempIRNode k = null;
 		while((currentLine = reader.readLine()) != null){
 			matchedTerm = astPattern.matcher(currentLine);
 			if(matchedTerm.find()){
@@ -64,10 +72,11 @@ public class Parser {
 				type = matchedTerm.group();
 				if(type.equals(".File")){
 					factory.startFunction();
-					recParse(type.substring(1));
+					k = (GoTempIRNode) recParse(type.substring(1));
 				}
 			}
 		}
+		//dumpTree(k,0);
 		return factory.getAllFunctions();
 	}
 	
@@ -81,8 +90,8 @@ public class Parser {
 	 * the first node it tried to parse.
 	 * Not sure if needed.
 	 */
-	private GoStatementNode recParse(String currNode) throws IOException {
-		ArrayList<GoStatementNode> body = new ArrayList<>();
+	private GoBaseIRNode recParse(String currNode) throws IOException {
+		ArrayList<GoBaseIRNode> body = new ArrayList<>();
 		Map<String, String> attrs = new HashMap<>();
 		String nodeName = currNode;
 		int bindex;//used to get start of the match of the reg ex.
@@ -93,7 +102,7 @@ public class Parser {
 			if(currentLine.indexOf('}') != -1) {
 				
 	    		//creating itself, going up
-				return getNodeType(nodeName,attrs,body);
+				return getIRNode(nodeName,attrs,body);
 
 	    	}
 	    	else if(currentLine.indexOf('{') >= 0) {
@@ -105,7 +114,7 @@ public class Parser {
 	    			if(nodeType.equals("FuncDecl")){
 	    				factory.startBlock();
 	    			}
-	    			GoStatementNode par = recParse(nodeType);
+	    			GoBaseIRNode par = recParse(nodeType);
 	    			if(par != null)
 	    				body.add(par);
 	    		}
@@ -124,8 +133,80 @@ public class Parser {
 	    		}
 	    	}
 		}
+		
 		return null;
 	}
+	
+//	public void dumpTree(GoBaseIRNode node, int spacing) {
+//		if(node != null) {
+//			spaces(spacing);
+//			System.out.println(node.toString());
+//			ArrayList<GoBaseIRNode> l = node.getChildren();
+//			for(int z =0; z < l.size(); z ++) {
+//				dumpTree(l.get(z),spacing+1);
+//			}
+//		}
+//	}
+//	
+//	public void spaces(int num) {
+//		for(int x = 0; x < num; x++) {
+//			System.out.print(". ");
+//		}
+//	}
+	
+	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, ArrayList<GoBaseIRNode> body) {
+		switch(nodeType) {
+			case "AssignStmt":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "BasicLit":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "BinaryExpr":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "UnaryExpr":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "BlockStmt":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "CallExpr":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "Decl":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "Expr":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "ExprStmt":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "FieldList":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "File":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "FuncDecl":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "FuncType":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "GenDecl":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "Ident":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "ImportSpec":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "Object":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "ParenExpr":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "Scope":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "SelectorExpr":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "Spec":
+				return new GoTempIRNode(nodeType,attrs,body);
+			case "Stmt":
+				return new GoTempIRNode(nodeType,attrs,body);
+			default:
+				System.out.println("Error, in default: " + nodeType);
+				
+		}
+		return new GoTempIRNode(nodeType,attrs,body);
+	}
+	
 /*
  * TODO
  * eventually replace with map[nodetype] = new node
@@ -244,4 +325,9 @@ public class Parser {
 		Parser parser = new Parser(language, source);
 		return parser.beginParse();
 	}
+	
+//	public static void main(String[] args) throws IOException {
+//		Parser p = new Parser("Addition.ast");
+//		p.beginParse();
+//	}
 }
