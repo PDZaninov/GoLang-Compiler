@@ -5,8 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.GoTruffle;
-import com.oracle.app.parser.ir.GoVisitor;
+import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoTempIRNode extends GoBaseIRNode {
 
@@ -36,15 +35,8 @@ public class GoTempIRNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoVisitor visitor) { 
+	public void accept(GoIRVisitor visitor) { 
 		visitor.visitObject(this); 
 	}
-	
-	@Override
-	public void accept(GoTruffle visitor) { 
-		visitor.visitObject(this); 
-	}
-
-
 
 }

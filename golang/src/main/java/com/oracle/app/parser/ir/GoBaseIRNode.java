@@ -18,9 +18,7 @@ public abstract class GoBaseIRNode {
 	
 	public void setParent(GoBaseIRNode node) { this.parent = node; }
 	
-	public void accept(GoVisitor visitor) { visitor.visitObject(this); }
-	
-	public void accept(GoTruffle visitor) { visitor.visitObject(this); }
+	public void accept(GoIRVisitor visitor) { visitor.visitObject(this); }
 	
 	public String toString() { return name; }
 }

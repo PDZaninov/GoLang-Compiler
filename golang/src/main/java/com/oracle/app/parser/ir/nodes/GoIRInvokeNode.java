@@ -3,8 +3,7 @@ package com.oracle.app.parser.ir.nodes;
 import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.GoTruffle;
-import com.oracle.app.parser.ir.GoVisitor;
+import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRInvokeNode extends GoBaseIRNode {
 
@@ -35,12 +34,7 @@ public class GoIRInvokeNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoVisitor visitor) { 
-		visitor.visitInvoke(this); 
-	}
-	
-	@Override
-	public void accept(GoTruffle visitor) { 
+	public void accept(GoIRVisitor visitor) { 
 		visitor.visitInvoke(this); 
 	}
 
