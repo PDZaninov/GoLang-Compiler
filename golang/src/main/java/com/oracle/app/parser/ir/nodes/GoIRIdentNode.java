@@ -10,10 +10,12 @@ public class GoIRIdentNode extends GoBaseIRNode {
 	
 	private String ident;
 	
+	private GoBaseIRNode child;
+	
 	public GoIRIdentNode(String ident, GoBaseIRNode child) {
 		super("Ident");
 		this.ident = ident;
-		this.setChild(child); 
+		this.child = child;
 		setChildParent();
 	}
 	
