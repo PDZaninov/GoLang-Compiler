@@ -1,5 +1,7 @@
 package com.oracle.app.parser.ir.nodes;
 
+import java.util.ArrayList;
+
 import com.oracle.app.parser.ir.GoBaseIRNode;
 
 public class GoIRBinaryExprNode extends GoBaseIRNode {
@@ -28,5 +30,11 @@ public class GoIRBinaryExprNode extends GoBaseIRNode {
 	
 	public String toString() {
 		return name;
+	}
+
+	@Override
+	public ArrayList<GoBaseIRNode> getChildren() {
+		System.out.println("Kyle can do this getchildren thing since he made this node. But I also took the time to write this.");
+		return null;
 	}
 }
