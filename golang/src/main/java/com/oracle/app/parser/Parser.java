@@ -162,6 +162,7 @@ public class Parser {
 //	}
 	
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, ArrayList<GoBaseIRNode> body) {
+		body.add(null);
 		switch(nodeType) {
 			case "AssignStmt":
 				return new GoTempIRNode(nodeType,attrs,body);
@@ -186,13 +187,16 @@ public class Parser {
 			case "File":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "FuncDecl"://(GoBaseIRNode receiver, GoBaseIRNode name, GoBaseIRNode type, GoBaseIRNode body)
-				return new GoIRFuncDeclNode(null,body.get(0),body.get(1),body.get(2));
+				if(body.size()==3)
+					return new GoIRFuncDeclNode(null,body.get(0),body.get(1),body.get(2));
+				else
+					return new GoIRFuncDeclNode(body.get(0),body.get(1),body.get(2),body.get(3));
 			case "FuncType":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "GenDecl":
 				return new GoIRGenericDispatchNode();
 			case "Ident":
-				return new GoIRIdentNode(attrs.get("Name"),null);
+				return new GoIRIdentNode(attrs.get("Name"),body.get(0));
 			case "ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "Object":
