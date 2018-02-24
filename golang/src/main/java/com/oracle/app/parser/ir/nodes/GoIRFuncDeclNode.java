@@ -3,6 +3,7 @@ package com.oracle.app.parser.ir.nodes;
 import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRFuncDeclNode extends GoBaseIRNode {
 	GoBaseIRNode receiver;
@@ -16,6 +17,28 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 		this.name = name;
 		this.type = type;
 		this.body = body;
+	}
+	
+	public void accept(GoIRVisitor visitor){
+		visitor.visitFuncDecl(this);
+	}
+	
+	public GoBaseIRNode getReceiver(){
+		if(receiver != null){
+			return receiver;
+		}
+		return null;
+	}
+	
+	public GoBaseIRNode getBody(){
+		if(body != null){
+			return body;
+		}
+		return null;
+	}
+	
+	public GoBaseIRNode getType(){
+		return type;
 	}
 
 	@Override
