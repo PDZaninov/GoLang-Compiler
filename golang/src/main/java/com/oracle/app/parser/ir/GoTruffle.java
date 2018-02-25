@@ -4,8 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.types.GoIntNode;
+import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
@@ -45,9 +48,9 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
-		node.getChild().accept(this);
-		//GoIdentNode n = new GoIdentNode(language, node.getIdent(), node.getChild());
-		return null;
+		GoExpressionNode[] result = new GoExpressionNode[1];
+		result[0] = (GoExpressionNode) node.getChild().accept(this);
+		return new GoIdentNode(language, node.getIdent(), result);
 	}
 
 	@Override
@@ -58,8 +61,29 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBasicLit(GoIRBasicLitNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		String type = node.getType();
+		String value = node.getValue();
+		final GoExpressionNode result;
+		switch(type) {
+		case "INT":
+			result = new GoIntNode(Integer.parseInt(value));
+			break;
+		case "FLOAT":
+			result = new GoIntNode(Integer.parseInt(value));
+			break;
+		case "IMAG":
+			result = new GoIntNode(Integer.parseInt(value));
+			break;
+		case "CHAR":
+			result = new GoIntNode(Integer.parseInt(value));
+			break;
+		case "STRING":
+			result = new GoStringNode(value);
+			break;
+		default:
+			throw new RuntimeException("Undefined type: " + type);
+		}
+		return result;
 	}
 
 	@Override
