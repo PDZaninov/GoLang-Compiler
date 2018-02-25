@@ -47,6 +47,7 @@ public class GoVisitor implements GoIRVisitor {
 	@Override
 	public void visitInvoke(GoIRInvokeNode node) {
 		System.out.println(node.toString());
+		node.getFunctionNode().accept(this);
 	}
 
 	@Override
