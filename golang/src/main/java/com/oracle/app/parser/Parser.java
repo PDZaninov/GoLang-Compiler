@@ -40,7 +40,7 @@ public class Parser {
 	private BufferedReader reader; // used to read file
 	private String currentLine; // String of the current line we are on
 	private Matcher matchedTerm; // used for regex/parsing of file
-	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+"); //for getting the type of node
+	private Pattern astPattern = Pattern.compile("(?!a|s|t|l|e|n)\\w+"); //for getting the type of node
 	private Pattern attrPattern= Pattern.compile("(\\w+): \"(.+)\"|(\\w+): (.+)"); //for getting the attributes
 	private GoNodeFactory factory; //used to call functions to create nodes
 	
@@ -114,13 +114,11 @@ public class Parser {
 	    	}
 	    	else if(currentLine.indexOf('{') >= 0) {
 	    		//going deeper into the tree creating children first
-	    		
+	    		System.out.println(currentLine);
 	    		matchedTerm = astPattern.matcher(currentLine);
 	    		if(matchedTerm.find()){
-	    			String nodeType = matchedTerm.group().substring(1);
-	    			if(nodeType.equals("FuncDecl")){
-	    				//factory.startBlock();
-	    			}
+	    			String nodeType = matchedTerm.group(1);
+	    			System.out.println(nodeType);
 	    			GoBaseIRNode par = recParse(nodeType);
 	    			if(par != null)
 	    				body.add(par);
