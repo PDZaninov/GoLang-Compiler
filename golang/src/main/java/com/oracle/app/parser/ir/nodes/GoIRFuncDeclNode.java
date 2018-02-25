@@ -24,6 +24,10 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 		return visitor.visitFuncDecl(this);
 	}
 	
+	public GoBaseIRNode getName(){
+		return name;
+	}
+	
 	public GoBaseIRNode getReceiver(){
 		if(receiver != null){
 			return receiver;

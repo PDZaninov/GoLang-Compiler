@@ -9,10 +9,10 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 
 	GoBaseIRNode functionNode;
-	ArrayList<GoBaseIRNode> argumentNodes;
+	GoIRArrayListExprNode argumentNodes;
 	GoIRGenericDispatchNode dispatchNode;
 	
-	public GoIRInvokeNode(GoBaseIRNode functionNode, ArrayList<GoBaseIRNode> argumentNodes) {
+	public GoIRInvokeNode(GoBaseIRNode functionNode, GoIRArrayListExprNode argumentNodes) {
 		super("Call Expr (Invoke)");
 		this.functionNode = functionNode;
 		this.argumentNodes = argumentNodes;
@@ -24,20 +24,26 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 		return functionNode;
 	}
 	
+	public GoIRArrayListExprNode getArgumentNode(){
+		return argumentNodes;
+	}
+	
+	public GoIRGenericDispatchNode getDispatchNode(){
+		return dispatchNode;
+	}
+	
 	//TODO
 	@Override
 	public void setChildParent() {
-		/*
-		this.functionNode.setParent(this);
-		
-		for(int i = 0; i < argumentNodes.size(); i++)
-			this.argumentNodes.get(i).setParent(this);
-			*/
+		functionNode.setParent(this);
+		argumentNodes.setParent(this);
+		dispatchNode.setParent(this);
 	}
 
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
-		return argumentNodes;
+		System.out.println("Invoke Node needs getChildren Function");
+		return null;
 	}
 	
 	@Override

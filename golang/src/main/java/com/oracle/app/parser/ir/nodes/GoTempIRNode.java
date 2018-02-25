@@ -11,9 +11,9 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 public class GoTempIRNode extends GoBaseIRNode {
 
 	Map<String, String> attrs = new HashMap<>();
-	public ArrayList<GoBaseIRNode> children;
+	public Map<String,GoBaseIRNode> children;
 	
-	public GoTempIRNode(String name, Map<String, String> attributes, ArrayList<GoBaseIRNode> childs) {
+	public GoTempIRNode(String name, Map<String, String> attributes, Map<String, GoBaseIRNode> childs) {
 		super(name);
 
 		attrs = attributes;
@@ -23,16 +23,21 @@ public class GoTempIRNode extends GoBaseIRNode {
 
 	@Override
 	public void setChildParent() {
-		if(children.isEmpty())
-		for(int x =0; x < children.size();x++) {
-			children.get(x).setParent(this);
+		if(children.isEmpty()){
+			for(GoBaseIRNode child : children.values()){
+				child.setParent(this);
+			}
 		}
 		
 	}
 
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
-		return children;
+		ArrayList<GoBaseIRNode> temp = new ArrayList<>();
+		for(GoBaseIRNode child : children.values()){
+			temp.add(child);
+		}
+		return temp;
 		
 	}
 	

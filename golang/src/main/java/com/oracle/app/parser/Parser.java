@@ -44,7 +44,8 @@ public class Parser {
 	private BufferedReader reader; // used to read file
 	private String currentLine; // String of the current line we are on
 	private Matcher matchedTerm; // used for regex/parsing of file
-	private Pattern astPattern = Pattern.compile("(?!a|s|t|l|e|n)\\w+"); //for getting the type of node
+	private Pattern astPattern = Pattern.compile("\\.\\w+"); //for getting the type of node
+	private Pattern nodeTypePattern = Pattern.compile("\\w+:|\"\\w+\"");
 	private Pattern attrPattern= Pattern.compile("(\\w+): \"(.+)\"|(\\w+): (.+)"); //for getting the attributes
 	private GoNodeFactory factory; //used to call functions to create nodes
 	
@@ -81,10 +82,7 @@ public class Parser {
 			if(matchedTerm.find()){
 			
 				type = matchedTerm.group();
-				if(type.equals(".File")){
-					//factory.startFunction();
-					k = recParse(type.substring(1));
-				}
+				k = recParse(type);
 			}
 		}
 		//dumpTree(k,0);
@@ -106,7 +104,7 @@ public class Parser {
 	 * Not sure if needed.
 	 */
 	private GoBaseIRNode recParse(String currNode) throws IOException {
-		ArrayList<GoBaseIRNode> body = new ArrayList<>();
+		Map<String, GoBaseIRNode> body = new HashMap<>();
 		Map<String, String> attrs = new HashMap<>();
 		String nodeName = currNode;
 		int bindex;//used to get start of the match of the reg ex.
@@ -122,14 +120,15 @@ public class Parser {
 	    	}
 	    	else if(currentLine.indexOf('{') >= 0) {
 	    		//going deeper into the tree creating children first
-	    		System.out.println(currentLine);
 	    		matchedTerm = astPattern.matcher(currentLine);
 	    		if(matchedTerm.find()){
-	    			String nodeType = matchedTerm.group(1);
-	    			System.out.println(nodeType);
-	    			GoBaseIRNode par = recParse(nodeType);
-	    			if(par != null)
-	    				body.add(par);
+	    			String nodeType = matchedTerm.group().substring(1);
+	    			matchedTerm = nodeTypePattern.matcher(currentLine);
+	    			matchedTerm.find();
+	    			String type = matchedTerm.group();
+	    			type = type.substring(0,type.length()-1);
+	    			body.put(type, recParse(nodeType));
+	    			
 	    		}
 	    	}
 	    	else {
@@ -167,8 +166,7 @@ public class Parser {
 //		}
 //	}
 	
-	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, ArrayList<GoBaseIRNode> body) {
-		body.add(null);
+	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "AssignStmt":
 				return new GoTempIRNode(nodeType,attrs,body);
@@ -179,32 +177,41 @@ public class Parser {
 			case "UnaryExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "BlockStmt":
-				return new GoIRBlockStmtNode(body.get(0));
+				return new GoIRBlockStmtNode(body.get("List"));
 			case "CallExpr":
-				GoBaseIRNode functionNode = body.get(0);
-				body.remove(0);
-				return new GoIRInvokeNode(functionNode,body);
+				GoBaseIRNode functionNode = body.get("Fun");
+				return new GoIRInvokeNode(functionNode,(GoIRArrayListExprNode) body.get("Args"));
 			case "Decl":
-				return new GoIRDeclNode(body);
+				ArrayList<GoBaseIRNode> list = new ArrayList<>();
+				for(GoBaseIRNode child : body.values()){
+					list.add(child);
+				}
+				return new GoIRDeclNode(list);
 			case "Expr":
-				return new GoIRArrayListExprNode(body);
+				ArrayList<GoBaseIRNode> list1 = new ArrayList<>();
+				for(GoBaseIRNode child : body.values()){
+					list1.add(child);
+				}
+				return new GoIRArrayListExprNode(list1);
 			case "ExprStmt":
-				return new GoIRExprStmtNode(body.get(0));
+				return new GoIRExprStmtNode(body.get("X"));
 			case "FieldList":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "File":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "FuncDecl"://(GoBaseIRNode receiver, GoBaseIRNode name, GoBaseIRNode type, GoBaseIRNode body)
-				if(body.size()==3)
-					return new GoIRFuncDeclNode(null,body.get(0),body.get(1),body.get(2));
-				else
-					return new GoIRFuncDeclNode(body.get(0),body.get(1),body.get(2),body.get(3));
+				GoBaseIRNode recv = body.get("Recv");
+				GoBaseIRNode name = body.get("Name");
+				GoBaseIRNode type = body.get("Type");
+				GoBaseIRNode func_body = body.get("Body");
+				return new GoIRFuncDeclNode(recv,name,type,func_body);
 			case "FuncType":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "GenDecl":
 				return new GoIRGenericDispatchNode();
 			case "Ident":
-				return new GoIRIdentNode(attrs.get("Name"),body.get(0));
+				GoBaseIRNode obj = body.get("Obj");
+				return new GoIRIdentNode(attrs.get("Name"),obj);
 			case "ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "Object":
