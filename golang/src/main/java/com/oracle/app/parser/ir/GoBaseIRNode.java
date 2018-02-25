@@ -18,7 +18,7 @@ public abstract class GoBaseIRNode implements GoIRVisitable {
 	
 	public void setParent(GoBaseIRNode node) { this.parent = node; }
 	
-	public abstract void accept(GoIRVisitor visitor);
+	public abstract Object accept(GoIRVisitor visitor);
 	
 	public String toString() { return name; }
 }

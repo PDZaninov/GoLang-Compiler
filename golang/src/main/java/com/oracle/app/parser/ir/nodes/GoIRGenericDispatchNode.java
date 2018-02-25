@@ -24,8 +24,8 @@ public class GoIRGenericDispatchNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor) { 
-		visitor.visitGenericDispatch(this); 
+	public Object accept(GoIRVisitor visitor) { 
+		return visitor.visitGenericDispatch(this); 
 	}
 	
 

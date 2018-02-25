@@ -20,8 +20,8 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor){
-		visitor.visitFuncDecl(this);
+	public Object accept(GoIRVisitor visitor){
+		return visitor.visitFuncDecl(this);
 	}
 	
 	public GoBaseIRNode getReceiver(){

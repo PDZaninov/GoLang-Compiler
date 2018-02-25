@@ -16,8 +16,8 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 	}
 
 	@Override
-	public void accept(GoIRVisitor visitor){
-		visitor.visitArrayListExpr(this);
+	public Object accept(GoIRVisitor visitor){
+		return visitor.visitArrayListExpr(this);
 	}
 	
 	@Override

@@ -40,8 +40,8 @@ public class GoIRBinaryExprNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor) { 
-		visitor.visitBinaryExpr(this); 
+	public Object accept(GoIRVisitor visitor) { 
+		return visitor.visitBinaryExpr(this); 
 	}
 
 }

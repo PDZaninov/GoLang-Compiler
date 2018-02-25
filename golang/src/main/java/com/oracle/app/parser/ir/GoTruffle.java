@@ -38,67 +38,70 @@ public class GoTruffle implements GoIRVisitor {
     }
 
 	@Override
-	public void visitObject(GoBaseIRNode node) {
-		System.out.println(node.toString());
+	public Object visitObject(GoBaseIRNode node) {
+		System.out.println("Visited Truffle temp: " + node.toString());
+		return null;
 	}
 
 	@Override
-	public void visitIdent(GoIRIdentNode node) {
+	public Object visitIdent(GoIRIdentNode node) {
+		node.getChild().accept(this);
 		//GoIdentNode n = new GoIdentNode(language, node.getIdent(), node.getChild());
+		return null;
 	}
 
 	@Override
-	public void visitBinaryExpr(GoIRBinaryExprNode node) {
+	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitBasicLit(GoIRBasicLitNode node) {
+	public Object visitBasicLit(GoIRBasicLitNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitInvoke(GoIRInvokeNode node) {
+	public Object visitInvoke(GoIRInvokeNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitGenericDispatch(GoIRGenericDispatchNode node) {
+	public Object visitGenericDispatch(GoIRGenericDispatchNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitFuncDecl(GoIRFuncDeclNode node) {
+	public Object visitFuncDecl(GoIRFuncDeclNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitDecl(GoIRDeclNode node) {
+	public Object visitDecl(GoIRDeclNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitArrayListExpr(GoIRArrayListExprNode node) {
+	public Object visitArrayListExpr(GoIRArrayListExprNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitBlockStmt(GoIRBlockStmtNode node) {
+	public Object visitBlockStmt(GoIRBlockStmtNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 	@Override
-	public void visitExprStmt(GoIRExprStmtNode node) {
+	public Object visitExprStmt(GoIRExprStmtNode node) {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
 
 }

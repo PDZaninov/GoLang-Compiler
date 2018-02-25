@@ -41,8 +41,8 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor) { 
-		visitor.visitInvoke(this); 
+	public Object accept(GoIRVisitor visitor) { 
+		return visitor.visitInvoke(this); 
 	}
 
 }

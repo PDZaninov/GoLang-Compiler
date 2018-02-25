@@ -38,8 +38,8 @@ public class GoIRIdentNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor) { 
-		visitor.visitIdent(this); 
+	public Object accept(GoIRVisitor visitor) { 
+		return visitor.visitIdent(this); 
 	}
 	
 	

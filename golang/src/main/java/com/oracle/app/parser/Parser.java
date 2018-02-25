@@ -183,7 +183,9 @@ public class Parser {
 			case "BlockStmt":
 				return new GoIRBlockStmtNode(body.get(0));
 			case "CallExpr":
-				return new GoIRInvokeNode(body.get(0),body);
+				GoBaseIRNode functionNode = body.get(0);
+				body.remove(0);
+				return new GoIRInvokeNode(functionNode,body);
 			case "Decl":
 				return new GoIRDeclNode(body);
 			case "Expr":
