@@ -24,9 +24,17 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 		return functionNode;
 	}
 	
+	/*
+	 * Maybe not needed
+	 */
 	public GoIRArrayListExprNode getArgumentNode(){
 		return argumentNodes;
 	}
+	
+	public int getArgumentsSize(){
+		return argumentNodes.getSize();
+	}
+	
 	
 	public GoIRGenericDispatchNode getDispatchNode(){
 		return dispatchNode;

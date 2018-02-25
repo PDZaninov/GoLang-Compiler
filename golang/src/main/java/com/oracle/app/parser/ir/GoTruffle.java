@@ -1,5 +1,6 @@
 package com.oracle.app.parser.ir;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,6 +8,11 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.call.GoInvokeNode;
+import com.oracle.app.nodes.expression.GoAddNodeGen;
+import com.oracle.app.nodes.expression.GoDivNodeGen;
+import com.oracle.app.nodes.expression.GoMulNodeGen;
+import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
@@ -48,15 +54,34 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
-		GoExpressionNode[] result = new GoExpressionNode[1];
-		result[0] = (GoExpressionNode) node.getChild().accept(this);
-		return new GoIdentNode(language, node.getIdent(), result);
+		GoExpressionNode result = (GoExpressionNode) node.getChild().accept(this);
+		String name = node.getIdent();
+		return new GoIdentNode(language, name, result);
 	}
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		GoExpressionNode rightNode = (GoExpressionNode) node.getRight().accept(this);
+		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
+		String op = node.getOp();
+		final GoExpressionNode result;
+		switch(op){
+		case "+":
+			result = GoAddNodeGen.create(leftNode, rightNode);
+			break;
+		case "-":
+			result = GoSubNodeGen.create(leftNode, rightNode);
+			break;
+		case "*":
+			result = GoMulNodeGen.create(leftNode, rightNode);
+			break;
+		case "/":
+			result = GoDivNodeGen.create(leftNode, rightNode);
+			break;
+		default:
+			throw new RuntimeException("Unimplemented op "+ op);
+		}
+		return result;
 	}
 
 	@Override
@@ -88,19 +113,21 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
+		GoExpressionNode[] arguments = (GoExpressionNode[]) node.getArgumentNode().accept(this);
+		
+		return new GoInvokeNode(functionNode, arguments);
 	}
 
 	@Override
 	public Object visitGenericDispatch(GoIRGenericDispatchNode node) {
-		// TODO Auto-generated method stub
+		// Probably not necessary or something we don't need
 		return null;
 	}
 
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
-		// TODO Auto-generated method stub
+		// Probably need this node created to the function hashmap
 		return null;
 	}
 
@@ -112,8 +139,13 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitArrayListExpr(GoIRArrayListExprNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		int argumentsize = node.getSize();
+		GoExpressionNode[] arguments = new GoExpressionNode[argumentsize];
+		ArrayList<GoBaseIRNode> children = node.getChildren();
+		for(int i = 0; i < argumentsize; i++){
+			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
+		}
+		return arguments;
 	}
 
 	@Override

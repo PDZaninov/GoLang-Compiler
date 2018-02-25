@@ -29,6 +29,10 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 
 	}
 
+	public int  getSize(){
+		return children.size();
+	}
+	
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
 		
