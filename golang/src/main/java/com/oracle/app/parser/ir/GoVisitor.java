@@ -21,13 +21,15 @@ public class GoVisitor implements GoIRVisitor {
 	public void visitObject(GoBaseIRNode node) {
 		System.out.println("Temp node: " + node.toString());
 		for(GoBaseIRNode child : node.getChildren())
-			child.accept(this);
+			if(child != null)
+				child.accept(this);
 	}
 
 	@Override
 	public void visitIdent(GoIRIdentNode node) {
 		System.out.println(node.toString());
-		node.getChild().accept(this);
+		if(node.getChild() != null)
+			node.getChild().accept(this);
 	}
 
 	@Override
@@ -56,7 +58,8 @@ public class GoVisitor implements GoIRVisitor {
 	public void visitFuncDecl(GoIRFuncDeclNode node) {
 		System.out.println(node.toString());
 		for(GoBaseIRNode child : node.getChildren())
-			child.accept(this);
+			if(child != null)
+				child.accept(this);
 	}
 
 	@Override
@@ -70,7 +73,8 @@ public class GoVisitor implements GoIRVisitor {
 	public void visitArrayListExpr(GoIRArrayListExprNode node) {
 		System.out.println(node.toString());
 		for(GoBaseIRNode child : node.getChildren())
-			child.accept(this);
+			if(child != null)
+				child.accept(this);
 	}
 
 	@Override
