@@ -76,6 +76,7 @@ public class GoVisitor implements GoIRVisitor {
 	@Override
 	public void visitBlockStmt(GoIRBlockStmtNode node) {
 		System.out.println(node.toString());
+		node.getChild().accept(this);
 	}
 
 	@Override
