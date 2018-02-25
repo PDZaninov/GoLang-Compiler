@@ -37,8 +37,8 @@ public class GoTempIRNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor) { 
-		visitor.visitObject(this); 
+	public Object accept(GoIRVisitor visitor) { 
+		return visitor.visitObject(this); 
 	}
 
 }

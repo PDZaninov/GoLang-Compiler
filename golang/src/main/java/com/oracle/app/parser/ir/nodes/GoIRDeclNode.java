@@ -30,8 +30,8 @@ public class GoIRDeclNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor) { 
-		visitor.visitDecl(this); 
+	public Object accept(GoIRVisitor visitor) { 
+		return visitor.visitDecl(this); 
 	}
 
 }

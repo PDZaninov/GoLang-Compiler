@@ -35,8 +35,8 @@ public class GoIRBasicLitNode extends GoBaseIRNode {
 	}
 	
 	@Override
-	public void accept(GoIRVisitor visitor) { 
-		visitor.visitBasicLit(this); 
+	public Object accept(GoIRVisitor visitor) { 
+		return visitor.visitBasicLit(this); 
 	}
 
 }

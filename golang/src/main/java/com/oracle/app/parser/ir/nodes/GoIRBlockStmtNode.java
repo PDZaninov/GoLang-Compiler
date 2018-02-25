@@ -20,8 +20,8 @@ public class GoIRBlockStmtNode extends GoBaseIRNode {
 	}
 
 	@Override
-	public void accept(GoIRVisitor visitor){
-		visitor.visitBlockStmt(this);
+	public Object accept(GoIRVisitor visitor){
+		return visitor.visitBlockStmt(this);
 	}
 	
 	@Override

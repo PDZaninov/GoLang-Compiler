@@ -13,26 +13,26 @@ import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 
 public interface GoIRVisitor {
 	
-	void visitObject(GoBaseIRNode node);
+	Object visitObject(GoBaseIRNode node);
 	
-	void visitIdent(GoIRIdentNode node);
+	Object visitIdent(GoIRIdentNode node);
 	
-	void visitBinaryExpr(GoIRBinaryExprNode node);
+	Object visitBinaryExpr(GoIRBinaryExprNode node);
 	
-	void visitBasicLit(GoIRBasicLitNode node);
+	Object visitBasicLit(GoIRBasicLitNode node);
 	
-	void visitInvoke(GoIRInvokeNode node);
+	Object visitInvoke(GoIRInvokeNode node);
 	
-	void visitGenericDispatch(GoIRGenericDispatchNode node);
+	Object visitGenericDispatch(GoIRGenericDispatchNode node);
 
-	void visitFuncDecl(GoIRFuncDeclNode node);
+	Object visitFuncDecl(GoIRFuncDeclNode node);
 
-	void visitArrayListExpr(GoIRArrayListExprNode node);
+	Object visitArrayListExpr(GoIRArrayListExprNode node);
 
-	void visitDecl(GoIRDeclNode node);
+	Object visitDecl(GoIRDeclNode node);
 
-	void visitBlockStmt(GoIRBlockStmtNode node);
+	Object visitBlockStmt(GoIRBlockStmtNode node);
 
-	void visitExprStmt(GoIRExprStmtNode node);
+	Object visitExprStmt(GoIRExprStmtNode node);
 
 }
