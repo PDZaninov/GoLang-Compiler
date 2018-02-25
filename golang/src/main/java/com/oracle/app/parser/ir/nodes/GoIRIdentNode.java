@@ -20,17 +20,21 @@ public class GoIRIdentNode extends GoBaseIRNode {
 	
 	@Override
 	public void setChildParent() {
-		child.setParent(this);
+		if(child != null)
+			child.setParent(this);
 	}
 	
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
 	public String getIdent() {
 		return ident;
+	}
+	
+	public GoBaseIRNode getChild() {
+		return child;
 	}
 	
 	@Override

@@ -31,6 +31,10 @@ public class GoIRBinaryExprNode extends GoBaseIRNode {
 		return null;
 	}
 	
+	public GoBaseIRNode getLeft() { return left; }
+	
+	public GoBaseIRNode getRight() { return right; }
+	
 	public String getOp() {
 		return op;
 	}

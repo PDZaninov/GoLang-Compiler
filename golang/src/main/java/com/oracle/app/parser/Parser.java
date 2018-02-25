@@ -17,6 +17,7 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoVisitor;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
@@ -84,6 +85,10 @@ public class Parser {
 			}
 		}
 		//dumpTree(k,0);
+		
+		GoVisitor visitor = new GoVisitor();
+		k.accept(visitor);
+		
 		return factory.getAllFunctions();
 	}
 	
@@ -177,7 +182,8 @@ public class Parser {
 			case "CallExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "Decl":
-				return new GoIRDeclNode((GoBaseIRNode[]) body.toArray());
+				return new GoTempIRNode(nodeType,attrs,body);
+				//return new GoIRDeclNode((GoBaseIRNode[]) body.toArray());
 			case "Expr":
 				return new GoIRArrayListExprNode(body);
 			case "ExprStmt":

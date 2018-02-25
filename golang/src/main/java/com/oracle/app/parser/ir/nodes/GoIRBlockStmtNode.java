@@ -15,6 +15,7 @@ public class GoIRBlockStmtNode extends GoBaseIRNode {
 		setChildParent();
 	}
 
+	@Override
 	public void accept(GoIRVisitor visitor){
 		visitor.visitBlockStmt(this);
 	}

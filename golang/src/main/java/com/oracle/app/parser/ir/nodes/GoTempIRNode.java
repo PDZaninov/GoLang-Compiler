@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoIRVisitable;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoTempIRNode extends GoBaseIRNode {
@@ -22,6 +23,7 @@ public class GoTempIRNode extends GoBaseIRNode {
 
 	@Override
 	public void setChildParent() {
+		if(children.isEmpty())
 		for(int x =0; x < children.size();x++) {
 			children.get(x).setParent(this);
 		}

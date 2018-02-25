@@ -2,7 +2,7 @@ package com.oracle.app.parser.ir;
 
 import java.util.ArrayList;
 
-public abstract class GoBaseIRNode {
+public abstract class GoBaseIRNode implements GoIRVisitable {
 	
 	protected String name;
 
@@ -18,7 +18,7 @@ public abstract class GoBaseIRNode {
 	
 	public void setParent(GoBaseIRNode node) { this.parent = node; }
 	
-	public void accept(GoIRVisitor visitor) { visitor.visitObject(this); }
+	public abstract void accept(GoIRVisitor visitor);
 	
 	public String toString() { return name; }
 }

@@ -3,9 +3,10 @@ package com.oracle.app.parser.ir.nodes;
 import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoIRVisitable;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
-public class GoIRInvokeNode extends GoBaseIRNode {
+public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 
 	GoBaseIRNode functionNode;
 	GoBaseIRNode[] argumentNodes;

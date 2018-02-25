@@ -25,14 +25,14 @@ public interface GoIRVisitor {
 	
 	void visitGenericDispatch(GoIRGenericDispatchNode node);
 
-	void visitFuncDecl(GoIRFuncDeclNode goIRFuncDeclNode);
+	void visitFuncDecl(GoIRFuncDeclNode node);
 
-	void visitArrayListExpr(GoIRArrayListExprNode goIRArrayListExprNode);
+	void visitArrayListExpr(GoIRArrayListExprNode node);
 
 	void visitDecl(GoIRDeclNode node);
 
-	void visitBlockStmt(GoIRBlockStmtNode goIRBlockStmtNode);
+	void visitBlockStmt(GoIRBlockStmtNode node);
 
-	void visitExprStmt(GoIRExprStmtNode goIRExprStmtNode);
+	void visitExprStmt(GoIRExprStmtNode node);
 
 }

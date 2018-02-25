@@ -15,12 +15,14 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 		setChildParent();
 	}
 
+	@Override
 	public void accept(GoIRVisitor visitor){
 		visitor.visitArrayListExpr(this);
 	}
 	
 	@Override
 	public void setChildParent() {
+		if(children.isEmpty())
 		for(GoBaseIRNode child : children){
 			child.setParent(this);
 		}
