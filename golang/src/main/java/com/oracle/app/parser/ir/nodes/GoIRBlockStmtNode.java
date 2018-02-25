@@ -14,7 +14,12 @@ public class GoIRBlockStmtNode extends GoBaseIRNode {
 		this.body = body;
 		setChildParent();
 	}
+	
+	public GoBaseIRNode getChild() {
+		return body;
+	}
 
+	@Override
 	public void accept(GoIRVisitor visitor){
 		visitor.visitBlockStmt(this);
 	}

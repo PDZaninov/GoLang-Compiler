@@ -1,8 +1,11 @@
 package com.oracle.app.parser.ir;
 
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
@@ -20,7 +23,7 @@ public class GoTruffle implements GoIRVisitor {
 	}
 
 	@Override
-	public void visitIdent(GoIRIdentNode goIRIdentNode) {
+	public void visitIdent(GoIRIdentNode node) {
 		// TODO Auto-generated method stub
 	}
 
@@ -49,13 +52,31 @@ public class GoTruffle implements GoIRVisitor {
 	}
 
 	@Override
-	public void visitFuncDecl(GoIRFuncDeclNode goIRFuncDeclNode) {
+	public void visitFuncDecl(GoIRFuncDeclNode node) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void visitDecl(GoIRDeclNode node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visitArrayListExpr(GoIRArrayListExprNode node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visitBlockStmt(GoIRBlockStmtNode node) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visitExprStmt(GoIRExprStmtNode node) {
 		// TODO Auto-generated method stub
 		
 	}

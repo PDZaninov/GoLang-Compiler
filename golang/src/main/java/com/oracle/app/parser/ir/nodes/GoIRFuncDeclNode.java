@@ -19,6 +19,7 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 		this.body = body;
 	}
 	
+	@Override
 	public void accept(GoIRVisitor visitor){
 		visitor.visitFuncDecl(this);
 	}
@@ -57,8 +58,12 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<GoBaseIRNode> list = new ArrayList<GoBaseIRNode>();
+		list.add(receiver);
+		list.add(name);
+		list.add(type);
+		list.add(body);
+		return list;
 	}
 
 }

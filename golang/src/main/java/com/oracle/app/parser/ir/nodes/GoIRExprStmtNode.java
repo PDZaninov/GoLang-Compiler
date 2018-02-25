@@ -14,7 +14,12 @@ public class GoIRExprStmtNode extends GoBaseIRNode {
 		this.expression = expression;
 		setChildParent();
 	}
+	
+	public GoBaseIRNode getChild() {
+		return expression;
+	}
 
+	@Override
 	public void accept(GoIRVisitor visitor){
 		visitor.visitExprStmt(this);
 	}
