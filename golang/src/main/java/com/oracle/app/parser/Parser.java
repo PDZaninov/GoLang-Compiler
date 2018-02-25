@@ -21,10 +21,13 @@ import com.oracle.app.parser.ir.GoVisitor;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -178,16 +181,15 @@ public class Parser {
 			case "UnaryExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "BlockStmt":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRBlockStmtNode(body.get(0));
 			case "CallExpr":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRInvokeNode(body.get(0),body);
 			case "Decl":
-				return new GoTempIRNode(nodeType,attrs,body);
-				//return new GoIRDeclNode((GoBaseIRNode[]) body.toArray());
+				return new GoIRDeclNode(body);
 			case "Expr":
 				return new GoIRArrayListExprNode(body);
 			case "ExprStmt":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRExprStmtNode(body.get(0));
 			case "FieldList":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "File":

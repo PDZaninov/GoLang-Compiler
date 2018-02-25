@@ -15,10 +15,13 @@ public class GoIRDeclNode extends GoBaseIRNode {
 		setChildParent();
 	}
 
+	//TODO
 	@Override
 	public void setChildParent() {
+		/*
 		for(int i = 0; i < children.size(); i++)
 			this.children.get(i).setParent(this);
+			*/
 	}
 
 	@Override

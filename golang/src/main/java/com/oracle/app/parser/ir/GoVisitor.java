@@ -47,7 +47,11 @@ public class GoVisitor implements GoIRVisitor {
 	@Override
 	public void visitInvoke(GoIRInvokeNode node) {
 		System.out.println(node.toString());
-		node.getFunctionNode().accept(this);
+		if(node.getFunctionNode() != null)
+			node.getFunctionNode().accept(this);
+		for(GoBaseIRNode child : node.getChildren())
+			if(child != null)
+				child.accept(this);
 	}
 
 	@Override
@@ -67,7 +71,8 @@ public class GoVisitor implements GoIRVisitor {
 	public void visitDecl(GoIRDeclNode node) {
 		System.out.println(node.toString());
 		for(GoBaseIRNode child : node.getChildren())
-			child.accept(this);
+			if(child != null)
+				child.accept(this);
 	}
 
 	@Override
