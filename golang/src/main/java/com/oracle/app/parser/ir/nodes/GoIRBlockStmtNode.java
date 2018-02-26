@@ -7,15 +7,16 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRBlockStmtNode extends GoBaseIRNode {
 
-	private GoIRArrayListExprNode body;
+	private GoBaseIRNode[] body;
 	
-	public GoIRBlockStmtNode(GoIRArrayListExprNode body) {
+	public GoIRBlockStmtNode(GoBaseIRNode body) {
 		super("Block Statement Node");
-		this.body = body;
+		this.body = new GoBaseIRNode[1];
+		this.body[0] = body;
 		setChildParent();
 	}
 	
-	public GoBaseIRNode getChild() {
+	public GoBaseIRNode[] getChild() {
 		return body;
 	}
 
@@ -26,7 +27,9 @@ public class GoIRBlockStmtNode extends GoBaseIRNode {
 	
 	@Override
 	public void setChildParent() {
-		body.setParent(this);
+		for(GoBaseIRNode child : body){
+			child.setParent(this);
+		}
 
 	}
 
@@ -34,6 +37,10 @@ public class GoIRBlockStmtNode extends GoBaseIRNode {
 	public ArrayList<GoBaseIRNode> getChildren() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public int getSize() {
+		return body.length;
 	}
 
 }

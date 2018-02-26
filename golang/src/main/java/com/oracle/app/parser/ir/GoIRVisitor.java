@@ -5,11 +5,13 @@ import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 
 public interface GoIRVisitor {
 	
@@ -34,5 +36,9 @@ public interface GoIRVisitor {
 	Object visitBlockStmt(GoIRBlockStmtNode node);
 
 	Object visitExprStmt(GoIRExprStmtNode node);
+	
+	Object visitExpr(GoIRExprNode node);
+	
+	Object visitStmt(GoIRStmtNode node);
 
 }
