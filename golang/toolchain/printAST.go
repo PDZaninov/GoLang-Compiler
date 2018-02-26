@@ -4,26 +4,24 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"io/ioutil"
 	"os"
 )
 
-func main() {
-	// input := `
-	// package main
-	// func main() {
-	// 	println("Hello, World!")
-	// }
-	// `
-	file := os.Args[0]
-	b, err := ioutil.ReadFile(file) //reads File
-	// Create the AST by go src.
-	fset := token.NewFileSet()                         // positions are relative to fset
-	f, err := parser.ParseFile(fset, "", string(b), 0) //second input is file name
-	if err != nil {
-		panic(err)
+func check(e error) {
+	if e != nil {
+		panic(e)
 	}
+}
 
-	ast.Print(fset, f)
+func main() {
+
+	files := os.Args[1:]
+	// Create the AST by go src.
+	fset := token.NewFileSet()
+	for i := 0; i < len(files); i++ {
+		f, err := parser.ParseFile(fset, string(files[i]), nil, parser.ParseComments)
+		check(err)
+		ast.Print(fset, f)
+	}
 
 }
