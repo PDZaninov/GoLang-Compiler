@@ -31,6 +31,7 @@ import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -167,7 +168,7 @@ public class Parser {
 			case "BinaryExpr":
 				return new GoIRBinaryExprNode(attrs.get("Op"),body.get("X"),body.get("Y"));
 			case "UnaryExpr":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRUnaryNode(attrs.get("Op"),body.get("X"));
 			case "BlockStmt":
 				return new GoIRBlockStmtNode((GoIRStmtNode) body.get("List"));
 			case "CallExpr":
@@ -213,7 +214,7 @@ public class Parser {
 			case "Object":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "ParenExpr":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRExprStmtNode(body.get("X"));
 			case "Scope":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "SelectorExpr":

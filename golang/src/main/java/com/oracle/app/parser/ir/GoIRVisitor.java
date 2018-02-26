@@ -12,6 +12,7 @@ import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 
 public interface GoIRVisitor {
 	
@@ -40,5 +41,7 @@ public interface GoIRVisitor {
 	Object visitExpr(GoIRExprNode node);
 	
 	Object visitStmt(GoIRStmtNode node);
+	
+	Object visitUnary(GoIRUnaryNode node);
 
 }

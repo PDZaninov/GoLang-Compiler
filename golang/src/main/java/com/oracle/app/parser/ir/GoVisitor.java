@@ -12,6 +12,7 @@ import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 
 public class GoVisitor implements GoIRVisitor {
 
@@ -30,7 +31,6 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
-		System.out.println(node.toString());
 		if(node.getChild() != null)
 			node.getChild().accept(this);
 		return null;
@@ -38,7 +38,6 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
-		System.out.println(node.toString());
 		node.getLeft().accept(this);
 		node.getRight().accept(this);
 		return null;
@@ -46,13 +45,11 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitBasicLit(GoIRBasicLitNode node) {
-		System.out.println(node.toString());
 		return null;
 	}
 
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
-		System.out.println(node.toString());
 		node.getFunctionNode().accept(this);
 		if(node.getArgumentNode() != null){
 			node.getArgumentNode().accept(this);
@@ -63,13 +60,11 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitGenericDispatch(GoIRGenericDispatchNode node) {
-		System.out.println(node.toString());
 		return null;
 	}
 
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
-		System.out.println(node.toString());
 		node.getName().accept(this);
 		if(node.getReceiver() != null){
 			node.getReceiver().accept(this);
@@ -83,7 +78,6 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitDecl(GoIRDeclNode node) {
-		System.out.println(node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)
 				child.accept(this);
@@ -92,7 +86,6 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitArrayListExpr(GoIRArrayListExprNode node) {
-		System.out.println(node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)
 				child.accept(this);
@@ -101,7 +94,6 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
-		System.out.println(node.toString());
 		if(node.getChild() != null){
 				node.getChild().accept(this);
 		}
@@ -110,24 +102,27 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitExprStmt(GoIRExprStmtNode node) {
-		System.out.println(node.toString());
 		node.getChild().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visitExpr(GoIRExprNode node) {
-		System.out.println(node.toString());
 		node.getChild().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visitStmt(GoIRStmtNode node) {
-		System.out.println(node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)
 				child.accept(this);
+		return null;
+	}
+
+	@Override
+	public Object visitUnary(GoIRUnaryNode node) {
+		node.getChild().accept(this);
 		return null;
 	}
 

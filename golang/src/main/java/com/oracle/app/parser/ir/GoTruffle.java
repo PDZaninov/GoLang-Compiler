@@ -15,8 +15,26 @@ import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
+import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
+import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
+import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
+import com.oracle.app.nodes.expression.GoEqualNodeGen;
+import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
+import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
+import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
+import com.oracle.app.nodes.expression.GoLessThanNodeGen;
+import com.oracle.app.nodes.expression.GoLogicalAndNode;
+import com.oracle.app.nodes.expression.GoLogicalNotNodeGen;
+import com.oracle.app.nodes.expression.GoLogicalOrNode;
+import com.oracle.app.nodes.expression.GoModNodeGen;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
+import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
+import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
+import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
@@ -32,6 +50,7 @@ import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.source.Source;
 
@@ -100,9 +119,51 @@ public class GoTruffle implements GoIRVisitor {
 		case "/":
 			result = GoDivNodeGen.create(leftNode, rightNode);
 			break;
+		case"%":
+			result = GoModNodeGen.create(leftNode, rightNode);
+			break;
+		case"<":
+			result = GoLessThanNodeGen.create(leftNode, rightNode);
+			break;
+		case"<=":
+			result = GoLessOrEqualNodeGen.create(leftNode, rightNode);
+			break;
+		case"==":
+			result = GoEqualNodeGen.create(leftNode, rightNode);
+			break;
+		case">":
+			result = GoGreaterThanNodeGen.create(leftNode, rightNode);
+			break;
+		case">=":
+			result = GoGreaterOrEqualNodeGen.create(leftNode, rightNode);
+			break;
+		case"!=":
+			result = GoNotEqualNodeGen.create(leftNode, rightNode);
+			break;
+		case"&&":
+			result = new GoLogicalAndNode(leftNode, rightNode);
+			break;
+		case"||":
+			result = new GoLogicalOrNode(leftNode, rightNode);
+			break;
+		case"<<":
+			result = GoBinaryLeftShiftNodeGen.create(leftNode, rightNode);
+			break;
+		case">>":
+			result = GoBinaryRightShiftNodeGen.create(leftNode, rightNode);
+			break;
+		case"&":
+			result = GoBitwiseAndNodeGen.create(leftNode, rightNode);
+			break;
+		case"|":
+			result = GoBitwiseOrNodeGen.create(leftNode, rightNode);
+			break;
+		case"^":
+			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
+			break;
 		default:
-			throw new RuntimeException("Unimplemented op "+ op);
-		}
+			throw new RuntimeException("Unexpected Operation: "+op);
+	}
 		return result;
 	}
 
@@ -207,6 +268,30 @@ public class GoTruffle implements GoIRVisitor {
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
 		return arguments;
+	}
+
+	@Override
+	public Object visitUnary(GoIRUnaryNode node) {
+		GoExpressionNode child = (GoExpressionNode) node.getChild().accept(this);
+		String op = node.getOp();
+		final GoExpressionNode result;
+		switch(op) {
+			case"!":
+				result = GoLogicalNotNodeGen.create(child);
+				break;
+			case"^":
+				result = GoBitwiseComplementNodeGen.create(child);
+				break;
+			case"+":
+				result = GoPositiveSignNodeGen.create(child);
+				break;
+			case"-":
+				result = GoNegativeSignNodeGen.create(child);
+				break;
+			default:
+				throw new RuntimeException("Unexpected Operation: "+op);
+		}
+		return result;
 	}
 
 }
