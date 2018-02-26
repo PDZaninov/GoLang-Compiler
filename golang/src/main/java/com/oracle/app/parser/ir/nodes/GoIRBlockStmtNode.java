@@ -7,9 +7,9 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRBlockStmtNode extends GoBaseIRNode {
 
-	private GoBaseIRNode body;
+	private GoIRArrayListExprNode body;
 	
-	public GoIRBlockStmtNode(GoBaseIRNode body) {
+	public GoIRBlockStmtNode(GoIRArrayListExprNode body) {
 		super("Block Statement Node");
 		this.body = body;
 		setChildParent();

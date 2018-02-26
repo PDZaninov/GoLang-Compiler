@@ -3,6 +3,7 @@ To Do:
 -variables
 -if/else
 -toolchain (run from go source code)
+-Test cases running compilation from go and truffle and comparing output
 
 Done:
 -Skeleton IR

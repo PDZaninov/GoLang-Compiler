@@ -8,7 +8,9 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
+import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
@@ -150,8 +152,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		GoStatementNode[] block = (GoStatementNode[]) node.getChild().accept(this);
+		return new GoBlockNode(block);
 	}
 
 	@Override
