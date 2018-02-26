@@ -177,7 +177,7 @@ public class Parser {
 			case "UnaryExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "BlockStmt":
-				return new GoIRBlockStmtNode(body.get("List"));
+				return new GoIRBlockStmtNode((GoIRArrayListExprNode) body.get("List"));
 			case "CallExpr":
 				GoBaseIRNode functionNode = body.get("Fun");
 				return new GoIRInvokeNode(functionNode,(GoIRArrayListExprNode) body.get("Args"));
