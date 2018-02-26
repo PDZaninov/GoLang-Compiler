@@ -14,7 +14,7 @@ func check(e error) {
 }
 
 func main() {
-
+	//TODO: add away to write the files to a text
 	files := os.Args[1:]
 	// Create the AST by go src.
 	fset := token.NewFileSet()
@@ -22,6 +22,9 @@ func main() {
 		f, err := parser.ParseFile(fset, string(files[i]), nil, parser.ParseComments)
 		check(err)
 		ast.Print(fset, f)
+		// d1 := []byte(asts)
+		// err := ioutil.WriteFile("/tmp/"+string(files[i]), d1, 0644)
+		// check(err)
 	}
 
 }
