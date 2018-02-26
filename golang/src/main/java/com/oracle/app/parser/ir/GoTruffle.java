@@ -139,10 +139,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
-		GoExpressionNode[] arguments = null;
-		if(node.getArgumentNode() != null)
-			arguments = (GoExpressionNode[]) node.getArgumentNode().accept(this);
-		
+		GoExpressionNode[] arguments = (GoExpressionNode[]) node.getArgumentNode().accept(this);
 		return new GoInvokeNode(functionNode, arguments);
 	}
 
@@ -187,12 +184,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
-		//hard coded for now
-		//TODO
-		GoStatementNode[] arguments = new GoStatementNode[1];
-		arguments[0] = (GoStatementNode) node.getChild()[0].accept(this);
-		
-		return new GoBlockNode(arguments);
+		GoStatementNode[] body = (GoStatementNode[]) node.getChild().accept(this);
+		return new GoBlockNode(body);
 	}
 
 	@Override
@@ -207,7 +200,13 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitStmt(GoIRStmtNode node) {
-		return new GoExprNode( (GoExpressionNode) node.getChild().accept(this));
+		int argumentsize = node.getSize();
+		GoStatementNode[] arguments = new GoStatementNode[argumentsize];
+		ArrayList<GoBaseIRNode> children = node.getChildren();
+		for(int i = 0; i < argumentsize; i++){
+			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
+		}
+		return arguments;
 	}
 
 }

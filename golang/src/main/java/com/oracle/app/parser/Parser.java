@@ -86,7 +86,7 @@ public class Parser {
 			matchedTerm = astPattern.matcher(currentLine);
 			if(matchedTerm.find()){
 			
-				type = matchedTerm.group();
+				type = matchedTerm.group().substring(1);
 				k = recParse(type);
 			}
 		}
@@ -157,40 +157,23 @@ public class Parser {
 		return null;
 	}
 	
-//	public void dumpTree(GoBaseIRNode node, int spacing) {
-//		if(node != null) {
-//			spaces(spacing);
-//			System.out.println(node.toString());
-//			ArrayList<GoBaseIRNode> l = node.getChildren();
-//			for(int z =0; z < l.size(); z ++) {
-//				dumpTree(l.get(z),spacing+1);
-//			}
-//		}
-//	}
-//	
-//	public void spaces(int num) {
-//		for(int x = 0; x < num; x++) {
-//			System.out.print(". ");
-//		}
-//	}
 	
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "AssignStmt":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "BasicLit":
-				return new GoIRBasicLitNode(attrs.get("Type"),attrs.get("Value"));
+				return new GoIRBasicLitNode(attrs.get("Kind"),attrs.get("Value"));
 			case "BinaryExpr":
-				return new GoIRBinaryExprNode(attrs.get("Op"),body.get(0),body.get(1));
+				return new GoIRBinaryExprNode(attrs.get("Op"),body.get("X"),body.get("Y"));
 			case "UnaryExpr":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "BlockStmt":
-				return new GoIRBlockStmtNode((GoIRArrayListExprNode) body.get("List"));
+				return new GoIRBlockStmtNode((GoIRStmtNode) body.get("List"));
 			case "CallExpr":
 				GoBaseIRNode functionNode = body.get("Fun");
 				GoIRExprNode n = (GoIRExprNode) body.get("Args");
 				GoIRArrayListExprNode args = (GoIRArrayListExprNode) n.getChild();
-				args.printChildren();
 				return new GoIRInvokeNode(functionNode,args);
 			case "Decl":
 				ArrayList<GoBaseIRNode> list = new ArrayList<>();
@@ -238,41 +221,18 @@ public class Parser {
 			case "Spec":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "Stmt":
-				return new GoIRStmtNode(body.get("0"));
+				ArrayList<GoBaseIRNode> stmtlist = new ArrayList<>();
+				for(GoBaseIRNode children : body.values()){
+					stmtlist.add(children);
+				}
+				return new GoIRStmtNode(stmtlist);
 			default:
 				System.out.println("Error, in default: " + nodeType);
 				
 		}
 		return new GoTempIRNode(nodeType,attrs,body);
 	}
-	
-	/* Purpose:
-	 * To find a string within an array list then return whatever comes after :
-	 * Input: 
-	 * String attr - search for the string attr in the arraylist...
-	 * ArrayList<String> attrs - Arraylist of attributes of a node
-	 * Output:
-	 * -String of the value attached to the given input
-	 * Example:
-	 * searchAttr("Value: ", attrs);
-	 * will find the line with "Value: "hello""
-	 * and return hello
-	 */
-	public String searchAttr(String attr, ArrayList<String> attrs) {
-		
-		String name = "";
-		for(int i = 0; i < attrs.size(); i++) {
-			if(attrs.get(i).contains(attr)) {
-				name = attrs.get(i);
-			}
-		}
-		if(!name.isEmpty()) {
-			name = name.split(": ", 2)[1];
-			name = name.substring(1, name.length()-1);
-		}
-		return name;
-		
-	}
+
 	/*
 	 * This is what is called to start building the ast.
 	 * Called from GoLanguage.java
@@ -284,8 +244,4 @@ public class Parser {
 		return parser.beginParse();
 	}
 	
-//	public static void main(String[] args) throws IOException {
-//		Parser p = new Parser("Addition.ast");
-//		p.beginParse();
-//	}
 }

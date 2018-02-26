@@ -7,28 +7,30 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRStmtNode extends GoBaseIRNode {
 	
-	private GoBaseIRNode child;
+	private ArrayList<GoBaseIRNode> children;
 	
-	public GoIRStmtNode(GoBaseIRNode child) {
+	public GoIRStmtNode(ArrayList<GoBaseIRNode> children) {
 		super("Stmt");
-		this.child = child;
+		this.children = children;
 		setChildParent();
+	}
+	
+	public int getSize(){
+		return children.size();
 	}
 	
 	@Override
 	public void setChildParent() {
-		if(child != null)
+		for(GoBaseIRNode child : children){
 			child.setParent(this);
+		}
 	}
 	
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
-		return null;
+		return children;
 	}
 	
-	public GoBaseIRNode getChild() {
-		return child;
-	}
 	
 	@Override
 	public Object accept(GoIRVisitor visitor) { 

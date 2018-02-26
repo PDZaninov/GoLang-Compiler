@@ -102,9 +102,9 @@ public class GoVisitor implements GoIRVisitor {
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
 		System.out.println(node.toString());
-		for(GoBaseIRNode child : node.getChild())
-			if(child != null)
-				child.accept(this);
+		if(node.getChild() != null){
+				node.getChild().accept(this);
+		}
 		return null;
 	}
 
@@ -125,7 +125,9 @@ public class GoVisitor implements GoIRVisitor {
 	@Override
 	public Object visitStmt(GoIRStmtNode node) {
 		System.out.println(node.toString());
-		node.getChild().accept(this);
+		for(GoBaseIRNode child : node.getChildren())
+			if(child != null)
+				child.accept(this);
 		return null;
 	}
 
