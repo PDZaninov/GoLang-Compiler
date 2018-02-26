@@ -9,15 +9,14 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class GoIdentNode extends GoExpressionNode{
 	
 	String name;
-	String[] attr = new String[25];
 	public GoBasicNode parent;
-	@Children final private GoStatementNode[] children;
+	@Child private GoExpressionNode child;
 	
 	private final ContextReference<GoContext> reference;
 	
-	public GoIdentNode(GoLanguage language, String name, GoStatementNode[] children) {
+	public GoIdentNode(GoLanguage language, String name, GoExpressionNode child) {
 		this.name = name;
-		this.children = children;
+		this.child = child;
 		reference = language.getContextReference();
 	}
 

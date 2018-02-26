@@ -122,7 +122,7 @@ public class GoNodeFactory {
     
     public GoExpressionNode createIdentNode(String name, ArrayList<GoStatementNode> body){
 
-    	return new GoIdentNode(language, name, body.toArray(new GoStatementNode[body.size()]));
+    	return new GoIdentNode(language, name, (GoExpressionNode) body.get(0));
     }
     
     public GoExpressionNode createBasicLit(String value, String kind) throws IOException{
