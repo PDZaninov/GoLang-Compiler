@@ -17,17 +17,20 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoTruffle;
 import com.oracle.app.parser.ir.GoVisitor;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -41,6 +44,7 @@ public class Parser {
 	
 	private final String file; // the file we open
 	private GoLanguage language; // language we are passed
+	private Source source;
 	private BufferedReader reader; // used to read file
 	private String currentLine; // String of the current line we are on
 	private Matcher matchedTerm; // used for regex/parsing of file
@@ -57,6 +61,7 @@ public class Parser {
 	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
 		this.file = source.getName();
 		this.language = language;
+		this.source = source;
 		reader = new BufferedReader(new FileReader(this.file));
 		factory = new GoNodeFactory(language,source);
 	}
@@ -90,7 +95,10 @@ public class Parser {
 		GoVisitor visitor = new GoVisitor();
 		k.accept(visitor);
 		
-		return factory.getAllFunctions();
+		GoTruffle truffleVisitor = new GoTruffle(language, source);
+		k.accept(truffleVisitor);
+		
+		return truffleVisitor.getAllFunctions();
 	}
 	
 	/*Purpose: 
@@ -180,7 +188,10 @@ public class Parser {
 				return new GoIRBlockStmtNode((GoIRArrayListExprNode) body.get("List"));
 			case "CallExpr":
 				GoBaseIRNode functionNode = body.get("Fun");
-				return new GoIRInvokeNode(functionNode,(GoIRArrayListExprNode) body.get("Args"));
+				GoIRExprNode n = (GoIRExprNode) body.get("Args");
+				GoIRArrayListExprNode args = (GoIRArrayListExprNode) n.getChild();
+				args.printChildren();
+				return new GoIRInvokeNode(functionNode,args);
 			case "Decl":
 				ArrayList<GoBaseIRNode> list = new ArrayList<>();
 				for(GoBaseIRNode child : body.values()){
@@ -188,11 +199,13 @@ public class Parser {
 				}
 				return new GoIRDeclNode(list);
 			case "Expr":
+				
 				ArrayList<GoBaseIRNode> list1 = new ArrayList<>();
 				for(GoBaseIRNode child : body.values()){
 					list1.add(child);
 				}
-				return new GoIRArrayListExprNode(list1);
+				
+				return new GoIRExprNode(new GoIRArrayListExprNode(list1));
 			case "ExprStmt":
 				return new GoIRExprStmtNode(body.get("X"));
 			case "FieldList":
@@ -225,7 +238,7 @@ public class Parser {
 			case "Spec":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "Stmt":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRStmtNode(body.get("0"));
 			default:
 				System.out.println("Error, in default: " + nodeType);
 				

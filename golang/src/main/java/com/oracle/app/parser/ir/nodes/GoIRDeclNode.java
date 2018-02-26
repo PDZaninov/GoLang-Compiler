@@ -34,4 +34,8 @@ public class GoIRDeclNode extends GoBaseIRNode {
 		return visitor.visitDecl(this); 
 	}
 
+	public int getSize() {
+		return children.size();
+	}
+
 }

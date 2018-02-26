@@ -28,6 +28,11 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 		return name;
 	}
 	
+	public String getIdent() {
+		GoIRIdentNode node = (GoIRIdentNode) name;
+		return node.getIdent();
+	}
+	
 	public GoBaseIRNode getReceiver(){
 		if(receiver != null){
 			return receiver;
