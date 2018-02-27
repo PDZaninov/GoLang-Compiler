@@ -22,10 +22,10 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 	
 	@Override
 	public void setChildParent() {
-		if(children.isEmpty())
-		for(GoBaseIRNode child : children){
-			child.setParent(this);
+		for(int x = 0; x < children.size(); x++){
+			children.get(x).setParent(this);
 		}
+
 
 	}
 	

@@ -23,6 +23,7 @@ import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
+import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
@@ -36,6 +37,7 @@ import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
+import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
@@ -52,10 +54,26 @@ import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.source.Source;
 
 public class GoTruffle implements GoIRVisitor {
 
+    static class LexicalScope {
+        protected final LexicalScope outer;
+        protected final Map<String, FrameSlot> locals;
+
+        LexicalScope(LexicalScope outer) {
+            this.outer = outer;
+            this.locals = new HashMap<>();
+            if (outer != null) {
+                locals.putAll(outer.locals);
+            }
+        }
+    }
+    
+
+    private LexicalScope lexicalScope;
 	GoLanguage language;
 	
     private final Source source;
@@ -93,10 +111,33 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
-		GoExpressionNode result = null;
-		if(node.getChild() != null)
-			result = (GoExpressionNode) node.getChild().accept(this);
 		String name = node.getIdent();
+		GoExpressionNode result;
+		System.out.println("1: " +name);
+		if(!(node.parent ==null))
+			System.out.println("Parent" + node.parent.toString());
+		else {
+			System.out.println("name doesnt have parent");
+		}
+		
+		if(node.parent instanceof GoIRArrayListExprNode) {
+			System.out.println("in here" + name);
+	        
+	        final FrameSlot frameSlot = lexicalScope.locals.get(name);
+	        if (frameSlot != null) {
+	            /* Read of a local variable. */
+	        	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
+	        } else {
+	            /* Read of a global name. In our language, the only global names are functions. */
+	        	result = (GoExpressionNode)new GoFunctionLiteralNode(language, name);
+	        }
+		}else {
+			result = null;
+			if(node.getChild() != null)
+				result = (GoExpressionNode) node.getChild().accept(this);
+
+			
+		}
 		return new GoIdentNode(language, name, result);
 	}
 
@@ -213,8 +254,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
 		// Probably need this node created to the function hashmap
-		
-		
+		startFunction();
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
 		
@@ -222,8 +262,13 @@ public class GoTruffle implements GoIRVisitor {
 		
 		GoRootNode root = new GoRootNode(language,frameDescriptor,bodyNode,null,name);
 		allFunctions.put(name,root);
+
 		
-		
+
+		frameDescriptor = null;
+		lexicalScope = lexicalScope.outer;
+
+
 		return null;
 	}
 
@@ -234,9 +279,11 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitArrayListExpr(GoIRArrayListExprNode node) {
+
 		int argumentsize = node.getSize();
 		GoExpressionNode[] arguments = new GoExpressionNode[argumentsize];
 		ArrayList<GoBaseIRNode> children = node.getChildren();
+		
 		for(int i = 0; i < argumentsize; i++){
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
@@ -256,6 +303,7 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitExpr(GoIRExprNode node) {
+
 		return new GoExprNode( (GoExpressionNode) node.getChild().accept(this));
 	}
 
@@ -293,5 +341,14 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		return result;
 	}
+	
+    public void startFunction(){
+    	startBlock();
+    	frameDescriptor = new FrameDescriptor();
+    }
+    
+    public void startBlock() {
+        lexicalScope = new LexicalScope(lexicalScope);
+    }
 
 }
