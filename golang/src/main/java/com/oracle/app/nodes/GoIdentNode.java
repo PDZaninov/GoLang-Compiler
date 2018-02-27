@@ -29,6 +29,10 @@ public class GoIdentNode extends GoExpressionNode{
 		return reference.get().getFunctionRegistry().lookup(name, true);
 	}
 	
+	public String getName(){
+		return name;
+	}
+	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		// TODO Auto-generated method stub
@@ -38,8 +42,3 @@ public class GoIdentNode extends GoExpressionNode{
 	
 
 }
-//type Ident struct {
-//    NamePos token.Pos // identifier position
-//    Name    string    // identifier name
-//    Obj     *Object   // denoted object; or nil
-//}

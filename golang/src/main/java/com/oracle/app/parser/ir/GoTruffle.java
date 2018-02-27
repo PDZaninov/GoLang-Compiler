@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
@@ -38,6 +39,7 @@ import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
@@ -130,7 +132,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdent();
-		GoExpressionNode result;
+		GoExpressionNode result = null;
 		//Cannot check for if writing value yet
 		if(node.parent instanceof GoIRArrayListExprNode) {
 	        
@@ -138,10 +140,10 @@ public class GoTruffle implements GoIRVisitor {
 	        if (frameSlot != null) {
 	            /* Read of a local variable. */
 	        	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
-	        } else {
-	            /* Read of a global name. In our language, the only global names are functions. */
+	        } /*else {
+	             Read of a global name. In our language, the only global names are functions. 
 	        	return (GoExpressionNode)new GoFunctionLiteralNode(language, name);
-	        }
+	        }*/
 		}else {
 			result = null;
 			if(node.getChild() != null)
@@ -294,6 +296,7 @@ public class GoTruffle implements GoIRVisitor {
 		ArrayList<GoBaseIRNode> children = node.getChildren();
 		
 		for(int i = 0; i < argumentsize; i++){
+			
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
 		return arguments;
@@ -352,7 +355,7 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
     
-    
+	//Skips over itself and returns the child node to the parent of this node
 	@Override
 	public Object visitDeclStmt(GoIRDeclStmtNode node) {
 		
@@ -383,13 +386,30 @@ public class GoTruffle implements GoIRVisitor {
 			System.out.println("GenDecl Error Checking Implementation");
 			result = null;
 		}
-		return result;
+		//Placeholder node. There should be a better way of doing this.
+		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
+		//we return another array into the parent array.
+		return new GoArrayExprNode(result);
 	}
 
 	@Override
-	public Object visitValueSpec(GoIRValueSpecNode goIRValueSpecNode) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object visitValueSpec(GoIRValueSpecNode node) {
+		GoExpressionNode[] names = (GoExpressionNode[]) node.getNames().accept(this);
+		GoExpressionNode[] values = (GoExpressionNode[])node.getExpr().accept(this);
+		GoExpressionNode[] result = new GoExpressionNode[names.length];
+		String name;
+		//Will need to check for null values arraylist.
+		for(int i = 0; i < names.length; i++){
+			 name = ((GoIdentNode) names[i]).getName();
+			 FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+			 lexicalscope.locals.put(name, frameSlot);
+			 result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
+			
+		}
+		//Placeholder node. There should be a better way of doing this.
+		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
+		//we return another array into the parent array.
+		return new GoArrayExprNode(result);
 	}
 
 }
