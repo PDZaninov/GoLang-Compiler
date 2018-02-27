@@ -88,8 +88,8 @@ public class Parser {
 		}
 		//dumpTree(k,0);
 		
-		GoVisitor visitor = new GoVisitor();
-		k.accept(visitor);
+		//GoVisitor visitor = new GoVisitor();
+		//k.accept(visitor);
 		
 		GoTruffle truffleVisitor = new GoTruffle(language, source);
 		k.accept(truffleVisitor);

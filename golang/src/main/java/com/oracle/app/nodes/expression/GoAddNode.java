@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.ImplicitCast;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.app.nodes.GoBinaryNode;
 import com.oracle.app.nodes.GoTypes;
@@ -43,4 +44,12 @@ public abstract class GoAddNode extends GoBinaryNode {
     protected boolean isString(Object a, Object b) {
         return a instanceof String || b instanceof String;
     }
+
+
+	@Override
+	public String toString() {
+		return "Add Node";
+	}
+
+    
 }

@@ -12,7 +12,7 @@ public class GoIntNode extends GoExpressionNode {
 
     @Override
     public int executeInteger(VirtualFrame virtualFrame) {
-        return this.number;
+        return number;
     }
 
     @Override
@@ -22,6 +22,6 @@ public class GoIntNode extends GoExpressionNode {
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return this.number;
+		return number;
 	}
 }

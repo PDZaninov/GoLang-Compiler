@@ -23,6 +23,17 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	     * created by the Truffle DSL based on the {@link NodeField} annotation on the class.
 	     */
 	    protected abstract FrameSlot getSlot();
+	    
+	    
+	    
+	    @Specialization(guards = "isIntOrIllegal(frame)")
+	    protected int writeInt(VirtualFrame frame, int value) {
+	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
+	        getSlot().setKind(FrameSlotKind.Int);
+
+	        frame.setInt(getSlot(), value);
+	        return value;
+	    }
 
 	    /**
 	     * Specialized method to write a primitive {@code long} value. This is only possible if the
@@ -57,7 +68,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	     * {@link Object}, it is guaranteed to never fail, i.e., once we are in this specialization the
 	     * node will never be re-specialized.
 	     */
-	    @Specialization(replaces = {"writeLong", "writeBoolean"})
+	    @Specialization(replaces = {"writeInt", "writeLong", "writeBoolean"})
 	    protected Object write(VirtualFrame frame, Object value) {
 	        /*
 	         * Regardless of the type before, the new and final type of the local variable is Object.
@@ -80,6 +91,10 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	     *            Guards without parameters are assumed to be pure, but our guard depends on the
 	     *            slot kind which can change.
 	     */
+	    
+	    protected boolean isIntOrIllegal(VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Int || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
 	    protected boolean isLongOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Long || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
