@@ -9,8 +9,12 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameInstance.FrameAccess;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
+
+/**
+ * This builtin sets the variable named "true" in the caller frame to the boolean false
+ */
 @NodeInfo(shortName = "FalseEqualsFalse")
-public class GoFalseEqualsFalse {
+public abstract class GoFalseEqualsFalse extends GoBuiltinNode{
     @Specialization
     @TruffleBoundary
     public boolean change() {

@@ -11,7 +11,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 /**
- * This builtin sets the variable named "hello" in the caller frame to the string "world".
+ * This builtin sets the variable named "true" in the caller frame to the boolean true
  */
 @NodeInfo(shortName = "TrueEqualsTrue")
 public abstract class GoTrueEqualsTrue extends GoBuiltinNode {
