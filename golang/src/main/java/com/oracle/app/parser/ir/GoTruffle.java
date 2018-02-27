@@ -113,16 +113,14 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdent();
 		GoExpressionNode result;
-		
+		//Cannot check for if writing value yet
 		if(node.parent instanceof GoIRArrayListExprNode) {
 	        
 	        final FrameSlot frameSlot = lexicalScope.locals.get(name);
 	        if (frameSlot != null) {
 	            /* Read of a local variable. */
-	        	System.out.println("yoyooy");
 	        	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	        } else {
-	        	System.out.println("-------");
 	            /* Read of a global name. In our language, the only global names are functions. */
 	        	return (GoExpressionNode)new GoFunctionLiteralNode(language, name);
 	        }
