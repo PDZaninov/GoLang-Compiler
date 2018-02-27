@@ -18,7 +18,7 @@ public class GoIRValueSpecNode extends GoBaseIRNode {
 		this.expr = expr;
 		setChildParent();
 	}
-	
+
 	public GoIRArrayListExprNode getNames(){
 		return names;
 	}
@@ -34,8 +34,12 @@ public class GoIRValueSpecNode extends GoBaseIRNode {
 	@Override
 	public void setChildParent() {
 		names.setParent(this);
-		type.setParent(this);
-		expr.setParent(this);
+		if(type != null){
+			type.setParent(this);
+		}
+		if(expr != null){
+			expr.setParent(this);
+		}
 		
 	}
 

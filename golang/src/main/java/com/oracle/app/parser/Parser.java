@@ -173,8 +173,7 @@ public class Parser {
 				
 			case "CallExpr":
 				GoBaseIRNode functionNode = body.get("Fun");
-				GoIRExprNode n = (GoIRExprNode) body.get("Args");
-				GoIRArrayListExprNode args = (GoIRArrayListExprNode) n.getChild();
+				GoIRArrayListExprNode args = (GoIRArrayListExprNode) body.get("Args");
 				return new GoIRInvokeNode(functionNode,args);
 				
 			case "DeclStmt":
@@ -194,7 +193,7 @@ public class Parser {
 					list1.add(child);
 				}
 				
-				return new GoIRExprNode(new GoIRArrayListExprNode(list1));
+				return new GoIRArrayListExprNode(list1);
 				
 			case "ExprStmt":
 				return new GoIRExprStmtNode(body.get("X"));
@@ -224,7 +223,7 @@ public class Parser {
 					identlist.add(child);
 				}
 				
-				return new GoIRExprNode(new GoIRArrayListExprNode(identlist));
+				return new GoIRArrayListExprNode(identlist);
 				
 			case "Ident":
 				GoBaseIRNode obj = body.get("Obj");
@@ -251,7 +250,7 @@ public class Parser {
 					speclist.add(child);
 				}
 				
-				return new GoIRExprNode(new GoIRArrayListExprNode(speclist));
+				return new GoIRArrayListExprNode(speclist);
 				
 			case "Stmt":
 				ArrayList<GoBaseIRNode> stmtlist = new ArrayList<>();

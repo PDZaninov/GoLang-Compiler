@@ -159,8 +159,12 @@ public class GoVisitor implements GoIRVisitor {
 	public Object visitValueSpec(GoIRValueSpecNode node) {
 		System.out.println("ValueSpec node: "+ node.toString());
 		node.getNames().accept(this);
-		node.getType().accept(this);
-		node.getExpr().accept(this);
+		if(node.getType() != null){
+			node.getType().accept(this);
+		}
+		if(node.getExpr() != null){
+			node.getExpr().accept(this);
+		}
 		return null;
 	}
 
