@@ -14,37 +14,18 @@ import com.oracle.truffle.api.nodes.Node.Children;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 /**
- * A statement node that just executes a list of other statements.
+ * Node holding a child node which holds the array of node arguments
  */
 @NodeInfo(shortName = "Expr", description = "The node implementing a source code Expr")
 public final class GoExprNode extends GoExpressionNode {
 
-    /**
-     * The array of child nodes. The annotation {@link com.oracle.truffle.api.nodes.Node.Children
-     * Children} informs Truffle that the field contains multiple children. It is a Truffle
-     * requirement that the field is {@code final} and an array of nodes.
-     */
+
     @Child private GoExpressionNode bodyNode;
 
     public GoExprNode(GoExpressionNode bodyNode) {
         this.bodyNode = bodyNode;
     }
 
-    /**
-     * Execute all child statements. The annotation {@link ExplodeLoop} triggers full unrolling of
-     * the loop during compilation. This allows the {@link GoStatementNode#executeVoid} method of
-     * all children to be inlined.
-     */
-    
-    @Override
-    @ExplodeLoop
-    public void executeVoid(VirtualFrame frame) {
-        /*
-         * This assertion illustrates that the array length is really a constant during compilation.
-         */
-        bodyNode.executeVoid(frame);
-    }
-    
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		
