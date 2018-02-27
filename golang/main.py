@@ -9,9 +9,11 @@ def parse(FILE_NAME):
     
 
 CWD = os.getcwd() + "/gofiles"
-print (CWD)
 for filename in os.listdir(CWD):
     SHORTENED_FILENAME = os.path.splitext(filename)[0]
+    print("Making AST for " + SHORTENED_FILENAME + " ...")
     parse(SHORTENED_FILENAME)
 for filename in os.listdir(os.getcwd() + "/astfiles"):
-    os.system("./astfiles/gt " + os.getcwd() + "/" + filename)
+    print("Running ./gt on file " + filename)
+    DIRECTORY = "/astfiles"
+    os.system("." + DIRECTORY + "/gt " + os.getcwd() + DIRECTORY +"/" + filename)
