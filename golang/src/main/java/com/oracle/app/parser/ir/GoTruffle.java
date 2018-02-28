@@ -91,6 +91,8 @@ public class GoTruffle implements GoIRVisitor {
 		this.language = language;
 		this.source = source;
         this.allFunctions = new HashMap<>();
+        //Creates a block to cover for idents located outside of a function body
+        startBlock();
     }
 
     public Map<String, GoRootNode> getAllFunctions() {
@@ -134,17 +136,16 @@ public class GoTruffle implements GoIRVisitor {
 		String name = node.getIdent();
 		GoExpressionNode result = null;
 		//Cannot check for if writing value yet
-		if(node.parent instanceof GoIRArrayListExprNode) {
-	        
-	        final FrameSlot frameSlot = lexicalscope.locals.get(name);
-	        if (frameSlot != null) {
+	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
+	    if (frameSlot != null) {
 	            /* Read of a local variable. */
-	        	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
-	        } /*else {
+	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
+	    } 
+	    	/*else {
 	             Read of a global name. In our language, the only global names are functions. 
 	        	return (GoExpressionNode)new GoFunctionLiteralNode(language, name);
 	        }*/
-		}else {
+		else {
 			result = null;
 			if(node.getChild() != null)
 				result = (GoExpressionNode) node.getChild().accept(this);
