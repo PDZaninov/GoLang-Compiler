@@ -244,6 +244,10 @@ public class GoTruffle implements GoIRVisitor {
 				result = new GoIntNode(Integer.parseInt(value));
 				break;
 			case "STRING":
+				value = value.substring(2, value.length()-2);
+				value = value.replace("\\\\", "\\");
+				
+				value = StringEscape.unescape_perl_string(value);
 				result = new GoStringNode(value);
 				break;
 			default:
