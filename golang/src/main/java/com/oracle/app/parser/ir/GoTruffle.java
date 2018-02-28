@@ -40,6 +40,7 @@ import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
+import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
@@ -234,7 +235,7 @@ public class GoTruffle implements GoIRVisitor {
 				result = new GoIntNode(Integer.parseInt(value));
 				break;
 			case "FLOAT":
-				result = new GoIntNode(Integer.parseInt(value));
+				result = new GoFloatNode(Float.parseFloat(value));
 				break;
 			case "IMAG":
 				result = new GoIntNode(Integer.parseInt(value));
@@ -243,6 +244,10 @@ public class GoTruffle implements GoIRVisitor {
 				result = new GoIntNode(Integer.parseInt(value));
 				break;
 			case "STRING":
+				value = value.substring(2, value.length()-2);
+				value = value.replace("\\\\", "\\");
+				
+				value = StringEscape.unescape_perl_string(value);
 				result = new GoStringNode(value);
 				break;
 			default:
