@@ -32,6 +32,11 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     protected int readInt(VirtualFrame frame){
     	return FrameUtil.getIntSafe(frame, getSlot());
     }
+    
+    @Specialization(guards = "isFloat(frame)")
+    protected float readFloat(VirtualFrame frame){
+    	return FrameUtil.getFloatSafe(frame, getSlot());
+    }
 
     @Specialization(guards = "isLong(frame)")
     protected long readLong(VirtualFrame frame) {
@@ -47,8 +52,13 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     protected boolean readBoolean(VirtualFrame frame) {
         return FrameUtil.getBooleanSafe(frame, getSlot());
     }
+    
+    @Specialization(guards = "isString(frame)")
+    protected String readString(VirtualFrame frame) {
+        return (String) FrameUtil.getObjectSafe(frame, getSlot());
+    }
 
-    @Specialization(replaces = {"readInt", "readLong", "readBoolean"})
+    @Specialization(replaces = {"readInt", "readFloat", "readLong", "readBoolean", "readString"})
     protected Object readObject(VirtualFrame frame) {
         if (!frame.isObject(getSlot())) {
             /*
@@ -79,11 +89,20 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     protected boolean isInt(VirtualFrame frame){
     	return getSlot().getKind() == FrameSlotKind.Int;
     }
+    
+    protected boolean isFloat(VirtualFrame frame){
+    	return getSlot().getKind() == FrameSlotKind.Float;
+    }
+    
     protected boolean isLong(VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Long;
     }
 
     protected boolean isBoolean(@SuppressWarnings("unused") VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Boolean;
+    }
+    
+    protected boolean isString(@SuppressWarnings("unused") VirtualFrame frame) {
+        return getSlot().getKind() == FrameSlotKind.Object;
     }
 }

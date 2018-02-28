@@ -34,12 +34,16 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        frame.setInt(getSlot(), value);
 	        return value;
 	    }
+	    
+	    @Specialization(guards = "isFloatOrIllegal(frame)")
+	    protected float writeFloat(VirtualFrame frame, float value) {
+	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
+	        getSlot().setKind(FrameSlotKind.Float);
 
-	    /**
-	     * Specialized method to write a primitive {@code long} value. This is only possible if the
-	     * local variable also has currently the type {@code long} or was never written before,
-	     * therefore a Truffle DSL {@link #isLongOrIllegal(VirtualFrame) custom guard} is specified.
-	     */
+	        frame.setFloat(getSlot(), value);
+	        return value;
+	    }
+
 	    @Specialization(guards = "isLongOrIllegal(frame)")
 	    protected long writeLong(VirtualFrame frame, long value) {
 	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
@@ -57,6 +61,15 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        frame.setBoolean(getSlot(), value);
 	        return value;
 	    }
+	    
+	    @Specialization(guards = "isStringOrIllegal(frame)")
+	    protected String writeString(VirtualFrame frame, String value) {
+	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
+	        getSlot().setKind(FrameSlotKind.Object);
+
+	        frame.setObject(getSlot(), value);
+	        return value;
+	    }
 
 	    /**
 	     * Generic write method that works for all possible types.
@@ -68,7 +81,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	     * {@link Object}, it is guaranteed to never fail, i.e., once we are in this specialization the
 	     * node will never be re-specialized.
 	     */
-	    @Specialization(replaces = {"writeInt", "writeLong", "writeBoolean"})
+	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString"})
 	    protected Object write(VirtualFrame frame, Object value) {
 	        /*
 	         * Regardless of the type before, the new and final type of the local variable is Object.
@@ -95,11 +108,20 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    protected boolean isIntOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Int || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
+	    
+	    protected boolean isFloatOrIllegal(VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Float || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
+	    
 	    protected boolean isLongOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Long || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 
 	    protected boolean isBooleanOrIllegal(@SuppressWarnings("unused") VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Boolean || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
+	    
+	    protected boolean isStringOrIllegal(@SuppressWarnings("unused") VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 }
