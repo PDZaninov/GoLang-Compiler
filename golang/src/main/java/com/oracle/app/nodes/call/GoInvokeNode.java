@@ -9,13 +9,6 @@ import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-/**
- * The node for function invocation in SL. Since SL has first class functions, the {@link SLFunction
- * target function} can be computed by an arbitrary expression. This node is responsible for
- * evaluating this expression, as well as evaluating the {@link #argumentNodes arguments}. The
- * actual dispatch is then delegated to a chain of {@link SLDispatchNode} that form a polymorphic
- * inline cache.
- */
 @NodeInfo(shortName = "invoke")
 public class GoInvokeNode extends GoExpressionNode {
 

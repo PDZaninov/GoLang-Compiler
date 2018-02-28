@@ -27,6 +27,11 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
      * created by the Truffle DSL based on the {@link NodeField} annotation on the class.
      */
     protected abstract FrameSlot getSlot();
+    
+    @Specialization(guards = "isInt(frame)")
+    protected int readInt(VirtualFrame frame){
+    	return FrameUtil.getIntSafe(frame, getSlot());
+    }
 
     @Specialization(guards = "isLong(frame)")
     protected long readLong(VirtualFrame frame) {
@@ -43,7 +48,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return FrameUtil.getBooleanSafe(frame, getSlot());
     }
 
-    @Specialization(replaces = {"readLong", "readBoolean"})
+    @Specialization(replaces = {"readInt", "readLong", "readBoolean"})
     protected Object readObject(VirtualFrame frame) {
         if (!frame.isObject(getSlot())) {
             /*
@@ -70,6 +75,10 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
      *            Guards without parameters are assumed to be pure, but our guard depends on the
      *            slot kind which can change.
      */
+    
+    protected boolean isInt(VirtualFrame frame){
+    	return getSlot().getKind() == FrameSlotKind.Int;
+    }
     protected boolean isLong(VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Long;
     }

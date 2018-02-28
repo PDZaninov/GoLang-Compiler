@@ -11,11 +11,26 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.GoBasicNode;
-import com.oracle.app.nodes.GoExprNode;
-import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoTruffle;
+import com.oracle.app.parser.ir.GoVisitor;
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
 // Parses a go file ast dump
@@ -28,12 +43,15 @@ public class Parser {
 	
 	private final String file; // the file we open
 	private GoLanguage language; // language we are passed
+	private Source source;
 	private BufferedReader reader; // used to read file
 	private String currentLine; // String of the current line we are on
 	private Matcher matchedTerm; // used for regex/parsing of file
-	private Pattern astPattern = Pattern.compile("\\.[a-zA-Z]+"); //for getting the type of node
+	private Pattern astPattern = Pattern.compile("\\[\\]\\*ast\\.\\w+|\\.\\w+"); //for getting the type of node
+	private Pattern arrayPattern = Pattern.compile("\\[\\]");
+	private Pattern nodeTypePattern = Pattern.compile("\\w+:|\"\\w+\"");
 	private Pattern attrPattern= Pattern.compile("(\\w+): \"(.+)\"|(\\w+): (.+)"); //for getting the attributes
-	private GoNodeFactory factory; //used to call functions to create nodes
+	//private GoNodeFactory factory; DEPRECATED
 	
 
 	/*Constructor
@@ -43,9 +61,12 @@ public class Parser {
 	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
 		this.file = source.getName();
 		this.language = language;
+		this.source = source;
 		reader = new BufferedReader(new FileReader(this.file));
-		factory = new GoNodeFactory(language,source);
+		//factory = new GoNodeFactory(language,source);
 	}
+
+	
 	/* TODO what are we doing to the .File
 	 * Purpose:
 	 * Start the parse process. Also returns the hashmap with the nodes inside.
@@ -56,19 +77,24 @@ public class Parser {
 	 */
 	public Map<String, GoRootNode> beginParse() throws IOException{
 		String type;
-		
+		GoBaseIRNode k = null;
 		while((currentLine = reader.readLine()) != null){
 			matchedTerm = astPattern.matcher(currentLine);
 			if(matchedTerm.find()){
 			
-				type = matchedTerm.group();
-				if(type.equals(".File")){
-					factory.startFunction();
-					recParse(type.substring(1));
-				}
+				type = matchedTerm.group().substring(1);
+				k = recParse(type);
 			}
 		}
-		return factory.getAllFunctions();
+		//dumpTree(k,0);
+		
+		//GoVisitor visitor = new GoVisitor();
+		//k.accept(visitor);
+		
+		GoTruffle truffleVisitor = new GoTruffle(language, source);
+		k.accept(truffleVisitor);
+		
+		return truffleVisitor.getAllFunctions();
 	}
 	
 	/*Purpose: 
@@ -81,8 +107,8 @@ public class Parser {
 	 * the first node it tried to parse.
 	 * Not sure if needed.
 	 */
-	private GoStatementNode recParse(String currNode) throws IOException {
-		ArrayList<GoStatementNode> body = new ArrayList<>();
+	private GoBaseIRNode recParse(String currNode) throws IOException {
+		Map<String, GoBaseIRNode> body = new HashMap<>();
 		Map<String, String> attrs = new HashMap<>();
 		String nodeName = currNode;
 		int bindex;//used to get start of the match of the reg ex.
@@ -93,21 +119,20 @@ public class Parser {
 			if(currentLine.indexOf('}') != -1) {
 				
 	    		//creating itself, going up
-				return getNodeType(nodeName,attrs,body);
+				return getIRNode(nodeName,attrs,body);
 
 	    	}
 	    	else if(currentLine.indexOf('{') >= 0) {
 	    		//going deeper into the tree creating children first
-	    		
 	    		matchedTerm = astPattern.matcher(currentLine);
 	    		if(matchedTerm.find()){
 	    			String nodeType = matchedTerm.group().substring(1);
-	    			if(nodeType.equals("FuncDecl")){
-	    				factory.startBlock();
-	    			}
-	    			GoStatementNode par = recParse(nodeType);
-	    			if(par != null)
-	    				body.add(par);
+	    			matchedTerm = nodeTypePattern.matcher(currentLine);
+	    			matchedTerm.find();
+	    			String type = matchedTerm.group();
+	    			type = type.substring(0,type.length()-1);
+	    			body.put(type, recParse(nodeType));
+	    			
 	    		}
 	    	}
 	    	else {
@@ -124,116 +149,129 @@ public class Parser {
 	    		}
 	    	}
 		}
+		
 		return null;
 	}
-/*
- * TODO
- * eventually replace with map[nodetype] = new node
- * or something like that i believe
- * and maybe get rid of the place holder GoBasicNode
- * Purpose:
- * create and return the creation of the node of type nodeType
- *  with body for children and attrs for attributes
- *  with parse makes a structure of function -> body -> lots of children 
- * Input: 
- * String nodeType: a string of the nodeType for the switch case
- * ArrayList attrs: an arraylist of the attributed for the
- * ArrayList body: contains children if any
- * Output:
- * the creation of the node
- * may do GoBasicNode if no good mapping is available.
- */
-	public GoStatementNode getNodeType(String nodeType, Map<String,String> attrs, ArrayList<GoStatementNode> body) throws IOException{
-
+	
+	
+	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "AssignStmt":
-				return factory.createGoWriteLocalVariableNode(body);
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "BasicLit":
-				return factory.createBasicLit(attrs.get("Value"),attrs.get("Kind"));
+				return new GoIRBasicLitNode(attrs.get("Kind"),attrs.get("Value"));
+				
 			case "BinaryExpr":
-				return factory.createBinaryExprNode(attrs.get("Op"),body);
+				return new GoIRBinaryExprNode(attrs.get("Op"),body.get("X"),body.get("Y"));
+				
 			case "UnaryExpr":
-				return factory.createUnaryExprNode(attrs.get("Op"),body);
+				return new GoIRUnaryNode(attrs.get("Op"),body.get("X"));
+				
 			case "BlockStmt":
-				//needs to return a block node
-				return factory.createFunctionBlock(body);
+				return new GoIRBlockStmtNode((GoIRStmtNode) body.get("List"));
+				
 			case "CallExpr":
-				//Create invoke node
-				return factory.createInvoke(body);
+				GoBaseIRNode functionNode = body.get("Fun");
+				GoIRArrayListExprNode args = (GoIRArrayListExprNode) body.get("Args");
+				return new GoIRInvokeNode(functionNode,args);
+				
+			case "DeclStmt":
+				return new GoIRDeclStmtNode(body.get("Decl"));
+				
 			case "Decl":
-				//Start a new lexical scope for decls
-				return factory.createDecl(body);
+				ArrayList<GoBaseIRNode> list = new ArrayList<>();
+				for(GoBaseIRNode child : body.values()){
+					list.add(child);
+				}
+				return new GoIRDeclNode(list);
+				
 			case "Expr":
-				return factory.createExpr(body);
+				
+				ArrayList<GoBaseIRNode> list1 = new ArrayList<>();
+				for(GoBaseIRNode child : body.values()){
+					list1.add(child);
+				}
+				
+				return new GoIRArrayListExprNode(list1);
+				
 			case "ExprStmt":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+				return new GoIRExprStmtNode(body.get("X"));
+				
 			case "FieldList":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "File":
-				return factory.createFileNode(nodeType,body.toArray(new GoStatementNode[body.size()]));
-			case "FuncDecl":
-				//Start a new lexical scope
-				//System.out.println(nodeType+" "+body);
-				factory.createFunction(body);
-				break;
+				return new GoTempIRNode(nodeType,attrs,body);
+				
+			case "FuncDecl"://(GoBaseIRNode receiver, GoBaseIRNode name, GoBaseIRNode type, GoBaseIRNode body)
+				GoBaseIRNode recv = body.get("Recv");
+				GoBaseIRNode name = body.get("Name");
+				GoBaseIRNode type = body.get("Type");
+				GoBaseIRNode func_body = body.get("Body");
+				return new GoIRFuncDeclNode(recv,name,type,func_body);
+				
 			case "FuncType":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "GenDecl":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+				return new GoIRGenDeclNode(attrs.get("Tok"),(GoIRArrayListExprNode) body.get("Specs"));
+				
+			case "]*ast.Ident":
+				ArrayList<GoBaseIRNode> identlist = new ArrayList<>();
+				for(GoBaseIRNode child : body.values()){
+					identlist.add(child);
+				}
+				
+				return new GoIRArrayListExprNode(identlist);
+				
 			case "Ident":
-				//Should also cover cases of having an object attatched
-				String fname =attrs.get("Name");
-				return factory.createIdentNode(fname,body);
+				GoBaseIRNode obj = body.get("Obj");
+				return new GoIRIdentNode(attrs.get("Name"),obj);
+				
 			case "ImportSpec":
-				System.out.println(nodeType);
-				break;
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "Object":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "ParenExpr":
-				return new GoExprNode((GoExpressionNode) body.get(0));
+				return new GoIRExprStmtNode(body.get("X"));
+				
 			case "Scope":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "SelectorExpr":
-				System.out.println(nodeType);
-				break;
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "Spec":
-				System.out.println(nodeType);
-				break;
+				ArrayList<GoBaseIRNode> speclist = new ArrayList<>();
+				for(GoBaseIRNode child : body.values()){
+					speclist.add(child);
+				}
+				
+				return new GoIRArrayListExprNode(speclist);
+				
 			case "Stmt":
-				return new GoBasicNode(nodeType, body.toArray(new GoExpressionNode[body.size()]));
+				ArrayList<GoBaseIRNode> stmtlist = new ArrayList<>();
+				for(GoBaseIRNode children : body.values()){
+					stmtlist.add(children);
+				}
+				return new GoIRStmtNode(stmtlist);
+				
+			case "ValueSpec":
+				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");
+				GoBaseIRNode valuetype = body.get("Type");
+				GoIRArrayListExprNode values = (GoIRArrayListExprNode) body.get("Values");
+				return new GoIRValueSpecNode(names,valuetype,values);
+				
 			default:
 				System.out.println("Error, in default: " + nodeType);
 				
 		}
-		return null;
+		return new GoTempIRNode(nodeType,attrs,body);
 	}
-	/* Purpose:
-	 * To find a string within an array list then return whatever comes after :
-	 * Input: 
-	 * String attr - search for the string attr in the arraylist...
-	 * ArrayList<String> attrs - Arraylist of attributes of a node
-	 * Output:
-	 * -String of the value attached to the given input
-	 * Example:
-	 * searchAttr("Value: ", attrs);
-	 * will find the line with "Value: "hello""
-	 * and return hello
-	 */
-	public String searchAttr(String attr, ArrayList<String> attrs) {
-		
-		String name = "";
-		for(int i = 0; i < attrs.size(); i++) {
-			if(attrs.get(i).contains(attr)) {
-				name = attrs.get(i);
-			}
-		}
-		if(!name.isEmpty()) {
-			name = name.split(": ", 2)[1];
-			name = name.substring(1, name.length()-1);
-		}
-		return name;
-		
-	}
+
 	/*
 	 * This is what is called to start building the ast.
 	 * Called from GoLanguage.java
@@ -244,4 +282,5 @@ public class Parser {
 		Parser parser = new Parser(language, source);
 		return parser.beginParse();
 	}
+	
 }
