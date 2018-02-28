@@ -62,8 +62,16 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.source.Source;
 
+/**
+ * Constructs the Truffle tree using a visitor pattern to visit
+ * every node in the IRTree and translate the information into Truffle
+ *
+ */
 public class GoTruffle implements GoIRVisitor {
-
+	/**
+	 * LexicalScope holds the symbol table information when creating the Truffle tree
+	 *
+	 */
     static class LexicalScope {
         protected final LexicalScope outer;
         protected final Map<String, FrameSlot> locals;
