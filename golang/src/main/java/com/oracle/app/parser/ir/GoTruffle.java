@@ -47,14 +47,17 @@ import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
@@ -416,6 +419,24 @@ public class GoTruffle implements GoIRVisitor {
 		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
 		//we return another array into the parent array.
 		return new GoArrayExprNode(result);
+	}
+
+	@Override
+	public Object visitForLoop(GoIRForNode node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object visitBranchStmt(GoIRBranchStmtNode node) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
