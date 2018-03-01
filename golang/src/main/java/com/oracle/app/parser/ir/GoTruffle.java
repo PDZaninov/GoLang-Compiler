@@ -14,6 +14,9 @@ import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
+import com.oracle.app.nodes.controlflow.GoBreakNode;
+import com.oracle.app.nodes.controlflow.GoContinueNode;
+import com.oracle.app.nodes.controlflow.GoForNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
@@ -22,11 +25,13 @@ import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
+import com.oracle.app.nodes.expression.GoDecNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
+import com.oracle.app.nodes.expression.GoIncNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
@@ -423,20 +428,62 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitForLoop(GoIRForNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		GoExpressionNode init = (GoExpressionNode) node.getInit().accept(this);
+		GoExpressionNode cond = (GoExpressionNode) node.getCond().accept(this);
+		GoExpressionNode post = (GoExpressionNode) node.getPost().accept(this);
+		GoStatementNode body = (GoStatementNode) node.getBody().accept(this);
+		return new GoForNode(init, cond, post, body);
+		
 	}
 
 	@Override
 	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		GoExpressionNode child = (GoExpressionNode) node.getChild().accept(this);
+		String op = node.getOp();
+		final GoExpressionNode result;
+		switch(op) {
+			case "++":
+				result = GoIncNodeGen.create(child);
+				break;
+			case "--":
+				result = GoDecNodeGen.create(child);
+				break;
+			default:
+				throw new RuntimeException("Unexpected Operation: " + op);
+		}
+		return result;
 	}
 
 	@Override
 	public Object visitBranchStmt(GoIRBranchStmtNode node) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		//The child is for the goto implementation
+		//TODO
+		
+		GoExpressionNode child;
+		if(node.getChild() != null)
+			child = (GoExpressionNode) node.getChild().accept(this);
+		
+		String type = node.getType();
+		GoStatementNode result = null;
+		switch(type) {
+			case "break":
+				result = new GoBreakNode();
+				break;
+			case "continue":
+				result = new GoContinueNode();
+				break;
+			case "goto":
+				System.out.println("BranchStmt Token: GOTO needs implementation");
+				break;
+			case "fallthrough":
+				System.out.println("BranchStmt Token: FALLTHROUGH needs implementation");
+				break;
+			default:
+				throw new RuntimeException("Unexpected BranchStmt: " + type);
+		}
+		
+		return result;
 	}
 
 }
