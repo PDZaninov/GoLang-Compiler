@@ -339,7 +339,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoStatementNode[] arguments = new GoStatementNode[argumentsize];
 		ArrayList<GoBaseIRNode> children = node.getChildren();
 		for(int i = 0; i < argumentsize; i++){
-			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
+			arguments[i] = (GoStatementNode) children.get(i).accept(this);
 		}
 		return arguments;
 	}
@@ -428,10 +428,17 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitForLoop(GoIRForNode node) {
-		GoExpressionNode init = (GoExpressionNode) node.getInit().accept(this);
-		GoExpressionNode cond = (GoExpressionNode) node.getCond().accept(this);
-		GoExpressionNode post = (GoExpressionNode) node.getPost().accept(this);
-		GoStatementNode body = (GoStatementNode) node.getBody().accept(this);
+		GoExpressionNode init = null;
+		GoExpressionNode cond = null;
+		GoExpressionNode post = null;
+		GoStatementNode body;
+		if(node.getInit() != null)
+			init = (GoExpressionNode) node.getInit().accept(this);
+		if(node.getCond() != null)
+			cond = (GoExpressionNode) node.getCond().accept(this);
+		if(node.getPost() != null)
+			post = (GoExpressionNode) node.getPost().accept(this);
+		body = (GoStatementNode) node.getBody().accept(this);
 		return new GoForNode(init, cond, post, body);
 		
 	}
