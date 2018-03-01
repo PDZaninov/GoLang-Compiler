@@ -6,6 +6,7 @@ import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
@@ -16,7 +17,14 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     
     @Specialization(guards = "isInt(frame)")
     protected int readInt(VirtualFrame frame){
-    	return FrameUtil.getIntSafe(frame, getSlot());
+    	int result;
+    	try{
+    		result = FrameUtil.getIntSafe(frame, getSlot());
+    	}
+    	catch(IllegalStateException e){
+    		result = 0;
+    	}
+    	return result;
     }
 
     @Specialization(guards = "isLong(frame)")
