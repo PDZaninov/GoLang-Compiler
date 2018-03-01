@@ -24,6 +24,15 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        frame.setInt(getSlot(), value);
 	        return value;
 	    }
+	    
+	    @Specialization(guards = "isFloatOrIllegal(frame)")
+	    protected float writeFloat(VirtualFrame frame, float value) {
+	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
+	        getSlot().setKind(FrameSlotKind.Float);
+
+	        frame.setFloat(getSlot(), value);
+	        return value;
+	    }
 
 	    @Specialization(guards = "isLongOrIllegal(frame)")
 	    protected long writeLong(VirtualFrame frame, long value) {
@@ -41,8 +50,18 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        frame.setBoolean(getSlot(), value);
 	        return value;
 	    }
+	    
+	    @Specialization(guards = "isStringOrIllegal(frame)")
+	    protected String writeString(VirtualFrame frame, String value) {
+	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
+	        getSlot().setKind(FrameSlotKind.Object);
 
-	    @Specialization(replaces = {"writeInt", "writeLong", "writeBoolean"})
+	        frame.setObject(getSlot(), value);
+	        return value;
+	    }
+
+
+	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString"})
 	    protected Object write(VirtualFrame frame, Object value) {
 
 	        getSlot().setKind(FrameSlotKind.Object);
@@ -54,11 +73,20 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    protected boolean isIntOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Int || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
+	    
+	    protected boolean isFloatOrIllegal(VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Float || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
+	    
 	    protected boolean isLongOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Long || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 
 	    protected boolean isBooleanOrIllegal(@SuppressWarnings("unused") VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Boolean || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
+	    
+	    protected boolean isStringOrIllegal(@SuppressWarnings("unused") VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 }
