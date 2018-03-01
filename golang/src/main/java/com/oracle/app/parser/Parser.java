@@ -19,13 +19,16 @@ import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
@@ -165,6 +168,9 @@ public class Parser {
 			case "BinaryExpr":
 				return new GoIRBinaryExprNode(attrs.get("Op"),body.get("X"),body.get("Y"));
 				
+			case "BranchStmt":
+				return new GoIRBranchStmtNode(attrs.get("Tok"),body.get("Label"));
+				
 			case "UnaryExpr":
 				return new GoIRUnaryNode(attrs.get("Op"),body.get("X"));
 				
@@ -204,6 +210,13 @@ public class Parser {
 			case "File":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
+			case "ForStmt":
+				GoBaseIRNode init = body.get("Init");
+				GoBaseIRNode cond = body.get("Cond");
+				GoBaseIRNode post = body.get("Post");
+				GoBaseIRNode for_body = body.get("Body");
+				return new GoIRForNode(init,cond,post,for_body);
+				
 			case "FuncDecl"://(GoBaseIRNode receiver, GoBaseIRNode name, GoBaseIRNode type, GoBaseIRNode body)
 				GoBaseIRNode recv = body.get("Recv");
 				GoBaseIRNode name = body.get("Name");
@@ -231,6 +244,9 @@ public class Parser {
 				
 			case "ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
+				
+			case "IncDecStmt":
+				return new GoIRIncDecStmtNode(attrs.get("Tok"),body.get("X"));
 				
 			case "Object":
 				return new GoTempIRNode(nodeType,attrs,body);

@@ -17,7 +17,10 @@ public class GoForNode extends GoStatementNode {
 
     public GoForNode(GoExpressionNode init, GoExpressionNode conditionNode, GoExpressionNode post, GoStatementNode bodyNode) {
     	this.init = init;
-        this.loopNode = Truffle.getRuntime().createLoopNode(new GoForRepeatingNode(conditionNode,post,bodyNode));
+    	if(post != null)
+    		this.loopNode = Truffle.getRuntime().createLoopNode(new GoForRepeatingNode(conditionNode,post,bodyNode));
+    	else
+    		this.loopNode = Truffle.getRuntime().createLoopNode(new GoForWhileNode(conditionNode,bodyNode));
     }
 
     @Override
@@ -29,6 +32,7 @@ public class GoForNode extends GoStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
+    	
         loopNode.executeLoop(frame);
     }
 }

@@ -9,23 +9,17 @@ public class GoIRBranchStmtNode extends GoBaseIRNode {
 	
 	private String type;
 	
-	private String ident;
 	
 	private GoBaseIRNode child;
 	
-	public GoIRBranchStmtNode(String type, String ident, GoBaseIRNode child) {
+	public GoIRBranchStmtNode(String type,GoBaseIRNode child) {
 		super("BranchStmt");
 		this.type = type;
-		this.ident = ident;
 		this.child = child;
 	}
 	
 	public String getType() {
 		return type;
-	}
-	
-	public String getIdent() {
-		return ident;
 	}
 	
 	@Override

@@ -173,19 +173,25 @@ public class GoVisitor implements GoIRVisitor {
 
 	@Override
 	public Object visitForLoop(GoIRForNode node) {
-		// TODO Auto-generated method stub
+		System.out.println("For node: "+ node.toString());
+		node.getInit().accept(this);
+		node.getCond().accept(this);
+		node.getPost().accept(this);
+		node.getBody().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
-		// TODO Auto-generated method stub
+		System.out.println("IncDec node: "+ node.toString());
+		node.getChild().accept(this);
 		return null;
 	}
 
 	@Override
 	public Object visitBranchStmt(GoIRBranchStmtNode node) {
-		// TODO Auto-generated method stub
+		System.out.println("BranchStmt node: "+ node.toString());
+		node.getChild().accept(this);
 		return null;
 	}
 
