@@ -19,8 +19,10 @@ public class GoForNode extends GoStatementNode {
     	this.init = init;
     	if(post != null)
     		this.loopNode = Truffle.getRuntime().createLoopNode(new GoForRepeatingNode(conditionNode,post,bodyNode));
-    	else
+    	else if (conditionNode != null)
     		this.loopNode = Truffle.getRuntime().createLoopNode(new GoForWhileNode(conditionNode,bodyNode));
+    	else
+    		this.loopNode = Truffle.getRuntime().createLoopNode(new GoForBreakNode(bodyNode));
     }
 
     @Override
