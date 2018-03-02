@@ -1,6 +1,7 @@
 package com.oracle.app.parser.ir;
 
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRAssignStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
@@ -61,5 +62,7 @@ public interface GoIRVisitor {
 	Object visitIncDecStmt(GoIRIncDecStmtNode node);
 	
 	Object visitBranchStmt(GoIRBranchStmtNode node);
+
+	Object visitAssignStmt(GoIRAssignStmtNode goIRAssignStmtNode);
 
 }
