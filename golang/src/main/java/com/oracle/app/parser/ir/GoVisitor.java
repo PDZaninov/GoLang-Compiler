@@ -195,12 +195,5 @@ public class GoVisitor implements GoIRVisitor {
 			node.getChild().accept(this);
 		return null;
 	}
-		
-	public Object visitAssignStmt(GoIRAssignStmtNode node) {
-		System.out.println(node.toString());
-		node.getLeft().accept(this);
-		node.getRight().accept(this);
-		return null;
-	}
 
 }

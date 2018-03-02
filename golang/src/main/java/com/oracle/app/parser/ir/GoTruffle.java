@@ -524,19 +524,4 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		return result;
 	}
-		
-	public Object visitAssignStmt(GoIRAssignStmtNode node) {
-		GoExpressionNode[] names  = (GoExpressionNode[]) node.getLeft().accept(this);
-		GoExpressionNode[] values = (GoExpressionNode[]) node.getRight().accept(this);
-		String type = node.getToken();
-		GoExpressionNode result;
-		switch(type){
-		case "=":
-			
-		default:
-			result = null;
-			System.out.println("Unimplemented token "+ type);
-		}
-		return result;
-	}
 }
