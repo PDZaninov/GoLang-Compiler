@@ -26,6 +26,7 @@ import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
@@ -228,7 +229,9 @@ public class Parser {
 			case "Ident":
 				GoBaseIRNode obj = body.get("Obj");
 				return new GoIRIdentNode(attrs.get("Name"),obj);
-				
+
+			case "IfStmt":
+				return new GoIRIfNode(Init ,attrs.get("Cond") ,body, attrs.get("Else"));
 			case "ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
 				

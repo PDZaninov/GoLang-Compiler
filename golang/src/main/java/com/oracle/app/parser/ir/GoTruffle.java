@@ -5,16 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.GoArrayExprNode;
-import com.oracle.app.nodes.GoExprNode;
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoIdentNode;
-import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.nodes.*;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
+import com.oracle.app.nodes.controlflow.GoIfStmtNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
@@ -42,22 +38,7 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.source.Source;
@@ -122,8 +103,18 @@ public class GoTruffle implements GoIRVisitor {
 		return arguments;
     }
 
+	public Object visitIfStmt(GoIRIfStmtNode node){
+		GoExpressionNode CondNode = (GoExpressionNode) node.getCond().accept(this);
+		GoBlockNode Body = (GoBlockNode)node.getBody().accept(this);
+		GoBlockNode Else = (GoBlockNode)node.getElse().accept(this);
+
+		return new GoIfStmtNode(CondNode,Body,Else);
+
+	}
+
+
 	@Override
-	public Object visitObject(GoBaseIRNode node) {
+	public Object Object(GoBaseIRNode node) {
 		System.out.println("Visited Truffle temp: " + node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)

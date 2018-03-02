@@ -10,8 +10,8 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.expression.GoUnboxNodeGen;
 
-@NodeInfo(shortName = "if", description = "The node implementing a condional statement")
-public final class GoIfNode extends GoStatementNode {
+@NodeInfo(shortName = "if", description = "The node implementing a conditional statement")
+public final class GoIfStmtNode extends GoStatementNode {
 
     @Child private GoExpressionNode conditionNode;
 
@@ -28,7 +28,7 @@ public final class GoIfNode extends GoStatementNode {
      */
     private final ConditionProfile condition = ConditionProfile.createCountingProfile();
 
-    public GoIfNode(GoExpressionNode conditionNode, GoStatementNode thenNode, GoStatementNode elseNode) {
+    public GoIfStmtNode(GoExpressionNode conditionNode, GoStatementNode thenNode, GoStatementNode elseNode) {
         this.conditionNode = GoUnboxNodeGen.create(conditionNode);
         this.thenNode = thenNode;
         this.elseNode = elseNode;
