@@ -19,9 +19,6 @@ import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 
 public class GoVisitor implements GoIRVisitor {
 
-	public GoVisitor() {
-		
-	}
 
 	@Override
 	public Object visitObject(GoBaseIRNode node) {
