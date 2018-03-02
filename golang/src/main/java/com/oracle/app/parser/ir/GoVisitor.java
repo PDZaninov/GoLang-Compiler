@@ -4,14 +4,17 @@ import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
@@ -21,9 +24,6 @@ import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 
 public class GoVisitor implements GoIRVisitor {
 
-	public GoVisitor() {
-		
-	}
 
 	@Override
 	public Object visitObject(GoBaseIRNode node) {
@@ -179,6 +179,17 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getList() != null){
 			node.getList().accept(this);
 		}
+
+	public Object visitForLoop(GoIRForNode node) {
+		System.out.println("For node: "+ node.toString());
+		if(node.getInit() != null)
+			node.getInit().accept(this);
+		if(node.getCond() != null)
+			node.getCond().accept(this);
+		if(node.getPost() != null)
+			node.getPost().accept(this);
+		node.getBody().accept(this);
+
 		return null;
 	}
 
@@ -194,6 +205,18 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getBody() != null){
 			node.getBody().accept(this);
 		}
+
+	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
+		System.out.println("IncDec node: "+ node.toString());
+		node.getChild().accept(this);
+		return null;
+	}
+
+	@Override
+	public Object visitBranchStmt(GoIRBranchStmtNode node) {
+		System.out.println("BranchStmt node: "+ node.toString());
+		if(node.getChild() != null)
+			node.getChild().accept(this);
 		return null;
 	}
 

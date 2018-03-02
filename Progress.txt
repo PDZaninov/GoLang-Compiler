@@ -1,5 +1,6 @@
 To Do:
 -variables
+    -Simple variable case
 -if/else
 -toolchain (run from go source code)
 -Test cases running compilation from go and truffle and comparing output
