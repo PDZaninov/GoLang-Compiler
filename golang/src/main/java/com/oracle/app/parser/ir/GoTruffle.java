@@ -44,7 +44,6 @@ import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
@@ -428,6 +427,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode[] result = new GoExpressionNode[names.length];
 		//Unbalanced arrays arent actually a thing. Thats a mismatch error
 		//TO-DO remove the second for loop and check for empty array or not
+		//Throw an exception when values array has values but unbalanced
 		for(int i = 0; i < values.length; i++){
 			String name = "";
 			FrameSlot frameSlot = null;
@@ -449,20 +449,5 @@ public class GoTruffle implements GoIRVisitor {
 		return new GoArrayExprNode(result);
 	}
 
-	@Override
-	public Object visitAssignStmt(GoIRAssignStmtNode node) {
-		GoExpressionNode[] names  = (GoExpressionNode[]) node.getLeft().accept(this);
-		GoExpressionNode[] values = (GoExpressionNode[]) node.getRight().accept(this);
-		String type = node.getToken();
-		GoExpressionNode result;
-		switch(type){
-		case "=":
-			
-		default:
-			result = null;
-			System.out.println("Unimplemented token "+ type);
-		}
-		return result;
-	}
 
 }

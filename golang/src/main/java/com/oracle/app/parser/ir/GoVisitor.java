@@ -1,7 +1,6 @@
 package com.oracle.app.parser.ir;
 
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
@@ -163,14 +162,6 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getExpr() != null){
 			node.getExpr().accept(this);
 		}
-		return null;
-	}
-
-	@Override
-	public Object visitAssignStmt(GoIRAssignStmtNode node) {
-		System.out.println(node.toString());
-		node.getLeft().accept(this);
-		node.getRight().accept(this);
 		return null;
 	}
 
