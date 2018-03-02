@@ -143,11 +143,13 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdent();
+		System.out.println("name of ident: " + name);
 		GoExpressionNode result = null;
 		//Cannot check for if writing value yet
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
+	    	System.out.println(name + " is a read node");
 	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	    } 
 	    	/*else {
