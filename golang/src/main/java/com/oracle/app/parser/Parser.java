@@ -165,6 +165,15 @@ public class Parser {
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "AssignStmt":
+				GoIRArrayListExprNode lhs = (GoIRArrayListExprNode) body.get("Lhs");
+				GoIRArrayListExprNode rhs = (GoIRArrayListExprNode) body.get("Rhs");
+				String assigntype = attrs.get("Tok");
+				switch(assigntype){
+				case "=":
+					return new GoIRValueSpecNode(lhs,null,rhs);
+				default:
+					System.out.println("Missing Assignment case " + assigntype);
+				}
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "BasicLit":

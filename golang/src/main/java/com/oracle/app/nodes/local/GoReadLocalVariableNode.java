@@ -13,7 +13,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 
-    protected abstract FrameSlot getSlot();
+    public abstract FrameSlot getSlot();
     
     @Specialization(guards = "isInt(frame)")
     protected int readInt(VirtualFrame frame){

@@ -37,12 +37,14 @@ import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
+import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRAssignStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
@@ -415,34 +417,52 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitValueSpec(GoIRValueSpecNode node) {
 		GoExpressionNode[] names = (GoExpressionNode[]) node.getNames().accept(this);
-		GoExpressionNode defaultval = (GoExpressionNode)node.getType().accept(this);
+		GoExpressionNode defaultval = null;
+		if(node.getType() != null){
+			defaultval = (GoExpressionNode)node.getType().accept(this);
+		}
 		GoExpressionNode[] values = null;
 		if(node.getExpr() != null){
 			values = (GoExpressionNode[])node.getExpr().accept(this);
 		}
 		GoExpressionNode[] result = new GoExpressionNode[names.length];
-		int i = 0;
-		String name;
-		if(values != null){
-
-			for(; i < values.length; i++){
+		//Unbalanced arrays arent actually a thing. Thats a mismatch error
+		//TO-DO remove the second for loop and check for empty array or not
+		for(int i = 0; i < values.length; i++){
+			String name = "";
+			FrameSlot frameSlot = null;
+			if(names[i] instanceof GoIdentNode){
 				name = ((GoIdentNode) names[i]).getName();
-				FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
-				lexicalscope.locals.put(name, frameSlot);
-				result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
-			
+				frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 			}
-		}
-		for(;i<names.length;i++){
-			name = ((GoIdentNode) names[i]).getName();
-			FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+			else if(names[i] instanceof GoReadLocalVariableNode){
+				frameSlot = ((GoReadLocalVariableNode) names[i]).getSlot();
+			}
+			
 			lexicalscope.locals.put(name, frameSlot);
-			result[i] = GoWriteLocalVariableNodeGen.create(defaultval, frameSlot);
+			result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
+			
 		}
 		//Placeholder node. There should be a better way of doing this.
 		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
 		//we return another array into the parent array.
 		return new GoArrayExprNode(result);
+	}
+
+	@Override
+	public Object visitAssignStmt(GoIRAssignStmtNode node) {
+		GoExpressionNode[] names  = (GoExpressionNode[]) node.getLeft().accept(this);
+		GoExpressionNode[] values = (GoExpressionNode[]) node.getRight().accept(this);
+		String type = node.getToken();
+		GoExpressionNode result;
+		switch(type){
+		case "=":
+			
+		default:
+			result = null;
+			System.out.println("Unimplemented token "+ type);
+		}
+		return result;
 	}
 
 }
