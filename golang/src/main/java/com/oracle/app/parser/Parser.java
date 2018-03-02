@@ -156,6 +156,12 @@ public class Parser {
 		return null;
 	}
 	
+	public GoIRValueSpecNode assignToValueSpec(GoIRArrayListExprNode l, GoIRArrayListExprNode r){
+		GoBaseIRNode temp = new GoIRBinaryExprNode("+",l.getChildren().get(0),r.getChildren().get(0));
+		r.getChildren().set(0, temp);
+		return new GoIRValueSpecNode(l,null,r);
+	}
+	
 	/**
 	 * Create the IRNode.
 	 * Match the nodetype to a switch case to create the specific IRNode that corresponds to
@@ -174,6 +180,8 @@ public class Parser {
 				switch(assigntype){
 				case "=":
 					return new GoIRValueSpecNode(lhs,null,rhs);
+				case "+=":
+					return assignToValueSpec(lhs,rhs);
 				default:
 					System.out.println("Missing Assignment case " + assigntype);
 				}
