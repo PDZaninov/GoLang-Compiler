@@ -16,6 +16,8 @@ import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 
 public class GoVisitor implements GoIRVisitor {
 
@@ -164,6 +166,33 @@ public class GoVisitor implements GoIRVisitor {
 		}
 		if(node.getExpr() != null){
 			node.getExpr().accept(this);
+		}
+		return null;
+	}
+
+	@Override
+	public Object visitCaseClause(GoIRCaseClauseNode node) {
+		System.out.println("CaseClause node: " + node.toString());
+		if(node.getBody() != null){
+			node.getBody().accept(this);
+		}
+		if(node.getList() != null){
+			node.getList().accept(this);
+		}
+		return null;
+	}
+
+	@Override
+	public Object visitSwitchStmt(GoIRSwitchStmtNode node) {
+		System.out.println("SwitchStmt node: " + node.toString());
+		if(node.getInit() != null){
+			node.getInit().accept(this);
+		}
+		if(node.getTag() != null){
+			node.getTag().accept(this);
+		}
+		if(node.getBody() != null){
+			node.getBody().accept(this);
 		}
 		return null;
 	}

@@ -31,6 +31,8 @@ import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.truffle.api.source.Source;
 
 // Parses a go file ast dump
@@ -175,6 +177,9 @@ public class Parser {
 				GoBaseIRNode functionNode = body.get("Fun");
 				GoIRArrayListExprNode args = (GoIRArrayListExprNode) body.get("Args");
 				return new GoIRInvokeNode(functionNode,args);
+
+			case "CaseClause":
+				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRArrayListExprNode) body.get("Body"));
 				
 			case "DeclStmt":
 				return new GoIRDeclStmtNode(body.get("Decl"));
@@ -258,6 +263,9 @@ public class Parser {
 					stmtlist.add(children);
 				}
 				return new GoIRStmtNode(stmtlist);
+
+			case "SwitchStmt":
+				return new GoIRSwitchStmtNode(body.get("Init"), body.get("Tag"), body.get("Body"));
 				
 			case "ValueSpec":
 				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");

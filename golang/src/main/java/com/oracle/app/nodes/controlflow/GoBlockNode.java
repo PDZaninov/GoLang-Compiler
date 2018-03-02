@@ -48,6 +48,7 @@ public final class GoBlockNode extends GoStatementNode {
         }
     }
 
+
     public List<GoStatementNode> getStatements() {
         return Collections.unmodifiableList(Arrays.asList(bodyNodes));
     }

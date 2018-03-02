@@ -16,6 +16,8 @@ import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoSwtichStmtNode;
 
 public interface GoIRVisitor {
 	
@@ -52,5 +54,9 @@ public interface GoIRVisitor {
 	Object visitGenDecl(GoIRGenDeclNode goIRGenDeclNode);
 
 	Object visitValueSpec(GoIRValueSpecNode goIRValueSpecNode);
+
+	Oject visitCaseClause(GoIRCaseClauseNode goIRCaseClauseNode);
+
+	Object visitSwitchStmt(GoIRSwitchStmtNode goIRSwitchStmtNode);
 
 }
