@@ -67,6 +67,8 @@ import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -484,6 +486,39 @@ public class GoTruffle implements GoIRVisitor {
 	}
 
 	@Override
+
+	public Object visitCaseClause(GoIRCaseClauseNode node) {
+		GoExpressionNode[] list = null;
+		GoStatementNode[]  body = null;
+
+		if (node.getList != null){
+			list = (GoExprNode[]) node.getList().accept(this);
+		}
+		if (node.getBody != null) {
+			body = (GoStatementNode[]) node.getBody().accept(this);
+		}
+
+		return new GoCaseClauseNode(list, body);
+	}
+
+	@Override
+	public Object visitSwitchStmt(GoIRSwitchStmtNode node) {
+		GoStatementNode init = null;
+		GoExpressionNode tag = null;
+		GoBlockNode body = null;
+
+		if (node.getInit != null){
+			init = (GoStatementNode) node.getInit().accept(this);
+		}
+		if (node.getTag != null){
+			tag = (GoExprNode) node.getTag().accept(this);
+		}
+		if (node.getBody != null){
+			body = (GoBlockNode) node.getBody().accept(this);
+		}
+
+		return new GoSwitchNode(init, tag, body);
+
 	public Object visitForLoop(GoIRForNode node) {
 		GoExpressionNode init = null;
 		GoExpressionNode cond = null;
