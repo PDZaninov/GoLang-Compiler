@@ -113,8 +113,8 @@ public class GoTruffle implements GoIRVisitor {
         this.allFunctions = new HashMap<>();
         //Creates a block to cover for idents located outside of a function body
         startFunction();
-        FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot("int",FrameSlotKind.Int);
-		lexicalscope.locals.put("int", frameSlot);
+        //FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot("int",FrameSlotKind.Int);
+		//lexicalscope.locals.put("int", frameSlot);
         
     }
 
@@ -436,22 +436,46 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		GoExpressionNode[] result = new GoExpressionNode[names.length];
 		//Unbalanced arrays arent actually a thing. Thats a mismatch error
-		//TO-DO remove the second for loop and check for empty array or not
 		//Throw an exception when values array has values but unbalanced
-		for(int i = 0; i < values.length; i++){
-			String name = "";
-			FrameSlot frameSlot = null;
-			if(names[i] instanceof GoIdentNode){
-				name = ((GoIdentNode) names[i]).getName();
-				frameSlot = frameDescriptor.findOrAddFrameSlot(name);
-			}
-			else if(names[i] instanceof GoReadLocalVariableNode){
-				frameSlot = ((GoReadLocalVariableNode) names[i]).getSlot();
-			}
+		if(values != null){
+			for(int i = 0; i < names.length; i++){
+				String name = "";
+				FrameSlot frameSlot = null;
+				if(names[i] instanceof GoIdentNode){
+					name = ((GoIdentNode) names[i]).getName();
+					frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+				}
+				else if(names[i] instanceof GoReadLocalVariableNode){
+					frameSlot = ((GoReadLocalVariableNode) names[i]).getSlot();
+				}
 			
-			lexicalscope.locals.put(name, frameSlot);
-			result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
+				lexicalscope.locals.put(name, frameSlot);
+				result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
 			
+			}
+		}
+		else{
+			String type = ((GoIdentNode)defaultval).getName();
+			GoExpressionNode val = null;
+			switch (type){
+			case "int":
+				val = new GoIntNode(0);
+				break;
+			case "string":
+				val = new GoStringNode("");
+				break;
+			case "float":
+				val = new GoFloatNode(0);
+				break;
+			default:
+				System.out.println("Unimplemented ValueSpec default case "+type);
+			}
+			for(int i = 0; i < names.length; i++){
+				String name = ((GoIdentNode) names[i]).getName();
+				FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+				lexicalscope.locals.put(name, frameSlot);
+				result[i] = GoWriteLocalVariableNodeGen.create(val, frameSlot);
+			}
 		}
 		//Placeholder node. There should be a better way of doing this.
 		//Issue: Parent node is a GoNodeExpresion[] filling its array,but

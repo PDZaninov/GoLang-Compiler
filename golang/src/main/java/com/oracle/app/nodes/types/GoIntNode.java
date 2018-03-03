@@ -17,7 +17,7 @@ public class GoIntNode extends GoExpressionNode {
 
     @Override
     public String toString() {
-        return "" + this.number;
+        return "" + number;
     }
 
 	@Override

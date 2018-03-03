@@ -182,6 +182,8 @@ public class Parser {
 					return new GoIRValueSpecNode(lhs,null,rhs);
 				case "+=":
 					return assignToValueSpec(lhs,rhs);
+				case ":=":
+					return new GoIRValueSpecNode(lhs,null,rhs);
 				default:
 					System.out.println("Missing Assignment case " + assigntype);
 				}
