@@ -181,15 +181,12 @@ public class Parser {
 				case "=":
 					return new GoIRValueSpecNode(lhs,null,rhs);
 				case "+=":
-					return assignToValueSpec("+",lhs,rhs);
 				case "-=":
-					return assignToValueSpec("-",lhs,rhs);
 				case "*=":
-					return assignToValueSpec("*",lhs,rhs);
 				case "/=":
-					return assignToValueSpec("/",lhs,rhs);
 				case "%=":
-					return assignToValueSpec("%",lhs,rhs);
+					assigntype = assigntype.substring(0,1);
+					return assignToValueSpec(assigntype,lhs,rhs);
 				case ":=":
 					return new GoIRValueSpecNode(lhs,null,rhs);
 				default:
