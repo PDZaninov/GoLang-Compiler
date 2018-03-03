@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.app.parser.ir.GoIRStmtNode;
-import com.oracle.app.parser.ir.GoIRBlockStmtNode;
 
 public class GoIRSwitchStmtNode extends GoBaseIRNode {
 

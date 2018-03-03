@@ -210,7 +210,7 @@ public class Parser {
 				return new GoIRInvokeNode(functionNode,args);
 
 			case "CaseClause":
-				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRArrayListExprNode) body.get("Body"));
+				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRStmtNode) body.get("Body"));
 				
 			case "DeclStmt":
 				return new GoIRDeclStmtNode(body.get("Decl"));
@@ -306,7 +306,10 @@ public class Parser {
 				return new GoIRStmtNode(stmtlist);
 
 			case "SwitchStmt":
-				return new GoIRSwitchStmtNode(body.get("Init"), body.get("Tag"), body.get("Body"));
+				GoIRStmtNode switchinit = (GoIRStmtNode) body.get("Init");
+				GoBaseIRNode tag = body.get("Tag");
+				GoIRBlockStmtNode switchbody = (GoIRBlockStmtNode) body.get("Body");
+				return new GoIRSwitchStmtNode(switchinit, tag, switchbody);
 				
 			case "ValueSpec":
 				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");

@@ -179,6 +179,8 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getList() != null){
 			node.getList().accept(this);
 		}
+		return null;
+	}
 
 	public Object visitForLoop(GoIRForNode node) {
 		System.out.println("For node: "+ node.toString());
@@ -205,6 +207,8 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getBody() != null){
 			node.getBody().accept(this);
 		}
+		return null;
+	}
 
 	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
 		System.out.println("IncDec node: "+ node.toString());

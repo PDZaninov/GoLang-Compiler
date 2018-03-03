@@ -57,8 +57,8 @@ public final class GoBlockNode extends GoStatementNode {
      * @param value: Value of the tag passed in from Switch statement.
      */
     public void executVoid(VirtualFrame frame, Object value) {
-        for (GoStatementNode case : bodyNodes){
-            if (case.executeVoid(frame, value)){
+        for (GoStatementNode node : bodyNodes){
+            if (((GoCaseClauseNode)node).executeVoid(frame, value)){
                 break;
             }
         }
@@ -68,15 +68,4 @@ public final class GoBlockNode extends GoStatementNode {
         return Collections.unmodifiableList(Arrays.asList(bodyNodes));
     }
 
-    /*
-	@Override
-	public Object executeGeneric(VirtualFrame frame) {
-		for (GoStatementNode statement : bodyNodes) {
-			if(statement != null){
-				statement.executeVoid(frame);
-			}
-        }
-		return null;
-	}
-	*/
 }
