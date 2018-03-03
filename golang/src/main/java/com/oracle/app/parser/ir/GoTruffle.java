@@ -465,13 +465,13 @@ public class GoTruffle implements GoIRVisitor {
 
 	public Object visitCaseClause(GoIRCaseClauseNode node) {
 		GoExpressionNode[] list = null;
-		GoStatementNode[] = body = null;
+		GoStatementNode[]  body = null;
 
 		if (node.getList != null){
 			list = (GoExprNode[]) node.getList().accept(this);
 		}
 		if (node.getBody != null) {
-			body = (GoStatementNodep[]) node.getBody().accept(this);
+			body = (GoStatementNode[]) node.getBody().accept(this);
 		}
 
 		return new GoCaseClauseNode(list, body);
