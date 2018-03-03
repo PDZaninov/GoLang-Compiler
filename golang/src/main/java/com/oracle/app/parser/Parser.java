@@ -156,6 +156,14 @@ public class Parser {
 		return null;
 	}
 	
+	/**
+	 * Assignment operators assumed to only have one child in lhs and rhs
+	 * else there is an error
+	 * @param op
+	 * @param l
+	 * @param r
+	 * @return
+	 */
 	public GoIRValueSpecNode assignToValueSpec(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r){
 		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0));
 		r.getChildren().set(0, temp);
