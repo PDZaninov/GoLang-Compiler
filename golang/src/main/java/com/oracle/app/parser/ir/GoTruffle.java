@@ -15,9 +15,11 @@ import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
+import com.oracle.app.nodes.controlflow.GoCaseClauseNode;
 import com.oracle.app.nodes.controlflow.GoContinueNode;
 import com.oracle.app.nodes.controlflow.GoForNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
+import com.oracle.app.nodes.controlflow.GoSwitchNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
@@ -53,6 +55,7 @@ import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
@@ -65,10 +68,9 @@ import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -491,10 +493,10 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode[] list = null;
 		GoStatementNode[]  body = null;
 
-		if (node.getList != null){
-			list = (GoExprNode[]) node.getList().accept(this);
+		if (node.getList() != null){
+			list = (GoExpressionNode[]) node.getList().accept(this);
 		}
-		if (node.getBody != null) {
+		if (node.getBody() != null) {
 			body = (GoStatementNode[]) node.getBody().accept(this);
 		}
 
@@ -507,17 +509,18 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode tag = null;
 		GoBlockNode body = null;
 
-		if (node.getInit != null){
+		if (node.getInit() != null){
 			init = (GoStatementNode) node.getInit().accept(this);
 		}
-		if (node.getTag != null){
-			tag = (GoExprNode) node.getTag().accept(this);
+		if (node.getTag() != null){
+			tag = (GoExpressionNode) node.getTag().accept(this);
 		}
-		if (node.getBody != null){
+		if (node.getBody() != null){
 			body = (GoBlockNode) node.getBody().accept(this);
 		}
 
 		return new GoSwitchNode(init, tag, body);
+	}
 
 	public Object visitForLoop(GoIRForNode node) {
 		GoExpressionNode init = null;
@@ -537,19 +540,36 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
-		GoExpressionNode child = (GoExpressionNode) node.getChild().accept(this);
-		String op = node.getOp();
+		
 		final GoExpressionNode result;
+		GoIRIdentNode ident = (GoIRIdentNode) node.getChild();
+		GoIRBasicLitNode one = new GoIRBasicLitNode("INT", "1");
+		
+		String op = node.getOp();
+		final GoIRBinaryExprNode binary_expr;
 		switch(op) {
 			case "++":
-				result = GoIncNodeGen.create(child);
+				binary_expr = new GoIRBinaryExprNode("+", ident, one);
 				break;
 			case "--":
-				result = GoDecNodeGen.create(child);
+				binary_expr = new GoIRBinaryExprNode("-", ident, one);
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: " + op);
 		}
+		
+		ArrayList<GoBaseIRNode> name_list = new ArrayList<>();
+		name_list.add(ident);
+		
+		ArrayList<GoBaseIRNode> arg_list = new ArrayList<>();
+		arg_list.add(binary_expr);
+		
+		GoIRArrayListExprNode names = new GoIRArrayListExprNode(name_list);
+		GoIRArrayListExprNode values = new GoIRArrayListExprNode(arg_list);
+		
+		GoIRValueSpecNode res = new GoIRValueSpecNode(names, null, values);
+		result = (GoExpressionNode) res.accept(this);
+		
 		return result;
 	}
 

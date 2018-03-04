@@ -1,11 +1,9 @@
-package com.oracle.app.nodes.controlflow
+package com.oracle.app.nodes.controlflow;
 
-import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.Node.Children;
-import come.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.nodes.NodeInfo;
 
 @NodeInfo(shortName = "case clause", description = "A node implementing a single case in a switch statement")
 public final class GoCaseClauseNode extends GoStatementNode {
@@ -13,7 +11,7 @@ public final class GoCaseClauseNode extends GoStatementNode {
     @Children private final GoExpressionNode[] list;
     @Children private final GoStatementNode[]  body;
 
-    public GoCaseClauseNode(GoExpressionNodep[] list, GoStatementNodep[] body) {
+    public GoCaseClauseNode(GoExpressionNode[] list, GoStatementNode[] body) {
         this.list = list;
         this.body = body;
     }
@@ -26,10 +24,9 @@ public final class GoCaseClauseNode extends GoStatementNode {
      * @param frame: Virtual frame
      * @param value: Value of the tag passed from SwitchStatement and the block statement.
      */
-    @Override
-    public executeVoid(VirtualFrame frame, Object value){
+    public boolean executeVoid(VirtualFrame frame, Object value){
         for (GoExpressionNode caseListElem : list){
-            if (caseListElem.executeVoid(frame) == value){
+            if (caseListElem.executeGeneric(frame) == value){
                 for (GoStatementNode executeBody : body){
                     executeBody.executeVoid(frame);
                 }
@@ -38,5 +35,13 @@ public final class GoCaseClauseNode extends GoStatementNode {
         }
         return false;
     }
+
+	@Override
+	public void executeVoid(VirtualFrame frame) {
+		for(GoStatementNode node : body){
+			node.executeVoid(frame);
+		}
+		
+	}
 }
 

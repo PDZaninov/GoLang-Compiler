@@ -5,6 +5,7 @@ import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
@@ -17,10 +18,9 @@ import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoSwtichStmtNode;
 
 public interface GoIRVisitor {
 	
@@ -64,7 +64,7 @@ public interface GoIRVisitor {
 	
 	Object visitBranchStmt(GoIRBranchStmtNode node);
 
-	Oject visitCaseClause(GoIRCaseClauseNode goIRCaseClauseNode);
+	Object visitCaseClause(GoIRCaseClauseNode goIRCaseClauseNode);
 
 	Object visitSwitchStmt(GoIRSwitchStmtNode goIRSwitchStmtNode);
 

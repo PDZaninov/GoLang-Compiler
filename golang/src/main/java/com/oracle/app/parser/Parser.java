@@ -158,8 +158,16 @@ public class Parser {
 		return null;
 	}
 	
-	public GoIRValueSpecNode assignToValueSpec(GoIRArrayListExprNode l, GoIRArrayListExprNode r){
-		GoBaseIRNode temp = new GoIRBinaryExprNode("+",l.getChildren().get(0),r.getChildren().get(0));
+	/**
+	 * Assignment operators assumed to only have one child in lhs and rhs
+	 * else there is an error
+	 * @param op
+	 * @param l
+	 * @param r
+	 * @return
+	 */
+	public GoIRValueSpecNode assignToValueSpec(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r){
+		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0));
 		r.getChildren().set(0, temp);
 		return new GoIRValueSpecNode(l,null,r);
 	}
@@ -183,11 +191,16 @@ public class Parser {
 				case "=":
 					return new GoIRValueSpecNode(lhs,null,rhs);
 				case "+=":
-					return assignToValueSpec(lhs,rhs);
+				case "-=":
+				case "*=":
+				case "/=":
+				case "%=":
+					assigntype = assigntype.substring(0,1);
+					return assignToValueSpec(assigntype,lhs,rhs);
 				case ":=":
 					return new GoIRValueSpecNode(lhs,null,rhs);
 				default:
-					System.out.println("Missing Assignment case " + assigntype);
+					System.out.println("Error unknown assignment: " + assigntype);
 				}
 				return new GoTempIRNode(nodeType,attrs,body);
 				
@@ -212,7 +225,7 @@ public class Parser {
 				return new GoIRInvokeNode(functionNode,args);
 
 			case "CaseClause":
-				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRArrayListExprNode) body.get("Body"));
+				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRStmtNode) body.get("Body"));
 				
 			case "DeclStmt":
 				return new GoIRDeclStmtNode(body.get("Decl"));
@@ -308,7 +321,10 @@ public class Parser {
 				return new GoIRStmtNode(stmtlist);
 
 			case "SwitchStmt":
-				return new GoIRSwitchStmtNode(body.get("Init"), body.get("Tag"), body.get("Body"));
+				GoIRStmtNode switchinit = (GoIRStmtNode) body.get("Init");
+				GoBaseIRNode tag = body.get("Tag");
+				GoIRBlockStmtNode switchbody = (GoIRBlockStmtNode) body.get("Body");
+				return new GoIRSwitchStmtNode(switchinit, tag, switchbody);
 				
 			case "ValueSpec":
 				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");

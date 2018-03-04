@@ -4,17 +4,14 @@ import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.app.parser.ir.GoIRExprNode;
-import com.oracle.app.parser.ir.GoIRStmtNode;
-import com.oracle.app.parser.ir.GoIRArrayListExprNode;
 
 public class GoIRCaseClauseNode extends GoBaseIRNode {
 
     GoIRArrayListExprNode list;
 
-    GoIRArrayListExprNode body;
+    GoIRStmtNode body;
 
-    public GoIRExprNode(GoIRArrayListExprNode list, GoIRArrayListExprNode body) {
+    public GoIRCaseClauseNode(GoIRArrayListExprNode list, GoIRStmtNode body) {
         super("CaseClause");
         this.list = list;
         this.body = body;
@@ -37,7 +34,7 @@ public class GoIRCaseClauseNode extends GoBaseIRNode {
         return null;
     }
 
-    public GoIRArrayListExprNode getBody() {
+    public GoIRStmtNode getBody() {
         return body;
     }
 
