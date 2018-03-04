@@ -15,9 +15,11 @@ import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
+import com.oracle.app.nodes.controlflow.GoCaseClauseNode;
 import com.oracle.app.nodes.controlflow.GoContinueNode;
 import com.oracle.app.nodes.controlflow.GoForNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
+import com.oracle.app.nodes.controlflow.GoSwitchNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
@@ -53,6 +55,7 @@ import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
@@ -65,6 +68,7 @@ import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -484,6 +488,40 @@ public class GoTruffle implements GoIRVisitor {
 	}
 
 	@Override
+
+	public Object visitCaseClause(GoIRCaseClauseNode node) {
+		GoExpressionNode[] list = null;
+		GoStatementNode[]  body = null;
+
+		if (node.getList() != null){
+			list = (GoExpressionNode[]) node.getList().accept(this);
+		}
+		if (node.getBody() != null) {
+			body = (GoStatementNode[]) node.getBody().accept(this);
+		}
+
+		return new GoCaseClauseNode(list, body);
+	}
+
+	@Override
+	public Object visitSwitchStmt(GoIRSwitchStmtNode node) {
+		GoStatementNode init = null;
+		GoExpressionNode tag = null;
+		GoBlockNode body = null;
+
+		if (node.getInit() != null){
+			init = (GoStatementNode) node.getInit().accept(this);
+		}
+		if (node.getTag() != null){
+			tag = (GoExpressionNode) node.getTag().accept(this);
+		}
+		if (node.getBody() != null){
+			body = (GoBlockNode) node.getBody().accept(this);
+		}
+
+		return new GoSwitchNode(init, tag, body);
+	}
+
 	public Object visitForLoop(GoIRForNode node) {
 		GoExpressionNode init = null;
 		GoExpressionNode cond = null;
