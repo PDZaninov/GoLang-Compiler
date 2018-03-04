@@ -540,19 +540,36 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
-		GoExpressionNode child = (GoExpressionNode) node.getChild().accept(this);
-		String op = node.getOp();
+		
 		final GoExpressionNode result;
+		GoIRIdentNode ident = (GoIRIdentNode) node.getChild();
+		GoIRBasicLitNode one = new GoIRBasicLitNode("INT", "1");
+		
+		String op = node.getOp();
+		final GoIRBinaryExprNode binary_expr;
 		switch(op) {
 			case "++":
-				result = GoIncNodeGen.create(child);
+				binary_expr = new GoIRBinaryExprNode("+", ident, one);
 				break;
 			case "--":
-				result = GoDecNodeGen.create(child);
+				binary_expr = new GoIRBinaryExprNode("-", ident, one);
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: " + op);
 		}
+		
+		ArrayList<GoBaseIRNode> name_list = new ArrayList<>();
+		name_list.add(ident);
+		
+		ArrayList<GoBaseIRNode> arg_list = new ArrayList<>();
+		arg_list.add(binary_expr);
+		
+		GoIRArrayListExprNode names = new GoIRArrayListExprNode(name_list);
+		GoIRArrayListExprNode values = new GoIRArrayListExprNode(arg_list);
+		
+		GoIRValueSpecNode res = new GoIRValueSpecNode(names, null, values);
+		result = (GoExpressionNode) res.accept(this);
+		
 		return result;
 	}
 
