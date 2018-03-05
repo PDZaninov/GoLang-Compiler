@@ -2,7 +2,6 @@ package com.oracle.app.nodes.controlflow;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
-import com.oracle.app.nodes.expression.GoUnboxNodeGen;
 import com.oracle.truffle.api.dsl.UnsupportedSpecializationException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
@@ -25,7 +24,7 @@ public class GoForRepeatingNode extends Node implements RepeatingNode {
     private SourceSection sourceSection;
 
     public GoForRepeatingNode(GoExpressionNode conditionNode, GoExpressionNode post, GoStatementNode bodyNode) {
-        this.conditionNode = GoUnboxNodeGen.create(conditionNode);
+        this.conditionNode = conditionNode;
         this.post = post;
         this.bodyNode = bodyNode;
     }
