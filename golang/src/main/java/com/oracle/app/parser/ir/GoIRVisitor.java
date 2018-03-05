@@ -68,4 +68,5 @@ public interface GoIRVisitor {
 
 	Object visitSwitchStmt(GoIRSwitchStmtNode goIRSwitchStmtNode);
 
+
 }

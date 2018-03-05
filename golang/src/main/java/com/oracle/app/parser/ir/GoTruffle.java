@@ -33,6 +33,7 @@ import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
 import com.oracle.app.nodes.expression.GoIncNodeGen;
+import com.oracle.app.nodes.expression.GoIndexExprNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
@@ -47,6 +48,7 @@ import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
+import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
@@ -246,6 +248,10 @@ public class GoTruffle implements GoIRVisitor {
 		case"^":
 			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
 			break;
+		case"IndexExpr":
+			result = GoIndexExprNodeGen.create(leftNode, rightNode);
+			break;
+			
 		default:
 			throw new RuntimeException("Unexpected Operation: "+op);
 	}
@@ -459,20 +465,25 @@ public class GoTruffle implements GoIRVisitor {
 			}
 		}
 		else{
-			String type = ((GoIdentNode)defaultval).getName();
 			GoExpressionNode val = null;
-			switch (type){
-			case "int":
-				val = new GoIntNode(0);
-				break;
-			case "string":
-				val = new GoStringNode("");
-				break;
-			case "float":
-				val = new GoFloatNode(0);
-				break;
-			default:
-				System.out.println("Unimplemented ValueSpec default case "+type);
+			
+			if(defaultval instanceof GoIdentNode) {
+				String type = ((GoIdentNode)defaultval).getName();
+				switch (type){
+				case "int":
+					val = new GoIntNode(0);
+					break;
+				case "string":
+					val = new GoStringNode("");
+					break;
+				case "float":
+					val = new GoFloatNode(0);
+					break;
+				default:
+					System.out.println("Unimplemented ValueSpec default case "+type);
+				}
+			}else {
+				val =defaultval;
 			}
 			for(int i = 0; i < names.length; i++){
 				String name = ((GoIdentNode) names[i]).getName();
@@ -480,6 +491,7 @@ public class GoTruffle implements GoIRVisitor {
 				lexicalscope.locals.put(name, frameSlot);
 				result[i] = GoWriteLocalVariableNodeGen.create(val, frameSlot);
 			}
+			
 		}
 		//Placeholder node. There should be a better way of doing this.
 		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
@@ -603,4 +615,6 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		return result;
 	}
+	
+
 }

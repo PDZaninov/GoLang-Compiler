@@ -1,7 +1,6 @@
 package com.oracle.app.nodes.interop;
 
 
-import com.oracle.app.runtime.GoBigNumber;
 import com.oracle.truffle.api.dsl.Fallback;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
@@ -23,10 +22,6 @@ public abstract class GoTypeToForeignNode extends Node {
         return value;
     }
 
-    @Specialization
-    static TruffleObject fromObject(BigInteger value) {
-        return new GoBigNumber(value);
-    }
 
     @Fallback
     static Object identity(Object value) {

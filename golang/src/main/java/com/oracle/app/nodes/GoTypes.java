@@ -49,8 +49,10 @@ import com.oracle.truffle.api.dsl.TypeCast;
 import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.app.runtime.GoNull;
+
 
 /**
  * The type system of SL, as explained in {@link SLLanguage}. Based on the {@link TypeSystem}
@@ -58,7 +60,7 @@ import com.oracle.app.runtime.GoNull;
  * conversion methods for all types. In this class, we only cover types where the automatically
  * generated ones would not be sufficient.
  */
-@TypeSystem({int.class, float.class, long.class, BigInteger.class, boolean.class, String.class, GoFunction.class, GoNull.class})
+@TypeSystem({int.class, float.class, long.class, BigInteger.class, boolean.class, String.class, GoFunction.class, GoNull.class, Object[].class})
 public abstract class GoTypes {
 
     /**

@@ -104,4 +104,8 @@ public abstract class GoExpressionNode extends GoStatementNode {
 		return GoTypesGen.expectFloat(executeGeneric(frame));
 	}
 
+	public Object[] executeGoArray(VirtualFrame frame) throws UnexpectedResultException {
+		return GoTypesGen.expectObjectArray(executeGeneric(frame));
+	}
+
 }

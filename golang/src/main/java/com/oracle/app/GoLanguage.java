@@ -3,6 +3,7 @@ package com.oracle.app;
 import java.util.Map;
 
 import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.parser.Parser;
 import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.app.nodes.GoEvalRootNode;
@@ -10,7 +11,6 @@ import com.oracle.app.nodes.GoEvalRootNode;
 import com.oracle.app.runtime.GoNull;
 import com.oracle.app.runtime.GoContext;
 import com.oracle.app.runtime.GoFunction;
-import com.oracle.app.runtime.GoBigNumber;
 
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
@@ -119,9 +119,6 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
         if (value == GoNull.SINGLETON) {
             return "NULL";
         }
-        if (value instanceof GoBigNumber) {
-            return super.toString(context, ((GoBigNumber) value).getValue());
-        }
         if (value instanceof Long) {
             return Long.toString((Long) value);
         }
@@ -130,7 +127,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 
     @Override
     protected Object findMetaObject(GoContext context, Object value) {
-        if (value instanceof Number || value instanceof GoBigNumber) {
+        if (value instanceof Number ) {
             return "Number";
         }
         if (value instanceof Boolean) {
@@ -144,6 +141,9 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
         }
         if (value instanceof GoFunction) {
             return "Function";
+        }
+        if (value instanceof GoArray) {
+            return "GoArray";
         }
         return "Object";
     }
