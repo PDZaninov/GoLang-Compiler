@@ -24,7 +24,7 @@ public final class GoCaseClauseNode extends GoStatementNode {
      * @param frame: Virtual frame
      * @param value: Value of the tag passed from SwitchStatement and the block statement.
      */
-    public boolean executeVoid(VirtualFrame frame, Object value){
+    public boolean caseExecute(VirtualFrame frame, Object value){
         for (GoExpressionNode caseListElem : list){
             if (caseListElem.executeGeneric(frame) == value){
                 for (GoStatementNode executeBody : body){
