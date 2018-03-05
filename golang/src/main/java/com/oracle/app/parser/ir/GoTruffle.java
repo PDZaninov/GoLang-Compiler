@@ -9,8 +9,14 @@ import com.oracle.app.nodes.*;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
+import com.oracle.app.nodes.controlflow.GoBreakNode;
+import com.oracle.app.nodes.controlflow.GoCaseClauseNode;
+import com.oracle.app.nodes.controlflow.GoContinueNode;
+import com.oracle.app.nodes.controlflow.GoForNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.controlflow.GoIfStmtNode;
+import com.oracle.app.nodes.controlflow.GoSwitchNode;
+
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
@@ -18,11 +24,12 @@ import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
+import com.oracle.app.nodes.expression.GoDecNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
-import com.oracle.app.nodes.expression.GoFunctionLiteralNode;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
+import com.oracle.app.nodes.expression.GoIncNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
@@ -34,17 +41,51 @@ import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
+import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
+import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
+
 import com.oracle.app.parser.ir.nodes.*;
+
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.source.Source;
 
+/**
+ * Constructs the Truffle tree using a visitor pattern to visit
+ * every node in the IRTree and translate the information into Truffle
+ *
+ */
 public class GoTruffle implements GoIRVisitor {
-
+	/**
+	 * LexicalScope holds the symbol table information when creating the Truffle tree
+	 *
+	 */
     static class LexicalScope {
         protected final LexicalScope outer;
         protected final Map<String, FrameSlot> locals;
@@ -56,7 +97,9 @@ public class GoTruffle implements GoIRVisitor {
             this.locals = new HashMap<>();
             //If there is an outerscope then put all the variables in there
             //into this scope
-
+            if (outer != null) {
+                locals.putAll(outer.locals);
+            }
             }
         }
     
@@ -73,7 +116,10 @@ public class GoTruffle implements GoIRVisitor {
 		this.source = source;
         this.allFunctions = new HashMap<>();
         //Creates a block to cover for idents located outside of a function body
-        startBlock();
+        startFunction();
+        //FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot("int",FrameSlotKind.Int);
+		//lexicalscope.locals.put("int", frameSlot);
+        
     }
 
     public Map<String, GoRootNode> getAllFunctions() {
@@ -87,6 +133,7 @@ public class GoTruffle implements GoIRVisitor {
     public void startFunction(){
     	startBlock();
     	frameDescriptor = new FrameDescriptor();
+    	
     }
     
     public void finishBlock(){
@@ -125,11 +172,13 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdent();
+		System.out.println("name of ident: " + name);
 		GoExpressionNode result = null;
 		//Cannot check for if writing value yet
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
+	    	System.out.println(name + " is a read node");
 	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	    } 
 	    	/*else {
@@ -225,7 +274,7 @@ public class GoTruffle implements GoIRVisitor {
 				result = new GoIntNode(Integer.parseInt(value));
 				break;
 			case "FLOAT":
-				result = new GoIntNode(Integer.parseInt(value));
+				result = new GoFloatNode(Float.parseFloat(value));
 				break;
 			case "IMAG":
 				result = new GoIntNode(Integer.parseInt(value));
@@ -234,6 +283,10 @@ public class GoTruffle implements GoIRVisitor {
 				result = new GoIntNode(Integer.parseInt(value));
 				break;
 			case "STRING":
+				value = value.substring(2, value.length()-2);
+				value = value.replace("\\\\", "\\");
+				
+				value = StringEscape.unescape_perl_string(value);
 				result = new GoStringNode(value);
 				break;
 			default:
@@ -317,7 +370,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoStatementNode[] arguments = new GoStatementNode[argumentsize];
 		ArrayList<GoBaseIRNode> children = node.getChildren();
 		for(int i = 0; i < argumentsize; i++){
-			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
+			arguments[i] = (GoStatementNode) children.get(i).accept(this);
 		}
 		return arguments;
 	}
@@ -387,16 +440,56 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitValueSpec(GoIRValueSpecNode node) {
 		GoExpressionNode[] names = (GoExpressionNode[]) node.getNames().accept(this);
-		GoExpressionNode[] values = (GoExpressionNode[])node.getExpr().accept(this);
+		GoExpressionNode defaultval = null;
+		if(node.getType() != null){
+			defaultval = (GoExpressionNode)node.getType().accept(this);
+		}
+		GoExpressionNode[] values = null;
+		if(node.getExpr() != null){
+			values = (GoExpressionNode[])node.getExpr().accept(this);
+		}
 		GoExpressionNode[] result = new GoExpressionNode[names.length];
-		String name;
-		//Will need to check for null values arraylist.
-		for(int i = 0; i < names.length; i++){
-			 name = ((GoIdentNode) names[i]).getName();
-			 FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
-			 lexicalscope.locals.put(name, frameSlot);
-			 result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
+		//Unbalanced arrays arent actually a thing. Thats a mismatch error
+		//Throw an exception when values array has values but unbalanced
+		if(values != null){
+			for(int i = 0; i < names.length; i++){
+				String name = "";
+				FrameSlot frameSlot = null;
+				if(names[i] instanceof GoIdentNode){
+					name = ((GoIdentNode) names[i]).getName();
+					frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+				}
+				else if(names[i] instanceof GoReadLocalVariableNode){
+					frameSlot = ((GoReadLocalVariableNode) names[i]).getSlot();
+				}
 			
+				lexicalscope.locals.put(name, frameSlot);
+				result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
+			
+			}
+		}
+		else{
+			String type = ((GoIdentNode)defaultval).getName();
+			GoExpressionNode val = null;
+			switch (type){
+			case "int":
+				val = new GoIntNode(0);
+				break;
+			case "string":
+				val = new GoStringNode("");
+				break;
+			case "float":
+				val = new GoFloatNode(0);
+				break;
+			default:
+				System.out.println("Unimplemented ValueSpec default case "+type);
+			}
+			for(int i = 0; i < names.length; i++){
+				String name = ((GoIdentNode) names[i]).getName();
+				FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+				lexicalscope.locals.put(name, frameSlot);
+				result[i] = GoWriteLocalVariableNodeGen.create(val, frameSlot);
+			}
 		}
 		//Placeholder node. There should be a better way of doing this.
 		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
@@ -404,4 +497,120 @@ public class GoTruffle implements GoIRVisitor {
 		return new GoArrayExprNode(result);
 	}
 
+	@Override
+
+	public Object visitCaseClause(GoIRCaseClauseNode node) {
+		GoExpressionNode[] list = null;
+		GoStatementNode[]  body = null;
+
+		if (node.getList() != null){
+			list = (GoExpressionNode[]) node.getList().accept(this);
+		}
+		if (node.getBody() != null) {
+			body = (GoStatementNode[]) node.getBody().accept(this);
+		}
+
+		return new GoCaseClauseNode(list, body);
+	}
+
+	@Override
+	public Object visitSwitchStmt(GoIRSwitchStmtNode node) {
+		GoStatementNode init = null;
+		GoExpressionNode tag = null;
+		GoBlockNode body = null;
+
+		if (node.getInit() != null){
+			init = (GoStatementNode) node.getInit().accept(this);
+		}
+		if (node.getTag() != null){
+			tag = (GoExpressionNode) node.getTag().accept(this);
+		}
+		if (node.getBody() != null){
+			body = (GoBlockNode) node.getBody().accept(this);
+		}
+
+		return new GoSwitchNode(init, tag, body);
+	}
+
+	public Object visitForLoop(GoIRForNode node) {
+		GoExpressionNode init = null;
+		GoExpressionNode cond = null;
+		GoExpressionNode post = null;
+		GoStatementNode body;
+		if(node.getInit() != null)
+			init = (GoExpressionNode) node.getInit().accept(this);
+		if(node.getCond() != null)
+			cond = (GoExpressionNode) node.getCond().accept(this);
+		if(node.getPost() != null)
+			post = (GoExpressionNode) node.getPost().accept(this);
+		body = (GoStatementNode) node.getBody().accept(this);
+		return new GoForNode(init, cond, post, body);
+		
+	}
+
+	@Override
+	public Object visitIncDecStmt(GoIRIncDecStmtNode node) {
+		
+		final GoExpressionNode result;
+		GoIRIdentNode ident = (GoIRIdentNode) node.getChild();
+		GoIRBasicLitNode one = new GoIRBasicLitNode("INT", "1");
+		
+		String op = node.getOp();
+		final GoIRBinaryExprNode binary_expr;
+		switch(op) {
+			case "++":
+				binary_expr = new GoIRBinaryExprNode("+", ident, one);
+				break;
+			case "--":
+				binary_expr = new GoIRBinaryExprNode("-", ident, one);
+				break;
+			default:
+				throw new RuntimeException("Unexpected Operation: " + op);
+		}
+		
+		ArrayList<GoBaseIRNode> name_list = new ArrayList<>();
+		name_list.add(ident);
+		
+		ArrayList<GoBaseIRNode> arg_list = new ArrayList<>();
+		arg_list.add(binary_expr);
+		
+		GoIRArrayListExprNode names = new GoIRArrayListExprNode(name_list);
+		GoIRArrayListExprNode values = new GoIRArrayListExprNode(arg_list);
+		
+		GoIRValueSpecNode res = new GoIRValueSpecNode(names, null, values);
+		result = (GoExpressionNode) res.accept(this);
+		
+		return result;
+	}
+
+	@Override
+	public Object visitBranchStmt(GoIRBranchStmtNode node) {
+		
+		//The child is for the goto implementation
+		//TODO
+		
+		GoExpressionNode child;
+		if(node.getChild() != null)
+			child = (GoExpressionNode) node.getChild().accept(this);
+		
+		String type = node.getType();
+		GoStatementNode result = null;
+		switch(type) {
+			case "break":
+				result = new GoBreakNode();
+				break;
+			case "continue":
+				result = new GoContinueNode();
+				break;
+			case "goto":
+				System.out.println("BranchStmt Token: GOTO needs implementation");
+				break;
+			case "fallthrough":
+				System.out.println("BranchStmt Token: FALLTHROUGH needs implementation");
+				break;
+			default:
+				throw new RuntimeException("Unexpected BranchStmt: " + type);
+		}
+		return result;
+	}
 }

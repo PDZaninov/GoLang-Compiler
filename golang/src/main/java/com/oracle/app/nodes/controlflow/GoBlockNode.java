@@ -48,19 +48,24 @@ public final class GoBlockNode extends GoStatementNode {
         }
     }
 
+    /**
+     * This executeVoid function is called by switch statment.
+     * Goes through each GoCaseClauseNode by executing its generic function.
+     * If the case returns true it means that it has already exectued its body function and we break.
+     *
+     * @param frame: Virtual Frame
+     * @param value: Value of the tag passed in from Switch statement.
+     */
+    public void executeVoid(VirtualFrame frame, Object value) {
+        for (GoStatementNode node : bodyNodes){
+            if (((GoCaseClauseNode)node).executeVoid(frame, value)){
+                break;
+            }
+        }
+    }
+
     public List<GoStatementNode> getStatements() {
         return Collections.unmodifiableList(Arrays.asList(bodyNodes));
     }
 
-    /*
-	@Override
-	public Object executeGeneric(VirtualFrame frame) {
-		for (GoStatementNode statement : bodyNodes) {
-			if(statement != null){
-				statement.executeVoid(frame);
-			}
-        }
-		return null;
-	}
-	*/
 }

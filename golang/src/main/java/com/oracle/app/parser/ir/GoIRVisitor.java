@@ -1,6 +1,30 @@
 package com.oracle.app.parser.ir;
 
+<<<<<<< HEAD
 import com.oracle.app.parser.ir.nodes.*;
+=======
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+>>>>>>> e640b62d842f99957792c61ef5acdbdff8208c5d
 
 public interface GoIRVisitor {
 	
@@ -37,6 +61,16 @@ public interface GoIRVisitor {
 	Object visitGenDecl(GoIRGenDeclNode goIRGenDeclNode);
 
 	Object visitValueSpec(GoIRValueSpecNode goIRValueSpecNode);
+	
+	Object visitForLoop(GoIRForNode node);
+	
+	Object visitIncDecStmt(GoIRIncDecStmtNode node);
+	
+	Object visitBranchStmt(GoIRBranchStmtNode node);
+
+	Object visitCaseClause(GoIRCaseClauseNode goIRCaseClauseNode);
+
+	Object visitSwitchStmt(GoIRSwitchStmtNode goIRSwitchStmtNode);
 
     Object visitIf(GoIRIfStmtNode goIRIfNode);
 }
