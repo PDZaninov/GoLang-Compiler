@@ -35,8 +35,7 @@ public class GoIdentNode extends GoExpressionNode{
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		// TODO Auto-generated method stub
-		return null;
+		return child.executeGeneric(frame);
 	}
 	
 	
