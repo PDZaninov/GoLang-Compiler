@@ -56,9 +56,9 @@ public final class GoBlockNode extends GoStatementNode {
      * @param frame: Virtual Frame
      * @param value: Value of the tag passed in from Switch statement.
      */
-    public void executeVoid(VirtualFrame frame, Object value) {
+    public void switchExecute(VirtualFrame frame, Object value) {
         for (GoStatementNode node : bodyNodes){
-            if (((GoCaseClauseNode)node).executeVoid(frame, value)){
+            if (((GoCaseClauseNode)node).caseExecute(frame, value)){
                 break;
             }
         }
