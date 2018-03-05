@@ -501,7 +501,7 @@ public class GoTruffle implements GoIRVisitor {
 					System.out.println("Unimplemented ValueSpec default case "+type);
 				}
 			}else {
-				val =defaultval;
+				val = new GoArray();
 			}
 			for(int i = 0; i < names.length; i++){
 				String name = ((GoIdentNode) names[i]).getName();

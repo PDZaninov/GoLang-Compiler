@@ -25,6 +25,15 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return value;
 	    }
 	    
+	    @Specialization(guards = "isIntOrIllegal(frame)")
+	    protected Object[] writeArray(VirtualFrame frame, Object[] value) {
+
+	        getSlot().setKind(FrameSlotKind.Int);
+
+	        frame.setObject(getSlot(), value);
+	        return value;
+	    }
+	    
 	    @Specialization(guards = "isFloatOrIllegal(frame)")
 	    protected float writeFloat(VirtualFrame frame, float value) {
 	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
