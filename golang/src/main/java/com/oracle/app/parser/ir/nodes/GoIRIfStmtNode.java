@@ -16,12 +16,12 @@ import java.util.ArrayList;
 
 public class GoIRIfStmtNode extends GoBaseIRNode {
 
-    @Child private String Init;
+    @Child private GoIRStmtNode Init;
     @Child private GoIRExprNode Cond;
     @Child private GoIRBlockStmtNode Body;
-    @Child private GoIRBlockStmtNode Else;
+    @Child private GoIRStmtNode Else;
 
-    public GoIRIfStmtNode(String Init, GoIRExprNode Cond, GoIRBlockStmtNode Body, GoIRBlockStmtNode Else) {
+    public GoIRIfStmtNode(GoIRStmtNode Init, GoIRExprNode Cond, GoIRBlockStmtNode Body, GoIRStmtNode Else) {
         super("If Node");
         this.Init=Init;
         this.Cond=Cond;
@@ -29,7 +29,7 @@ public class GoIRIfStmtNode extends GoBaseIRNode {
         this.Else=Else;
     }
 
-    public String getInit() {
+    public GoIRStmtNode getInit() {
         return Init;
     }
 
@@ -39,7 +39,7 @@ public class GoIRIfStmtNode extends GoBaseIRNode {
 
     public GoIRBlockStmtNode getBody() { return Body; }
 
-    public GoIRBlockStmtNode getElse() { return Else; }
+    public GoIRStmtNode getElse() { return Else; }
 
     @Override
     public void setChildParent() {
