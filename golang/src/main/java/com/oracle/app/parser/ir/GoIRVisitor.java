@@ -1,5 +1,7 @@
 package com.oracle.app.parser.ir;
 
+
+import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
@@ -21,6 +23,7 @@ import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+
 
 public interface GoIRVisitor {
 	
@@ -68,5 +71,5 @@ public interface GoIRVisitor {
 
 	Object visitSwitchStmt(GoIRSwitchStmtNode goIRSwitchStmtNode);
 
-
+	Object visitIfStmt(GoIRIfStmtNode goIRIfStmtNode);
 }

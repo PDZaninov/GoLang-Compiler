@@ -5,12 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.GoArrayExprNode;
-import com.oracle.app.nodes.GoExprNode;
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoIdentNode;
-import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.nodes.*;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
@@ -19,7 +14,9 @@ import com.oracle.app.nodes.controlflow.GoCaseClauseNode;
 import com.oracle.app.nodes.controlflow.GoContinueNode;
 import com.oracle.app.nodes.controlflow.GoForNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
+import com.oracle.app.nodes.controlflow.GoIfStmtNode;
 import com.oracle.app.nodes.controlflow.GoSwitchNode;
+
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
@@ -52,6 +49,9 @@ import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
+
+import com.oracle.app.parser.ir.nodes.*;
+
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
@@ -151,6 +151,24 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		return arguments;
     }
+
+	public Object visitIfStmt(GoIRIfStmtNode node){
+		GoStatementNode Init = null;
+		GoExpressionNode CondNode = null;
+		GoStatementNode Body = null;
+		GoStatementNode Else = null;
+		
+		if(node.getInit() != null)
+			Init = (GoStatementNode) node.getInit().accept(this);
+		
+		CondNode = (GoExpressionNode) node.getCond().accept(this);
+		Body = (GoStatementNode)node.getBody().accept(this);
+		
+		if(node.getElse() != null)
+			Else = (GoStatementNode)node.getElse().accept(this);
+
+		return new GoIfStmtNode(CondNode,Body,Else);
+	}
 
 	@Override
 	public Object visitObject(GoBaseIRNode node) {
@@ -615,6 +633,5 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		return result;
 	}
-	
 
 }
