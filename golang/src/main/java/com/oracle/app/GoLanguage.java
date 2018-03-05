@@ -2,24 +2,15 @@ package com.oracle.app;
 
 import java.util.Map;
 
+import com.oracle.app.nodes.GoEvalRootNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.Parser;
-import com.oracle.app.nodes.GoBasicNode;
-import com.oracle.app.nodes.GoEvalRootNode;
-//import com.oracle.app.nodes.local.GoLexicalScope
-import com.oracle.app.runtime.GoNull;
 import com.oracle.app.runtime.GoContext;
 import com.oracle.app.runtime.GoFunction;
-import com.oracle.app.runtime.GoBigNumber;
-
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage;
-import com.oracle.truffle.api.debug.DebuggerTags;
 import com.oracle.truffle.api.frame.Frame;
-import com.oracle.truffle.api.instrumentation.ProvidedTags;
-import com.oracle.truffle.api.instrumentation.StandardTags;
-import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.metadata.ScopeProvider;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.source.Source;
@@ -98,11 +89,6 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
     }
 
     @Override
-    protected boolean isVisible(GoContext context, Object value) {
-        return value != GoNull.SINGLETON;
-    }
-
-    @Override
     protected boolean isObjectOfLanguage(Object object) {
     	/*
         if (!(object instanceof TruffleObject)) {
@@ -116,12 +102,6 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 
     @Override
     protected String toString(GoContext context, Object value) {
-        if (value == GoNull.SINGLETON) {
-            return "NULL";
-        }
-        if (value instanceof GoBigNumber) {
-            return super.toString(context, ((GoBigNumber) value).getValue());
-        }
         if (value instanceof Long) {
             return Long.toString((Long) value);
         }
@@ -130,7 +110,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 
     @Override
     protected Object findMetaObject(GoContext context, Object value) {
-        if (value instanceof Number || value instanceof GoBigNumber) {
+        if (value instanceof Number) {
             return "Number";
         }
         if (value instanceof Boolean) {
@@ -138,9 +118,6 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
         }
         if (value instanceof String) {
             return "String";
-        }
-        if (value == GoNull.SINGLETON) {
-            return "Null";
         }
         if (value instanceof GoFunction) {
             return "Function";
