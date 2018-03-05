@@ -165,7 +165,7 @@ public class GoTruffle implements GoIRVisitor {
 		if(node.getElse() != null)
 			Else = (GoStatementNode)node.getElse().accept(this);
 
-		return new GoIfStmtNode(CondNode,Body,Else);
+		return new GoIfStmtNode(Init,CondNode,Body,Else);
 	}
 
 	@Override
