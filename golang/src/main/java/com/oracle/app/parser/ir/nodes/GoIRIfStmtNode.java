@@ -17,37 +17,44 @@ import java.util.ArrayList;
 public class GoIRIfStmtNode extends GoBaseIRNode {
 
     @Child private GoIRStmtNode Init;
-    @Child private GoIRExprNode Cond;
+    @Child private GoBaseIRNode Cond;
     @Child private GoIRBlockStmtNode Body;
     @Child private GoIRStmtNode Else;
 
-    public GoIRIfStmtNode(GoIRStmtNode Init, GoIRExprNode Cond, GoIRBlockStmtNode Body, GoIRStmtNode Else) {
+    public GoIRIfStmtNode(GoIRStmtNode Init, GoBaseIRNode Cond, GoIRBlockStmtNode Body, GoIRStmtNode Else) {
         super("If Node");
         this.Init=Init;
         this.Cond=Cond;
         this.Body=Body;
         this.Else=Else;
+        setChildParent();
     }
 
     public GoIRStmtNode getInit() {
         return Init;
     }
 
-    public  GoIRExprNode getCond() {
+    public  GoBaseIRNode getCond() {
         return Cond;
     }
 
-    public GoIRBlockStmtNode getBody() { return Body; }
+    public GoIRBlockStmtNode getBody() { 
+    	return Body; 
+    }
 
-    public GoIRStmtNode getElse() { return Else; }
+    public GoIRStmtNode getElse() { 
+    	return Else; 
+    }
 
     @Override
     public void setChildParent() {
         if (Init!=null) {
             Init.setParent(this);
-            Cond.setParent(this);
-            Body.setParent(this);
-            Else.setParent(this);
+        }
+        Cond.setParent(this);
+        Body.setParent(this);
+        if(Else != null){
+        	Else.setParent(this);
         }
     }
 
