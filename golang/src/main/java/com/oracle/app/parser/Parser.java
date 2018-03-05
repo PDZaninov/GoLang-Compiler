@@ -290,10 +290,10 @@ public class Parser {
 				return new GoIRIdentNode(attrs.get("Name"),obj);
 
 			case "IfStmt":
-				GoIRStmtNode ifinit = (GoIRStmtNode)body.get("Init");
-				GoBaseIRNode ifcond = (GoBaseIRNode)body.get("Cond");
-				GoIRBlockStmtNode ifblock = (GoIRBlockStmtNode)body.get("Body");
-				GoIRStmtNode elseblock = (GoIRStmtNode) body.get("Else");
+				GoBaseIRNode ifinit = body.get("Init");
+				GoBaseIRNode ifcond = body.get("Cond");
+				GoBaseIRNode ifblock = body.get("Body");
+				GoBaseIRNode elseblock = body.get("Else");
 				return new GoIRIfStmtNode(ifinit,ifcond, ifblock, elseblock);
 			case "ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);

@@ -151,13 +151,21 @@ public class GoTruffle implements GoIRVisitor {
     }
 
 	public Object visitIfStmt(GoIRIfStmtNode node){
-		GoStatementNode Init = (GoStatementNode) node.getInit().accept(this);
-		GoExpressionNode CondNode = (GoExpressionNode) node.getCond().accept(this);
-		GoStatementNode Body = (GoStatementNode)node.getBody().accept(this);
-		GoStatementNode Else = (GoStatementNode)node.getElse().accept(this);
+		GoStatementNode Init = null;
+		GoExpressionNode CondNode = null;
+		GoStatementNode Body = null;
+		GoStatementNode Else = null;
+		
+		if(node.getInit() != null)
+			Init = (GoStatementNode) node.getInit().accept(this);
+		
+		CondNode = (GoExpressionNode) node.getCond().accept(this);
+		Body = (GoStatementNode)node.getBody().accept(this);
+		
+		if(node.getElse() != null)
+			Else = (GoStatementNode)node.getElse().accept(this);
 
 		return new GoIfStmtNode(CondNode,Body,Else);
-
 	}
 
 	@Override
