@@ -11,6 +11,8 @@ import com.oracle.truffle.api.profiles.ConditionProfile;
 
 @NodeInfo(shortName = "if", description = "The node implementing a conditional statement")
 public final class GoIfStmtNode extends GoStatementNode {
+	
+	@Child private GoStatementNode init;
 
     @Child private GoExpressionNode conditionNode;
 
@@ -27,7 +29,8 @@ public final class GoIfStmtNode extends GoStatementNode {
      */
     private final ConditionProfile condition = ConditionProfile.createCountingProfile();
 
-    public GoIfStmtNode(GoExpressionNode conditionNode, GoStatementNode thenNode, GoStatementNode elseNode) {
+    public GoIfStmtNode(GoStatementNode init, GoExpressionNode conditionNode, GoStatementNode thenNode, GoStatementNode elseNode) {
+    	this.init = init;
         this.conditionNode = conditionNode;
         this.thenNode = thenNode;
         this.elseNode = elseNode;
@@ -35,6 +38,8 @@ public final class GoIfStmtNode extends GoStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
+    	if(init != null)
+    		init.executeVoid(frame);
         if (condition.profile(evaluateCondition(frame))) {
             thenNode.executeVoid(frame);
         } else {
