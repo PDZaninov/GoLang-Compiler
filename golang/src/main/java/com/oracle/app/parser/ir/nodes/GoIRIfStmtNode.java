@@ -43,11 +43,12 @@ public class GoIRIfStmtNode extends GoBaseIRNode {
 
     @Override
     public void setChildParent() {
-        // Do nothing :^)
-        // Init.setParent(this);
-//        Cond.setParent(this);
-        Body.setParent(this);
-        Else.setParent(this);
+        if (Init!=null) {
+            Init.setParent(this);
+            Cond.setParent(this);
+            Body.setParent(this);
+            Else.setParent(this);
+        }
     }
 
     @Override
@@ -57,7 +58,7 @@ public class GoIRIfStmtNode extends GoBaseIRNode {
 
     @Override
     public Object accept(GoIRVisitor visitor) {
-        return visitor.visitIf(this);
+        return visitor.visitIfStmt(this);
     }
 
 }

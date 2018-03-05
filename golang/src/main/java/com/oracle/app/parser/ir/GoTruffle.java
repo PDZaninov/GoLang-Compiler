@@ -159,7 +159,6 @@ public class GoTruffle implements GoIRVisitor {
 
 	}
 
-
 	@Override
 	public Object Object(GoBaseIRNode node) {
 		System.out.println("Visited Truffle temp: " + node.toString());

@@ -14,12 +14,30 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
+
 import com.oracle.app.parser.ir.GoVisitor;
 import com.oracle.app.parser.ir.nodes.*;
-<<<<<<< HEAD
-import com.oracle.app.parser.ir.nodes.GoIRIfNode;
-=======
->>>>>>> e640b62d842f99957792c61ef5acdbdff8208c5d
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
 /**
@@ -272,7 +290,10 @@ public class Parser {
 				return new GoIRIdentNode(attrs.get("Name"),obj);
 
 			case "IfStmt":
-				return new GoIRIfStmtNode(init ,attrs.get("Cond") ,body, attrs.get("Else"));
+				return new GoIRIfStmtNode((GoIRStmtNode)body.get("Init"),
+						(GoIRExprNode)body.get("Cond"),
+						(GoIRBlockStmtNode)body.get("Body"),
+						(GoIRStmtNode) body.get("Else"));
 			case "ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
