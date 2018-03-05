@@ -151,6 +151,7 @@ public class GoTruffle implements GoIRVisitor {
     }
 
 	public Object visitIfStmt(GoIRIfStmtNode node){
+		GoStatementNode Init = (GoStatementNode) node.getInit().accept(this);
 		GoExpressionNode CondNode = (GoExpressionNode) node.getCond().accept(this);
 		GoStatementNode Body = (GoStatementNode)node.getBody().accept(this);
 		GoStatementNode Else = (GoStatementNode)node.getElse().accept(this);
