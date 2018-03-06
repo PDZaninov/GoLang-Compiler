@@ -34,8 +34,7 @@ public class LogicalNotTest
      * Rigourous Test :-)
      * @throws IOException 
      */
-    public void testApp() throws IOException
-    {	String[] args = new String[1];
+    public void testApp() throws IOException, InterruptedException {	String[] args = new String[1];
 		args[0] = "LogicalNot.ast";
         GoMain.main(args);
     }

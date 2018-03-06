@@ -34,8 +34,7 @@ public class BitwiseComplementTest
      * Rigourous Test :-)
      * @throws IOException 
      */
-    public void testApp() throws IOException
-    {	String[] args = new String[1];
+    public void testApp() throws IOException, InterruptedException {	String[] args = new String[1];
 		args[0] = "BitwiseComplement.ast";
         GoMain.main(args);
     }

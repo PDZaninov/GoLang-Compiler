@@ -19,7 +19,7 @@ public class toolchain {
     }
 
     public static File createTempScript(String FILE_NAME, String GO_DIRECTORY, String AST_DIRECTORY) throws IOException {
-
+        String currentDir = System.getProperty("user.dir");
         File tempScript = File.createTempFile("script", null);
 
         Writer streamWriter = new OutputStreamWriter(new FileOutputStream(
@@ -27,10 +27,12 @@ public class toolchain {
         PrintWriter printWriter = new PrintWriter(streamWriter);
 
         printWriter.println("#!/bin/bash");
-        printWriter.println("go build printAST.go");
+        printWriter.println("go build " + currentDir + "/" + "printAST.go");
         printWriter.println("./printAST " + GO_DIRECTORY + FILE_NAME + ".go" + " > " + AST_DIRECTORY + FILE_NAME + ".ast");
-        printWriter.println("rm printAST");
-
+//        printWriter.println("rm printAST");
+//        printWriter.println("javac "+ currentDir + "/src/main/java/com/oracle/app/toolchain.java");
+//        System.out.println("Run this");
+//        System.out.println("java -classpath " + currentDir + "/src/main/java" + " com.oracle.app.toolchain " + FILE_NAME +".go" );
         printWriter.close();
 
         return tempScript;
