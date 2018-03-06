@@ -10,10 +10,14 @@ public final class GoCaseClauseNode extends GoStatementNode {
 
     @Children private final GoExpressionNode[] list;
     @Children private final GoStatementNode[]  body;
+    public String caseType = "case";
 
     public GoCaseClauseNode(GoExpressionNode[] list, GoStatementNode[] body) {
         this.list = list;
         this.body = body;
+        if(list == null){
+            caseType = "default";
+        }
     }
 
     /**
@@ -25,12 +29,18 @@ public final class GoCaseClauseNode extends GoStatementNode {
      * @param value: Value of the tag passed from SwitchStatement and the block statement.
      */
     public boolean caseExecute(VirtualFrame frame, Object value){
-        for (GoExpressionNode caseListElem : list){
-            if (caseListElem.executeGeneric(frame) == value){
-                for (GoStatementNode executeBody : body){
-                    executeBody.executeVoid(frame);
+        if(caseType == "default"){
+            for (GoStatementNode executeBody : body){
+                executeBody.executeVoid(frame);
+            }
+        } else {
+            for (GoExpressionNode caseListElem : list) {
+                if (caseListElem.executeGeneric(frame) == value) {
+                    for (GoStatementNode executeBody : body) {
+                        executeBody.executeVoid(frame);
+                    }
+                    return true;
                 }
-                return true;
             }
         }
         return false;
