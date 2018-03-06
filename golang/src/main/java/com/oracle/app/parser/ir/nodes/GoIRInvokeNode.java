@@ -44,7 +44,9 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 	@Override
 	public void setChildParent() {
 		functionNode.setParent(this);
-		argumentNodes.setParent(this);
+		if(argumentNodes != null){
+			argumentNodes.setParent(this);
+		}
 		dispatchNode.setParent(this);
 	}
 
