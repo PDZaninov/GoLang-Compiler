@@ -14,7 +14,7 @@ func check(e error) {
 }
 
 func main() {
-	//TODO: add away to write the files to a text
+	//TODO: add a way to write the files to a text
 	files := os.Args[1:]
 	// Create the AST by go src.
 	fset := token.NewFileSet()
