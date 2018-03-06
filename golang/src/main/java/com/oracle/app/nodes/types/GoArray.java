@@ -14,23 +14,31 @@ public class GoArray extends GoExpressionNode {
 
     public GoArray() {
     	super();
-    	Object[] array = {0,0};
+    	Object[] array = {0,0,99,0,0,0,0,0};
     	this.array = array;
     }
     
+    public Object[] getArray() {
+    	return array;
+    }
+    
+    public void setArray(Object[] array) {
+    	this.array= array;
+    }
+    
     @Override
-    public Object[] executeGoArray(VirtualFrame virtualFrame) {
-        return this.array;
+    public GoArray executeGoArray(VirtualFrame virtualFrame) {
+        return this;
     }
 
 	@Override
-	public Object[] executeGeneric(VirtualFrame frame) {
-		return array;
+	public GoArray executeGeneric(VirtualFrame frame) {
+		return this;
 	}
     
     @Override
     public String toString() {
-    	String m = "";
+    	String m = "ToString:";
     	for(int a = 0; a < array.length; a ++) {
     		m += a+ ": " + array[a] +"\n";
     	}

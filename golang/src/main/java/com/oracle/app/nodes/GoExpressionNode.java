@@ -43,6 +43,7 @@ package com.oracle.app.nodes;
 
 import java.math.BigInteger;
 
+import com.oracle.app.nodes.types.GoArray;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.Instrumentable;
@@ -104,8 +105,8 @@ public abstract class GoExpressionNode extends GoStatementNode {
 		return GoTypesGen.expectFloat(executeGeneric(frame));
 	}
 
-	public Object[] executeGoArray(VirtualFrame frame) throws UnexpectedResultException {
-		return GoTypesGen.expectObjectArray(executeGeneric(frame));
+	public GoArray executeGoArray(VirtualFrame frame) throws UnexpectedResultException {
+		return GoTypesGen.expectGoArray(executeGeneric(frame));
 	}
 
 }

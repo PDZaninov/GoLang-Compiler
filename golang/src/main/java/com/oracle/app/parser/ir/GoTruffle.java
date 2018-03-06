@@ -515,8 +515,8 @@ public class GoTruffle implements GoIRVisitor {
 				FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 				lexicalscope.locals.put(name, frameSlot);
 				result[i] = GoWriteLocalVariableNodeGen.create(val, frameSlot);
-				System.out.println("name: " + name);
-				System.out.println("val: " + val.toString());
+				//System.out.println("name: " + name);
+				//System.out.println("val: " + val.toString());
 			}
 			
 		}

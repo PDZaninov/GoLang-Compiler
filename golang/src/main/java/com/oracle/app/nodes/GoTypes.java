@@ -53,6 +53,6 @@ import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
-@TypeSystem({int.class, float.class, long.class, BigInteger.class, boolean.class, String.class, GoFunction.class, GoNull.class, Object[].class})
+@TypeSystem({int.class, float.class, long.class, BigInteger.class, boolean.class, String.class, GoFunction.class, GoNull.class, GoArray.class})
 public abstract class GoTypes {
 }

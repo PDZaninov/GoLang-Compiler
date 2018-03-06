@@ -1,4 +1,4 @@
-     0  *ast.File {
+ 0  *ast.File {
      1  .  Package: 1:1
      2  .  Name: *ast.Ident {
      3  .  .  NamePos: 1:9
@@ -24,7 +24,7 @@
     23  .  .  .  }
     24  .  .  .  Body: *ast.BlockStmt {
     25  .  .  .  .  Lbrace: 5:13
-    26  .  .  .  .  List: []ast.Stmt (len = 2) {
+    26  .  .  .  .  List: []ast.Stmt (len = 3) {
     27  .  .  .  .  .  0: *ast.DeclStmt {
     28  .  .  .  .  .  .  Decl: *ast.GenDecl {
     29  .  .  .  .  .  .  .  TokPos: 6:2
@@ -69,37 +69,56 @@
     68  .  .  .  .  .  .  .  }
     69  .  .  .  .  .  .  .  Lparen: 7:8
     70  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
-    71  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
-    72  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
-    73  .  .  .  .  .  .  .  .  .  .  NamePos: 7:9
-    74  .  .  .  .  .  .  .  .  .  .  Name: "a"
-    75  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 38)
-    76  .  .  .  .  .  .  .  .  .  }
-    77  .  .  .  .  .  .  .  .  .  Lbrack: 7:10
-    78  .  .  .  .  .  .  .  .  .  Index: *ast.BasicLit {
-    79  .  .  .  .  .  .  .  .  .  .  ValuePos: 7:11
-    80  .  .  .  .  .  .  .  .  .  .  Kind: INT
-    81  .  .  .  .  .  .  .  .  .  .  Value: "2"
-    82  .  .  .  .  .  .  .  .  .  }
-    83  .  .  .  .  .  .  .  .  .  Rbrack: 7:12
-    84  .  .  .  .  .  .  .  .  }
-    85  .  .  .  .  .  .  .  }
-    86  .  .  .  .  .  .  .  Ellipsis: -
-    87  .  .  .  .  .  .  .  Rparen: 7:13
-    88  .  .  .  .  .  .  }
-    89  .  .  .  .  .  }
-    90  .  .  .  .  }
-    91  .  .  .  .  Rbrace: 8:1
-    92  .  .  .  }
-    93  .  .  }
-    94  .  }
-    95  .  Scope: *ast.Scope {
-    96  .  .  Objects: map[string]*ast.Object (len = 1) {
-    97  .  .  .  "main": *(obj @ 11)
-    98  .  .  }
-    99  .  }
-   100  .  Unresolved: []*ast.Ident (len = 2) {
-   101  .  .  0: *(obj @ 53)
-   102  .  .  1: *(obj @ 65)
-   103  .  }
-   104  }
+    71  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
+    72  .  .  .  .  .  .  .  .  .  ValuePos: 7:9
+    73  .  .  .  .  .  .  .  .  .  Kind: STRING
+    74  .  .  .  .  .  .  .  .  .  Value: "\"Did it work?\""
+    75  .  .  .  .  .  .  .  .  }
+    76  .  .  .  .  .  .  .  }
+    77  .  .  .  .  .  .  .  Ellipsis: -
+    78  .  .  .  .  .  .  .  Rparen: 7:23
+    79  .  .  .  .  .  .  }
+    80  .  .  .  .  .  }
+    81  .  .  .  .  .  2: *ast.ExprStmt {
+    82  .  .  .  .  .  .  X: *ast.CallExpr {
+    83  .  .  .  .  .  .  .  Fun: *ast.Ident {
+    84  .  .  .  .  .  .  .  .  NamePos: 8:1
+    85  .  .  .  .  .  .  .  .  Name: "println"
+    86  .  .  .  .  .  .  .  }
+    87  .  .  .  .  .  .  .  Lparen: 8:8
+    88  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+    89  .  .  .  .  .  .  .  .  0: *ast.IndexExpr {
+    90  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+    91  .  .  .  .  .  .  .  .  .  .  NamePos: 8:9
+    92  .  .  .  .  .  .  .  .  .  .  Name: "a"
+    93  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 38)
+    94  .  .  .  .  .  .  .  .  .  }
+    95  .  .  .  .  .  .  .  .  .  Lbrack: 8:10
+    96  .  .  .  .  .  .  .  .  .  Index: *ast.BasicLit {
+    97  .  .  .  .  .  .  .  .  .  .  ValuePos: 8:11
+    98  .  .  .  .  .  .  .  .  .  .  Kind: INT
+    99  .  .  .  .  .  .  .  .  .  .  Value: "2"
+   100  .  .  .  .  .  .  .  .  .  }
+   101  .  .  .  .  .  .  .  .  .  Rbrack: 8:12
+   102  .  .  .  .  .  .  .  .  }
+   103  .  .  .  .  .  .  .  }
+   104  .  .  .  .  .  .  .  Ellipsis: -
+   105  .  .  .  .  .  .  .  Rparen: 8:13
+   106  .  .  .  .  .  .  }
+   107  .  .  .  .  .  }
+   108  .  .  .  .  }
+   109  .  .  .  .  Rbrace: 9:1
+   110  .  .  .  }
+   111  .  .  }
+   112  .  }
+   113  .  Scope: *ast.Scope {
+   114  .  .  Objects: map[string]*ast.Object (len = 1) {
+   115  .  .  .  "main": *(obj @ 11)
+   116  .  .  }
+   117  .  }
+   118  .  Unresolved: []*ast.Ident (len = 3) {
+   119  .  .  0: *(obj @ 53)
+   120  .  .  1: *(obj @ 65)
+   121  .  .  2: *(obj @ 83)
+   122  .  }
+   123  }
