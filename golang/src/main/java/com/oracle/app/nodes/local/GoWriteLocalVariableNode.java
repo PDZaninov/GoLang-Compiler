@@ -25,10 +25,10 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return value;
 	    }
 	    
-	    @Specialization(guards = "isIntOrIllegal(frame)")
+	    @Specialization(guards = "isArrayOrIllegal(frame)")
 	    protected Object[] writeArray(VirtualFrame frame, Object[] value) {
 
-	        getSlot().setKind(FrameSlotKind.Int);
+	        getSlot().setKind(FrameSlotKind.Object);
 
 	        frame.setObject(getSlot(), value);
 	        return value;
@@ -70,7 +70,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 
 
-	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString"})
+	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString", "writeArray"})
 	    protected Object write(VirtualFrame frame, Object value) {
 
 	        getSlot().setKind(FrameSlotKind.Object);
@@ -96,6 +96,10 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 	    
 	    protected boolean isStringOrIllegal(@SuppressWarnings("unused") VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
+	    
+	    protected boolean isArrayOrIllegal(@SuppressWarnings("unused") VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 }

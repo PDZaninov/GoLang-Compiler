@@ -14,6 +14,8 @@ public class GoArray extends GoExpressionNode {
 
     public GoArray() {
     	super();
+    	Object[] array = {0,0};
+    	this.array = array;
     }
     
     @Override

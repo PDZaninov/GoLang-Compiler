@@ -25,6 +25,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	catch(IllegalStateException e){
     		result = 0;
     	}
+    	System.out.println("reading int: " +result);
     	return result;
     }
     
@@ -47,8 +48,14 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     protected String readString(VirtualFrame frame) {
         return (String) FrameUtil.getObjectSafe(frame, getSlot());
     }
+    
+    @Specialization(guards = "isArray(frame)")
+    protected Object[] readArray(VirtualFrame frame) {
+    	System.out.println("reading a stored array");
+        return (Object[]) FrameUtil.getObjectSafe(frame, getSlot());
+    }
 
-    @Specialization(replaces = {"readInt", "readFloat", "readLong", "readBoolean", "readString"})
+    @Specialization(replaces = {"readInt", "readFloat", "readLong", "readBoolean", "readString", "readArray"})
     protected Object readObject(VirtualFrame frame) {
         if (!frame.isObject(getSlot())) {
             CompilerDirectives.transferToInterpreter();
@@ -77,6 +84,10 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     }
     
     protected boolean isString(@SuppressWarnings("unused") VirtualFrame frame) {
+        return getSlot().getKind() == FrameSlotKind.Object;
+    }
+    
+    protected boolean isArray( VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Object;
     }
 }

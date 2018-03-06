@@ -11,6 +11,17 @@ public abstract class GoIndexExprNode extends GoBinaryNode{
 	
     @Specialization
     protected Object doIndex(Object[] array, int index) {
+    	System.out.println("reading index");
+    	System.out.println(array.toString());
+    	System.out.println(index);
         return array[index];
+    }
+    
+    @Specialization
+    protected Object doIndex(int array, int index) {
+    	System.out.println("reading index");
+    	System.out.println(array);
+    	System.out.println(index);
+        return array;
     }
 }
