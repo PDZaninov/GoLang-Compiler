@@ -25,7 +25,11 @@ public final class GoSwitchNode extends GoStatementNode {
     	if(init != null){
     		init.executeVoid(frame);
     	}
-        Object value = tag.executeGeneric(frame);
-        body.switchExecute(frame, value);
+    	if (tag != null) {
+            Object value = tag.executeGeneric(frame);
+            body.switchExecute(frame, value);
+        } else {
+    	    body.ifElseExecute(frame);
+        }
     }
 }

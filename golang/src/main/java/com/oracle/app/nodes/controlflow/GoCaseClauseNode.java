@@ -29,11 +29,6 @@ public final class GoCaseClauseNode extends GoStatementNode {
      * @param value: Value of the tag passed from SwitchStatement and the block statement.
      */
     public boolean caseExecute(VirtualFrame frame, Object value){
-        if(caseType == "default"){
-            for (GoStatementNode executeBody : body){
-                executeBody.executeVoid(frame);
-            }
-        } else {
             for (GoExpressionNode caseListElem : list) {
                 if (caseListElem.executeGeneric(frame) == value) {
                     for (GoStatementNode executeBody : body) {
@@ -42,7 +37,18 @@ public final class GoCaseClauseNode extends GoStatementNode {
                     return true;
                 }
             }
-        }
+        return false;
+    }
+
+    public boolean ifElseExecute(VirtualFrame frame){
+            for (GoExpressionNode caseListElem : list) {
+                if (caseListElem.executeBoolean(frame)){
+                    for (GoStatementNode executeBody : body){
+                        executeBody.executeVoid(frame);
+                    }
+                    return true;
+                }
+            }
         return false;
     }
 
