@@ -35,8 +35,8 @@ public class toolchain {
         System.out.println("chmod +x " + "./gt");
         printWriter.println("chmod +x " + "./gt");
         printWriter.println("sudo -S true");
-        System.out.println("sudo "+ "./" + "gt " + AST_DIRECTORY + FILE_NAME + ".ast");
-        printWriter.println("sudo "+ "./" + "gt " + AST_DIRECTORY + FILE_NAME + ".ast");
+        System.out.println("sudo "+ "./" + "gt " + AST_DIRECTORY + "/" + FILE_NAME + ".ast");
+        printWriter.println("sudo "+ "./" + "gt " + AST_DIRECTORY +"/" + FILE_NAME + ".ast");
         printWriter.close();
 
         return tempScript;
