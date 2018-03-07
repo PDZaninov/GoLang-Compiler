@@ -1,18 +1,18 @@
      0  *ast.File {
-     1  .  Package: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:1:1
+     1  .  Package: gofiles/hellogo.go:1:1
      2  .  Name: *ast.Ident {
-     3  .  .  NamePos: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:1:9
+     3  .  .  NamePos: gofiles/hellogo.go:1:9
      4  .  .  Name: "main"
      5  .  }
      6  .  Decls: []ast.Decl (len = 2) {
      7  .  .  0: *ast.GenDecl {
-     8  .  .  .  TokPos: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:3:1
+     8  .  .  .  TokPos: gofiles/hellogo.go:3:1
      9  .  .  .  Tok: import
     10  .  .  .  Lparen: -
     11  .  .  .  Specs: []ast.Spec (len = 1) {
     12  .  .  .  .  0: *ast.ImportSpec {
     13  .  .  .  .  .  Path: *ast.BasicLit {
-    14  .  .  .  .  .  .  ValuePos: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:3:8
+    14  .  .  .  .  .  .  ValuePos: gofiles/hellogo.go:3:8
     15  .  .  .  .  .  .  Kind: STRING
     16  .  .  .  .  .  .  Value: "\"fmt\""
     17  .  .  .  .  .  }
@@ -23,7 +23,7 @@
     22  .  .  }
     23  .  .  1: *ast.FuncDecl {
     24  .  .  .  Name: *ast.Ident {
-    25  .  .  .  .  NamePos: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:5:6
+    25  .  .  .  .  NamePos: gofiles/hellogo.go:5:6
     26  .  .  .  .  Name: "main"
     27  .  .  .  .  Obj: *ast.Object {
     28  .  .  .  .  .  Kind: func
@@ -32,41 +32,41 @@
     31  .  .  .  .  }
     32  .  .  .  }
     33  .  .  .  Type: *ast.FuncType {
-    34  .  .  .  .  Func: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:5:1
+    34  .  .  .  .  Func: gofiles/hellogo.go:5:1
     35  .  .  .  .  Params: *ast.FieldList {
-    36  .  .  .  .  .  Opening: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:5:10
-    37  .  .  .  .  .  Closing: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:5:11
+    36  .  .  .  .  .  Opening: gofiles/hellogo.go:5:10
+    37  .  .  .  .  .  Closing: gofiles/hellogo.go:5:11
     38  .  .  .  .  }
     39  .  .  .  }
     40  .  .  .  Body: *ast.BlockStmt {
-    41  .  .  .  .  Lbrace: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:5:13
+    41  .  .  .  .  Lbrace: gofiles/hellogo.go:5:13
     42  .  .  .  .  List: []ast.Stmt (len = 1) {
     43  .  .  .  .  .  0: *ast.ExprStmt {
     44  .  .  .  .  .  .  X: *ast.CallExpr {
     45  .  .  .  .  .  .  .  Fun: *ast.SelectorExpr {
     46  .  .  .  .  .  .  .  .  X: *ast.Ident {
-    47  .  .  .  .  .  .  .  .  .  NamePos: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:6:2
+    47  .  .  .  .  .  .  .  .  .  NamePos: gofiles/hellogo.go:6:2
     48  .  .  .  .  .  .  .  .  .  Name: "fmt"
     49  .  .  .  .  .  .  .  .  }
     50  .  .  .  .  .  .  .  .  Sel: *ast.Ident {
-    51  .  .  .  .  .  .  .  .  .  NamePos: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:6:6
+    51  .  .  .  .  .  .  .  .  .  NamePos: gofiles/hellogo.go:6:6
     52  .  .  .  .  .  .  .  .  .  Name: "Println"
     53  .  .  .  .  .  .  .  .  }
     54  .  .  .  .  .  .  .  }
-    55  .  .  .  .  .  .  .  Lparen: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:6:13
+    55  .  .  .  .  .  .  .  Lparen: gofiles/hellogo.go:6:13
     56  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
     57  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
-    58  .  .  .  .  .  .  .  .  .  ValuePos: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:6:14
+    58  .  .  .  .  .  .  .  .  .  ValuePos: gofiles/hellogo.go:6:14
     59  .  .  .  .  .  .  .  .  .  Kind: STRING
     60  .  .  .  .  .  .  .  .  .  Value: "\"hello world\""
     61  .  .  .  .  .  .  .  .  }
     62  .  .  .  .  .  .  .  }
     63  .  .  .  .  .  .  .  Ellipsis: -
-    64  .  .  .  .  .  .  .  Rparen: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:6:27
+    64  .  .  .  .  .  .  .  Rparen: gofiles/hellogo.go:6:27
     65  .  .  .  .  .  .  }
     66  .  .  .  .  .  }
     67  .  .  .  .  }
-    68  .  .  .  .  Rbrace: /Users/bhuang/Desktop/GoLang-Compiler/golang/gofiles/HelloGo.go:7:1
+    68  .  .  .  .  Rbrace: gofiles/hellogo.go:7:1
     69  .  .  .  }
     70  .  .  }
     71  .  }

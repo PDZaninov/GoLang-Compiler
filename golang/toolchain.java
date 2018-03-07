@@ -26,7 +26,9 @@ public class toolchain {
         PrintWriter printWriter = new PrintWriter(streamWriter);
 
         printWriter.println("#!/bin/bash");
-        printWriter.println("go build " + currentDir + "/" + "printAST.go");
+        System.out.println("go build " + "printAST.go");
+        printWriter.println("go build " + "printAST.go");
+        System.out.println("./printAST " + GO_DIRECTORY + FILE_NAME + ".go" + " > " + AST_DIRECTORY  + FILE_NAME + ".ast");
         printWriter.println("./printAST " + GO_DIRECTORY + FILE_NAME + ".go" + " > " + AST_DIRECTORY + FILE_NAME + ".ast");
 //        printWriter.println("rm printAST");
 //        printWriter.println("javac "+ currentDir + "/src/main/java/com/oracle/app/toolchain.java");
@@ -35,8 +37,8 @@ public class toolchain {
         System.out.println("chmod +x " + "./gt");
         printWriter.println("chmod +x " + "./gt");
         printWriter.println("sudo -S true");
-        System.out.println("sudo "+ "./" + "gt " + AST_DIRECTORY + "/" + FILE_NAME + ".ast");
-        printWriter.println("sudo "+ "./" + "gt " + AST_DIRECTORY +"/" + FILE_NAME + ".ast");
+        System.out.println("sudo "+ "./" + "gt " + FILE_NAME + ".ast");
+        printWriter.println("sudo "+ "./" + "gt " + FILE_NAME + ".ast");
         printWriter.close();
 
         return tempScript;
@@ -45,8 +47,11 @@ public class toolchain {
     public static void main(String[] args) throws IOException, InterruptedException {
         String currentDir = System.getProperty("user.dir");
         System.out.println(currentDir);
-        String GO_DIRECTORY = currentDir + "/gofiles/"; //TODO: fix the directory
-        String AST_DIRECTORY = currentDir; //TODO: fix the directory
+        String GO_DIRECTORY = ""; //TODO: fix the directory
+//        String GO_DIRECTORY = currentDir + "/gofiles/";
+//        String AST_DIRECTORY = currentDir;
+        String AST_DIRECTORY = ""; //TODO: fix the directory
+
 //		File folder = new File("your/path");
 //		File[] listOfFiles = folder.listFiles();
 
