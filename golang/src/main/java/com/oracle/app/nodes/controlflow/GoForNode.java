@@ -34,7 +34,8 @@ public class GoForNode extends GoStatementNode {
 
     @Override
     public void executeVoid(VirtualFrame frame) {
-    	
+    	if(init != null)
+    		init.executeVoid(frame);
         loopNode.executeLoop(frame);
     }
 }
