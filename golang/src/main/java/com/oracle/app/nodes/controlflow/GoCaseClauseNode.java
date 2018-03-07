@@ -4,16 +4,21 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 @NodeInfo(shortName = "case clause", description = "A node implementing a single case in a switch statement")
 public final class GoCaseClauseNode extends GoStatementNode {
 
     @Children private final GoExpressionNode[] list;
     @Children private final GoStatementNode[]  body;
+    public String caseType = "case";
 
     public GoCaseClauseNode(GoExpressionNode[] list, GoStatementNode[] body) {
         this.list = list;
         this.body = body;
+        if(list == null){
+            caseType = "default";
+        }
     }
 
     /**
@@ -25,14 +30,32 @@ public final class GoCaseClauseNode extends GoStatementNode {
      * @param value: Value of the tag passed from SwitchStatement and the block statement.
      */
     public boolean caseExecute(VirtualFrame frame, Object value){
-        for (GoExpressionNode caseListElem : list){
-            if (caseListElem.executeGeneric(frame) == value){
-                for (GoStatementNode executeBody : body){
-                    executeBody.executeVoid(frame);
+            for (GoExpressionNode caseListElem : list) {
+                if (caseListElem.executeGeneric(frame) == value) {
+                    for (GoStatementNode executeBody : body) {
+                        executeBody.executeVoid(frame);
+                    }
+                    return true;
                 }
-                return true;
             }
-        }
+        return false;
+    }
+
+    public boolean ifElseExecute(VirtualFrame frame){
+            for (GoExpressionNode caseListElem : list) {
+                //Should probably look at this one day
+            	try {
+					if (caseListElem.executeBoolean(frame)){
+					    for (GoStatementNode executeBody : body){
+					        executeBody.executeVoid(frame);
+					    }
+					    return true;
+					}
+				} catch (UnexpectedResultException e) {
+					// TODO Auto-generated catch block
+					return false;
+				}
+            }
         return false;
     }
 
