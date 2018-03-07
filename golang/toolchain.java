@@ -39,6 +39,7 @@ public class toolchain {
         printWriter.println("sudo -S true");
         System.out.println("sudo "+ "./" + "gt " + FILE_NAME + ".ast");
         printWriter.println("sudo "+ "./" + "gt " + FILE_NAME + ".ast");
+        printWriter.println("rm "+FILE_NAME +".ast");
         printWriter.close();
 
         return tempScript;
@@ -48,8 +49,6 @@ public class toolchain {
         String currentDir = System.getProperty("user.dir");
         System.out.println(currentDir);
         String GO_DIRECTORY = ""; //TODO: fix the directory
-//        String GO_DIRECTORY = currentDir + "/gofiles/";
-//        String AST_DIRECTORY = currentDir;
         String AST_DIRECTORY = ""; //TODO: fix the directory
 
 //		File folder = new File("your/path");
