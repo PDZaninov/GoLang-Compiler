@@ -8,6 +8,7 @@ import java.math.BigInteger;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.builtins.GoBuiltinNode;
 import com.oracle.app.builtins.GoFalseEqualsFalseFactory;
+import com.oracle.app.builtins.GoLenBuiltinFactory;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
 import com.oracle.app.builtins.GoTrueEqualsTrueFactory;
@@ -97,6 +98,7 @@ public final class GoContext {
 		installBuiltin(GoPrintlnBuiltinFactory.getInstance());
 		installBuiltin(GoTrueEqualsTrueFactory.getInstance());
 		installBuiltin(GoFalseEqualsFalseFactory.getInstance());
+		installBuiltin(GoLenBuiltinFactory.getInstance());
 	}
 	
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){
