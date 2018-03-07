@@ -9,7 +9,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class XequalsOneTest 
+public class ArrayTest 
     extends TestCase
 {
     /**
@@ -17,7 +17,7 @@ public class XequalsOneTest
      *
      * @param testName name of the test case
      */
-    public XequalsOneTest( String testName )
+    public ArrayTest  ( String testName )
     {
         super( testName );
     }
@@ -27,7 +27,7 @@ public class XequalsOneTest
      */
     public static Test suite()
     {
-        return new TestSuite( XequalsOneTest.class );
+        return new TestSuite( ArrayTest.class );
     }
 
     /**
@@ -36,7 +36,7 @@ public class XequalsOneTest
      */
     public void testApp() throws IOException
     {	String[] args = new String[1];
-		args[0] = "XequalsOne.ast";
+		args[0] = "Array.ast";
         GoMain.main(args);
     }
 }

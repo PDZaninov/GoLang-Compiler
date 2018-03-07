@@ -9,7 +9,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class PrintTrueTest 
+public class IfTest 
     extends TestCase
 {
     /**
@@ -17,7 +17,7 @@ public class PrintTrueTest
      *
      * @param testName name of the test case
      */
-    public PrintTrueTest ( String testName )
+    public IfTest  ( String testName )
     {
         super( testName );
     }
@@ -27,15 +27,16 @@ public class PrintTrueTest
      */
     public static Test suite()
     {
-        return new TestSuite( PrintTrueTest.class );
+        return new TestSuite( IfTest.class );
     }
 
     /**
      * Rigourous Test :-)
      * @throws IOException 
      */
-    public void testApp() throws IOException, InterruptedException {	String[] args = new String[1];
-		args[0] = "PrintTrue.ast";
+    public void testApp() throws IOException
+    {	String[] args = new String[1];
+		args[0] = "If.ast";
         GoMain.main(args);
     }
 }
