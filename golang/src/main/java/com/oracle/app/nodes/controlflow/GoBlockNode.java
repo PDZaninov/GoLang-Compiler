@@ -61,9 +61,9 @@ public final class GoBlockNode extends GoStatementNode {
         int caseDefIndx = -1;
         for (int i = 0; i < bodyNodes.length; i++){
             if(((GoCaseClauseNode) bodyNodes[i]).caseType == "default"){
-                caseDefIndx = i++;
+                caseDefIndx = i;
             }
-            if (((GoCaseClauseNode) bodyNodes[i]).caseExecute(frame, value)){
+            else if (((GoCaseClauseNode) bodyNodes[i]).caseExecute(frame, value)){
                 caseDefault = false;
                 break;
             }

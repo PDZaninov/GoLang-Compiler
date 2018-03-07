@@ -4,6 +4,7 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
 @NodeInfo(shortName = "case clause", description = "A node implementing a single case in a switch statement")
 public final class GoCaseClauseNode extends GoStatementNode {
@@ -42,12 +43,18 @@ public final class GoCaseClauseNode extends GoStatementNode {
 
     public boolean ifElseExecute(VirtualFrame frame){
             for (GoExpressionNode caseListElem : list) {
-                if (caseListElem.executeBoolean(frame)){
-                    for (GoStatementNode executeBody : body){
-                        executeBody.executeVoid(frame);
-                    }
-                    return true;
-                }
+                //Should probably look at this one day
+            	try {
+					if (caseListElem.executeBoolean(frame)){
+					    for (GoStatementNode executeBody : body){
+					        executeBody.executeVoid(frame);
+					    }
+					    return true;
+					}
+				} catch (UnexpectedResultException e) {
+					// TODO Auto-generated catch block
+					return false;
+				}
             }
         return false;
     }
