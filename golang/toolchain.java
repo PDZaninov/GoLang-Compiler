@@ -30,7 +30,7 @@ public class toolchain {
         printWriter.println("go build " + "printAST.go");
         System.out.println("./printAST " + GO_DIRECTORY + FILE_NAME + ".go" + " > " + AST_DIRECTORY  + FILE_NAME + ".ast");
         printWriter.println("./printAST " + GO_DIRECTORY + FILE_NAME + ".go" + " > " + AST_DIRECTORY + FILE_NAME + ".ast");
-//        printWriter.println("rm printAST");
+        printWriter.println("rm printAST");
 //        printWriter.println("javac "+ currentDir + "/src/main/java/com/oracle/app/toolchain.java");
 //        System.out.println("Run this");
 //        System.out.println("java -classpath " + currentDir + "/src/main/java" + " com.oracle.app.toolchain " + FILE_NAME +".go" );
@@ -39,6 +39,9 @@ public class toolchain {
         printWriter.println("sudo -S true");
         System.out.println("sudo "+ "./" + "gt " + FILE_NAME + ".ast");
         printWriter.println("sudo "+ "./" + "gt " + FILE_NAME + ".ast");
+        printWriter.println("rm "+FILE_NAME +".ast");
+        printWriter.println("rm toolchain.class");
+
         printWriter.close();
 
         return tempScript;
@@ -48,8 +51,6 @@ public class toolchain {
         String currentDir = System.getProperty("user.dir");
         System.out.println(currentDir);
         String GO_DIRECTORY = ""; //TODO: fix the directory
-//        String GO_DIRECTORY = currentDir + "/gofiles/";
-//        String AST_DIRECTORY = currentDir;
         String AST_DIRECTORY = ""; //TODO: fix the directory
 
 //		File folder = new File("your/path");
