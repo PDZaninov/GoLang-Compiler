@@ -18,6 +18,7 @@ import com.oracle.app.parser.ir.GoTruffle;
 import com.oracle.app.parser.ir.GoVisitor;
 import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
@@ -185,6 +186,8 @@ public class Parser {
 	 */
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
+			case "ArrayType":
+				return new GoIRArrayTypeNode(nodeType,body.get("Len"),body.get("Elt"));
 			case "AssignStmt":
 				GoIRArrayListExprNode lhs = (GoIRArrayListExprNode) body.get("Lhs");
 				GoIRArrayListExprNode rhs = (GoIRArrayListExprNode) body.get("Rhs");
@@ -288,6 +291,9 @@ public class Parser {
 			case "Ident":
 				GoBaseIRNode obj = body.get("Obj");
 				return new GoIRIdentNode(attrs.get("Name"),obj);
+			case "IndexExpr":
+				return new GoIRBinaryExprNode("IndexExpr", body.get("X"),body.get("Index"));
+			
 
 			case "IfStmt":
 				GoBaseIRNode ifinit = body.get("Init");
