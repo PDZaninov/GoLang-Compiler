@@ -187,6 +187,7 @@ public class Parser {
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "ArrayType":
+				
 				return new GoIRArrayTypeNode(nodeType,body.get("Len"),body.get("Elt"));
 			case "AssignStmt":
 				GoIRArrayListExprNode lhs = (GoIRArrayListExprNode) body.get("Lhs");

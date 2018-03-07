@@ -47,7 +47,9 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoFloatNode;
+import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntNode;
+import com.oracle.app.nodes.types.GoStringArray;
 import com.oracle.app.nodes.types.GoStringNode;
 
 import com.oracle.app.parser.ir.nodes.*;
@@ -182,13 +184,13 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdent();
-		System.out.println("name of ident: " + name);
+		//System.out.println("name of ident: " + name);
 		GoExpressionNode result = null;
 		//Cannot check for if writing value yet
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
-	    	System.out.println(name + " is a read node");
+	    	//System.out.println(name + " is a read node");
 	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	    } 
 	    	/*else {
@@ -211,9 +213,6 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
 		String op = node.getOp();
 		final GoExpressionNode result;
-		System.out.println("In case:");
-		System.out.println(leftNode.toString());
-		System.out.println(rightNode.toString());
 		switch(op){
 		case "+":
 			result = GoAddNodeGen.create(leftNode, rightNode);
@@ -460,14 +459,10 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode defaultval = null;
 		if(node.getType() != null){
 			defaultval = (GoExpressionNode)node.getType().accept(this);
-			System.out.println("type: ");
-			System.out.println(node.getType().name);
 		}
 		GoExpressionNode[] values = null;
 		if(node.getExpr() != null){
 			values = (GoExpressionNode[])node.getExpr().accept(this);
-			System.out.println("values: ");
-			System.out.print(node.getExpr().name);
 		}
 		GoExpressionNode[] result = new GoExpressionNode[names.length];
 		//Unbalanced arrays arent actually a thing. Thats a mismatch error
@@ -508,7 +503,24 @@ public class GoTruffle implements GoIRVisitor {
 					System.out.println("Unimplemented ValueSpec default case "+type);
 				}
 			}else {
-				val = new GoArray();
+				//this is for arrays, probably should make this better
+				if(node.getType().getChildren().get(0) instanceof GoIRBasicLitNode) {
+					int size = Integer.parseInt( ((GoIRBasicLitNode) node.getType().getChildren().get(0)).getValue());
+					String arrType = ((GoIRIdentNode) node.getType().getChildren().get(1)).getIdent();
+					switch(arrType) {
+					case "int":
+						val = new GoIntArray(size);
+						break;
+					case "string":
+						val = new GoStringArray(size);
+						break;
+					}
+					//val = new GoArray(size);
+				}else {
+					//idk what to do so far if passed ident for size on declaration of array
+					val = new GoIntArray(50);
+					
+				}
 			}
 			for(int i = 0; i < names.length; i++){
 				String name = ((GoIdentNode) names[i]).getName();

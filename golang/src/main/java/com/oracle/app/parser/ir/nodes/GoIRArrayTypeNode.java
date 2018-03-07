@@ -23,11 +23,14 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 		type.setParent(this);
 		
 	}
+	
 
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<GoBaseIRNode> m = new ArrayList<GoBaseIRNode>();;
+		m.add(len);
+		m.add(type);
+		return m;
 	}
 
 	@Override
