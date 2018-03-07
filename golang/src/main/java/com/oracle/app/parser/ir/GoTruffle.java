@@ -315,7 +315,13 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
-		GoExpressionNode[] arguments = (GoExpressionNode[]) node.getArgumentNode().accept(this);
+		GoExpressionNode[] arguments = null;
+		if(node.getArgumentNode() != null){
+			arguments = (GoExpressionNode[]) node.getArgumentNode().accept(this);
+		}
+		else{
+			arguments = new GoExpressionNode[0];
+		}
 		return new GoInvokeNode(functionNode, arguments);
 	}
 
