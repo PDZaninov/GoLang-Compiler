@@ -25,7 +25,6 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	catch(IllegalStateException e){
     		result = 0;
     	}
-    	System.out.println("reading int: " +result);
     	return result;
     }
     
