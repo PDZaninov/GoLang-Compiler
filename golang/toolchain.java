@@ -1,4 +1,3 @@
-package com.oracle.app;
 
 import java.io.*;
 
@@ -33,11 +32,11 @@ public class toolchain {
 //        printWriter.println("javac "+ currentDir + "/src/main/java/com/oracle/app/toolchain.java");
 //        System.out.println("Run this");
 //        System.out.println("java -classpath " + currentDir + "/src/main/java" + " com.oracle.app.toolchain " + FILE_NAME +".go" );
-        System.out.println("chmod +x "+ AST_DIRECTORY + "gt");
-        printWriter.println("chmod +x "+ AST_DIRECTORY + "gt");
+        System.out.println("chmod +x " + "./gt");
+        printWriter.println("chmod +x " + "./gt");
         printWriter.println("sudo -S true");
-        System.out.println("sudo "+ "."+ AST_DIRECTORY + "gt " + AST_DIRECTORY + FILE_NAME + ".ast");
-        printWriter.println("sudo "+ "."+ AST_DIRECTORY + "gt " + AST_DIRECTORY + FILE_NAME + ".ast");
+        System.out.println("sudo "+ "./" + "gt " + AST_DIRECTORY + FILE_NAME + ".ast");
+        printWriter.println("sudo "+ "./" + "gt " + AST_DIRECTORY + FILE_NAME + ".ast");
         printWriter.close();
 
         return tempScript;
@@ -47,7 +46,7 @@ public class toolchain {
         String currentDir = System.getProperty("user.dir");
         System.out.println(currentDir);
         String GO_DIRECTORY = currentDir + "/gofiles/"; //TODO: fix the directory
-        String AST_DIRECTORY = currentDir + "/astfiles/"; //TODO: fix the directory
+        String AST_DIRECTORY = currentDir; //TODO: fix the directory
 //		File folder = new File("your/path");
 //		File[] listOfFiles = folder.listFiles();
 
