@@ -39,7 +39,7 @@ public class GoMain
   		out.println("== running on " + Truffle.getRuntime().getName());
     	PolyglotEngine engine = PolyglotEngine.newBuilder().setIn(in).setOut(out).build();
     	//Don't know about this yet
-    	//assert engine.getLanguages().containsKey(GoLanguage.MIME_TYPE);
+    	assert engine.getLanguages().containsKey(GoLanguage.MIME_TYPE);
     	try {
     		Value result = engine.eval(source);
     		
