@@ -13,6 +13,7 @@ public class GoStringArray extends GoArray{
 	public GoStringArray(int size) {
 		array = new String[size];
 		Arrays.fill(array, "");
+		length = array.length;
 	}
 	
 	@Override
@@ -30,6 +31,12 @@ public class GoStringArray extends GoArray{
 	public GoArray executeGeneric(VirtualFrame frame) {
 		// TODO Auto-generated method stub
 		return this;
+	}
+
+	@Override
+	public int len(GoArray a) {
+		// TODO Auto-generated method stub
+		return a.length;
 	}
 
 }

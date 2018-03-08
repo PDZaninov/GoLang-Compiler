@@ -1,11 +1,7 @@
 package com.oracle.app;
 
 
-import java.io.IOException;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 
 import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.Truffle;
@@ -16,10 +12,14 @@ import com.oracle.truffle.api.vm.PolyglotEngine.Value;
 
 public class GoMain 
 {
-    public static void main(String[] args) throws IOException
-    {
-		
+    public static void main(String[] args) throws IOException, InterruptedException {
+
+    	toolchain tool = new toolchain();
+
+
+
 		System.out.println(args[0]);
+//		tool.run(args[0]);
      	Source source;
         if(args.length == 0){
         	System.out.println("Don't know about standard input quite yet");
