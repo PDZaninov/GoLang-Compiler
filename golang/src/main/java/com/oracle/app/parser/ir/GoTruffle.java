@@ -5,7 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.*;
+import com.oracle.app.nodes.GoArrayExprNode;
+import com.oracle.app.nodes.GoExprNode;
+import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoIdentNode;
+import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
@@ -16,7 +21,6 @@ import com.oracle.app.nodes.controlflow.GoForNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.controlflow.GoIfStmtNode;
 import com.oracle.app.nodes.controlflow.GoSwitchNode;
-
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
@@ -24,12 +28,10 @@ import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
-import com.oracle.app.nodes.expression.GoDecNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
-import com.oracle.app.nodes.expression.GoIncNodeGen;
 import com.oracle.app.nodes.expression.GoIndexExprNodeGen;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
@@ -51,10 +53,8 @@ import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringArray;
 import com.oracle.app.nodes.types.GoStringNode;
-
-import com.oracle.app.parser.ir.nodes.*;
-
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
@@ -69,6 +69,7 @@ import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
@@ -77,7 +78,7 @@ import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.source.Source;
 
 /**
@@ -104,8 +105,8 @@ public class GoTruffle implements GoIRVisitor {
             if (outer != null) {
                 locals.putAll(outer.locals);
             }
-            }
         }
+    }
     
 	GoLanguage language;
 	
@@ -190,19 +191,21 @@ public class GoTruffle implements GoIRVisitor {
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
-	    	//System.out.println(name + " is a read node");
 	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
-	    } 
-	    	/*else {
-	             Read of a global name. In our language, the only global names are functions. 
-	        	return (GoExpressionNode)new GoFunctionLiteralNode(language, name);
-	        }*/
-		else {
+	    } else {
+	    	switch (name){
+			case "int":
+				return new GoIntNode(0);
+			case "string":
+				return new GoStringNode("");
+			case "float":
+				return new GoFloatNode(0);
+			}
+	    	/*
 			result = null;
 			if(node.getChild() != null)
-				result = (GoExpressionNode) node.getChild().accept(this);
-
-			
+				result = (GoExpressionNode) node.getChild().accept(this);	
+	    	 */
 		}
 		return new GoIdentNode(language, name, result);
 	}
@@ -491,50 +494,11 @@ public class GoTruffle implements GoIRVisitor {
 			}
 		}
 		else{
-			GoExpressionNode val = null;
-			
-			if(defaultval instanceof GoIdentNode) {
-				String type = ((GoIdentNode)defaultval).getName();
-				switch (type){
-				case "int":
-					val = new GoIntNode(0);
-					break;
-				case "string":
-					val = new GoStringNode("");
-					break;
-				case "float":
-					val = new GoFloatNode(0);
-					break;
-				default:
-					System.out.println("Unimplemented ValueSpec default case "+type);
-				}
-			}else {
-				//this is for arrays, probably should make this better
-				if(node.getType().getChildren().get(0) instanceof GoIRBasicLitNode) {
-					int size = Integer.parseInt( ((GoIRBasicLitNode) node.getType().getChildren().get(0)).getValue());
-					String arrType = ((GoIRIdentNode) node.getType().getChildren().get(1)).getIdent();
-					switch(arrType) {
-					case "int":
-						val = new GoIntArray(size);
-						break;
-					case "string":
-						val = new GoStringArray(size);
-						break;
-					}
-					//val = new GoArray(size);
-				}else {
-					//idk what to do so far if passed ident for size on declaration of array
-					val = new GoIntArray(50);
-					
-				}
-			}
 			for(int i = 0; i < names.length; i++){
 				String name = ((GoIdentNode) names[i]).getName();
 				FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 				lexicalscope.locals.put(name, frameSlot);
-				result[i] = GoWriteLocalVariableNodeGen.create(val, frameSlot);
-				//System.out.println("name: " + name);
-				//System.out.println("val: " + val.toString());
+				result[i] = GoWriteLocalVariableNodeGen.create(defaultval, frameSlot);
 			}
 			
 		}
@@ -544,8 +508,38 @@ public class GoTruffle implements GoIRVisitor {
 		return new GoArrayExprNode(result);
 	}
 
+	/*
+	 * Known Code Smell:
+	 * Type currently returns a BasicLit expression node, might be able to
+	 * switch around to use a visitor pattern or some fancy enum pattern,but not
+	 * known if anything else would use it. Might not even be that many cases to run through.
+	 * Could also possibly go for a hashmap
+	 */
 	@Override
-
+	public Object visitArrayType(GoIRArrayTypeNode node){
+		GoExpressionNode length = (GoExpressionNode) node.getLength().accept(this);
+		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		//Length can be assumed BasicLit. Only other value it can be is a const variable
+		try{
+			int size = length.executeInteger(null);
+			if(type instanceof GoIntNode){
+				return new GoIntArray(size);
+			}
+			else if(type instanceof GoStringNode){
+				return new GoStringArray(size);
+			}
+			else{
+				System.out.println("Array Type "+ type +" not implemented");
+			}
+		}
+		catch(UnexpectedResultException e){
+			//Throws error when the size value isnt an int or const
+			System.out.println(e);
+		}
+		return type;
+	}
+	
+	@Override
 	public Object visitCaseClause(GoIRCaseClauseNode node) {
 		GoExpressionNode[] list = null;
 		GoStatementNode[]  body = null;

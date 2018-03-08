@@ -14,7 +14,6 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 		len = length;
 		this.type = type;
 		setChildParent();
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -24,6 +23,13 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 		
 	}
 	
+	public GoBaseIRNode getLength(){
+		return len;
+	}
+	
+	public GoBaseIRNode getType(){
+		return type;
+	}
 
 	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
@@ -35,8 +41,7 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 
 	@Override
 	public Object accept(GoIRVisitor visitor) {
-		// TODO Auto-generated method stub
-		return null;
+		return visitor.visitArrayType(this);
 	}
 
 }

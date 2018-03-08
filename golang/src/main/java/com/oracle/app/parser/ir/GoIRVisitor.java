@@ -72,4 +72,9 @@ public interface GoIRVisitor {
 	Object visitSwitchStmt(GoIRSwitchStmtNode goIRSwitchStmtNode);
 
 	Object visitIfStmt(GoIRIfStmtNode goIRIfStmtNode);
+
+	default Object visitArrayType(GoIRArrayTypeNode goIRArrayTypeNode){
+		System.out.println("Default Array Type Visit");
+		return null;
+	}
 }
