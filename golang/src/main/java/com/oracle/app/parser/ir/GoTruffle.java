@@ -156,6 +156,7 @@ public class GoTruffle implements GoIRVisitor {
     }
 
 	public Object visitIfStmt(GoIRIfStmtNode node){
+		startBlock();
 		GoStatementNode Init = null;
 		GoExpressionNode CondNode = null;
 		GoStatementNode Body = null;
@@ -169,7 +170,7 @@ public class GoTruffle implements GoIRVisitor {
 		
 		if(node.getElse() != null)
 			Else = (GoStatementNode)node.getElse().accept(this);
-
+		finishBlock();
 		return new GoIfStmtNode(Init,CondNode,Body,Else);
 	}
 
@@ -462,6 +463,9 @@ public class GoTruffle implements GoIRVisitor {
 		return new GoArrayExprNode(result);
 	}
 
+	/**
+	 * Needs to throw a runtimeexception when the value array does not match the names array
+	 */
 	@Override
 	public Object visitValueSpec(GoIRValueSpecNode node) {
 		GoExpressionNode[] names = (GoExpressionNode[]) node.getNames().accept(this);
@@ -508,7 +512,7 @@ public class GoTruffle implements GoIRVisitor {
 		return new GoArrayExprNode(result);
 	}
 
-	/*
+	/**
 	 * Known Code Smell:
 	 * Type currently returns a BasicLit expression node, might be able to
 	 * switch around to use a visitor pattern or some fancy enum pattern,but not
@@ -574,6 +578,8 @@ public class GoTruffle implements GoIRVisitor {
 	}
 
 	public Object visitForLoop(GoIRForNode node) {
+		startBlock();
+		
 		GoExpressionNode init = null;
 		GoExpressionNode cond = null;
 		GoExpressionNode post = null;
@@ -585,6 +591,9 @@ public class GoTruffle implements GoIRVisitor {
 		if(node.getPost() != null)
 			post = (GoExpressionNode) node.getPost().accept(this);
 		body = (GoStatementNode) node.getBody().accept(this);
+		
+		finishBlock();
+		
 		return new GoForNode(init, cond, post, body);
 		
 	}

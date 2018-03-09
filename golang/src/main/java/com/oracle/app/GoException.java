@@ -13,11 +13,7 @@ import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 import com.oracle.app.nodes.GoRootNode;
 
-/**
- * SL does not need a sophisticated error checking and reporting mechanism, so all unexpected
- * conditions just abort execution. This exception class is used when we abort from within the SL
- * implementation.
- */
+
 public class GoException extends RuntimeException {
 
     private static final long serialVersionUID = -6799734410727348507L;

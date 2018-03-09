@@ -32,8 +32,8 @@ import com.oracle.truffle.api.source.Source;
  */
 
 public final class GoContext {
-	private static final Source BUILTIN_SOURCE = Source.newBuilder("").name("Go builtin").mimeType(GoLanguage.MIME_TYPE).build();
-	private static final Layout LAYOUT = Layout.createLayout();
+	//private static final Source BUILTIN_SOURCE = Source.newBuilder("").name("Go builtin").mimeType(GoLanguage.MIME_TYPE).build();
+	//private static final Layout LAYOUT = Layout.createLayout();
 	
 	private final Env env;
 	private final BufferedReader input;
@@ -103,6 +103,7 @@ public final class GoContext {
 	
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){
 		int argumentCount = factory.getExecutionSignature().size();
+		//System.out.println(factory.toString()+" "+argumentCount);
 		GoExpressionNode[] argumentNodes = new GoExpressionNode[argumentCount];
 		//Gets the parameters of the function, Need GoReadArgumentNode
 		for(int i = 0; i < argumentCount; i++){
