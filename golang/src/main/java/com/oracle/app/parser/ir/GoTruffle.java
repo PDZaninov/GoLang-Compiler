@@ -32,7 +32,7 @@ import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
-import com.oracle.app.nodes.expression.GoIndexExprNodeGen;
+import com.oracle.app.nodes.expression.GoIndexExprNode;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
@@ -46,8 +46,9 @@ import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
+import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
-import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -71,6 +72,7 @@ import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
@@ -272,10 +274,12 @@ public class GoTruffle implements GoIRVisitor {
 		case"^":
 			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
 			break;
+			/*
 		case"IndexExpr":
+			System.out.println(leftNode);
 			result = GoIndexExprNodeGen.create(leftNode, rightNode);
 			break;
-			
+			*/
 		default:
 			throw new RuntimeException("Unexpected Operation: "+op);
 	}
@@ -326,6 +330,9 @@ public class GoTruffle implements GoIRVisitor {
 		else{
 			arguments = new GoExpressionNode[0];
 		}
+		//No way to currently distinquish the index expression node from a read or a write to
+		//an index. Hard coded this to test out only printing an array index
+		arguments[0] = GoReadArrayNodeGen.create(((GoIndexExprNode) arguments[0]).getIndex(), ((GoIndexExprNode) arguments[0]).getName().getSlot());
 		return new GoInvokeNode(functionNode, arguments);
 	}
 
@@ -365,9 +372,7 @@ public class GoTruffle implements GoIRVisitor {
 		int argumentsize = node.getSize();
 		GoExpressionNode[] arguments = new GoExpressionNode[argumentsize];
 		ArrayList<GoBaseIRNode> children = node.getChildren();
-		
 		for(int i = 0; i < argumentsize; i++){
-			
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
 		return arguments;
@@ -482,8 +487,18 @@ public class GoTruffle implements GoIRVisitor {
 		//Throw an exception when values array has values but unbalanced
 		if(values != null){
 			for(int i = 0; i < names.length; i++){
+				
 				String name = "";
 				FrameSlot frameSlot = null;
+				/*
+				 * Writing to an index of an array requires 3 things rather than 2 so I
+				 * also had to create a new kind of Write node and return that instead
+				 */
+				if(names[i] instanceof GoIndexExprNode){
+					frameSlot = ((GoIndexExprNode) names[i]).getName().getSlot();
+					result[i] = GoWriteArrayNodeGen.create(values[i], ((GoIndexExprNode) names[i]).getIndex(), frameSlot);
+					continue;
+				}
 				if(names[i] instanceof GoIdentNode){
 					name = ((GoIdentNode) names[i]).getName();
 					frameSlot = frameDescriptor.findOrAddFrameSlot(name);
@@ -491,8 +506,8 @@ public class GoTruffle implements GoIRVisitor {
 				else if(names[i] instanceof GoReadLocalVariableNode){
 					frameSlot = ((GoReadLocalVariableNode) names[i]).getSlot();
 				}
-			
 				lexicalscope.locals.put(name, frameSlot);
+				System.out.println(frameSlot+" "+values[i]);
 				result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
 			
 			}
@@ -502,6 +517,7 @@ public class GoTruffle implements GoIRVisitor {
 				String name = ((GoIdentNode) names[i]).getName();
 				FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 				lexicalscope.locals.put(name, frameSlot);
+				
 				result[i] = GoWriteLocalVariableNodeGen.create(defaultval, frameSlot);
 			}
 			
@@ -511,7 +527,19 @@ public class GoTruffle implements GoIRVisitor {
 		//we return another array into the parent array.
 		return new GoArrayExprNode(result);
 	}
-
+	
+	/**
+	 * The index expression node is only currently  used for its values in it.
+	 * The name is a readlocalvariable so that I can retrieve the frameslot it is in and get the actual array object
+	 * Save the index as a goint node because the Generator factory will auto execute it and pass an int to the write
+	 */
+	@Override
+	public Object visitIndexNode(GoIRIndexNode node){
+		GoReadLocalVariableNode name = (GoReadLocalVariableNode) node.getName().accept(this);
+		GoIndexExprNode array = new GoIndexExprNode(name,(GoIntNode) node.getIndex().accept(this));
+		return array;
+	}
+	
 	/**
 	 * Known Code Smell:
 	 * Type currently returns a BasicLit expression node, might be able to

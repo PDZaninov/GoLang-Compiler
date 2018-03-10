@@ -1,12 +1,14 @@
 package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
-import com.oracle.truffle.api.frame.FrameSlotTypeException;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
@@ -14,18 +16,16 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 
 	
-    public abstract FrameSlot getSlot();
+    @Override
+	public String toString() {
+		return "GoReadLocalVariableNode []";
+	}
+
+	public abstract FrameSlot getSlot();
     
     @Specialization(guards = "isInt(frame)")
     protected int readInt(VirtualFrame frame){
-    	int result;
-    	try{
-    		result = FrameUtil.getIntSafe(frame, getSlot());
-    	}
-    	catch(IllegalStateException e){
-    		result = 0;
-    	}
-    	return result;
+    	return FrameUtil.getIntSafe(frame, getSlot());
     }
     
     @Specialization(guards = "isFloat(frame)")
@@ -43,14 +43,14 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return FrameUtil.getBooleanSafe(frame, getSlot());
     }
     
-    @Specialization(guards = "isString(frame)")
-    protected Object readString(VirtualFrame frame) {
+    @Specialization(guards = "isArray(frame)")
+    protected Object readArray(VirtualFrame frame) {
+    	
         return FrameUtil.getObjectSafe(frame, getSlot());
     }
     
-    @Specialization(guards = "isArray(frame)")
-    protected Object readArray(VirtualFrame frame) {
-    	System.out.println("reading a stored array");
+    @Specialization(guards = "isString(frame)")
+    protected Object readString(VirtualFrame frame) {
         return FrameUtil.getObjectSafe(frame, getSlot());
     }
 
@@ -59,7 +59,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         if (!frame.isObject(getSlot())) {
             CompilerDirectives.transferToInterpreter();
             Object result = frame.getValue(getSlot());
-            frame.setObject(getSlot(), result);
+            frame.setObject(getSlot(), result);	
             return result;
         }
 
@@ -88,5 +88,16 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     
     protected boolean isArray( VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Object;
+    }
+    
+    @NodeChild(value="index",type=GoIntNode.class)
+    public abstract static class GoReadArrayNode extends GoReadLocalVariableNode{
+    	
+    	@Specialization
+    	public Object readArray(VirtualFrame frame, int index){
+    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+    		return array.readArray(index);
+    	}
+    	
     }
 }

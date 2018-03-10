@@ -1,6 +1,9 @@
 package com.oracle.app.nodes.types;
 
+import java.util.Arrays;
+
 import com.oracle.truffle.api.frame.VirtualFrame;
+
 
 public class GoIntArray extends GoArray{
 
@@ -9,6 +12,11 @@ public class GoIntArray extends GoArray{
 	public GoIntArray(int size) {
 		array = new int[size];
 		length = array.length;
+	}
+	
+	@Override
+	public void setArray(int index, int value){
+		array[index] = value;
 	}
 	
 	@Override
@@ -31,8 +39,10 @@ public class GoIntArray extends GoArray{
 		return this;
 	}
 
-
-
+	@Override
+	public String toString() {
+		return "GoIntArray [array=" + Arrays.toString(array) + "]";
+	}
 
 
 }

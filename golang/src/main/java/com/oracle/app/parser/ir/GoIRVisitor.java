@@ -77,4 +77,9 @@ public interface GoIRVisitor {
 		System.out.println("Default Array Type Visit");
 		return null;
 	}
+
+	default Object visitIndexNode(GoIRIndexNode goIRIndexNode){
+		System.out.println("Default Index Node Visit");
+		return null;
+	}
 }

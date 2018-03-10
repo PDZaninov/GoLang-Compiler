@@ -59,9 +59,9 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 	long.class,
 	BigInteger.class,
 	boolean.class,
+	GoArray.class,
 	String.class,
 	GoFunction.class,
-	GoNull.class, 
-	GoArray.class})
+	GoNull.class})
 public abstract class GoTypes {
 }

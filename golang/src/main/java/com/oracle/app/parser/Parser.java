@@ -14,9 +14,6 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
-
-import com.oracle.app.parser.ir.GoVisitor;
-import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
@@ -33,6 +30,7 @@ import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
@@ -292,8 +290,8 @@ public class Parser {
 				GoBaseIRNode obj = body.get("Obj");
 				return new GoIRIdentNode(attrs.get("Name"),obj);
 			case "IndexExpr":
-				return new GoIRBinaryExprNode("IndexExpr", body.get("X"),body.get("Index"));
-			
+				//return new GoIRBinaryExprNode("IndexExpr", body.get("X"),body.get("Index"));
+				return new GoIRIndexNode((GoIRIdentNode) body.get("X"),body.get("Index"));
 
 			case "IfStmt":
 				GoBaseIRNode ifinit = body.get("Init");

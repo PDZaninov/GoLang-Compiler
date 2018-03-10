@@ -1,12 +1,14 @@
 package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.truffle.api.dsl.Fallback;
+import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 @NodeChild("valueNode")
@@ -18,7 +20,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    
 	    @Specialization(guards = "isIntOrIllegal(frame)")
 	    protected int writeInt(VirtualFrame frame, int value) {
-
+	    	
 	        getSlot().setKind(FrameSlotKind.Int);
 
 	        frame.setInt(getSlot(), value);
@@ -26,8 +28,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 	    
 	    @Specialization(guards = "isArrayOrIllegal(frame)")
-	    protected Object[] writeArray(VirtualFrame frame, Object[] value) {
-
+	    protected GoArray writeArray(VirtualFrame frame, GoArray value) {
 	        getSlot().setKind(FrameSlotKind.Object);
 
 	        frame.setObject(getSlot(), value);
@@ -83,6 +84,10 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return getSlot().getKind() == FrameSlotKind.Int || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 	    
+	    protected boolean isArrayOrIllegal(VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
+	    
 	    protected boolean isFloatOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Float || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
@@ -99,7 +104,15 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 	    
-	    protected boolean isArrayOrIllegal(@SuppressWarnings("unused") VirtualFrame frame) {
-	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
+
+	    @NodeChild(value = "indexNode",type = GoIntNode.class)
+	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
+	    	@Specialization
+	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		array.setArray(index,value);
+	    		frame.setObject(getSlot(), array);
+	    		return null;
+	    	}
 	    }
 }
