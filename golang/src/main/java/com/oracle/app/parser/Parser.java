@@ -32,6 +32,7 @@ import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
@@ -294,11 +295,7 @@ public class Parser {
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "IncDecStmt":
-				String inctype = attrs.get("Tok");
-				inctype = inctype.substring(0,1);
-				GoBaseIRNode incoperation = new GoIRBinaryExprNode(inctype,body.get("X"),new GoIRIntNode(1));
-				return new GoIRAssignmentStmtNode(body.get("X"), incoperation);
-				//return new GoIRIncDecStmtNode(attrs.get("Tok"),body.get("X"));
+				return new GoIRIncDecStmtNode(attrs.get("Tok"),body.get("X"));
 				
 			case "Object":
 				return new GoTempIRNode(nodeType,attrs,body);

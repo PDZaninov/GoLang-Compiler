@@ -159,28 +159,9 @@ public class GoTruffle implements GoIRVisitor {
 		return arguments;
     }
 
-	public Object visitIfStmt(GoIRIfStmtNode node){
-		startBlock();
-		GoStatementNode Init = null;
-		GoExpressionNode CondNode = null;
-		GoStatementNode Body = null;
-		GoStatementNode Else = null;
-		
-		if(node.getInit() != null)
-			Init = (GoStatementNode) node.getInit().accept(this);
-		
-		CondNode = (GoExpressionNode) node.getCond().accept(this);
-		Body = (GoStatementNode)node.getBody().accept(this);
-		
-		if(node.getElse() != null)
-			Else = (GoStatementNode)node.getElse().accept(this);
-		finishBlock();
-		return new GoIfStmtNode(Init,CondNode,Body,Else);
-	}
-
 	@Override
 	public Object visitObject(GoBaseIRNode node) {
-		System.out.println("Visited Truffle temp: " + node.toString());
+		//System.out.println("Visited Truffle temp: " + node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)
 				child.accept(this);
@@ -567,17 +548,17 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitCaseClause(GoIRCaseClauseNode node) {
-		GoExpressionNode[] list = null;
+		GoArrayExprNode list = null;
 		GoStatementNode[]  body = null;
 
 		if (node.getList() != null){
-			list = (GoExpressionNode[]) node.getList().accept(this);
+			list = (GoArrayExprNode) node.getList().accept(this);
 		}
 		if (node.getBody() != null) {
 			body = (GoStatementNode[]) node.getBody().accept(this);
 		}
 
-		return new GoCaseClauseNode(list, body);
+		return new GoCaseClauseNode(list.getArguments(), body);
 	}
 
 	@Override
@@ -625,23 +606,34 @@ public class GoTruffle implements GoIRVisitor {
 		
 		final GoExpressionNode result;
 		GoIRIdentNode ident = (GoIRIdentNode) node.getChild();
-		GoIRIntNode one = new GoIRIntNode(0);
+		GoIRIntNode one = new GoIRIntNode(1);
 		
 		String op = node.getOp();
-		final GoIRBinaryExprNode binary_expr;
-		switch(op) {
-			case "++":
-				binary_expr = new GoIRBinaryExprNode("+", ident, one);
-				break;
-			case "--":
-				binary_expr = new GoIRBinaryExprNode("-", ident, one);
-				break;
-			default:
-				throw new RuntimeException("Unexpected Operation: " + op);
-		}
+		final GoIRBinaryExprNode binary_expr = new GoIRBinaryExprNode(op.substring(0,1), ident, one);
+
 		GoIRAssignmentStmtNode res = new GoIRAssignmentStmtNode(ident,binary_expr);
 		result = (GoExpressionNode) res.accept(this);
 		return result;
+	}
+	
+	@Override
+	public Object visitIfStmt(GoIRIfStmtNode node){
+		startBlock();
+		GoStatementNode Init = null;
+		GoExpressionNode CondNode = null;
+		GoStatementNode Body = null;
+		GoStatementNode Else = null;
+		
+		if(node.getInit() != null)
+			Init = (GoStatementNode) node.getInit().accept(this);
+		
+		CondNode = (GoExpressionNode) node.getCond().accept(this);
+		Body = (GoStatementNode)node.getBody().accept(this);
+		
+		if(node.getElse() != null)
+			Else = (GoStatementNode)node.getElse().accept(this);
+		finishBlock();
+		return new GoIfStmtNode(Init,CondNode,Body,Else);
 	}
 
 	@Override
