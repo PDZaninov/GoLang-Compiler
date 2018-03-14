@@ -17,6 +17,10 @@ func main() {
 	var n int = 0
 	var o int = 0
 	var p int = 0
+	var q int = 0
+	var r int = 0
+	var s int = 0
+	var t int = 0
 
 	println(a)
 	println(b)
