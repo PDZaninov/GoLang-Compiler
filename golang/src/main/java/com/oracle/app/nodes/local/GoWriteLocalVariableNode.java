@@ -106,7 +106,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 	    
 
-	    @NodeChild(value = "indexNode",type = GoIntNode.class)
+	    @NodeChild(value = "indexNode",type = GoExpressionNode.class)
 	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
 	    	@Specialization
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){

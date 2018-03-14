@@ -18,9 +18,9 @@ public class GoIndexExprNode extends GoExpressionNode{
 	/*The array variable is a read node because calling an index expression 
 	 * you have to get the GoArray object from a read local variable slot*/
 	private GoReadLocalVariableNode array;
-	GoIntNode index;
+	GoExpressionNode index;
 	
-	public GoIndexExprNode(GoReadLocalVariableNode array,GoIntNode index){
+	public GoIndexExprNode(GoReadLocalVariableNode array,GoExpressionNode index){
 		this.array = array;
 		this.index = index;
 	}
@@ -29,7 +29,7 @@ public class GoIndexExprNode extends GoExpressionNode{
 		return array;
 	}
 	
-	public GoIntNode getIndex(){
+	public GoExpressionNode getIndex(){
 		return index;
 	}
 	
