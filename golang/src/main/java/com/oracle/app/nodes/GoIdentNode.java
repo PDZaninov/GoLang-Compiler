@@ -35,7 +35,10 @@ public class GoIdentNode extends GoExpressionNode{
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return child.executeGeneric(frame);
+		if(child != null) {
+			return child.executeGeneric(frame);
+		}
+		return null;
 	}
 	
 	

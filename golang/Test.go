@@ -37,6 +37,16 @@ func main() {
         println("twenty")
     }
 
+    for f := 0; f < len(array); f++ {
+        array[f] = f;
+    }
+
+    for z := len(array) - 1; z >= 0; z-- {
+        println(array[z])
+    }
+
+
+
     println(a + i)
     println(k + i)
 }
