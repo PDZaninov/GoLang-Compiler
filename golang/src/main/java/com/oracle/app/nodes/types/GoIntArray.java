@@ -14,7 +14,6 @@ public class GoIntArray extends GoArray{
 		length = array.length;
 	}
 	
-	@Override
 	public void setArray(int index, int value){
 		array[index] = value;
 	}

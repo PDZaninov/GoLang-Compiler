@@ -17,7 +17,7 @@ public class GoIndexExprNode extends GoExpressionNode{
 	
 	/*The array variable is a read node because calling an index expression 
 	 * you have to get the GoArray object from a read local variable slot*/
-	@Child private GoReadLocalVariableNode array;
+	private GoReadLocalVariableNode array;
 	GoIntNode index;
 	
 	public GoIndexExprNode(GoReadLocalVariableNode array,GoIntNode index){
@@ -40,8 +40,6 @@ public class GoIndexExprNode extends GoExpressionNode{
 	}
     
     protected Object doIndex(GoArray array, int index) {
-    	//System.out.println("Indexnode reads: " + array.readArray(index));
-    	//System.out.println(array);
         return array.readArray(index);
     }
     

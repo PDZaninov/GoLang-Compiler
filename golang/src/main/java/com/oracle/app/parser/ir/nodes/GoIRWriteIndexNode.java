@@ -5,16 +5,25 @@ import java.util.ArrayList;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
-public class GoIRIndexNode extends GoBaseIRNode {
+/**
+ * Class only created when an Index node appears on the left hand side of an assignment.
+ * @author Trevor
+ *
+ */
+public class GoIRWriteIndexNode extends GoBaseIRNode {
 
 	GoIRIdentNode name;
 	GoBaseIRNode index;
 	
-	public GoIRIndexNode(GoIRIdentNode name, GoBaseIRNode index) {
-		super("Index Node");
+	
+	public GoIRWriteIndexNode(GoIRIdentNode name, GoBaseIRNode index) {
+		super("Write Index");
 		this.name = name;
 		this.index = index;
-		setChildParent();
+	}
+
+	public static GoIRWriteIndexNode createIRWriteIndex(GoIRIndexNode node){
+		return new GoIRWriteIndexNode(node.getName(),node.getIndex());
 	}
 	
 	public GoIRIdentNode getName(){
@@ -29,11 +38,11 @@ public class GoIRIndexNode extends GoBaseIRNode {
 	public GoBaseIRNode getIndex(){
 		return index;
 	}
-
+	
 	@Override
 	public void setChildParent() {
-		name.setParent(this);
-		index.setParent(this);
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -44,7 +53,8 @@ public class GoIRIndexNode extends GoBaseIRNode {
 
 	@Override
 	public Object accept(GoIRVisitor visitor) {
-		return visitor.visitIndexNode(this);
+		// TODO Auto-generated method stub
+		return visitor.visitWriteIndex(this);
 	}
 
 }

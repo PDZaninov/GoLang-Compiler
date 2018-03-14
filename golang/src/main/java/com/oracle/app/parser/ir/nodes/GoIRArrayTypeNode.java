@@ -9,8 +9,8 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 	GoBaseIRNode len;
 	GoBaseIRNode type;
 	
-	public GoIRArrayTypeNode(String name,GoBaseIRNode length, GoBaseIRNode type) {
-		super(name);
+	public GoIRArrayTypeNode(GoBaseIRNode length, GoBaseIRNode type) {
+		super("IR Array Type Node");
 		len = length;
 		this.type = type;
 		setChildParent();

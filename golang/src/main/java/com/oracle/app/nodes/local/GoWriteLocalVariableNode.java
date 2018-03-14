@@ -2,6 +2,7 @@ package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -109,7 +110,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
 	    	@Specialization
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
-	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		GoIntArray array = (GoIntArray) FrameUtil.getObjectSafe(frame, getSlot());
 	    		array.setArray(index,value);
 	    		frame.setObject(getSlot(), array);
 	    		return null;

@@ -29,6 +29,12 @@ public class GoIRIdentNode extends GoBaseIRNode {
 		return null;
 	}
 	
+	//Will need to merge getIdent and getIdentifier so that only getIdentifier is used
+	@Override
+	public String getIdentifier(){
+		return ident;
+	}
+	
 	public String getIdent() {
 		return ident;
 	}

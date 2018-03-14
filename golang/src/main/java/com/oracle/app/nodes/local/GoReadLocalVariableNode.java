@@ -90,7 +90,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return getSlot().getKind() == FrameSlotKind.Object;
     }
     
-    @NodeChild(value="index",type=GoIntNode.class)
+    @NodeChild(value="index",type=GoExpressionNode.class)
     public abstract static class GoReadArrayNode extends GoReadLocalVariableNode{
     	
     	@Specialization

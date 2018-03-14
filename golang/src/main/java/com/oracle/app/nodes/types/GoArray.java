@@ -16,7 +16,7 @@ public abstract class GoArray extends GoExpressionNode {
 
 	abstract public int len(GoArray a);
 
-	abstract public void setArray(int index, int value);
+	//abstract public void setArray(int index, int value);
 	
 	@Override
 	abstract public GoArray executeGoArray(VirtualFrame virtualFrame);

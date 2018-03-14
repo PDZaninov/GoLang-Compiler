@@ -39,4 +39,9 @@ public class GoStringArray extends GoArray{
 		return a.length;
 	}
 
+	public void setArray(int index, String value) {
+		array[index] = value;
+		
+	}
+
 }

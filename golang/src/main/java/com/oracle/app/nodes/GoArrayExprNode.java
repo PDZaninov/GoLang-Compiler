@@ -9,6 +9,10 @@ public class GoArrayExprNode extends GoExpressionNode {
 	public GoArrayExprNode(GoExpressionNode[] children) {
 		this.children = children;
 	}
+	
+	public GoExpressionNode[] getArguments(){
+		return children;
+	}
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
