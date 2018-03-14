@@ -440,7 +440,7 @@ public class GoTruffle implements GoIRVisitor {
 	 */
 	public Object visitWriteIndex(GoIRWriteIndexNode node){
 		GoReadLocalVariableNode name = (GoReadLocalVariableNode) node.getName().accept(this);
-		GoIndexExprNode array = new GoIndexExprNode(name,(GoIntNode) node.getIndex().accept(this));
+		GoIndexExprNode array = new GoIndexExprNode(name,(GoExpressionNode) node.getIndex().accept(this));
 		return array;
 	}
 	
