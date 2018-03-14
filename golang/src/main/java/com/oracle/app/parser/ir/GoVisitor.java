@@ -32,12 +32,6 @@ public class GoVisitor implements GoIRVisitor {
 	}
 
 	@Override
-	public Object visitBasicLit(GoIRBasicLitNode node) {
-		System.out.println("Basic Lit node: " + node.toString());
-		return null;
-	}
-
-	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		System.out.println("Call node: " + node.toString());
 		node.getFunctionNode().accept(this);

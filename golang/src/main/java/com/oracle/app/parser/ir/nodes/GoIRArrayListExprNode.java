@@ -25,8 +25,6 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 		for(int x = 0; x < children.size(); x++){
 			children.get(x).setParent(this);
 		}
-
-
 	}
 	
 	public void printChildren() {

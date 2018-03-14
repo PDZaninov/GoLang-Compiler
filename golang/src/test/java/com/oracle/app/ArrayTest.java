@@ -33,8 +33,9 @@ public class ArrayTest
     /**
      * Rigourous Test :-)
      * @throws IOException 
+     * @throws InterruptedException 
      */
-    public void testApp() throws IOException
+    public void testApp() throws IOException, InterruptedException
     {	String[] args = new String[1];
 		args[0] = "Array.ast";
         GoMain.main(args);

@@ -9,7 +9,7 @@ public class GoIntNode extends GoExpressionNode {
     public GoIntNode(int number) {
         this.number = number;
     }
-
+    
     @Override
     public int executeInteger(VirtualFrame virtualFrame) {
         return number;
