@@ -291,6 +291,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoRootNode root = new GoRootNode(language,frameDescriptor,bodyNode,null,name);
 		allFunctions.put(name,root);
 
+		System.out.println(frameDescriptor);
 		finishBlock();
 		
 		frameDescriptor = null;
