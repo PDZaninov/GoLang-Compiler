@@ -525,7 +525,14 @@ public class GoTruffle implements GoIRVisitor {
 	 */
 	@Override
 	public Object visitArrayType(GoIRArrayTypeNode node){
-		GoExpressionNode length = (GoExpressionNode) node.getLength().accept(this);
+
+		GoExpressionNode length;
+		if(node.getLength() == null) {
+			length= new GoIntNode(0);
+		}
+		else {
+			length = (GoExpressionNode) node.getLength().accept(this);
+		}
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		//Length can be assumed BasicLit. Only other value it can be is a const variable
 		try{

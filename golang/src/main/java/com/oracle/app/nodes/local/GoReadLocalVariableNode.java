@@ -3,6 +3,7 @@ package com.oracle.app.nodes.local;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
+import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -49,12 +50,18 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return FrameUtil.getObjectSafe(frame, getSlot());
     }
     
+    @Specialization(guards = "isSlice(frame)")
+    protected Object readSlice(VirtualFrame frame) {
+    	
+        return FrameUtil.getObjectSafe(frame, getSlot());
+    }
+    
     @Specialization(guards = "isString(frame)")
     protected Object readString(VirtualFrame frame) {
         return FrameUtil.getObjectSafe(frame, getSlot());
     }
 
-    @Specialization(replaces = {"readInt", "readFloat", "readLong", "readBoolean", "readArray", "readString"})
+    @Specialization(replaces = {"readInt", "readFloat", "readLong", "readBoolean", "readArray", "readSlice", "readString"})
     protected Object readObject(VirtualFrame frame) {
         if (!frame.isObject(getSlot())) {
             CompilerDirectives.transferToInterpreter();
@@ -90,6 +97,10 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return getSlot().getKind() == FrameSlotKind.Object;
     }
     
+    protected boolean isSlice( VirtualFrame frame) {
+        return getSlot().getKind() == FrameSlotKind.Object;
+    }
+    
     @NodeChild(value="index",type=GoExpressionNode.class)
     public abstract static class GoReadArrayNode extends GoReadLocalVariableNode{
     	
@@ -97,6 +108,17 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	public Object readArray(VirtualFrame frame, int index){
     		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
     		return array.readArray(index);
+    	}
+    	
+    }
+    
+    @NodeChild(value="index",type=GoExpressionNode.class)
+    public abstract static class GoReadSliceNode extends GoReadLocalVariableNode{
+    	
+    	@Specialization
+    	public Object readSlice(VirtualFrame frame, int index){
+    		GoSlice slice = (GoSlice) FrameUtil.getObjectSafe(frame, getSlot());
+    		return slice.readSlice(index);
     	}
     	
     }

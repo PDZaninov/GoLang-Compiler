@@ -50,6 +50,7 @@ import com.oracle.truffle.api.dsl.TypeCheck;
 import com.oracle.truffle.api.dsl.TypeSystem;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
@@ -60,6 +61,7 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 	BigInteger.class,
 	boolean.class,
 	GoArray.class,
+	GoSlice.class,
 	String.class,
 	GoFunction.class,
 	GoNull.class})

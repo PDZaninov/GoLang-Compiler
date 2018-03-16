@@ -9,11 +9,19 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 	GoBaseIRNode len;
 	GoBaseIRNode type;
 	
+	boolean isSlice = false;
+	
 	public GoIRArrayTypeNode(GoBaseIRNode length, GoBaseIRNode type) {
 		super("IR Array Type Node");
 		len = length;
 		this.type = type;
 		setChildParent();
+	}
+	
+	public GoIRArrayTypeNode(GoBaseIRNode type, boolean isSlice) {
+		super("IR Array Type Node");
+		this.type = type;
+		this.isSlice = true;
 	}
 
 	@Override
@@ -29,6 +37,10 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 	
 	public GoBaseIRNode getType(){
 		return type;
+	}
+	
+	public boolean getIsSlice() {
+		return isSlice;
 	}
 
 	@Override
