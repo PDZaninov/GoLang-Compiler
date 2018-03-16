@@ -95,6 +95,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	
     	@Specialization
     	public Object readArray(VirtualFrame frame, int index){
+    		
     		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
     		return array.readArray(index);
     	}

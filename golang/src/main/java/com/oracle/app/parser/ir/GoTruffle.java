@@ -174,25 +174,14 @@ public class GoTruffle implements GoIRVisitor {
 		//System.out.println("name of ident: " + name);
 		GoExpressionNode result = null;
 		//Cannot check for if writing value yet
+		System.out.println(name+" "+lexicalscope.locals);
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
+	    
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
 	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
-	    } else {
-	    	switch (name){
-			case "int":
-				return new GoIntNode(0);
-			case "string":
-				return new GoStringNode("");
-			case "float":
-				return new GoFloatNode(0);
-			}
-	    	/*
-			result = null;
-			if(node.getChild() != null)
-				result = (GoExpressionNode) node.getChild().accept(this);	
-	    	 */
-		}
+	    }
+	    
 		return new GoIdentNode(language, name, result);
 	}
 
@@ -297,7 +286,6 @@ public class GoTruffle implements GoIRVisitor {
 
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
-		
 		String name = node.getIdent();
 		
 		GoRootNode root = new GoRootNode(language,frameDescriptor,bodyNode,null,name);
@@ -428,6 +416,7 @@ public class GoTruffle implements GoIRVisitor {
 			return GoWriteArrayNodeGen.create(value, index.getIndex(), frameSlot);
 		}
 		else if(child instanceof GoIRIdentNode){
+			
 			lexicalscope.locals.put(name, frameSlot);
 		}
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);

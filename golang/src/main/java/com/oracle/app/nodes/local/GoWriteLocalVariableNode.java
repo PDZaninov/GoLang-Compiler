@@ -49,7 +49,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    protected long writeLong(VirtualFrame frame, long value) {
 
 	        getSlot().setKind(FrameSlotKind.Long);
-
+	        
 	        frame.setLong(getSlot(), value);
 	        return value;
 	    }
