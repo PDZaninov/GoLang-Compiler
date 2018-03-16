@@ -1,8 +1,7 @@
 package com.oracle.app.parser.ir.nodes;
 
-import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode.GoIRIntNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode.GoIRStringNode;
+import com.oracle.app.parser.ir.nodes.GoIRIntNode;
+import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 
 public class GoIRDefaultValues {
 

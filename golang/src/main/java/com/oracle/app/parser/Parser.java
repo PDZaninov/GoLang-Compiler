@@ -18,7 +18,7 @@ import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode.GoIRIntNode;
+import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
@@ -174,7 +174,13 @@ public class Parser {
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "ArrayType":
-				return new GoIRArrayTypeNode(body.get("Len"),body.get("Elt"));
+				//If has a len
+				if(body.containsKey("Len")) {
+					return new GoIRArrayTypeNode(body.get("Len"),body.get("Elt"));
+				}
+				else {
+					return new GoIRArrayTypeNode(body.get("Elt"), true);
+				}
 			case "AssignStmt":
 				GoIRArrayListExprNode lhs = (GoIRArrayListExprNode) body.get("Lhs");
 				GoIRArrayListExprNode rhs = (GoIRArrayListExprNode) body.get("Rhs");

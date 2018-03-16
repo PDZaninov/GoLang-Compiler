@@ -4,6 +4,8 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntNode;
+import com.oracle.app.nodes.types.GoIntSlice;
+import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -30,6 +32,14 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    
 	    @Specialization(guards = "isArrayOrIllegal(frame)")
 	    protected GoArray writeArray(VirtualFrame frame, GoArray value) {
+	        getSlot().setKind(FrameSlotKind.Object);
+
+	        frame.setObject(getSlot(), value);
+	        return value;
+	    }
+	    
+	    @Specialization(guards = "isSliceOrIllegal(frame)")
+	    protected GoSlice writeSlice(VirtualFrame frame, GoSlice value) {
 	        getSlot().setKind(FrameSlotKind.Object);
 
 	        frame.setObject(getSlot(), value);
@@ -72,7 +82,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 
 
-	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString", "writeArray"})
+	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString", "writeArray", "writeSlice"})
 	    protected Object write(VirtualFrame frame, Object value) {
 
 	        getSlot().setKind(FrameSlotKind.Object);
@@ -86,6 +96,10 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 	    
 	    protected boolean isArrayOrIllegal(VirtualFrame frame) {
+	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
+	    }
+	    
+	    protected boolean isSliceOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 	    
@@ -105,6 +119,16 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 	    
+	    @NodeChild(value = "indexNode",type = GoExpressionNode.class)
+	    public abstract static class GoWriteSliceNode extends GoWriteLocalVariableNode{
+	    	@Specialization
+	    	public GoArray writeIntSlice(VirtualFrame frame, int value, int index){
+	    		GoIntSlice slice = (GoIntSlice) FrameUtil.getObjectSafe(frame, getSlot());
+	    		slice.setSlice(index,value);
+	    		frame.setObject(getSlot(), slice);
+	    		return null;
+	    	}
+	    }
 
 	    @NodeChild(value = "indexNode",type = GoExpressionNode.class)
 	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
@@ -115,5 +139,5 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    		frame.setObject(getSlot(), array);
 	    		return null;
 	    	}
-	    }
+	    } 
 }
