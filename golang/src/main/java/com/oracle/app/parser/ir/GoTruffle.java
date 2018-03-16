@@ -50,6 +50,7 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteSliceNodeGen;
 import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -58,8 +59,9 @@ import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode.GoIRIntNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode.GoIRStringNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRIntNode;
+import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
@@ -98,16 +100,20 @@ public class GoTruffle implements GoIRVisitor {
     static class LexicalScope {
         protected final LexicalScope outer;
         protected final Map<String, FrameSlot> locals;
+        protected final Map<String, String> types;
 
         LexicalScope(LexicalScope outer) {
         	//Sets the outerscope to be the calling scope
             this.outer = outer;
             //Creates the local scope
             this.locals = new HashMap<>();
+            
+            this.types = new HashMap<>();
             //If there is an outerscope then put all the variables in there
             //into this scope
             if (outer != null) {
                 locals.putAll(outer.locals);
+                types.putAll(outer.types);
             }
         }
     }
@@ -417,19 +423,47 @@ public class GoTruffle implements GoIRVisitor {
 		return new GoArrayExprNode(result.getArguments());
 	}
 
-	public Object visitAssignment(GoIRAssignmentStmtNode node){
+	public Object visitAssignment(GoIRAssignmentStmtNode node) {
 		//GoExpressionNode name = (GoExpressionNode) node.getLHS().accept(this);
 		String name = node.getIdentifier();
 		
 		GoBaseIRNode child = node.getLHS();
 		GoExpressionNode value = (GoExpressionNode) node.getRHS().accept(this);
 		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
-		if(child instanceof GoIRWriteIndexNode){
+		if(child instanceof GoIRWriteIndexNode) {
 			GoIndexExprNode index = (GoIndexExprNode) node.getLHS().accept(this);
+			String type = lexicalscope.types.get(name);
+			if(type.equals("Slice")) {
+				return GoWriteSliceNodeGen.create(value, index.getIndex(), frameSlot);
+			}
 			return GoWriteArrayNodeGen.create(value, index.getIndex(), frameSlot);
 		}
-		else if(child instanceof GoIRIdentNode){
+		else if(child instanceof GoIRIdentNode) {
 			lexicalscope.locals.put(name, frameSlot);
+			
+			GoIRBasicLitNode type = null;
+			if(node.getRHS() instanceof GoIRBasicLitNode) {
+				type = (GoIRBasicLitNode) node.getRHS();
+				lexicalscope.types.put(name, type.getType());
+			}
+			
+			//Need to put array as type into types hashmap
+			/*			
+					GoIRArrayTypeNode arrType = null;
+			else if(node.getRHS() instanceof GoIRArrayTypeNode) {
+				arrType = (GoIRArrayTypeNode) node.getRHS();
+				arrType.getType();
+			}
+			*/
+		}
+		
+		//Will cause error for Map, need to figure out better way.
+		
+		if(node.getRHS() instanceof GoIRInvokeNode) {
+			String methodCall = ((GoIRInvokeNode) node.getRHS()).getFunctionNode().getIdentifier();
+			if(methodCall.equals("make")) {
+				lexicalscope.types.put(name, "Slice");
+			}
 		}
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 	}
@@ -445,67 +479,6 @@ public class GoTruffle implements GoIRVisitor {
 		return array;
 	}
 	
-	/*
-	 * Needs to throw a runtimeexception when the value array does not match the names array
-	 
-	@Override
-	public Object visitValueSpec(GoIRValueSpecNode node) {
-		//visit write visitor
-		GoExpressionNode[] names = (GoExpressionNode[]) node.getNames().accept(this);
-		GoExpressionNode defaultval = null;
-		if(node.getType() != null){
-			defaultval = (GoExpressionNode)node.getType().accept(this);
-		}
-		GoExpressionNode[] values = null;
-		if(node.getExpr() != null){
-			values = (GoExpressionNode[])node.getExpr().accept(this);
-		}
-		GoExpressionNode[] result = new GoExpressionNode[names.length];
-		//Unbalanced arrays arent actually a thing. Thats a mismatch error
-		//Throw an exception when values array has values but unbalanced
-		if(values != null){
-			for(int i = 0; i < names.length; i++){
-				
-				String name = "";
-				FrameSlot frameSlot = null;
-				
-				 // Writing to an index of an array requires 3 things rather than 2 so I
-				 // also had to create a new kind of Write node and return that instead
-				 
-				if(names[i] instanceof GoIndexExprNode){
-					frameSlot = ((GoIndexExprNode) names[i]).getName().getSlot();
-					result[i] = GoWriteArrayNodeGen.create(values[i], ((GoIndexExprNode) names[i]).getIndex(), frameSlot);
-					continue;
-				}
-				if(names[i] instanceof GoIdentNode){
-					name = ((GoIdentNode) names[i]).getName();
-					frameSlot = frameDescriptor.findOrAddFrameSlot(name);
-				}
-				else if(names[i] instanceof GoReadLocalVariableNode){
-					frameSlot = ((GoReadLocalVariableNode) names[i]).getSlot();
-				}
-				lexicalscope.locals.put(name, frameSlot);
-				System.out.println(frameSlot+" "+values[i]);
-				result[i] = GoWriteLocalVariableNodeGen.create(values[i], frameSlot);
-			
-			}
-		}
-		else{
-			for(int i = 0; i < names.length; i++){
-				String name = ((GoIdentNode) names[i]).getName();
-				FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
-				lexicalscope.locals.put(name, frameSlot);
-				
-				result[i] = GoWriteLocalVariableNodeGen.create(defaultval, frameSlot);
-			}
-			
-		}
-		//Placeholder node. There should be a better way of doing this.
-		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
-		//we return another array into the parent array.
-		return new GoArrayExprNode(result);
-	}
-	*/
 	/**
 	 * Only called when needing to read from an array so return a read.
 	 */
