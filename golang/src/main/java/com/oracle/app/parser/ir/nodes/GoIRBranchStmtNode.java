@@ -7,15 +7,15 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRBranchStmtNode extends GoBaseIRNode {
 	
-	private String type;
+	String type;
+	String source;
+	GoBaseIRNode child;
 	
-	
-	private GoBaseIRNode child;
-	
-	public GoIRBranchStmtNode(String type,GoBaseIRNode child) {
+	public GoIRBranchStmtNode(String type,GoBaseIRNode child, String source) {
 		super("BranchStmt");
 		this.type = type;
 		this.child = child;
+		this.source = source;
 	}
 	
 	public String getType() {

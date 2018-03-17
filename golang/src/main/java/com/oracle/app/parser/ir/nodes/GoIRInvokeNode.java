@@ -10,13 +10,17 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 
 	GoBaseIRNode functionNode;
 	GoIRArrayListExprNode argumentNodes;
-	GoIRGenericDispatchNode dispatchNode;
+	String lparen;
+	String ellipsis;
+	String rparen;
 	
-	public GoIRInvokeNode(GoBaseIRNode functionNode, GoIRArrayListExprNode argumentNodes) {
+	public GoIRInvokeNode(GoBaseIRNode functionNode, GoIRArrayListExprNode argumentNodes,String lparen,String ellipsis,String rparen) {
 		super("Call Expr (Invoke)");
 		this.functionNode = functionNode;
 		this.argumentNodes = argumentNodes;
-		this.dispatchNode = new GoIRGenericDispatchNode();
+		this.lparen = lparen;
+		this.ellipsis = ellipsis;
+		this.rparen = rparen;
 		setChildParent();
 	}
 	
@@ -35,11 +39,6 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 		return argumentNodes.getSize();
 	}
 	
-	
-	public GoIRGenericDispatchNode getDispatchNode(){
-		return dispatchNode;
-	}
-	
 	//TODO
 	@Override
 	public void setChildParent() {
@@ -47,7 +46,6 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 		if(argumentNodes != null){
 			argumentNodes.setParent(this);
 		}
-		dispatchNode.setParent(this);
 	}
 
 	@Override

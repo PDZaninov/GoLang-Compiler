@@ -7,14 +7,15 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRUnaryNode extends GoBaseIRNode {
 	
-	private String op;
+	String op;
+	String source;
+	GoBaseIRNode child;
 	
-	private GoBaseIRNode child;
-	
-	public GoIRUnaryNode(String op, GoBaseIRNode child) {
+	public GoIRUnaryNode(String op, GoBaseIRNode child,String source) {
 		super("Unary");
 		this.op = op;
 		this.child = child;
+		this.source = source;
 	}
 	
 	@Override

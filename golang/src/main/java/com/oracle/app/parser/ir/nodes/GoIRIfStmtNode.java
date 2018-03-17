@@ -4,52 +4,50 @@ import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.truffle.api.nodes.Node.Child;
-import com.oracle.truffle.api.nodes.NodeInfo;
-
-@NodeInfo(shortName = "if", description = "The node implementing a condional statement")
 
 public class GoIRIfStmtNode extends GoBaseIRNode {
 
-    @Child private GoBaseIRNode Init;
-    @Child private GoBaseIRNode Cond;
-    @Child private GoBaseIRNode Body;
-    @Child private GoBaseIRNode Else;
+    GoBaseIRNode init;
+    GoBaseIRNode cond;
+    GoBaseIRNode body;
+    GoBaseIRNode elsenode;
+    String iftok;
 
-    public GoIRIfStmtNode(GoBaseIRNode Init, GoBaseIRNode Cond, GoBaseIRNode Body, GoBaseIRNode Else) {
+    public GoIRIfStmtNode(GoBaseIRNode init, GoBaseIRNode cond, GoBaseIRNode body, GoBaseIRNode elsenode,String iftok) {
         super("If Node");
-        this.Init=Init;
-        this.Cond=Cond;
-        this.Body=Body;
-        this.Else=Else;
+        this.init=init;
+        this.cond=cond;
+        this.body=body;
+        this.elsenode=elsenode;
+        this.iftok = iftok;
         setChildParent();
     }
 
     public GoBaseIRNode getInit() {
-        return Init;
+        return init;
     }
 
     public  GoBaseIRNode getCond() {
-        return Cond;
+        return cond;
     }
 
     public GoBaseIRNode getBody() { 
-    	return Body; 
+    	return body; 
     }
 
     public GoBaseIRNode getElse() { 
-    	return Else; 
+    	return elsenode; 
     }
 
     @Override
     public void setChildParent() {
-        if (Init!=null) {
-            Init.setParent(this);
+        if (init!=null) {
+            init.setParent(this);
         }
-        Cond.setParent(this);
-        Body.setParent(this);
-        if(Else != null){
-        	Else.setParent(this);
+        cond.setParent(this);
+        body.setParent(this);
+        if(elsenode != null){
+        	elsenode.setParent(this);
         }
     }
 

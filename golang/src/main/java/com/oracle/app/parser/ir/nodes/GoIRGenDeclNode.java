@@ -7,13 +7,19 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRGenDeclNode extends GoBaseIRNode {
 
-	private String token;
-	private GoIRArrayListExprNode children;
+	String token;
+	GoIRArrayListExprNode children;
+	String tokpos;
+	String lparen;
+	String rparen;
 	
-	public GoIRGenDeclNode(String token, GoIRArrayListExprNode children) {
+	public GoIRGenDeclNode(String token, GoIRArrayListExprNode children,String tokpos, String lparen, String rparen) {
 		super("GenDecl Node");
 		this.token = token;
 		this.children = children;
+		this.tokpos = tokpos;
+		this.lparen = lparen;
+		this.rparen = rparen;
 		setChildParent();
 	}
 

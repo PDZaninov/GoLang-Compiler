@@ -574,10 +574,10 @@ public class GoTruffle implements GoIRVisitor {
 		
 		final GoExpressionNode result;
 		GoIRIdentNode ident = (GoIRIdentNode) node.getChild();
-		GoIRIntNode one = new GoIRIntNode(1);
+		GoIRIntNode one = new GoIRIntNode(1, null);
 		
 		String op = node.getOp();
-		final GoIRBinaryExprNode binary_expr = new GoIRBinaryExprNode(op.substring(0,1), ident, one);
+		final GoIRBinaryExprNode binary_expr = new GoIRBinaryExprNode(op.substring(0,1), ident, one, null);
 
 		GoIRAssignmentStmtNode res = new GoIRAssignmentStmtNode(ident,binary_expr);
 		result = (GoExpressionNode) res.accept(this);

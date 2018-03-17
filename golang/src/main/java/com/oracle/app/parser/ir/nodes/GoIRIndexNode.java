@@ -9,11 +9,15 @@ public class GoIRIndexNode extends GoBaseIRNode {
 
 	GoIRIdentNode name;
 	GoBaseIRNode index;
+	String lbrack;
+	String rbrack;
 	
-	public GoIRIndexNode(GoIRIdentNode name, GoBaseIRNode index) {
+	public GoIRIndexNode(GoIRIdentNode name, GoBaseIRNode index, String lbrack, String rbrack) {
 		super("Index Node");
 		this.name = name;
 		this.index = index;
+		this.lbrack = lbrack;
+		this.rbrack = rbrack;
 		setChildParent();
 	}
 	

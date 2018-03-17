@@ -8,10 +8,19 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 public class GoIRArrayListExprNode extends GoBaseIRNode {
 
 	ArrayList<GoBaseIRNode> children;
+	String source;
+	
+	public GoIRArrayListExprNode(ArrayList<GoBaseIRNode> children,String source) {
+		super("ArrayList Expression Node");
+		this.children = children;
+		this.source = source;
+		setChildParent();
+	}
 	
 	public GoIRArrayListExprNode(ArrayList<GoBaseIRNode> children) {
 		super("ArrayList Expression Node");
 		this.children = children;
+		this.source = null;
 		setChildParent();
 	}
 

@@ -7,12 +7,16 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRBlockStmtNode extends GoBaseIRNode {
 
-	private GoBaseIRNode body;
+	GoBaseIRNode body;
+	String lbrace;
+	String rbrace;
 	
-	public GoIRBlockStmtNode(GoBaseIRNode body) {
+	public GoIRBlockStmtNode(GoBaseIRNode body,String lbrace, String rbrace) {
 		super("Block Statement Node");
 		this.body = body;
 		setChildParent();
+		this.lbrace = lbrace;
+		this.rbrace = rbrace;
 	}
 	
 	public GoBaseIRNode getChild() {

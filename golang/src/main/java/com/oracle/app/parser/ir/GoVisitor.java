@@ -58,7 +58,6 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getArgumentNode() != null){
 			node.getArgumentNode().accept(this);
 		}
-		node.getDispatchNode().accept(this);
 		return null;
 	}
 

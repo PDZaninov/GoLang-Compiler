@@ -7,20 +7,19 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRForNode extends GoBaseIRNode {
 	
-	private GoBaseIRNode init;
+	GoBaseIRNode init;
+	GoBaseIRNode cond;
+	GoBaseIRNode post;
+	GoBaseIRNode body;
+	String fortok;
 	
-	private GoBaseIRNode cond;
-	
-	private GoBaseIRNode post;
-	
-	private GoBaseIRNode body;
-	
-	public GoIRForNode(GoBaseIRNode init, GoBaseIRNode cond, GoBaseIRNode post, GoBaseIRNode body) {
+	public GoIRForNode(GoBaseIRNode init, GoBaseIRNode cond, GoBaseIRNode post, GoBaseIRNode body,String fortok) {
 		super("For Loop");
 		this.init = init;
 		this.cond = cond;
 		this.post = post;
 		this.body = body;
+		this.fortok = fortok;
 	}
 	
 	@Override

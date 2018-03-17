@@ -8,13 +8,16 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 public class GoIRCaseClauseNode extends GoBaseIRNode {
 
     GoIRArrayListExprNode list;
-
     GoIRStmtNode body;
+    String casetok;
+    String colon;
 
-    public GoIRCaseClauseNode(GoIRArrayListExprNode list, GoIRStmtNode body) {
+    public GoIRCaseClauseNode(GoIRArrayListExprNode list, GoIRStmtNode body,String casetok, String colon) {
         super("CaseClause");
         this.list = list;
         this.body = body;
+        this.casetok = casetok;
+        this.colon = colon;
         setChildParent();
     }
 

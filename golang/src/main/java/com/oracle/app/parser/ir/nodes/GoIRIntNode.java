@@ -6,12 +6,14 @@ public class GoIRIntNode extends GoIRBasicLitNode{
 		
 		private int value;
 		
-		public GoIRIntNode(String value) {
+		public GoIRIntNode(String value, String source) {
+			super(source);
 			this.value = Integer.parseInt(value);
 			this.type = "INT";
 		}
 		
-		public GoIRIntNode(int value){
+		public GoIRIntNode(int value,String source){
+			super(source);
 			this.value = value;
 		}
 		

@@ -7,16 +7,18 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRBinaryExprNode extends GoBaseIRNode {
 	
-	private String op;
+	String op;
+	GoBaseIRNode left;
+	GoBaseIRNode right;
+	String source;
 	
-	private GoBaseIRNode left;
-	private GoBaseIRNode right;
-	
-	public GoIRBinaryExprNode(String op, GoBaseIRNode left, GoBaseIRNode right) {
+	public GoIRBinaryExprNode(String op, GoBaseIRNode left, GoBaseIRNode right, String source) {
 		super("BinaryExpr");
 		this.op = op;
 		this.left = left;
 		this.right = right;
+		setChildParent();
+		this.source = source;
 	}
 	
 	@Override

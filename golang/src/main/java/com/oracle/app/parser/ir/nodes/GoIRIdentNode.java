@@ -7,14 +7,15 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRIdentNode extends GoBaseIRNode {
 	
-	private String ident;
+	String ident;
+	GoBaseIRNode child;
+	String namepos;
 	
-	private GoBaseIRNode child;
-	
-	public GoIRIdentNode(String ident, GoBaseIRNode child) {
+	public GoIRIdentNode(String ident, GoBaseIRNode child, String namepos) {
 		super("Ident");
 		this.ident = ident;
 		this.child = child;
+		this.namepos = namepos;
 		setChildParent();
 	}
 	
