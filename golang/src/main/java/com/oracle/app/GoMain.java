@@ -16,8 +16,6 @@ public class GoMain
 
     	toolchain tool = new toolchain();
 
-
-
 		System.out.println(args[0]);
 //		tool.run(args[0]);
      	Source source;
