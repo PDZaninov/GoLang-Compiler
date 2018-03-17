@@ -2,9 +2,9 @@ package com.oracle.app.nodes.expression;
 
 import java.math.BigInteger;
 
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.oracle.app.nodes.GoExpressionNode;
 
 /**
  * Constant literal for a arbitrary-precision number that exceeds the range of

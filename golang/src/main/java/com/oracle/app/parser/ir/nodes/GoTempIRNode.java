@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.GoIRVisitable;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoTempIRNode extends GoBaseIRNode {

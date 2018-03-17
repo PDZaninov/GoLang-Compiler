@@ -1,13 +1,11 @@
 package com.oracle.app.runtime;
 
-import com.oracle.truffle.api.Assumption;
+import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoUndefinedFunctionRootNode;
 import com.oracle.truffle.api.RootCallTarget;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.interop.ForeignAccess;
 import com.oracle.truffle.api.interop.TruffleObject;
-import com.oracle.truffle.api.utilities.CyclicAssumption;
-import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.GoUndefinedFunctionRootNode;
 
 
 public final class GoFunction implements TruffleObject {

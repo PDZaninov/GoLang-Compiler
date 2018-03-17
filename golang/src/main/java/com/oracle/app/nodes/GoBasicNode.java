@@ -1,9 +1,7 @@
 package com.oracle.app.nodes;
 
-import com.oracle.app.nodes.GoBasicNode;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.Node.Children;
 
 public class GoBasicNode extends GoExpressionNode{
 	String name;

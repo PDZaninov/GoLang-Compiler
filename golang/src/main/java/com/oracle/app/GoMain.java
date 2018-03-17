@@ -1,7 +1,11 @@
 package com.oracle.app;
 
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.Truffle;

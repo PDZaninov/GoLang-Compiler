@@ -1,6 +1,7 @@
 package com.oracle.app.nodes.types;
 
-import java.math.BigInteger;	
+import java.math.BigInteger;
+
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 

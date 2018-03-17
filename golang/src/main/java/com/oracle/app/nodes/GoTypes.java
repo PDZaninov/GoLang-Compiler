@@ -42,15 +42,10 @@ package com.oracle.app.nodes;
 
 import java.math.BigInteger;
 
-import com.oracle.app.runtime.GoNull;
-import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
-import com.oracle.truffle.api.dsl.ImplicitCast;
-import com.oracle.truffle.api.dsl.TypeCast;
-import com.oracle.truffle.api.dsl.TypeCheck;
-import com.oracle.truffle.api.dsl.TypeSystem;
-import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.app.runtime.GoFunction;
+import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.dsl.TypeSystem;
 
 @TypeSystem({
@@ -60,6 +55,7 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 	BigInteger.class,
 	boolean.class,
 	GoArray.class,
+	GoSlice.class,
 	String.class,
 	GoFunction.class,
 	GoNull.class})

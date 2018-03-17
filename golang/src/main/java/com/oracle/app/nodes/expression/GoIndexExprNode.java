@@ -3,8 +3,6 @@ package com.oracle.app.nodes.expression;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoIntNode;
-import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 /**

@@ -2,16 +2,15 @@ package com.oracle.app.nodes;
 
 import java.util.Map;
 
+import com.oracle.app.GoLanguage;
+import com.oracle.app.runtime.GoContext;
+import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.TruffleLanguage.ContextReference;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.SourceSection;
-
-import com.oracle.app.GoLanguage;
-import com.oracle.app.runtime.GoContext;
-import com.oracle.app.runtime.GoNull;
 
 /**
  * In addition to {@link GoRootNode}, this class performs two additional tasks:

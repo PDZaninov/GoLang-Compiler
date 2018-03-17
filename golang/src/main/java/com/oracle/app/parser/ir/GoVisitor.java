@@ -1,6 +1,26 @@
 package com.oracle.app.parser.ir;
 
-import com.oracle.app.parser.ir.nodes.*;
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 
 public class GoVisitor implements GoIRVisitor {
 

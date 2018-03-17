@@ -1,6 +1,5 @@
 package com.oracle.app.nodes.controlflow;
 
-import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.truffle.api.frame.VirtualFrame;

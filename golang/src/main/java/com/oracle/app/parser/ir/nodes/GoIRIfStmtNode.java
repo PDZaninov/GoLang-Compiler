@@ -1,16 +1,11 @@
 package com.oracle.app.parser.ir.nodes;
 
-import com.oracle.app.nodes.GoBinaryNode;
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoStatementNode;
-import com.oracle.app.nodes.controlflow.GoIfStmtNode;
+import java.util.ArrayList;
+
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.Node.Child;
 import com.oracle.truffle.api.nodes.NodeInfo;
-
-import java.util.ArrayList;
 
 @NodeInfo(shortName = "if", description = "The node implementing a condional statement")
 

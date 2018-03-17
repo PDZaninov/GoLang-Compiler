@@ -1,9 +1,9 @@
 package com.oracle.app.nodes.expression;
 
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
-import com.oracle.app.nodes.GoExpressionNode;
 
 /**
  * Constant literal for a primitive {@code long} value. The unboxed value can be returned when the
