@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -16,20 +14,8 @@ public class GoIRIdentNode extends GoBaseIRNode {
 		this.ident = ident;
 		this.child = child;
 		this.namepos = namepos;
-		setChildParent();
 	}
-	
-	@Override
-	public void setChildParent() {
-		if(child != null)
-			child.setParent(this);
-	}
-	
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		return null;
-	}
-	
+
 	//Will need to merge getIdent and getIdentifier so that only getIdentifier is used
 	@Override
 	public String getIdentifier(){

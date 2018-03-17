@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -20,7 +18,6 @@ public class GoIRIfStmtNode extends GoBaseIRNode {
         this.body=body;
         this.elsenode=elsenode;
         this.iftok = iftok;
-        setChildParent();
     }
 
     public GoBaseIRNode getInit() {
@@ -37,23 +34,6 @@ public class GoIRIfStmtNode extends GoBaseIRNode {
 
     public GoBaseIRNode getElse() { 
     	return elsenode; 
-    }
-
-    @Override
-    public void setChildParent() {
-        if (init!=null) {
-            init.setParent(this);
-        }
-        cond.setParent(this);
-        body.setParent(this);
-        if(elsenode != null){
-        	elsenode.setParent(this);
-        }
-    }
-
-    @Override
-    public ArrayList<GoBaseIRNode> getChildren() {
-        return null; //TODO: to be removed
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 
 /**
@@ -28,15 +26,6 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 	
 	public String getType() {
 		return type;
-	}
-	
-	@Override
-	public void setChildParent() {
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		return null;
 	}
 
 	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){

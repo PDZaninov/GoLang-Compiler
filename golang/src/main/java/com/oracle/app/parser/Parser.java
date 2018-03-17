@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -161,6 +162,14 @@ public class Parser {
 		return null;
 	}
 	
+	public ArrayList<GoBaseIRNode> packIntoArrayList(Collection<GoBaseIRNode> body){
+		ArrayList<GoBaseIRNode> list = new ArrayList<>();
+		for(GoBaseIRNode child : body){
+			list.add(child);
+		}
+		return list;
+	}
+	
 	/**
 	 * Create the IRNode.
 	 * Match the nodetype to a switch case to create the specific IRNode that corresponds to
@@ -259,18 +268,10 @@ public class Parser {
 				return new GoIRDeclStmtNode(body.get("Decl"));
 				
 			case "Decl":
-				ArrayList<GoBaseIRNode> list = new ArrayList<>();
-				for(GoBaseIRNode child : body.values()){
-					list.add(child);
-				}
-				return new GoIRDeclNode(list);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 				
 			case "Expr":
-				ArrayList<GoBaseIRNode> list1 = new ArrayList<>();
-				for(GoBaseIRNode child : body.values()){
-					list1.add(child);
-				}
-				return new GoIRArrayListExprNode(list1);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 				
 			case "ExprStmt":
 				return new GoIRExprStmtNode(body.get("X"));
@@ -314,12 +315,7 @@ public class Parser {
 						);
 				
 			case "]*ast.Ident":
-				ArrayList<GoBaseIRNode> identlist = new ArrayList<>();
-				for(GoBaseIRNode child : body.values()){
-					identlist.add(child);
-				}
-				
-				return new GoIRArrayListExprNode(identlist);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 				
 			case "Ident":
 				GoBaseIRNode obj = body.get("Obj");
@@ -372,19 +368,10 @@ public class Parser {
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "Spec":
-				ArrayList<GoBaseIRNode> speclist = new ArrayList<>();
-				for(GoBaseIRNode child : body.values()){
-					speclist.add(child);
-				}
-				
-				return new GoIRArrayListExprNode(speclist);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 				
 			case "Stmt":
-				ArrayList<GoBaseIRNode> stmtlist = new ArrayList<>();
-				for(GoBaseIRNode children : body.values()){
-					stmtlist.add(children);
-				}
-				return new GoIRStmtNode(stmtlist);
+				return new GoIRStmtNode(packIntoArrayList(body.values()));
 
 			case "SwitchStmt":
 				GoIRStmtNode switchinit = (GoIRStmtNode) body.get("Init");

@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitable;
 import com.oracle.app.parser.ir.GoIRVisitor;
@@ -21,7 +19,6 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 		this.lparen = lparen;
 		this.ellipsis = ellipsis;
 		this.rparen = rparen;
-		setChildParent();
 	}
 	
 	public GoBaseIRNode getFunctionNode() {
@@ -37,21 +34,6 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 	
 	public int getArgumentsSize(){
 		return argumentNodes.getSize();
-	}
-	
-	//TODO
-	@Override
-	public void setChildParent() {
-		functionNode.setParent(this);
-		if(argumentNodes != null){
-			argumentNodes.setParent(this);
-		}
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		System.out.println("Invoke Node needs getChildren Function");
-		return null;
 	}
 	
 	@Override

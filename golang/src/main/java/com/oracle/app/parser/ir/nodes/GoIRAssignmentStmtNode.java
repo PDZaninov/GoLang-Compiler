@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -14,7 +12,6 @@ public class GoIRAssignmentStmtNode extends GoBaseIRNode {
 		super("Assignment Statement Node");
 		this.lhs = lhs;
 		this.rhs = rhs;
-		setChildParent();
 	}
 
 	@Override
@@ -28,17 +25,6 @@ public class GoIRAssignmentStmtNode extends GoBaseIRNode {
 	
 	public GoBaseIRNode getRHS(){
 		return rhs;
-	}
-	
-	@Override
-	public void setChildParent() {
-		lhs.setParent(this);
-		rhs.setParent(this);
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		return null;
 	}
 
 	@Override

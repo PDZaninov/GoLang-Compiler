@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -49,30 +47,6 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 	
 	public GoBaseIRNode getType(){
 		return type;
-	}
-
-	@Override
-	public void setChildParent() {
-		
-		if(receiver != null){
-			receiver.setParent(this);
-		}
-		name.setParent(this);
-		type.setParent(this);
-		if(body != null){
-			body.setParent(this);
-		}
-
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		ArrayList<GoBaseIRNode> list = new ArrayList<GoBaseIRNode>();
-		list.add(receiver);
-		list.add(name);
-		list.add(type);
-		list.add(body);
-		return list;
 	}
 
 }

@@ -14,26 +14,17 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 		super("ArrayList Expression Node");
 		this.children = children;
 		this.source = source;
-		setChildParent();
 	}
 	
 	public GoIRArrayListExprNode(ArrayList<GoBaseIRNode> children) {
 		super("ArrayList Expression Node");
 		this.children = children;
 		this.source = null;
-		setChildParent();
 	}
 
 	@Override
 	public Object accept(GoIRVisitor visitor){
 		return visitor.visitArrayListExpr(this);
-	}
-	
-	@Override
-	public void setChildParent() {
-		for(int x = 0; x < children.size(); x++){
-			children.get(x).setParent(this);
-		}
 	}
 	
 	public void printChildren() {
@@ -46,7 +37,6 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 		return children.size();
 	}
 	
-	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
 		
 		return children;

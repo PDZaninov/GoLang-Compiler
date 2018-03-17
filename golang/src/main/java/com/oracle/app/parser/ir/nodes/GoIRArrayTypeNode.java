@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -17,7 +15,6 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 		len = length;
 		this.type = type;
 		this.source = source;
-		setChildParent();
 	}
 	
 	public GoIRArrayTypeNode(GoBaseIRNode type, boolean isSlice, String source) {
@@ -25,13 +22,6 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 		this.type = type;
 		this.isSlice = true;
 		this.source = source;
-	}
-
-	@Override
-	public void setChildParent() {
-		len.setParent(this);
-		type.setParent(this);
-		
 	}
 	
 	public GoBaseIRNode getLength(){
@@ -44,14 +34,6 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 	
 	public boolean getIsSlice() {
 		return isSlice;
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		ArrayList<GoBaseIRNode> m = new ArrayList<GoBaseIRNode>();;
-		m.add(len);
-		m.add(type);
-		return m;
 	}
 
 	@Override

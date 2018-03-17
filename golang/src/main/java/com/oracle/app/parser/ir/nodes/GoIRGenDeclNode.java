@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -20,12 +18,6 @@ public class GoIRGenDeclNode extends GoBaseIRNode {
 		this.tokpos = tokpos;
 		this.lparen = lparen;
 		this.rparen = rparen;
-		setChildParent();
-	}
-
-	@Override
-	public void setChildParent() {
-		children.setParent(this);
 	}
 	
 	public GoIRArrayListExprNode getChild(){
@@ -34,12 +26,6 @@ public class GoIRGenDeclNode extends GoBaseIRNode {
 	
 	public String getToken(){
 		return token;
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

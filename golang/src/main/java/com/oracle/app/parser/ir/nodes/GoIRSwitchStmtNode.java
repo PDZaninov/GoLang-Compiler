@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -18,7 +16,6 @@ public class GoIRSwitchStmtNode extends GoBaseIRNode {
         this.tag = tag;
         this.body = body;
         this.source = source;
-        setChildParent();
     }
 
     public GoIRStmtNode getInit(){
@@ -31,26 +28,6 @@ public class GoIRSwitchStmtNode extends GoBaseIRNode {
 
     public GoIRBlockStmtNode getBody(){
         return body;
-    }
-
-    @Override
-    public void setChildParent() {
-        if(init != null){
-            init.setParent(this);
-        }
-        if(tag != null){
-            tag.setParent(this);
-        }
-        if(body != null){
-            body.setParent(this);
-        }
-
-    }
-
-    @Override
-    public ArrayList<GoBaseIRNode> getChildren() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override

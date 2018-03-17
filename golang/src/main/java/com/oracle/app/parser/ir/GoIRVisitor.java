@@ -19,7 +19,6 @@ import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenericDispatchNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
@@ -32,11 +31,12 @@ import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 
 public interface GoIRVisitor {
 	
-	default Object visitObject(GoBaseIRNode node){
+	default Object visitObject(GoTempIRNode	 node){
 		System.out.println("Default Base IR Node visit");
 		return null;
 	}
@@ -54,12 +54,7 @@ public interface GoIRVisitor {
 	default Object visitInvoke(GoIRInvokeNode node){
 		System.out.println("Default Invoke Visit");
 		return null;
-	}
-	
-	default Object visitGenericDispatch(GoIRGenericDispatchNode node){
-		System.out.println("Default Generic Dispatch Visit, USELESS NODE");
-		return null;
-	}
+	}	
 
 	default Object visitFuncDecl(GoIRFuncDeclNode node){
 		System.out.println("Default Function Declaration Visit");
@@ -180,4 +175,5 @@ public interface GoIRVisitor {
 		System.out.println("Default Write Index Visit");
 		return null;
 	}
+
 }

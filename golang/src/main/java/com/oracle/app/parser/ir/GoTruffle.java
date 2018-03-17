@@ -81,6 +81,7 @@ import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
@@ -154,6 +155,7 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = lexicalscope.outer;
     }
     
+    /*TODO Remove this after removing GoIRDeclNode
     public GoStatementNode[] arrayListtoArray(GoBaseIRNode node) {
     	ArrayList<GoBaseIRNode> children = node.getChildren();
     	int argumentsize = children.size();
@@ -163,9 +165,9 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		return arguments;
     }
-
+	*/
 	@Override
-	public Object visitObject(GoBaseIRNode node) {
+	public Object visitObject(GoTempIRNode node) {
 		//System.out.println("Visited Truffle temp: " + node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)
@@ -305,7 +307,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitDecl(GoIRDeclNode node) {
-		return new GoDeclNode(arrayListtoArray(node));
+		//TODO check if this can be removed, replaced with GoIRArraylistExprNode
+		return null;
 	}
 
 	@Override
