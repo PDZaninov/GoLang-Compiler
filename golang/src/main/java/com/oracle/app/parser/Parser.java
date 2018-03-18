@@ -73,7 +73,7 @@ public class Parser {
 	 * @throws FileNotFoundException
 	 */
 	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
-		this.file = source.getName();
+		this.file = source.getName().substring(0, source.getName().lastIndexOf('.')) + ".ast";;
 		this.language = language;
 		this.source = source;
 		reader = new BufferedReader(new FileReader(this.file));

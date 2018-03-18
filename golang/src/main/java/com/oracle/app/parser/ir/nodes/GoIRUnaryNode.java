@@ -16,7 +16,15 @@ public class GoIRUnaryNode extends GoBaseIRNode {
 		this.source = source;
 	}
 	
-	public GoBaseIRNode getChild() { return child; }
+	public GoBaseIRNode getChild() { 
+		return child; 
+	}
+	
+	public int getOpTok(){
+		String[] split = source.split(":");
+		int endindex = Integer.parseInt(split[1]);
+		return endindex;
+	}
 	
 	public String getOp() {
 		return op;

@@ -18,7 +18,7 @@ public class GoMain
 {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-    	toolchain tool = new toolchain();
+    	
 
 		System.out.println(args[0]);
 //		tool.run(args[0]);
@@ -31,7 +31,10 @@ public class GoMain
                     build();
         }
         else{
-        	source = Source.newBuilder(new File(args[0])).build();
+        	
+        	String goFile  = args[0];
+        	ToolChain.executeCommands(goFile);
+        	source = Source.newBuilder(new File(goFile)).build();
         }
         executeSource(source, System.in, System.out);
 

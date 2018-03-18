@@ -2,6 +2,8 @@ package com.oracle.app.parser.ir.nodes;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
+import com.oracle.truffle.api.source.Source;
+import com.oracle.truffle.api.source.SourceSection;
 
 public class GoIRIdentNode extends GoBaseIRNode {
 	
@@ -33,6 +35,13 @@ public class GoIRIdentNode extends GoBaseIRNode {
 	@Override
 	public Object accept(GoIRVisitor visitor) { 
 		return visitor.visitIdent(this); 
+	}
+
+	public SourceSection getSource(Source source) {
+		String[] split = namepos.split(":");
+		int linenum = Integer.parseInt(split[0]);
+		int charindex = Integer.parseInt(split[1]);
+		return source.createSection(linenum,charindex,ident.length());
 	}
 	
 	

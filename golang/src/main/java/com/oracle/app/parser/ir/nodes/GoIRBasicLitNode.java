@@ -1,6 +1,8 @@
 package com.oracle.app.parser.ir.nodes;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.truffle.api.source.Source;
+import com.oracle.truffle.api.source.SourceSection;
 
 /**
  * Abstract BasicLiteral node class for any basic type node.
@@ -27,6 +29,15 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 	public String getType() {
 		return type;
 	}
+	
+	/**
+	 * Create a source section based off of the source file. In theory that should be the actual Gofile.
+	 * Split the source by the colon and the first index is the line number
+	 * The charindex is the right hand side. Might need to change it so that it can capture the whole number
+	 * @param section The source code file
+	 * @return The created source section
+	 */
+	public abstract SourceSection getSource(Source section);
 
 	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){
 		switch(name){
@@ -35,7 +46,7 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 		case "STRING":
 			return new GoIRStringNode(value, source);
 		default:
-			System.out.println("Unimplemented Basic Lit type");
+			System.out.println("Unimplemented Basic Lit type "+ name);
 			return null;
 		}
 	

@@ -2,6 +2,8 @@ package com.oracle.app.parser.ir.nodes;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
+import com.oracle.truffle.api.source.Source;
+import com.oracle.truffle.api.source.SourceSection;
 
 public class GoIRBinaryExprNode extends GoBaseIRNode {
 	

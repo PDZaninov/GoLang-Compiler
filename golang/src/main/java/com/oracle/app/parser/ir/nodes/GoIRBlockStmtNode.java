@@ -19,7 +19,19 @@ public class GoIRBlockStmtNode extends GoBaseIRNode {
 	public GoBaseIRNode getChild() {
 		return body;
 	}
+	
+	public int getLbrace(){
+		String[] split = lbrace.split(":");
+		int lbraceindex = Integer.parseInt(split[1]);
+		return lbraceindex;
+	}
 
+	public int getRbrace(){
+		String[] split = rbrace.split(":");
+		int endindex = Integer.parseInt(split[1]);
+		return endindex;
+	}
+	
 	@Override
 	public Object accept(GoIRVisitor visitor){
 		return visitor.visitBlockStmt(this);

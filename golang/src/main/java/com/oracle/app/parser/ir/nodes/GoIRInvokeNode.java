@@ -25,6 +25,11 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 		return functionNode;
 	}
 	
+	public int getEndPos(){
+		int endpos = Integer.parseInt(rparen.split(":")[1]);
+		return endpos;
+	}
+	
 	/*
 	 * Maybe not needed
 	 */

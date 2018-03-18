@@ -126,14 +126,12 @@ public class GoTruffle implements GoIRVisitor {
     
     private LexicalScope lexicalscope;
 	
+    //Can create a global function block and append writes to the top most node
 	public GoTruffle(GoLanguage language, Source source) {
 		this.language = language;
 		this.source = source;
         this.allFunctions = new HashMap<>();
-        //Creates a block to cover for idents located outside of a function body
         startFunction();
-        //FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot("int",FrameSlotKind.Int);
-		//lexicalscope.locals.put("int", frameSlot);
         
     }
 
@@ -180,16 +178,17 @@ public class GoTruffle implements GoIRVisitor {
 		String name = node.getIdent();
 		//System.out.println("name of ident: " + name);
 		GoExpressionNode result = null;
-		//Cannot check for if writing value yet
-		System.out.println(name+" "+lexicalscope.locals);
+		//System.out.println(name+" "+lexicalscope.locals);
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
 	    
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
-	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
+	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
+	    } else {
+	    	result = new GoIdentNode(language, name, result);
 	    }
-	    
-		return new GoIdentNode(language, name, result);
+	    result.setSourceSection(node.getSource(source));
+	    return result;
 	}
 
 	@Override
@@ -253,24 +252,25 @@ public class GoTruffle implements GoIRVisitor {
 		case"^":
 			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
 			break;
-			/*
-		case"IndexExpr":
-			System.out.println(leftNode);
-			result = GoIndexExprNodeGen.create(leftNode, rightNode);
-			break;
-			*/
 		default:
 			throw new RuntimeException("Unexpected Operation: "+op);
-	}
+		}
+		int start = leftNode.getSourceSection().getCharIndex();
+		int end = rightNode.getSourceSection().getCharEndIndex() - start;
+		result.setSourceSection(source.createSection(start,end));
 		return result;
 	}
 
 	public GoIntNode visitIRIntNode(GoIRIntNode node){
-		return new GoIntNode(node.getValue());
+		GoIntNode result = new GoIntNode(node.getValue());
+		result.setSourceSection(node.getSource(source));
+		return result;
 	}
 	
 	public GoStringNode visitIRStringNode(GoIRStringNode node){
-		return new GoStringNode(node.getValue());
+		GoStringNode result = new GoStringNode(node.getValue());
+		result.setSourceSection(node.getSource(source));
+		return result;
 	}
 	
 	@Override
@@ -283,9 +283,14 @@ public class GoTruffle implements GoIRVisitor {
 		else{
 			arguments = new GoArrayExprNode(new GoExpressionNode[0]);
 		}
-		return new GoInvokeNode(functionNode, arguments.getArguments());
+		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments());
+		int start = functionNode.getSourceSection().getCharIndex();
+		int end = node.getEndPos() - start;
+		result.setSourceSection(source.createSection(start,end));
+		return result;
 	}
 
+	//TODO add source section for function declaration
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
 
@@ -320,24 +325,39 @@ public class GoTruffle implements GoIRVisitor {
 		for(int i = 0; i < argumentsize; i++){
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
-		return new GoArrayExprNode(arguments);
+		GoArrayExprNode result = new GoArrayExprNode(arguments);
+		result.setSourceSection(source.createUnavailableSection());
+		/*
+		if(argumentsize > 0){
+			int start = arguments[0].getSourceSection().getCharIndex();
+			int end = arguments[argumentsize].getSourceSection().getCharEndIndex() - start;
+			result.setSourceSection(source.createSection(start,end));
+		}*/
+		return result;
 	}
 
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
 		GoStatementNode[] body = (GoStatementNode[]) node.getChild().accept(this);
-		return new GoBlockNode(body);
+		GoBlockNode result = new GoBlockNode(body);
+		int start = node.getLbrace();
+		int end = node.getRbrace() - start;
+		result.setSourceSection(source.createSection(start, end));
+		return result;
 	}
 
 	@Override
 	public Object visitExprStmt(GoIRExprStmtNode node) {
-		return new GoExprNode( (GoExpressionNode) node.getChild().accept(this));
+		GoExprNode result = new GoExprNode( (GoExpressionNode) node.getChild().accept(this));
+		result.setSourceSection(source.createUnavailableSection());
+		return result;
 	}
 
 	@Override
 	public Object visitExpr(GoIRExprNode node) {
-		System.out.println(node.getChild());
-		return new GoExprNode( (GoExpressionNode) node.getChild().accept(this));
+		GoExprNode result = new GoExprNode( (GoExpressionNode) node.getChild().accept(this));
+		result.setSourceSection(source.createUnavailableSection());
+		return result;
 	}
 
 	@Override
@@ -372,6 +392,9 @@ public class GoTruffle implements GoIRVisitor {
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
 		}
+		int start = node.getOpTok();
+		int end = child.getSourceSection().getCharEndIndex() - start;
+		result.setSourceSection(source.createSection(start,end));
 		return result;
 	}
 	
@@ -379,7 +402,6 @@ public class GoTruffle implements GoIRVisitor {
 	//Skips over itself and returns the child node to the parent of this node
 	@Override
 	public Object visitDeclStmt(GoIRDeclStmtNode node) {
-		
 		return node.getChild().accept(this);
 	}
 
