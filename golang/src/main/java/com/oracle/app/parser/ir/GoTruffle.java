@@ -287,6 +287,7 @@ public class GoTruffle implements GoIRVisitor {
 		int start = functionNode.getSourceSection().getCharIndex();
 		int end = arguments.getSourceSection().getCharEndIndex() + 1 - start;
 		result.setSourceSection(source.createSection(start,end));
+		System.out.println(result.getSourceSection());
 		return result;
 	}
 
