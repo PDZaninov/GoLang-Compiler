@@ -33,8 +33,8 @@ public class GoIRIntNode extends GoIRBasicLitNode{
 		@Override
 		public SourceSection getSource(Source section) {
 			String[] split = source.split(":");
-			int linenum = Integer.parseInt(split[0]);
-			int charindex = Integer.parseInt(split[1]);
+			int linenum = Integer.parseInt(split[1]);
+			int charindex = Integer.parseInt(split[2]);
 			return section.createSection(linenum,charindex,valuelen);
 		}
 		

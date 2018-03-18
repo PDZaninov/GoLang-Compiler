@@ -30,11 +30,11 @@ public class ToolChain {
 
         Writer streamWriter = new OutputStreamWriter(new FileOutputStream(tempScript));
         PrintWriter printWriter = new PrintWriter(streamWriter);
-
+        //Assumed to have the printast file
         printWriter.println("#!/bin/bash");
-        System.out.println("go build " + "printAST.go");
+        //System.out.println("go build " + "printAST.go");
         printWriter.println("go build " + "printast.go");
-        System.out.println("./printast "+ goFile + " > " + astFile);
+        //System.out.println("./printast "+ goFile + " > " + astFile);
         printWriter.println("./printast "+ goFile + " > " + astFile);
         //printWriter.println("rm printast");
 

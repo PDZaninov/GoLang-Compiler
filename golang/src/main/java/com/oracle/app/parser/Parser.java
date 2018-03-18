@@ -404,6 +404,7 @@ public class Parser {
 
 	/*
 	 * Should throw an error when either side have unbalanced arrays or if either is empty
+	 * 
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoIRArrayListExprNode rhs, String source){
 		if(lhs.getSize() != rhs.getSize()){
@@ -425,6 +426,7 @@ public class Parser {
 	
 	/*
 	 * Given no right hand side, set default values of the type to each ident
+	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, String source){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
@@ -444,6 +446,7 @@ public class Parser {
 	/*
 	 * Given a type and a right hand side, the right hand side should match the type given
 	 * Assuming that the type matches the right hand side always for now
+	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
 		if(lhs.getSize() != rhs.getSize()){

@@ -4,6 +4,8 @@ import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRFuncDeclNode extends GoBaseIRNode {
+	
+
 	GoBaseIRNode receiver;
 	GoBaseIRNode name;
 	GoBaseIRNode type;
@@ -26,9 +28,9 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 		return name;
 	}
 	
-	public String getIdent() {
-		GoIRIdentNode node = (GoIRIdentNode) name;
-		return node.getIdent();
+	@Override
+	public String getIdentifier() {
+		return name.getIdentifier();
 	}
 	
 	public GoBaseIRNode getReceiver(){

@@ -39,8 +39,8 @@ public class GoIRIdentNode extends GoBaseIRNode {
 
 	public SourceSection getSource(Source source) {
 		String[] split = namepos.split(":");
-		int linenum = Integer.parseInt(split[0]);
-		int charindex = Integer.parseInt(split[1]);
+		int linenum = Integer.parseInt(split[1]);
+		int charindex = Integer.parseInt(split[2]);
 		return source.createSection(linenum,charindex,ident.length());
 	}
 	

@@ -285,12 +285,11 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments());
 		int start = functionNode.getSourceSection().getCharIndex();
-		int end = node.getEndPos() - start;
+		int end = arguments.getSourceSection().getCharEndIndex() + 1 - start;
 		result.setSourceSection(source.createSection(start,end));
 		return result;
 	}
 
-	//TODO add source section for function declaration
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
 
@@ -298,7 +297,7 @@ public class GoTruffle implements GoIRVisitor {
 
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
-		String name = node.getIdent();
+		String name = node.getIdentifier();
 		
 		GoRootNode root = new GoRootNode(language,frameDescriptor,bodyNode,null,name);
 		allFunctions.put(name,root);
@@ -326,13 +325,12 @@ public class GoTruffle implements GoIRVisitor {
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
 		GoArrayExprNode result = new GoArrayExprNode(arguments);
-		result.setSourceSection(source.createUnavailableSection());
-		/*
-		if(argumentsize > 0){
+		//result.setSourceSection(source.createUnavailableSection());
+		if(argumentsize > 0 && arguments[0] != null){
 			int start = arguments[0].getSourceSection().getCharIndex();
-			int end = arguments[argumentsize].getSourceSection().getCharEndIndex() - start;
+			int end = arguments[argumentsize-1].getSourceSection().getCharEndIndex() - start;
 			result.setSourceSection(source.createSection(start,end));
-		}*/
+		}
 		return result;
 	}
 
@@ -432,10 +430,35 @@ public class GoTruffle implements GoIRVisitor {
 		//Placeholder node. There should be a better way of doing this.
 		//Issue: Parent node is a GoNodeExpresion[] filling its array,but
 		//we return another array into the parent array.
-		return new GoArrayExprNode(result.getArguments());
+		GoArrayExprNode results = new GoArrayExprNode(result.getArguments());
+		int start = node.getTokPos();
+		int end = result.getSourceSection().getCharEndIndex() - start;
+		result.setSourceSection(source.createSection(start,end));
+		return results;
 	}
 
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {
+		//GoExpressionNode name = (GoExpressionNode) node.getLHS().accept(this);
+		String name = node.getIdentifier();
+				
+		GoBaseIRNode child = node.getLHS();
+		GoExpressionNode tempchild = (GoExpressionNode) node.getLHS().accept(this);
+		GoExpressionNode value = (GoExpressionNode) node.getRHS().accept(this);
+		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+		GoExpressionNode result;
+		if(child instanceof GoIRWriteIndexNode){
+			GoIndexExprNode index = (GoIndexExprNode) node.getLHS().accept(this);
+			result = GoWriteArrayNodeGen.create(value, index.getIndex(), frameSlot);
+		}
+		else{
+			lexicalscope.locals.put(name, frameSlot);
+			result = GoWriteLocalVariableNodeGen.create(value, frameSlot);
+		}
+		int start = tempchild.getSourceSection().getCharIndex();
+		int end = value.getSourceSection().getCharEndIndex() - start;
+		result.setSourceSection(source.createSection(start,end));
+		return result;
+		/*
 		//GoExpressionNode name = (GoExpressionNode) node.getLHS().accept(this);
 		String name = node.getIdentifier();
 		
@@ -460,13 +483,13 @@ public class GoTruffle implements GoIRVisitor {
 			}
 			
 			//Need to put array as type into types hashmap
-			/*			
+					
 					GoIRArrayTypeNode arrType = null;
 			else if(node.getRHS() instanceof GoIRArrayTypeNode) {
 				arrType = (GoIRArrayTypeNode) node.getRHS();
 				arrType.getType();
 			}
-			*/
+		
 		}
 		
 		//Will cause error for Map, need to figure out better way.
@@ -478,6 +501,7 @@ public class GoTruffle implements GoIRVisitor {
 			}
 		}
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
+		*/
 	}
 	
 	/**
@@ -488,6 +512,8 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitWriteIndex(GoIRWriteIndexNode node){
 		GoReadLocalVariableNode name = (GoReadLocalVariableNode) node.getName().accept(this);
 		GoIndexExprNode array = new GoIndexExprNode(name,(GoExpressionNode) node.getIndex().accept(this));
+		int start = name.getSourceSection().getCharIndex();
+		//int end = 
 		return array;
 	}
 	
