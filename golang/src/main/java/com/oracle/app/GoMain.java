@@ -58,6 +58,7 @@ public class GoMain
     	//A Parse error goes here
     	catch (Throwable ex){
     		//Other error catching stuff, refer to GoMain....
+
     		ex.printStackTrace(out);
     	}
     	

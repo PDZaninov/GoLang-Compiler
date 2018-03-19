@@ -22,13 +22,13 @@ public class GoIRBlockStmtNode extends GoBaseIRNode {
 	
 	public int getLbrace(){
 		String[] split = lbrace.split(":");
-		int lbraceindex = Integer.parseInt(split[1]);
+		int lbraceindex = Integer.parseInt(split[2]);
 		return lbraceindex;
 	}
 
 	public int getRbrace(){
 		String[] split = rbrace.split(":");
-		int endindex = Integer.parseInt(split[1]);
+		int endindex = Integer.parseInt(split[2]);
 		return endindex;
 	}
 	

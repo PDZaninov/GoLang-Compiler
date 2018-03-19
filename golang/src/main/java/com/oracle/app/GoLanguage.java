@@ -83,9 +83,6 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 
     @Override
     protected Object getLanguageGlobal(GoContext context) {
-        /*
-         * The context itself is the global function registry. Go does not have global variables.
-         */
         return context;
     }
 

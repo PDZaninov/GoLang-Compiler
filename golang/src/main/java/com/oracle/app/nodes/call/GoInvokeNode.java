@@ -19,7 +19,7 @@ public class GoInvokeNode extends GoExpressionNode {
     public GoInvokeNode(GoExpressionNode functionNode, GoExpressionNode[] argumentNodes) {
         this.functionNode = functionNode;
         this.argumentNodes = argumentNodes;
-        this.dispatchNode = new GoGenericDispatchNode();
+        this.dispatchNode = GoGenericDispatchNodeGen.create();
     }
     
 

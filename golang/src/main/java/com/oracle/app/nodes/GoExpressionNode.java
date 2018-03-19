@@ -47,6 +47,7 @@ import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.instrumentation.Instrumentable;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
@@ -57,7 +58,7 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
  */
 @TypeSystemReference(GoTypes.class)
 @NodeInfo(description = "The abstract base node for all expressions")
-//@Instrumentable(factory = GoExpressionNodeWrapper.class)
+@Instrumentable(factory = GoExpressionNodeWrapper.class)
 public abstract class GoExpressionNode extends GoStatementNode {
 
     /**
