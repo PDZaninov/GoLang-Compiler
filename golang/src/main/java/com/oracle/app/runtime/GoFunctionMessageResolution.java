@@ -28,6 +28,9 @@ public class GoFunctionMessageResolution {
 				arr[i] = fromForeignValue(arguments[i]);
 			}
 			Object result = dispatch.executeDispatch(receiver, arr);
+			if(result == null){
+				result = GoNull.SINGLETON;
+			}
 			return toForeign.executeConvert(result);
 		}
 	}

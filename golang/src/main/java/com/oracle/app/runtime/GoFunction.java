@@ -50,8 +50,7 @@ public final class GoFunction implements TruffleObject {
 
 	@Override
 	public ForeignAccess getForeignAccess() {
-		// TODO Auto-generated method stub
-		return null;
+		return GoFunctionMessageResolutionForeign.ACCESS;
 	}
 
 }
