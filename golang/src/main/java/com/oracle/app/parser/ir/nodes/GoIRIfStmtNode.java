@@ -20,6 +20,10 @@ public class GoIRIfStmtNode extends GoBaseIRNode {
         this.iftok = iftok;
     }
 
+    public int getSourceLine(){
+    	return Integer.parseInt(iftok.split(":")[1]);
+    }
+    
     public GoBaseIRNode getInit() {
         return init;
     }

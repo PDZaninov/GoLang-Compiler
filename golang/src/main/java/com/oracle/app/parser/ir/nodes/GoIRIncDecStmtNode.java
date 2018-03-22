@@ -16,7 +16,13 @@ public class GoIRIncDecStmtNode extends GoBaseIRNode {
 		this.tokpos = tokpos;
 	}
 	
-	public GoBaseIRNode getChild() { return child; }
+	public GoBaseIRNode getChild() { 
+		return child; 
+	}
+	
+	public String getTokPos(){
+		return tokpos;
+	}
 	
 	public String getOp() {
 		return op;

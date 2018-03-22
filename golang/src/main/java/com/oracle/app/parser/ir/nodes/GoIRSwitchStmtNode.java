@@ -17,6 +17,10 @@ public class GoIRSwitchStmtNode extends GoBaseIRNode {
         this.body = body;
         this.source = source;
     }
+    
+    public int getSourceLine(){
+    	return Integer.parseInt(source.split(":")[1]);
+    }
 
     public GoIRStmtNode getInit(){
         return init;

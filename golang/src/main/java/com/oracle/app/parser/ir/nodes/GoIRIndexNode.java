@@ -30,7 +30,25 @@ public class GoIRIndexNode extends GoBaseIRNode {
 	public GoBaseIRNode getIndex(){
 		return index;
 	}
-
+	
+	public int getLineNumber(){
+		return Integer.parseInt(rbrack.split(":")[1]);
+	}
+	
+	public int getRBrack(){
+		return Integer.parseInt(rbrack.split(":")[2]);
+	}
+	
+	public int getLBrack(){
+		return Integer.parseInt(lbrack.split(":")[2]);
+	}
+	
+	public int getSourceSize(){
+		int start = Integer.parseInt(lbrack.split(":")[2]);
+		int end = Integer.parseInt(rbrack.split(":")[2]);
+		return end - start;
+	}
+	
 	@Override
 	public Object accept(GoIRVisitor visitor) {
 		return visitor.visitIndexNode(this);

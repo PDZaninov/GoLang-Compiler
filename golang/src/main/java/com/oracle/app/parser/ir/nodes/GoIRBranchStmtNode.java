@@ -16,6 +16,10 @@ public class GoIRBranchStmtNode extends GoBaseIRNode {
 		this.source = source;
 	}
 	
+	public int getSourceLine(){
+		return Integer.parseInt(source.split(":")[1]);
+	}
+	
 	public String getType() {
 		return type;
 	}

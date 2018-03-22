@@ -18,6 +18,20 @@ public class GoIRCaseClauseNode extends GoBaseIRNode {
         this.colon = colon;
     }
 
+    public int getSourceLine(){
+    	return Integer.parseInt(casetok.split(":")[1]);
+    }
+    
+    public int getCaseStart(){
+    	return Integer.parseInt(casetok.split(":")[2]);
+    }
+    
+    public int getSourceLength(){
+    	int start = Integer.parseInt(casetok.split(":")[2]);
+    	int end = Integer.parseInt(colon.split(":")[2]);
+    	return end - start;
+    }
+    
     public GoIRStmtNode getBody() {
         return body;
     }

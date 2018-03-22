@@ -24,6 +24,10 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 		this.source = source;
 	}
 	
+	public String getSource(){
+		return source;
+	}
+	
 	public GoBaseIRNode getLength(){
 		return len;
 	}

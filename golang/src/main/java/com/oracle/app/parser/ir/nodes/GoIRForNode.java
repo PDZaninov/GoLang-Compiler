@@ -20,6 +20,10 @@ public class GoIRForNode extends GoBaseIRNode {
 		this.fortok = fortok;
 	}
 	
+	public int getSourceLine(){
+		return Integer.parseInt(fortok.split(":")[1]);
+	}
+	
 	public GoBaseIRNode getInit() { return init; }
 	
 	public GoBaseIRNode getCond() { return cond; }

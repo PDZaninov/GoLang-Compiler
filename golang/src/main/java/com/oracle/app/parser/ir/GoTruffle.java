@@ -516,8 +516,10 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitWriteIndex(GoIRWriteIndexNode node){
 		GoReadLocalVariableNode name = (GoReadLocalVariableNode) node.getName().accept(this);
 		GoIndexExprNode array = new GoIndexExprNode(name,(GoExpressionNode) node.getIndex().accept(this));
-		int start = name.getSourceSection().getCharIndex();
-		//int end = 
+		int start = node.getLBrack();
+		int startLine = node.getLineNumber();
+		int length = node.getSourceSize();
+		array.setSourceSection(source.createSection(startLine, start, length));
 		return array;
 	}
 	
@@ -528,7 +530,12 @@ public class GoTruffle implements GoIRVisitor {
 	public GoReadArrayNode visitIndexNode(GoIRIndexNode node){
 		FrameSlot slot = frameDescriptor.findFrameSlot(node.getIdentifier());
 		GoExpressionNode index = (GoExpressionNode) node.getIndex().accept(this);
-		return GoReadArrayNodeGen.create(index, slot);
+		GoReadArrayNode read = GoReadArrayNodeGen.create(index, slot);
+		int start = node.getLBrack();
+		int startLine = node.getLineNumber();
+		int length = node.getSourceSize();
+		read.setSourceSection(source.createSection(startLine,start,length));
+		return read;
 	}
 	
 	/**
@@ -549,16 +556,18 @@ public class GoTruffle implements GoIRVisitor {
 			length = (GoExpressionNode) node.getLength().accept(this);
 		}
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		GoExpressionNode result = null;
 		//Length can be assumed BasicLit. Only other value it can be is a const variable
 		try{
 			int size = length.executeInteger(null);
 			if(type instanceof GoIntNode){
-				return new GoIntArray(size);
+				result = new GoIntArray(size);
 			}
 			else if(type instanceof GoStringNode){
-				return new GoStringArray(size);
+				result = new GoStringArray(size);
 			}
 			else{
+				result = type;
 				System.out.println("Array Type "+ type +" not implemented");
 			}
 		}
@@ -566,7 +575,12 @@ public class GoTruffle implements GoIRVisitor {
 			//Throws error when the size value isn't an int or const
 			System.out.println(e);
 		}
-		return type;
+		String lbrack = node.getSource();
+		int startLine = Integer.parseInt(lbrack.split(":")[1]);
+		int start = Integer.parseInt(lbrack.split(":")[2]);
+		int len = type.getSourceSection().getEndColumn();
+		result.setSourceSection(source.createSection(startLine, start, len));
+		return result;
 	}
 	
 	@Override
@@ -581,7 +595,12 @@ public class GoTruffle implements GoIRVisitor {
 			body = (GoStatementNode[]) node.getBody().accept(this);
 		}
 
-		return new GoCaseClauseNode(list.getArguments(), body);
+		GoCaseClauseNode result = new GoCaseClauseNode(list.getArguments(), body);
+		int startLine = node.getSourceLine();
+		int start = node.getCaseStart();
+		int length = node.getSourceLength();
+		result.setSourceSection(source.createSection(startLine,start,length));
+		return result;
 	}
 
 	@Override
@@ -600,7 +619,10 @@ public class GoTruffle implements GoIRVisitor {
 			body = (GoBlockNode) node.getBody().accept(this);
 		}
 
-		return new GoSwitchNode(init, tag, body);
+		GoSwitchNode result = new GoSwitchNode(init, tag, body);
+		int line = node.getSourceLine();
+		result.setSourceSection(source.createSection(line));
+		return result;
 	}
 
 	public Object visitForLoop(GoIRForNode node) {
@@ -620,8 +642,9 @@ public class GoTruffle implements GoIRVisitor {
 		
 		finishBlock();
 		
-		return new GoForNode(init, cond, post, body);
-		
+		GoForNode result = new GoForNode(init, cond, post, body);
+		//result.setSourceSection(source.createSection(node.getSourceLine()));
+		return result;
 	}
 
 	@Override
@@ -629,7 +652,7 @@ public class GoTruffle implements GoIRVisitor {
 		
 		final GoExpressionNode result;
 		GoIRIdentNode ident = (GoIRIdentNode) node.getChild();
-		GoIRIntNode one = new GoIRIntNode(1, null);
+		GoIRIntNode one = new GoIRIntNode(1, node.getTokPos());
 		
 		String op = node.getOp();
 		final GoIRBinaryExprNode binary_expr = new GoIRBinaryExprNode(op.substring(0,1), ident, one, null);
@@ -660,7 +683,9 @@ public class GoTruffle implements GoIRVisitor {
 		if(node.getElse() != null)
 			Else = (GoStatementNode)node.getElse().accept(this);
 		finishBlock();
-		return new GoIfStmtNode(Init,CondNode,Body,Else);
+		GoIfStmtNode result = new GoIfStmtNode(Init,CondNode,Body,Else);
+		result.setSourceSection(source.createSection(node.getSourceLine()));
+		return result;
 	}
 
 	@Override
@@ -691,6 +716,7 @@ public class GoTruffle implements GoIRVisitor {
 			default:
 				throw new RuntimeException("Unexpected BranchStmt: " + type);
 		}
+		result.setSourceSection(source.createSection(node.getSourceLine()));
 		return result;
 	}
 

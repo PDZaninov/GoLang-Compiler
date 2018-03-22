@@ -6,19 +6,23 @@ import com.oracle.truffle.api.source.SourceSection;
 
 public class GoIRIntNode extends GoIRBasicLitNode{
 		
-		private int value;
-		private int valuelen;
+		int value;
+		int valuelen;
+		String source;
 		
 		public GoIRIntNode(String value, String source) {
-			super(source);
+			super("IR Int Node");
 			this.value = Integer.parseInt(value);
 			valuelen = value.length();
 			this.type = "INT";
+			this.source = source;
 		}
 		
 		public GoIRIntNode(int value,String source){
-			super(source);
+			super("IR Int Node");
 			this.value = value;
+			valuelen = 1;
+			this.source = source;
 		}
 		
 		public int getValue(){
