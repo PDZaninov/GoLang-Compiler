@@ -56,32 +56,7 @@ import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringArray;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRIntNode;
-import com.oracle.app.parser.ir.nodes.GoIRStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
+import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
@@ -646,6 +621,18 @@ public class GoTruffle implements GoIRVisitor {
 				throw new RuntimeException("Unexpected BranchStmt: " + type);
 		}
 		return result;
+	}
+
+	@Override
+	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
+		System.out.println("Default ImportSpec Visit");
+		return null;
+	}
+
+	@Override
+	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
+		System.out.println("Default SelectorExpr Visit");
+		return null;
 	}
 
 }
