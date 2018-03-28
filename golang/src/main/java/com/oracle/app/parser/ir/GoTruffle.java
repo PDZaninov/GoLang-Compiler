@@ -12,6 +12,8 @@ import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
+import com.oracle.app.nodes.SpecDecl.GoImportSpec;
+import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
@@ -625,14 +627,20 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
-		System.out.println("Default ImportSpec Visit");
-		return null;
+		String name = goIRImportSpecNode.getIdentifier();
+		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+		lexicalscope.locals.put(name, frameSlot);
+
+		GoIdentNode ident = (GoIdentNode) goIRImportSpecNode.getChild().accept(this);
+
+		return new GoImportSpec(ident);
 	}
 
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
-		System.out.println("Default SelectorExpr Visit");
-		return null;
+		GoIdentNode importPackage = (GoIdentNode) goIRSelectorExprNode.getImportName().accept(this);
+		GoIdentNode importMethod = (GoIdentNode) goIRSelectorExprNode.getImportMethod().accept(this);
+		return new GoSelectorExprNode(language, importPackage, importMethod);
 	}
 
 }

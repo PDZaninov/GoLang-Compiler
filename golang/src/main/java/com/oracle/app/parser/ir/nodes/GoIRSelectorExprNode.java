@@ -31,11 +31,11 @@ public class GoIRSelectorExprNode extends GoBaseIRNode {
         return null;
     }
 
-    public GoIRIdentNode getName() {
+    public GoIRIdentNode getImportName() {
         return importName;
     }
 
-    public GoIRIdentNode getMethod() {
+    public GoIRIdentNode getImportMethod() {
         return importMethod;
     }
 
