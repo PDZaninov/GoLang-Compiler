@@ -426,6 +426,21 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {
 		//GoExpressionNode name = (GoExpressionNode) node.getLHS().accept(this);
 		String name = node.getIdentifier();
+				
+		GoBaseIRNode child = node.getLHS();
+		GoExpressionNode value = (GoExpressionNode) node.getRHS().accept(this);
+		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+		if(child instanceof GoIRWriteIndexNode){
+			GoIndexExprNode index = (GoIndexExprNode) node.getLHS().accept(this);
+			return GoWriteArrayNodeGen.create(value, index.getIndex(), frameSlot);
+		}
+		else if(child instanceof GoIRIdentNode){
+			lexicalscope.locals.put(name, frameSlot);
+		}
+		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
+		/*
+		//GoExpressionNode name = (GoExpressionNode) node.getLHS().accept(this);
+		String name = node.getIdentifier();
 		
 		GoBaseIRNode child = node.getLHS();
 		GoExpressionNode value = (GoExpressionNode) node.getRHS().accept(this);
@@ -448,13 +463,13 @@ public class GoTruffle implements GoIRVisitor {
 			}
 			
 			//Need to put array as type into types hashmap
-			/*			
+					
 					GoIRArrayTypeNode arrType = null;
 			else if(node.getRHS() instanceof GoIRArrayTypeNode) {
 				arrType = (GoIRArrayTypeNode) node.getRHS();
 				arrType.getType();
 			}
-			*/
+			
 		}
 		
 		//Will cause error for Map, need to figure out better way.
@@ -466,6 +481,7 @@ public class GoTruffle implements GoIRVisitor {
 			}
 		}
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
+		*/
 	}
 	
 	/**
