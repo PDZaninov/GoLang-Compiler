@@ -11,14 +11,17 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class GoSelectorExprNode extends GoExpressionNode {
 
     String name;
-    @Child private GoExpressionNode importPackage;
+    String packageName;
+    boolean installed = false;
+    @Child private GoIdentNode importPackage;
 
-    @Child private GoExpressionNode importMethod;
+    @Child private GoIdentNode importMethod;
 
     private final ContextReference<GoContext> reference;
 
     public GoSelectorExprNode(GoLanguage language, GoIdentNode importPackage, GoIdentNode importMethod) {
-        this.name = importPackage.getName();
+        this.name = importMethod.getName();
+        this.packageName = importPackage.getName();
         this.importPackage = importPackage;
         this.importMethod = importMethod;
         reference = language.getContextReference();
@@ -35,6 +38,22 @@ public class GoSelectorExprNode extends GoExpressionNode {
 
     public String getName(){
         return name;
+    }
+
+    public String getPackageName() { return packageName; }
+
+    public void loadBuiltIn() {
+        if(installed) {
+            return;
+        }
+        switch(packageName) {
+            case "fmt":
+                reference.get().installFmt();
+                break;
+            default:
+                System.out.println("Package not yet done");
+        }
+        installed = true;
     }
 
     @Override

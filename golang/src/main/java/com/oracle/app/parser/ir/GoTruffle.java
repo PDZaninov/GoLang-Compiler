@@ -387,8 +387,7 @@ public class GoTruffle implements GoIRVisitor {
 			result = null;
 			break;
 		case "import":
-			System.out.println("GenDecl Token: IMPORT needs implementation");
-			result = null;
+			result = (GoArrayExprNode) node.getChild().accept(this);
 			break;
 		default:
 			System.out.println("GenDecl Error Checking Implementation");
@@ -631,7 +630,7 @@ public class GoTruffle implements GoIRVisitor {
 		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 		lexicalscope.locals.put(name, frameSlot);
 
-		GoIdentNode ident = (GoIdentNode) goIRImportSpecNode.getChild().accept(this);
+		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
 
 		return new GoImportSpec(ident);
 	}

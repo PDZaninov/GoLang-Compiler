@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoIRVisitor;
 import com.oracle.app.parser.ir.GoTruffle;
 import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.source.Source;
@@ -272,9 +273,13 @@ public class Parser {
 				GoBaseIRNode ifblock = body.get("Body");
 				GoBaseIRNode elseblock = body.get("Else");
 				return new GoIRIfStmtNode(ifinit,ifcond, ifblock, elseblock);
+
 			case "ImportSpec":
-				return new GoIRImportSpecNode((GoIRBasicLitNode) body.get("PATH"));
-				
+				return new GoIRImportSpecNode((GoIRBasicLitNode) body.get("Path"));
+
+			case "]*ast.ImportSpec":
+				return new GoTempIRNode(nodeType,attrs,body);
+
 			case "IncDecStmt":
 				return new GoIRIncDecStmtNode(attrs.get("Tok"),body.get("X"));
 
