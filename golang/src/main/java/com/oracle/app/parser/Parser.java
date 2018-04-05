@@ -274,11 +274,11 @@ public class Parser {
 				GoBaseIRNode elseblock = body.get("Else");
 				return new GoIRIfStmtNode(ifinit,ifcond, ifblock, elseblock);
 
-			case "ImportSpec":
-				return new GoIRImportSpecNode((GoIRBasicLitNode) body.get("Path"));
-
 			case "]*ast.ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
+
+			case "ImportSpec":
+				return new GoIRImportSpecNode((GoIRBasicLitNode) body.get("Path"));
 
 			case "IncDecStmt":
 				return new GoIRIncDecStmtNode(attrs.get("Tok"),body.get("X"));

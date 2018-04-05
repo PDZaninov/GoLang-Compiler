@@ -631,7 +631,6 @@ public class GoTruffle implements GoIRVisitor {
 		lexicalscope.locals.put(name, frameSlot);
 
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
-
 		return new GoImportSpec(ident);
 	}
 

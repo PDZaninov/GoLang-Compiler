@@ -30,7 +30,7 @@ public class GoInvokeNode extends GoExpressionNode {
     @ExplodeLoop
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        GoFunction function = null;
+        GoFunction function;
         if(functionNode instanceof GoIdentNode) {
             function = ((GoIdentNode) functionNode).getFunction();
         }

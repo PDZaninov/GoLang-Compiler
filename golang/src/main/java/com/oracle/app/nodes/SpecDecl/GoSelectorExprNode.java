@@ -58,8 +58,6 @@ public class GoSelectorExprNode extends GoExpressionNode {
 
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        //TODO
-
         return null;
     }
 
