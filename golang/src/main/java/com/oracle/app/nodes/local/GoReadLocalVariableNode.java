@@ -21,8 +21,13 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 	public String toString() {
 		return "GoReadLocalVariableNode []";
 	}
+    
+    @Override
+    public int hashCode(){
+    	return getSlot().hashCode();
+    }
 
-	public abstract FrameSlot getSlot();
+	protected abstract FrameSlot getSlot();
     
     @Specialization(guards = "isInt(frame)")
     protected int readInt(VirtualFrame frame){
