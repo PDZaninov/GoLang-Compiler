@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -118,7 +119,7 @@ public class Parser {
 	 * @throws IOException
 	 */
 	private GoBaseIRNode recParse(String currNode) throws IOException {
-		Map<String, GoBaseIRNode> body = new HashMap<>();
+		Map<String, GoBaseIRNode> body = new LinkedHashMap<>();
 		Map<String, String> attrs = new HashMap<>();
 		String nodeName = currNode;
 		

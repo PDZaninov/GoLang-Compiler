@@ -347,7 +347,6 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitExpr(GoIRExprNode node) {
-		System.out.println(node.getChild());
 		return new GoExprNode( (GoExpressionNode) node.getChild().accept(this));
 	}
 
