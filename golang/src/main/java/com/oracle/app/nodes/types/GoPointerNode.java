@@ -7,11 +7,20 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+/**
+ * Truffle Pointer node. 
+ * Holds a ptr for a makeshift address value
+ * Holds a {@link FrameSlot} as a makeshift pointer value.
+ * When executed it will return the value to read in the frameslot
+ * Printing the toString of the pointer will return the makeshift ptr address
+ * Dereferencing the address is handled in {@link GoWriteMemoryNode}
+ * @author Trevor
+ *
+ */
 public abstract class GoPointerNode extends GoExpressionNode{
 
 	protected int ptr;
 	protected FrameSlot obj;
-	protected boolean star = false;
 
 	public GoPointerNode(int ptr, FrameSlot obj){
 		this.ptr = ptr;
@@ -35,7 +44,7 @@ public abstract class GoPointerNode extends GoExpressionNode{
 		case Long:
 			break;
 		case Object:
-			break;
+			return new GoObjectPointerNode(obj.hashCode(),obj);
 		default:
 			break;
 		
@@ -74,6 +83,24 @@ public abstract class GoPointerNode extends GoExpressionNode{
 		@Override
 		public Object executeStar(VirtualFrame frame) {
 			return FrameUtil.getIntSafe(frame, getSlot());
+		}
+	}
+	
+	public static class GoObjectPointerNode extends GoPointerNode{
+		
+		public GoObjectPointerNode(int ptr, FrameSlot obj) {
+			super(ptr, obj);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Specialization
+		public Object doInt(VirtualFrame frame){
+			return FrameUtil.getObjectSafe(frame, getSlot());
+		}
+
+		@Override
+		public Object executeStar(VirtualFrame frame) {
+			return FrameUtil.getObjectSafe(frame, getSlot());
 		}
 	}
 	

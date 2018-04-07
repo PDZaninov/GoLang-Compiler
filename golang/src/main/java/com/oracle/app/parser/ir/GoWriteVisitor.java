@@ -8,6 +8,12 @@ import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.truffle.api.frame.FrameSlot;
 
+/**
+ * Mini visitor called inside {@link GoTruffle} which will handle all assignment visits
+ * to simplify deciding between a read and write variable.
+ * @author Trevor
+ *
+ */
 public class GoWriteVisitor implements GoIRVisitor {
 
 	private LexicalScope scope;

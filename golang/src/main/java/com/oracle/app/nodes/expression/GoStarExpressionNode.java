@@ -6,6 +6,14 @@ import com.oracle.app.nodes.types.GoPointerNode;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
+/**
+ * Should only be called on {@link GoReadLocalVariableNode}s that contain
+ * a pointer in them. This is only used to print the value a pointer is pointing
+ * at. Did not see a way to directly execute the pointer object without calling a
+ * specific method inside {@link GoPointerNode}
+ * @author Trevor
+ *
+ */
 public class GoStarExpressionNode extends GoExpressionNode {
 
 	private GoReadLocalVariableNode ptr;
