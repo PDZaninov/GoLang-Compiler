@@ -1,16 +1,17 @@
 package com.oracle.app.nodes.expression;
 
-import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoUnaryNode;
+import com.oracle.app.nodes.types.GoPointerNode;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 @NodeInfo(shortName = "&")
 public class GoUnaryAddressNode extends GoUnaryNode {
 
-	private GoExpressionNode value;
+	private FrameSlot value;
 	
-	public GoUnaryAddressNode(GoExpressionNode value){
+	public GoUnaryAddressNode(FrameSlot value){
 		this.value = value;
 	}
 
@@ -21,6 +22,6 @@ public class GoUnaryAddressNode extends GoUnaryNode {
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return String.format("0x%x", value.hashCode());
+		return GoPointerNode.createPointer(value, value.getKind());
 	}
 }

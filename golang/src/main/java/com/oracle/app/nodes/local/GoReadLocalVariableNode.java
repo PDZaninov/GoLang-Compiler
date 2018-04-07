@@ -16,7 +16,6 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 
-	
     @Override
 	public String toString() {
 		return "GoReadLocalVariableNode []";
@@ -27,7 +26,8 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	return getSlot().hashCode();
     }
 
-	protected abstract FrameSlot getSlot();
+    //Called by GoUnaryAddress to allow pointers to reference a frameslot...
+	public abstract FrameSlot getSlot();
     
     @Specialization(guards = "isInt(frame)")
     protected int readInt(VirtualFrame frame){

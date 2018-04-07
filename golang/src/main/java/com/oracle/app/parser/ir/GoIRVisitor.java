@@ -8,8 +8,6 @@ import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIntNode;
-import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
@@ -26,8 +24,11 @@ import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
+import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
@@ -178,6 +179,11 @@ public interface GoIRVisitor {
 
 	default Object visitWriteIndex(GoIRWriteIndexNode goIRWriteIndexNode){
 		System.out.println("Default Write Index Visit");
+		return null;
+	}
+
+	default Object visitStarNode(GoIRStarNode goIRStarNode){
+		System.out.println("Default Star Node");
 		return null;
 	}
 }

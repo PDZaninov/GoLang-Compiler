@@ -43,6 +43,7 @@ import com.oracle.app.nodes.expression.GoMulNodeGen;
 import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
+import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
@@ -76,6 +77,7 @@ import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
@@ -379,7 +381,7 @@ public class GoTruffle implements GoIRVisitor {
 				result = GoNegativeSignNodeGen.create(child);
 				break;
 			case "&":
-				result = new GoUnaryAddressNode(child);
+				result = new GoUnaryAddressNode(((GoReadLocalVariableNode) child).getSlot());
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
@@ -484,6 +486,10 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 		*/
+	}
+	
+	public Object visitStarNode(GoIRStarNode node){
+		return new GoStarExpressionNode((GoReadLocalVariableNode) node.getChild().accept(this));
 	}
 	
 	/**
