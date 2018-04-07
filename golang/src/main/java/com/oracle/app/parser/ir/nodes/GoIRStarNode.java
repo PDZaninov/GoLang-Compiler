@@ -32,6 +32,13 @@ public class GoIRStarNode extends GoBaseIRNode {
 		return expr;
 	}
 	
+	
+	
+	@Override
+	public String getIdentifier() {
+		return expr.getIdentifier();
+	}
+
 	@Override
 	public Object accept(GoIRVisitor visitor) {
 		// TODO Auto-generated method stub

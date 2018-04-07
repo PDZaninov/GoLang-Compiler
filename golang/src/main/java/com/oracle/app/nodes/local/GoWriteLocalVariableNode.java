@@ -3,8 +3,8 @@ package com.oracle.app.nodes.local;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntArray;
-import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoIntSlice;
+import com.oracle.app.nodes.types.GoPointerNode;
 import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -84,7 +84,6 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 
 	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString", "writeArray", "writeSlice"})
 	    protected Object write(VirtualFrame frame, Object value) {
-
 	        getSlot().setKind(FrameSlotKind.Object);
 
 	        frame.setObject(getSlot(), value);

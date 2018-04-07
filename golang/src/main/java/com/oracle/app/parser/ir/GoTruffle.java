@@ -429,6 +429,7 @@ public class GoTruffle implements GoIRVisitor {
 
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {
 		//GoExpressionNode name = (GoExpressionNode) node.getLHS().accept(this);
+		
 		String name = node.getIdentifier();
 				
 		GoBaseIRNode child = node.getLHS();
@@ -438,11 +439,14 @@ public class GoTruffle implements GoIRVisitor {
 			GoIndexExprNode index = (GoIndexExprNode) node.getLHS().accept(this);
 			return GoWriteArrayNodeGen.create(value, index.getIndex(), frameSlot);
 		}
+		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,value,name,frameSlot);
+		return miniVisitor.visit(child);
+		/*
 		else if(child instanceof GoIRIdentNode){
 			lexicalscope.locals.put(name, frameSlot);
 		}
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
-		/*
+		
 		//GoExpressionNode name = (GoExpressionNode) node.getLHS().accept(this);
 		String name = node.getIdentifier();
 		
