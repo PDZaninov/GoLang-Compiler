@@ -2,16 +2,17 @@ package com.oracle.app.nodes;
 
 import java.util.Map;
 
+import com.oracle.app.GoLanguage;
+import com.oracle.app.runtime.GoContext;
+import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.TruffleLanguage.ContextReference;
 import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.SourceSection;
-
-import com.oracle.app.GoLanguage;
-import com.oracle.app.runtime.GoContext;
-import com.oracle.app.runtime.GoNull;
 
 /**
  * In addition to {@link GoRootNode}, this class performs two additional tasks:
@@ -45,6 +46,21 @@ public final class GoEvalRootNode extends GoRootNode {
             CompilerDirectives.transferToInterpreterAndInvalidate();
             reference.get().getFunctionRegistry().register(functions);
             registered = true;
+            FrameDescriptor f = getFrameDescriptor();
+            FrameSlot slot;
+            slot = f.findFrameSlot("int");
+            slot.setKind(FrameSlotKind.Int);
+            frame.setInt(slot, 0);
+            slot = f.findFrameSlot("float64");
+            frame.setFloat(slot, 0);
+            slot = f.findFrameSlot("string");
+            frame.setObject(slot, "");
+            slot = f.findFrameSlot("bool");
+            frame.setBoolean(slot, false);
+            slot = f.findFrameSlot("true");
+            frame.setBoolean(slot,true);
+            slot = f.findFrameSlot("false");
+            frame.setBoolean(slot, false);
         }
 
         if (getBodyNode() == null) {

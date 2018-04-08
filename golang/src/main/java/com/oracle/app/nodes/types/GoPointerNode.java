@@ -1,6 +1,7 @@
 package com.oracle.app.nodes.types;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.local.GoWriteMemoryNode;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -14,6 +15,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
  * When executed it will return the value to read in the frameslot
  * Printing the toString of the pointer will return the makeshift ptr address
  * Dereferencing the address is handled in {@link GoWriteMemoryNode}
+ * TO-DO - add PrimitiveType field to identify the pointer type
  * @author Trevor
  *
  */
@@ -21,6 +23,7 @@ public abstract class GoPointerNode extends GoExpressionNode{
 
 	protected int ptr;
 	protected FrameSlot obj;
+	protected GoPrimitiveTypes type;
 
 	public GoPointerNode(int ptr, FrameSlot obj){
 		this.ptr = ptr;
@@ -94,7 +97,7 @@ public abstract class GoPointerNode extends GoExpressionNode{
 		}
 		
 		@Specialization
-		public Object doInt(VirtualFrame frame){
+		public Object doObject(VirtualFrame frame){
 			return FrameUtil.getObjectSafe(frame, getSlot());
 		}
 

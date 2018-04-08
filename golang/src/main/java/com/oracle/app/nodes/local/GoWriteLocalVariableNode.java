@@ -2,9 +2,7 @@ package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoIntArray;
 import com.oracle.app.nodes.types.GoIntSlice;
-import com.oracle.app.nodes.types.GoPointerNode;
 import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -131,12 +129,13 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 
 	    @NodeChild(value = "indexNode",type = GoExpressionNode.class)
 	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
+	    	/*
 	    	@Specialization
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
 	    		GoIntArray array = (GoIntArray) FrameUtil.getObjectSafe(frame, getSlot());
 	    		array.setArray(index,value);
 	    		frame.setObject(getSlot(), array);
 	    		return null;
-	    	}
+	    	}*/
 	    } 
 }

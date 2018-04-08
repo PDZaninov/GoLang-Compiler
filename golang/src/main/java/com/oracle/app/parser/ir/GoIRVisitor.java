@@ -152,7 +152,7 @@ public interface GoIRVisitor {
 		return null;
 	}
 
-	default GoReadArrayNode visitIndexNode(GoIRIndexNode goIRIndexNode){
+	default Object visitIndexNode(GoIRIndexNode goIRIndexNode){
 		System.out.println("Default Index Node Visit");
 		return null;
 	}

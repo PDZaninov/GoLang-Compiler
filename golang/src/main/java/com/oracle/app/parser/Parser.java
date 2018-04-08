@@ -103,7 +103,7 @@ public class Parser {
 		//GoVisitor visitor = new GoVisitor();
 		//k.accept(visitor);
 		
-		GoTruffle truffleVisitor = new GoTruffle(language, source);
+		GoTruffle truffleVisitor = new GoTruffle(language, source).initialize();
 		k.accept(truffleVisitor);
 		
 		return truffleVisitor.getAllFunctions();
@@ -374,9 +374,10 @@ public class Parser {
 		GoBaseIRNode writeto;
 		for(int i = 0; i < size;i++){
 			writeto = lhs.getChildren().get(i);
+			/*Can be handled in a mini visitor inside GoTruffle Now
 			if(writeto instanceof GoIRIndexNode){
 				writeto = GoIRWriteIndexNode.createIRWriteIndex((GoIRIndexNode) writeto);
-			}
+			}*/
 			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i) ));
 		}
 		return new GoIRArrayListExprNode(result);
@@ -387,15 +388,16 @@ public class Parser {
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
-		GoBaseIRNode value = null;
+		/*
 		if(type instanceof GoIRIdentNode){
 			value = GoIRDefaultValues.createDefaultBasicLits((GoIRIdentNode)type);
 		}
 		else if(type instanceof GoIRArrayTypeNode){
 			value = type;
 		}
+		*/
 		for(GoBaseIRNode node : lhs.getChildren()){
-			result.add(new GoIRAssignmentStmtNode(node,value));
+			result.add(new GoIRAssignmentStmtNode(node,type));
 		}
 		return new GoIRArrayListExprNode(result);
 	}

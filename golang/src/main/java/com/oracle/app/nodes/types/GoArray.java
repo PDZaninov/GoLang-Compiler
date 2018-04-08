@@ -1,29 +1,41 @@
 package com.oracle.app.nodes.types;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 
-public abstract class GoArray extends GoExpressionNode {
+public class GoArray extends GoExpressionNode {
 	protected int length;
+	protected GoPrimitiveTypes type;
+	protected FrameSlot[] arr;
 	
-	abstract public Object readArray(int index);
+	public GoArray(GoIntNode length){
+		this.length = length.executeInteger(null);
+	}
+	
+	public void insert(FrameSlot slot, int index){
+		if(index > length || index < 0){
+			//Throws error
+			System.out.println("Invalid array index");
+			return;
+		}
+		arr[index] = slot;
+	}
 	
 	@Override
 	public String toString() {
+		
 		return "GoArray [length=" + length + "]";
 	}
 
-	abstract public int len(GoArray a);
-
-	//abstract public void setArray(int index, int value);
-	
 	@Override
-	abstract public GoArray executeGoArray(VirtualFrame virtualFrame);
+	public GoArray executeGeneric(VirtualFrame frame){
+		return null;
+	}
 	
-	@Override
-	abstract public GoArray executeGeneric(VirtualFrame frame);
-	
-
+	public int len(){
+		return length;
+	}
 
 }
