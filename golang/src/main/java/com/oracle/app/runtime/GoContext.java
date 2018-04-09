@@ -12,7 +12,6 @@ import com.oracle.app.builtins.GoLenBuiltinFactory;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
 import com.oracle.app.builtins.GoTrueEqualsTrueFactory;
-import com.oracle.app.builtins.GoMakeBuiltinFactory;
 import com.oracle.app.builtins.fmt.GoFmtPrintln;
 import com.oracle.app.builtins.fmt.GoFmtPrintlnFactory;
 import com.oracle.app.nodes.GoExpressionNode;
