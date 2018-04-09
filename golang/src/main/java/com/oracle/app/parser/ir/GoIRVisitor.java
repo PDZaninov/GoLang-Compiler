@@ -2,7 +2,6 @@ package com.oracle.app.parser.ir;
 
 
 import com.oracle.app.nodes.expression.GoIndexExprNode;
-import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.*;
@@ -125,7 +124,7 @@ public interface GoIRVisitor {
 		return null;
 	}
 
-	default GoReadArrayNode visitIndexNode(GoIRIndexNode goIRIndexNode){
+	default Object visitIndexNode(GoIRIndexNode goIRIndexNode){
 		System.out.println("Default Index Node Visit");
 		return null;
 	}
@@ -155,6 +154,16 @@ public interface GoIRVisitor {
 		return null;
 	}
 
+	default Object visitStarNode(GoIRStarNode goIRStarNode){
+		System.out.println("Default Star Node");
+		return null;
+	}
+
+	default Object visit(GoIRCompositeLitNode goIRCompositeLitNode){
+		System.out.println("Default Composite Lit Node");
+		return null;
+	}
+	
 	default Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
 		System.out.println("Default ImportSpec Visit");
 		return null;

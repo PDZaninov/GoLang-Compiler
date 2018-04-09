@@ -22,4 +22,14 @@ public class GoArrayExprNode extends GoExpressionNode {
 		return null;
 	}
 
+	/*
+	 * Called by composite lit node. Gathers the results to initialize a non primitive type.
+	 */
+	public Object[] gatherResults(VirtualFrame frame){
+		Object[] results = new Object[children.length];
+		for(int i = 0; i < results.length; i++){
+			results[i] = children[i].executeGeneric(frame);
+		}
+		return results;
+	}
 }

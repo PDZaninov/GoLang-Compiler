@@ -17,31 +17,6 @@ import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 import com.oracle.app.parser.ir.GoTruffle;
 import com.oracle.app.parser.ir.nodes.*;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRDefaultValues;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
-import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
 /**
@@ -104,7 +79,7 @@ public class Parser {
 		//GoVisitor visitor = new GoVisitor();
 		//k.accept(visitor);
 		
-		GoTruffle truffleVisitor = new GoTruffle(language, source);
+		GoTruffle truffleVisitor = new GoTruffle(language, source).initialize();
 		k.accept(truffleVisitor);
 		
 		return truffleVisitor.getAllFunctions();
@@ -176,13 +151,15 @@ public class Parser {
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "ArrayType":
+				return new GoIRArrayTypeNode(body.get("Len"),body.get("Elt"));
+				/*
 				//If has a len
 				if(body.containsKey("Len")) {
 					return new GoIRArrayTypeNode(body.get("Len"),body.get("Elt"));
 				}
 				else {
 					return new GoIRArrayTypeNode(body.get("Elt"), true);
-				}
+				}*/
 			case "AssignStmt":
 				GoIRArrayListExprNode lhs = (GoIRArrayListExprNode) body.get("Lhs");
 				GoIRArrayListExprNode rhs = (GoIRArrayListExprNode) body.get("Rhs");
@@ -227,6 +204,13 @@ public class Parser {
 				GoIRArrayListExprNode args = (GoIRArrayListExprNode) body.get("Args");
 				return new GoIRInvokeNode(functionNode,args);
 
+			case "CompositeLit":
+				GoBaseIRNode expr = body.get("Type");
+				String lbrace = attrs.get("Lbrace");
+				GoIRArrayListExprNode elts = (GoIRArrayListExprNode) body.get("Elts");
+				String rbrace = attrs.get("Rbrace");
+				return new GoIRCompositeLitNode(expr,lbrace,elts,rbrace);
+				
 			case "CaseClause":
 				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRStmtNode) body.get("Body"));
 				
@@ -328,6 +312,9 @@ public class Parser {
 				}
 				
 				return new GoIRArrayListExprNode(speclist);
+			
+			case "StarExpr":
+				return new GoIRStarNode(body.get("X"), attrs.get("Star"));
 				
 			case "Stmt":
 				ArrayList<GoBaseIRNode> stmtlist = new ArrayList<>();
@@ -374,9 +361,6 @@ public class Parser {
 		GoBaseIRNode writeto;
 		for(int i = 0; i < size;i++){
 			writeto = lhs.getChildren().get(i);
-			if(writeto instanceof GoIRIndexNode){
-				writeto = GoIRWriteIndexNode.createIRWriteIndex((GoIRIndexNode) writeto);
-			}
 			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i) ));
 		}
 		return new GoIRArrayListExprNode(result);
@@ -387,15 +371,8 @@ public class Parser {
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
-		GoBaseIRNode value = null;
-		if(type instanceof GoIRIdentNode){
-			value = GoIRDefaultValues.createDefaultBasicLits((GoIRIdentNode)type);
-		}
-		else if(type instanceof GoIRArrayTypeNode){
-			value = type;
-		}
 		for(GoBaseIRNode node : lhs.getChildren()){
-			result.add(new GoIRAssignmentStmtNode(node,value));
+			result.add(new GoIRAssignmentStmtNode(node,type));
 		}
 		return new GoIRArrayListExprNode(result);
 	}

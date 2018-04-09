@@ -2,8 +2,6 @@ package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoIntArray;
-import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoIntSlice;
 import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
@@ -84,7 +82,6 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 
 	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString", "writeArray", "writeSlice"})
 	    protected Object write(VirtualFrame frame, Object value) {
-
 	        getSlot().setKind(FrameSlotKind.Object);
 
 	        frame.setObject(getSlot(), value);
@@ -132,11 +129,36 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 
 	    @NodeChild(value = "indexNode",type = GoExpressionNode.class)
 	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
+	    	
 	    	@Specialization
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
-	    		GoIntArray array = (GoIntArray) FrameUtil.getObjectSafe(frame, getSlot());
-	    		array.setArray(index,value);
-	    		frame.setObject(getSlot(), array);
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
+	    		frame.setInt(slot, value);
+	    		return null;
+	    	}
+	    	
+	    	@Specialization
+	    	public GoArray writeFloatArray(VirtualFrame frame, float value, int index){
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
+	    		frame.setFloat(slot, value);
+	    		return null;
+	    	}
+	    	
+	    	@Specialization
+	    	public GoArray writeBooleanArray(VirtualFrame frame, boolean value, int index){
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
+	    		frame.setBoolean(slot, value);
+	    		return null;
+	    	}
+	    	
+	    	@Specialization
+	    	public GoArray writeObjectArray(VirtualFrame frame, Object value, int index){
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
+	    		frame.setObject(slot, value);
 	    		return null;
 	    	}
 	    } 
