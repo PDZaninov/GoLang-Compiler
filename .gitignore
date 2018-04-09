@@ -10,3 +10,4 @@ target/
 bin/
 .recommenders/
 /.metadata/
+*.iml
