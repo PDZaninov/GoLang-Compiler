@@ -316,7 +316,9 @@ public class Parser {
 						attrs.get("Lbrack"),
 						attrs.get("Rbrack")
 						);
-
+			case "]*ast.ImportSpec":
+				return new GoTempIRNode(nodeType,attrs,body);
+				
 			case "ImportSpec":
 				return new GoIRImportSpecNode((GoIRBasicLitNode) body.get("Path"));
 
