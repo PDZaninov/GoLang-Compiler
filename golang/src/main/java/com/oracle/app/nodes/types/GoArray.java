@@ -43,6 +43,14 @@ public class GoArray extends GoExpressionNode {
 		return arr[index];
 	}
 	
+	/**
+	 * Will need to change to account for objects, not just primitives
+	 * @return - The type of array
+	 */
+	public GoPrimitiveTypes getType(){
+		return type;
+	}
+	
 	@Override
 	public String toString() {
 		return "GoArray [length=" + length + "]";
