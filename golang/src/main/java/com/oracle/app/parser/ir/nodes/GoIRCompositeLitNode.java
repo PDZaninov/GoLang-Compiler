@@ -1,10 +1,9 @@
-package com.oracle.app.parser;
+package com.oracle.app.parser.ir.nodes;
 
 import java.util.ArrayList;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 
 public class GoIRCompositeLitNode extends GoBaseIRNode {
 

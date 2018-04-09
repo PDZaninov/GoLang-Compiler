@@ -12,6 +12,8 @@ import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoDeclNode;
+import com.oracle.app.nodes.SpecDecl.GoImportSpec;
+import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
@@ -56,32 +58,7 @@ import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoNonPrimitiveType;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRIntNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRStarNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -410,8 +387,7 @@ public class GoTruffle implements GoIRVisitor {
 			result = null;
 			break;
 		case "import":
-			System.out.println("GenDecl Token: IMPORT needs implementation");
-			result = null;
+			result = (GoArrayExprNode) node.getChild().accept(this);
 			break;
 		default:
 			System.out.println("GenDecl Error Checking Implementation");
@@ -609,6 +585,23 @@ public class GoTruffle implements GoIRVisitor {
 				throw new RuntimeException("Unexpected BranchStmt: " + type);
 		}
 		return result;
+	}
+
+	@Override
+	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
+		String name = goIRImportSpecNode.getIdentifier();
+		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+		lexicalscope.locals.put(name, frameSlot);
+
+		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
+		return new GoImportSpec(ident);
+	}
+
+	@Override
+	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
+		GoIdentNode importPackage = (GoIdentNode) goIRSelectorExprNode.getImportName().accept(this);
+		GoIdentNode importMethod = (GoIdentNode) goIRSelectorExprNode.getImportMethod().accept(this);
+		return new GoSelectorExprNode(language, importPackage, importMethod);
 	}
 
 }

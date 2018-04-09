@@ -14,31 +14,9 @@ import java.util.regex.Pattern;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
+import com.oracle.app.parser.ir.GoIRVisitor;
 import com.oracle.app.parser.ir.GoTruffle;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRStarNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.source.Source;
 
 /**
@@ -305,12 +283,16 @@ public class Parser {
 				GoBaseIRNode ifblock = body.get("Body");
 				GoBaseIRNode elseblock = body.get("Else");
 				return new GoIRIfStmtNode(ifinit,ifcond, ifblock, elseblock);
-			case "ImportSpec":
+
+			case "]*ast.ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
-				
+
+			case "ImportSpec":
+				return new GoIRImportSpecNode((GoIRBasicLitNode) body.get("Path"));
+
 			case "IncDecStmt":
 				return new GoIRIncDecStmtNode(attrs.get("Tok"),body.get("X"));
-				
+
 			case "Object":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
@@ -321,7 +303,7 @@ public class Parser {
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "SelectorExpr":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRSelectorExprNode((GoIRIdentNode) body.get("X"),(GoIRIdentNode) body.get("Sel"));
 				
 			case "Spec":
 				ArrayList<GoBaseIRNode> speclist = new ArrayList<>();
