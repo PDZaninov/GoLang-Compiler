@@ -226,6 +226,13 @@ public class Parser {
 				GoIRArrayListExprNode args = (GoIRArrayListExprNode) body.get("Args");
 				return new GoIRInvokeNode(functionNode,args);
 
+			case "CompositeLit":
+				GoBaseIRNode expr = body.get("Type");
+				String lbrace = attrs.get("Lbrace");
+				GoIRArrayListExprNode elts = (GoIRArrayListExprNode) body.get("Elts");
+				String rbrace = attrs.get("Rbrace");
+				return new GoIRCompositeLitNode(expr,lbrace,elts,rbrace);
+				
 			case "CaseClause":
 				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRStmtNode) body.get("Body"));
 				

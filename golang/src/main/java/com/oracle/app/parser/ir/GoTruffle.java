@@ -28,6 +28,7 @@ import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
+import com.oracle.app.nodes.expression.GoCompositeLitNode;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
@@ -53,7 +54,9 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
+import com.oracle.app.nodes.types.GoNonPrimitiveType;
 import com.oracle.app.nodes.types.GoStringNode;
+import com.oracle.app.parser.GoIRCompositeLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
@@ -450,7 +453,7 @@ public class GoTruffle implements GoIRVisitor {
 	
 	/**
 	 * 
-	 * return - An initialized GoArray
+	 * return - A GoArray with filled frameSlots, but values are not written in yet
 	 */
 	@Override
 	public Object visitArrayType(GoIRArrayTypeNode node){
@@ -467,15 +470,23 @@ public class GoTruffle implements GoIRVisitor {
 		//Catch error where length is not an int node or possibly an int const
 		GoArray result = new GoArray((GoIntNode) length);
 		result.setType(type);
-		int i = 0;
+		//Fill the array with frameslots that are reachable in the framedescriptor, frameslots will have values when executed
 		int hash = result.hashCode();
 		FrameSlot indexSlot;
 		String temporaryIdentifier;
-		for(; i < result.len(); i++){
+		for(int i = 0; i < result.len(); i++){
 			temporaryIdentifier = String.format("_0x%x_%d", hash,i);
 			indexSlot = frameDescriptor.addFrameSlot(temporaryIdentifier);
 			result.insert(indexSlot, i);
 		}
+		return result;
+	}
+	
+	@Override
+	public Object visit(GoIRCompositeLitNode node){
+		GoExpressionNode type = (GoExpressionNode) node.getExpr().accept(this);
+		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
+		GoCompositeLitNode result = new GoCompositeLitNode((GoNonPrimitiveType) type, elts);
 		return result;
 	}
 	

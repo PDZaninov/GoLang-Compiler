@@ -1,13 +1,15 @@
 package com.oracle.app.nodes.types;
 
+import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 
-public class GoArray extends GoExpressionNode {
+public class GoArray extends GoNonPrimitiveType {
 	protected int length;
 	protected GoPrimitiveTypes type;
 	protected FrameSlot[] arr;
@@ -15,6 +17,10 @@ public class GoArray extends GoExpressionNode {
 	public GoArray(GoIntNode length){
 		this.length = length.executeInteger(null);
 		arr = new FrameSlot[this.length];
+	}
+	
+	public int len(){
+		return length;
 	}
 	
 	public void insert(FrameSlot slot, int index){
@@ -61,35 +67,73 @@ public class GoArray extends GoExpressionNode {
 	 */
 	@Override
 	public GoArray executeGeneric(VirtualFrame frame){
+		CompilerDirectives.transferToInterpreter();
 		switch(type){
 		case BOOL:
-			fillArray(frame,false,FrameSlotKind.Boolean);
+			for(int i = 0; i < arr.length; i++){
+				arr[i].setKind(FrameSlotKind.Boolean);
+				frame.setBoolean(arr[i], false);
+			}
 			break;
 		case FLOAT64:
-			fillArray(frame,(float)0,FrameSlotKind.Float);
+			for(int i = 0; i < arr.length; i++){
+				arr[i].setKind(FrameSlotKind.Float);
+				frame.setFloat(arr[i], (float) 0);
+			}
 			break;
 		case INT:
-			fillArray(frame,0,FrameSlotKind.Int);
+			for(int i = 0; i < arr.length; i++){
+				arr[i].setKind(FrameSlotKind.Int);
+				frame.setInt(arr[i], (int) 0);
+			}
 			break;
 		case STRING:
-			fillArray(frame,"",FrameSlotKind.Object);
+			for(int i = 0; i < arr.length; i++){
+				arr[i].setKind(FrameSlotKind.Object);
+				frame.setObject(arr[i], "");
+			}
 			break;
 		default:
 			break;
 		}
 		return this;
 	}
-	
-	protected void fillArray(VirtualFrame frame, Object value, FrameSlotKind type){
+
+	@Override
+	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts) {
+		Object[] results = elts.gatherResults(frame);
+		//GoExpressionNode[] writes = new GoExpressionNode[results.length];
 		CompilerDirectives.transferToInterpreter();
-		for(int i = 0; i < length; i++){
-			arr[i].setKind(type);
-			frame.setObject(arr[i], value);
+		switch(type){
+		case BOOL:
+			for(int i = 0; i < results.length; i++){
+				arr[i].setKind(FrameSlotKind.Boolean);
+				frame.setBoolean(arr[i], (boolean) results[i]);
+			}
+			break;
+		case FLOAT64:
+			for(int i = 0; i < results.length; i++){
+				arr[i].setKind(FrameSlotKind.Float);
+				frame.setFloat(arr[i], (float) results[i]);
+			}
+			break;
+		case INT:
+			for(int i = 0; i < results.length; i++){
+				arr[i].setKind(FrameSlotKind.Int);
+				frame.setInt(arr[i], (int) results[i]);
+			}
+			break;
+		case STRING:
+			for(int i = 0; i < results.length; i++){
+				arr[i].setKind(FrameSlotKind.Object);
+				frame.setObject(arr[i], results[i]);
+			}
+			break;
+		default:
+			break;
+		
 		}
-	}
-	
-	public int len(){
-		return length;
+		return this;
 	}
 
 }
