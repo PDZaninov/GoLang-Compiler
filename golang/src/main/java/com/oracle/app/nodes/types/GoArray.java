@@ -1,7 +1,9 @@
 package com.oracle.app.nodes.types;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 
@@ -24,14 +26,15 @@ public class GoArray extends GoExpressionNode {
 		arr[index] = slot;
 	}
 	
-	public void setType(GoExpressionNode type){
-		if(type instanceof GoIntNode){
+	public void setType(String type){
+		switch(type){
+		case "int":
 			this.type = GoPrimitiveTypes.INT;
-		}
-		else if(type instanceof GoStringNode){
+			break;
+		case "string":
 			this.type = GoPrimitiveTypes.STRING;
-		}
-		else{
+			break;
+		default:
 			System.out.println("Array Type "+type+" not implemented");
 		}
 	}
@@ -50,7 +53,31 @@ public class GoArray extends GoExpressionNode {
 	 */
 	@Override
 	public GoArray executeGeneric(VirtualFrame frame){
+		switch(type){
+		case BOOL:
+			fillArray(frame,false,FrameSlotKind.Boolean);
+			break;
+		case FLOAT64:
+			fillArray(frame,(float)0,FrameSlotKind.Float);
+			break;
+		case INT:
+			fillArray(frame,0,FrameSlotKind.Int);
+			break;
+		case STRING:
+			fillArray(frame,"",FrameSlotKind.Object);
+			break;
+		default:
+			break;
+		}
 		return this;
+	}
+	
+	protected void fillArray(VirtualFrame frame, Object value, FrameSlotKind type){
+		CompilerDirectives.transferToInterpreter();
+		for(int i = 0; i < length; i++){
+			arr[i].setKind(type);
+			frame.setObject(arr[i], value);
+		}
 	}
 	
 	public int len(){

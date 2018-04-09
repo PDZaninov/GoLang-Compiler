@@ -462,10 +462,11 @@ public class GoTruffle implements GoIRVisitor {
 		else {
 			length = (GoExpressionNode) node.getLength().accept(this);
 		}
-		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		//GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		String type = node.getType().getIdentifier();
 		//Catch error where length is not an int node or possibly an int const
 		GoArray result = new GoArray((GoIntNode) length);
-		//result.setType();
+		result.setType(type);
 		int i = 0;
 		int hash = result.hashCode();
 		FrameSlot indexSlot;

@@ -134,6 +134,30 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
 	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
 	    		FrameSlot slot = array.readArray(index);
+	    		frame.setInt(slot, value);
+	    		return null;
+	    	}
+	    	
+	    	@Specialization
+	    	public GoArray writeFloatArray(VirtualFrame frame, float value, int index){
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
+	    		frame.setFloat(slot, value);
+	    		return null;
+	    	}
+	    	
+	    	@Specialization
+	    	public GoArray writeBooleanArray(VirtualFrame frame, boolean value, int index){
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
+	    		frame.setBoolean(slot, value);
+	    		return null;
+	    	}
+	    	
+	    	@Specialization
+	    	public GoArray writeObjectArray(VirtualFrame frame, Object value, int index){
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
 	    		frame.setObject(slot, value);
 	    		return null;
 	    	}
