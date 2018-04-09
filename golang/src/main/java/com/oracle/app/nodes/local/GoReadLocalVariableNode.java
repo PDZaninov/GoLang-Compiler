@@ -15,12 +15,17 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 
-	
     @Override
 	public String toString() {
 		return "GoReadLocalVariableNode []";
 	}
+    
+    @Override
+    public int hashCode(){
+    	return getSlot().hashCode();
+    }
 
+    //Called by GoUnaryAddress to allow pointers to reference a frameslot...
 	public abstract FrameSlot getSlot();
     
     @Specialization(guards = "isInt(frame)")
@@ -84,11 +89,11 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return getSlot().getKind() == FrameSlotKind.Long;
     }
 
-    protected boolean isBoolean(@SuppressWarnings("unused") VirtualFrame frame) {
+    protected boolean isBoolean(VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Boolean;
     }
     
-    protected boolean isString(@SuppressWarnings("unused") VirtualFrame frame) {
+    protected boolean isString( VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Object;
     }
     
@@ -100,14 +105,29 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return getSlot().getKind() == FrameSlotKind.Object;
     }
     
-    @NodeChild(value="index",type=GoExpressionNode.class)
+    @NodeChild(value="index",type = GoExpressionNode.class)
     public abstract static class GoReadArrayNode extends GoReadLocalVariableNode{
     	
+    	public abstract GoExpressionNode getIndex();
+    	
+    	//Rip specialization. No way to check for what type of array is being read, if a way is found change this
     	@Specialization
     	public Object readArray(VirtualFrame frame, int index){
     		
     		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
-    		return array.readArray(index);
+    		FrameSlot slot = array.readArray(index);
+    		switch(array.getType()){
+			case BOOL:
+				return FrameUtil.getBooleanSafe(frame, slot);
+			case FLOAT64:
+				return FrameUtil.getFloatSafe(frame, slot);
+			case INT:
+				return FrameUtil.getIntSafe(frame, slot);
+			case STRING:
+				return FrameUtil.getObjectSafe(frame, slot);
+			default:
+				return null;
+    		}
     	}
     	
     }

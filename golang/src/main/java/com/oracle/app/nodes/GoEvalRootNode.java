@@ -9,6 +9,8 @@ import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.TruffleLanguage.ContextReference;
 import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.source.SourceSection;
 
@@ -40,10 +42,25 @@ public final class GoEvalRootNode extends GoRootNode {
     public Object execute(VirtualFrame frame) {
         /* Lazy registrations of functions on first execution. */
         if (!registered) {
-            /* Function registration is a Goow-path operation that must not be compiled. */
+            /* Function registration is a Goow-path operation that must not be compiled. And default variable initialization*/
             CompilerDirectives.transferToInterpreterAndInvalidate();
             reference.get().getFunctionRegistry().register(functions);
             registered = true;
+            FrameDescriptor f = getFrameDescriptor();
+            FrameSlot slot;
+            slot = f.findFrameSlot("int");
+            slot.setKind(FrameSlotKind.Int);
+            frame.setInt(slot, 0);
+            slot = f.findFrameSlot("float64");
+            frame.setFloat(slot, 0);
+            slot = f.findFrameSlot("string");
+            frame.setObject(slot, "");
+            slot = f.findFrameSlot("bool");
+            frame.setBoolean(slot, false);
+            slot = f.findFrameSlot("true");
+            frame.setBoolean(slot,true);
+            slot = f.findFrameSlot("false");
+            frame.setBoolean(slot, false);
         }
 
         if (getBodyNode() == null) {

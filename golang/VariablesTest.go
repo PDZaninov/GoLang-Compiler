@@ -1,6 +1,7 @@
 package main
 
 func main() {
+<<<<<<< HEAD
     var a int = 5
     var b int = 6
     var c int = 7
@@ -15,4 +16,8 @@ func main() {
     println(e)
     println(f)
     println(g)
+=======
+	x := 5
+	println(&x)
+>>>>>>> d3fe584eead33b57844d7378c195727c49c4e24a
 }

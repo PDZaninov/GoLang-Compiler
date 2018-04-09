@@ -9,7 +9,7 @@ public abstract class GoLenBuiltin extends GoBuiltinNode{
 
 	@Specialization
 	public int len(GoArray a) {
-		return a.len(a);
+		return a.len();
 	}
 
 }
