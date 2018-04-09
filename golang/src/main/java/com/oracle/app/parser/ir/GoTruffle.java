@@ -47,11 +47,11 @@ import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
+import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoFloatNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
@@ -193,21 +193,8 @@ public class GoTruffle implements GoIRVisitor {
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
 	    	return (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
-	    } else {
-	    	switch (name){
-			case "int":
-				return new GoIntNode(0);
-			case "string":
-				return new GoStringNode("");
-			case "float":
-				return new GoFloatNode(0);
-			}
-	    	/*
-			result = null;
-			if(node.getChild() != null)
-				result = (GoExpressionNode) node.getChild().accept(this);	
-	    	 */
-		}
+	    } 
+		
 		return new GoIdentNode(language, name, result);
 	}
 
@@ -272,12 +259,6 @@ public class GoTruffle implements GoIRVisitor {
 		case"^":
 			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
 			break;
-			/*
-		case"IndexExpr":
-			System.out.println(leftNode);
-			result = GoIndexExprNodeGen.create(leftNode, rightNode);
-			break;
-			*/
 		default:
 			throw new RuntimeException("Unexpected Operation: "+op);
 	}
@@ -387,7 +368,13 @@ public class GoTruffle implements GoIRVisitor {
 				result = GoNegativeSignNodeGen.create(child);
 				break;
 			case "&":
-				result = new GoUnaryAddressNode(((GoReadLocalVariableNode) child).getSlot());
+				if(child instanceof GoReadArrayNode){
+					FrameSlot array = ((GoReadArrayNode)child).getSlot();
+					GoIntNode index = (GoIntNode) ((GoReadArrayNode)child).getIndex();
+					result = new GoUnaryAddressNode(array,true,index);
+				}else{
+					result = new GoUnaryAddressNode(((GoReadLocalVariableNode) child).getSlot());
+				}
 				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
@@ -436,7 +423,6 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {	
 		GoBaseIRNode child = node.getLHS();
 		
-		
 		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node);
 		GoExpressionNode result = (GoExpressionNode) miniVisitor.visit(child);
 		if(child instanceof GoIRIndexNode){
@@ -448,19 +434,9 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	public Object visitStarNode(GoIRStarNode node){
-		return new GoStarExpressionNode((GoReadLocalVariableNode) node.getChild().accept(this));
+		GoStarExpressionNode result = new GoStarExpressionNode((GoReadLocalVariableNode) node.getChild().accept(this));
+		return result;
 	}
-	
-	/**
-	 * Only used for writing in assignments, but the value to write is not known so it needs to return
-	 * some extra information. 
-	 * Can probably be changed, was copy pasted from earlier stuff
-	 
-	public Object visitWriteIndex(GoIRWriteIndexNode node){
-		GoReadLocalVariableNode name = (GoReadLocalVariableNode) node.getName().accept(this);
-		GoIndexExprNode array = new GoIndexExprNode(name,(GoExpressionNode) node.getIndex().accept(this));
-		return array;
-	}*/
 	
 	/**
 	 * Only called when needing to read from an array so return a read.
@@ -481,7 +457,7 @@ public class GoTruffle implements GoIRVisitor {
 
 		GoExpressionNode length;
 		if(node.getLength() == null) {
-			length= new GoIntNode(0);
+			length = new GoIntNode(0);
 		}
 		else {
 			length = (GoExpressionNode) node.getLength().accept(this);
@@ -489,27 +465,17 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		//Catch error where length is not an int node or possibly an int const
 		GoArray result = new GoArray((GoIntNode) length);
-		/*
-		//Length can be assumed BasicLit. Only other value it can be is a const variable
-		try{
-			int size = length.executeInteger(null);
-			
-			if(type instanceof GoIntNode){
-				return new GoIntArray(size);
-			}
-			else if(type instanceof GoStringNode){
-				return new GoStringArray(size);
-			}
-			else{
-				System.out.println("Array Type "+ type +" not implemented");
-			}
+		//result.setType();
+		int i = 0;
+		int hash = result.hashCode();
+		FrameSlot indexSlot;
+		String temporaryIdentifier;
+		for(; i < result.len(); i++){
+			temporaryIdentifier = String.format("_0x%x_%d", hash,i);
+			indexSlot = frameDescriptor.addFrameSlot(temporaryIdentifier);
+			result.insert(indexSlot, i);
 		}
-		catch(UnexpectedResultException e){
-			//Throws error when the size value isn't an int or const
-			System.out.println(e);
-		}
-		*/
-		return type;
+		return result;
 	}
 	
 	@Override

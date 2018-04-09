@@ -42,7 +42,7 @@ public final class GoEvalRootNode extends GoRootNode {
     public Object execute(VirtualFrame frame) {
         /* Lazy registrations of functions on first execution. */
         if (!registered) {
-            /* Function registration is a Goow-path operation that must not be compiled. */
+            /* Function registration is a Goow-path operation that must not be compiled. And default variable initialization*/
             CompilerDirectives.transferToInterpreterAndInvalidate();
             reference.get().getFunctionRegistry().register(functions);
             registered = true;

@@ -41,7 +41,7 @@ public abstract class GoPointerNode extends GoExpressionNode{
 		case Float:
 			break;
 		case Illegal:
-			break;
+			return new GoObjectPointerNode(obj.hashCode(),obj);
 		case Int:
 			return new GoIntPointerNode(obj.hashCode(),obj);
 		case Long:

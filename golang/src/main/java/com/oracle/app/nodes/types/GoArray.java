@@ -12,6 +12,7 @@ public class GoArray extends GoExpressionNode {
 	
 	public GoArray(GoIntNode length){
 		this.length = length.executeInteger(null);
+		arr = new FrameSlot[this.length];
 	}
 	
 	public void insert(FrameSlot slot, int index){
@@ -23,15 +24,33 @@ public class GoArray extends GoExpressionNode {
 		arr[index] = slot;
 	}
 	
+	public void setType(GoExpressionNode type){
+		if(type instanceof GoIntNode){
+			this.type = GoPrimitiveTypes.INT;
+		}
+		else if(type instanceof GoStringNode){
+			this.type = GoPrimitiveTypes.STRING;
+		}
+		else{
+			System.out.println("Array Type "+type+" not implemented");
+		}
+	}
+	
+	public FrameSlot readArray(int index){
+		return arr[index];
+	}
+	
 	@Override
 	public String toString() {
-		
 		return "GoArray [length=" + length + "]";
 	}
 
+	/**
+	 * Initialize slot values here
+	 */
 	@Override
 	public GoArray executeGeneric(VirtualFrame frame){
-		return null;
+		return this;
 	}
 	
 	public int len(){

@@ -129,13 +129,13 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 
 	    @NodeChild(value = "indexNode",type = GoExpressionNode.class)
 	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
-	    	/*
+	    	
 	    	@Specialization
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
-	    		GoIntArray array = (GoIntArray) FrameUtil.getObjectSafe(frame, getSlot());
-	    		array.setArray(index,value);
-	    		frame.setObject(getSlot(), array);
+	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(index);
+	    		frame.setObject(slot, value);
 	    		return null;
-	    	}*/
+	    	}
 	    } 
 }

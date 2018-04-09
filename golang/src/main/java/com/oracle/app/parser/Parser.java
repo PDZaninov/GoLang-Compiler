@@ -25,7 +25,6 @@ import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRDefaultValues;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
@@ -39,7 +38,6 @@ import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -374,10 +372,6 @@ public class Parser {
 		GoBaseIRNode writeto;
 		for(int i = 0; i < size;i++){
 			writeto = lhs.getChildren().get(i);
-			/*Can be handled in a mini visitor inside GoTruffle Now
-			if(writeto instanceof GoIRIndexNode){
-				writeto = GoIRWriteIndexNode.createIRWriteIndex((GoIRIndexNode) writeto);
-			}*/
 			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i) ));
 		}
 		return new GoIRArrayListExprNode(result);
@@ -388,14 +382,6 @@ public class Parser {
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
-		/*
-		if(type instanceof GoIRIdentNode){
-			value = GoIRDefaultValues.createDefaultBasicLits((GoIRIdentNode)type);
-		}
-		else if(type instanceof GoIRArrayTypeNode){
-			value = type;
-		}
-		*/
 		for(GoBaseIRNode node : lhs.getChildren()){
 			result.add(new GoIRAssignmentStmtNode(node,type));
 		}
