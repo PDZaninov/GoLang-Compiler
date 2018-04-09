@@ -236,6 +236,11 @@ public class Parser {
 			case "ExprStmt":
 				return new GoIRExprStmtNode(body.get("X"));
 				
+			case "Field":
+				return new GoTempIRNode(nodeType,attrs,body);
+				
+			case "]*ast.Field":
+				return new GoTempIRNode(nodeType,attrs,body);
 			case "FieldList":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
@@ -343,6 +348,7 @@ public class Parser {
 				
 			default:
 				System.out.println("Error, in default: " + nodeType);
+				System.out.println(attrs);
 				
 		}
 		return new GoTempIRNode(nodeType,attrs,body);
