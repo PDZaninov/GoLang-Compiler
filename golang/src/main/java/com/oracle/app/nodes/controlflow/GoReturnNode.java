@@ -27,6 +27,7 @@ public final class GoReturnNode extends GoStatementNode {
              */
             result = GoNull.SINGLETON;
         }
+        //this throw is what makes it actualy return
         throw new GoReturnException(result);
     }
 }
