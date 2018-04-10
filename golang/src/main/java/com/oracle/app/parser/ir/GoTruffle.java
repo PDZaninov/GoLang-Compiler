@@ -24,6 +24,7 @@ import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.controlflow.GoIfStmtNode;
 import com.oracle.app.nodes.controlflow.GoSwitchNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
+import com.oracle.app.nodes.expression.GoArrayTypeExprNode;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
@@ -55,12 +56,38 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
-import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoNonPrimitiveType;
-import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.ir.nodes.*;
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
+import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRImportSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
+import com.oracle.app.parser.ir.nodes.GoIRIntNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRStarNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRStringNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -446,17 +473,8 @@ public class GoTruffle implements GoIRVisitor {
 		//GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		String type = node.getType().getIdentifier();
 		//Catch error where length is not an int node or possibly an int const
-		GoArray result = new GoArray((GoIntNode) length);
-		result.setType(type);
-		//Fill the array with frameslots that are reachable in the framedescriptor, frameslots will have values when executed
-		int hash = result.hashCode();
-		FrameSlot indexSlot;
-		String temporaryIdentifier;
-		for(int i = 0; i < result.len(); i++){
-			temporaryIdentifier = String.format("_0x%x_%d", hash,i);
-			indexSlot = frameDescriptor.addFrameSlot(temporaryIdentifier);
-			result.insert(indexSlot, i);
-		}
+		GoArrayTypeExprNode result = new GoArrayTypeExprNode((GoIntNode) length,type);
+
 		return result;
 	}
 	
@@ -484,7 +502,7 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visit(GoIRCompositeLitNode node){
 		GoExpressionNode type = (GoExpressionNode) node.getExpr().accept(this);
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
-		GoCompositeLitNode result = new GoCompositeLitNode((GoNonPrimitiveType) type, elts);
+		GoCompositeLitNode result = new GoCompositeLitNode((GoArrayTypeExprNode) type, elts);
 		return result;
 	}
 	

@@ -8,6 +8,11 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 
+/**
+ * Creates a {@link GoSlice} node from either a {@link GoSlice} or a {@link GoArray}
+ * @author Trevor
+ *
+ */
 public class GoSliceExprNode extends GoExpressionNode {
 
 	GoReadLocalVariableNode expr;
