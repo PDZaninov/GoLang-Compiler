@@ -2,6 +2,7 @@ package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoArrayLikeTypes;
 import com.oracle.app.nodes.types.GoIntSlice;
 import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
@@ -132,32 +133,32 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    	
 	    	@Specialization
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
-	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(index);
+	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(frame, index);
 	    		frame.setInt(slot, value);
 	    		return null;
 	    	}
 	    	
 	    	@Specialization
 	    	public GoArray writeFloatArray(VirtualFrame frame, float value, int index){
-	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(index);
+	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(frame, index);
 	    		frame.setFloat(slot, value);
 	    		return null;
 	    	}
 	    	
 	    	@Specialization
 	    	public GoArray writeBooleanArray(VirtualFrame frame, boolean value, int index){
-	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(index);
+	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(frame, index);
 	    		frame.setBoolean(slot, value);
 	    		return null;
 	    	}
 	    	
 	    	@Specialization
 	    	public GoArray writeObjectArray(VirtualFrame frame, Object value, int index){
-	    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(index);
+	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
+	    		FrameSlot slot = array.readArray(frame, index);
 	    		frame.setObject(slot, value);
 	    		return null;
 	    	}

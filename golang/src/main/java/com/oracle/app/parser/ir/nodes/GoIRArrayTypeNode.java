@@ -15,7 +15,6 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 		super("IR Array Type Node");
 		len = length;
 		this.type = type;
-		setChildParent();
 	}
 	
 	public GoIRArrayTypeNode(GoBaseIRNode type, boolean isSlice) {

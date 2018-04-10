@@ -7,7 +7,7 @@ import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 
-public class GoArray extends GoNonPrimitiveType {
+public class GoArray extends GoArrayLikeTypes{
 	protected int length;
 	protected GoPrimitiveTypes type;
 	protected FrameSlot[] arr;
@@ -43,7 +43,8 @@ public class GoArray extends GoNonPrimitiveType {
 		}
 	}
 	
-	public FrameSlot readArray(int index){
+	@Override
+	public FrameSlot readArray(VirtualFrame frame, int index){
 		return arr[index];
 	}
 	
@@ -51,6 +52,7 @@ public class GoArray extends GoNonPrimitiveType {
 	 * Will need to change to account for objects, not just primitives
 	 * @return - The type of array
 	 */
+	@Override
 	public GoPrimitiveTypes getType(){
 		return type;
 	}

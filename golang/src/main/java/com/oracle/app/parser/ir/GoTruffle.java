@@ -46,6 +46,7 @@ import com.oracle.app.nodes.expression.GoMulNodeGen;
 import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
+import com.oracle.app.nodes.expression.GoSliceExprNode;
 import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
@@ -57,6 +58,7 @@ import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGe
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoNonPrimitiveType;
+import com.oracle.app.nodes.types.GoSliceNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -455,6 +457,23 @@ public class GoTruffle implements GoIRVisitor {
 			indexSlot = frameDescriptor.addFrameSlot(temporaryIdentifier);
 			result.insert(indexSlot, i);
 		}
+		return result;
+	}
+	
+	@Override
+	public Object visitSliceExpr(GoIRSliceExprNode node){
+		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(this);
+		GoExpressionNode low = (GoExpressionNode) node.getLow().accept(this);
+		GoExpressionNode high = null;
+		if(node.getHigh() != null){
+			high = (GoExpressionNode) node.getHigh().accept(this);
+		}
+		GoExpressionNode max = null;
+		if(node.isSlice3()){
+			max = (GoExpressionNode) node.getMax().accept(this);
+		}
+		GoSliceExprNode result = new GoSliceExprNode(expr,low,high,max);
+		
 		return result;
 	}
 	
