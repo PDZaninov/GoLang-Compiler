@@ -5,7 +5,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class GoSliceNode extends GoArrayLikeTypes {
+public class GoSlice extends GoArrayLikeTypes {
 
 	FrameSlot array;
 	GoPrimitiveTypes type;
@@ -14,7 +14,7 @@ public class GoSliceNode extends GoArrayLikeTypes {
 	int low;
 	int high;
 	
-	public GoSliceNode(FrameSlot array, int low, int high, int cap){
+	public GoSlice(FrameSlot array, int low, int high, int cap){
 		this.array = array;
 		this.low = low;
 		this.high = high;

@@ -58,7 +58,7 @@ import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGe
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoNonPrimitiveType;
-import com.oracle.app.nodes.types.GoSliceNode;
+import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.frame.FrameDescriptor;

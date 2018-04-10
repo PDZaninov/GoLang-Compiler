@@ -2,7 +2,6 @@ package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArrayLikeTypes;
-import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -130,15 +129,5 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	}
     	
     }
-    
-    @NodeChild(value="index",type=GoExpressionNode.class)
-    public abstract static class GoReadSliceNode extends GoReadLocalVariableNode{
-    	
-    	@Specialization
-    	public Object readSlice(VirtualFrame frame, int index){
-    		GoSlice slice = (GoSlice) FrameUtil.getObjectSafe(frame, getSlot());
-    		return slice.readSlice(index);
-    	}
-    	
-    }
+   
 }

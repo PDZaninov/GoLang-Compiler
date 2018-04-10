@@ -3,7 +3,7 @@ package com.oracle.app.nodes.expression;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoSliceNode;
+import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
@@ -58,7 +58,7 @@ public class GoSliceExprNode extends GoExpressionNode {
 				e.printStackTrace();
 			}
 		}
-		GoSliceNode slice = new GoSliceNode(slot,lowerbound,highbound,maxsize);
+		GoSlice slice = new GoSlice(slot,lowerbound,highbound,maxsize);
 		slice.setType(array.getType());
 		return slice;
 	}
