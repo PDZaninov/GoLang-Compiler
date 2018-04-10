@@ -1,5 +1,6 @@
 package com.oracle.app.nodes.controlflow;
 
+import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.runtime.GoNull;
@@ -13,15 +14,13 @@ public final class GoReturnNode extends GoStatementNode {
 
     public GoReturnNode(GoExpressionNode valueNode) {
         this.valueNode = valueNode;
-        System.out.println("*****");
-        System.out.println(valueNode);
     }
 
     @Override
     public void executeVoid(VirtualFrame frame) {
         Object result;
         if (valueNode != null) {
-            result = valueNode.executeGeneric(frame);
+            result = ((GoArrayExprNode) valueNode).getArguments()[0].executeGeneric(frame);
         } else {
             /*
              * Return statement that was not followed by an expression, so return the null value.

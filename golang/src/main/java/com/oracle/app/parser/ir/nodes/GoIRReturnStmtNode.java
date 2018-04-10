@@ -10,6 +10,7 @@ public class GoIRReturnStmtNode  extends GoBaseIRNode{
 	
 	public GoIRReturnStmtNode(GoIRArrayListExprNode children) {
 		super("ArrayList Expression Node");
+		System.out.println(children);
 		this.children = children;
 		setChildParent();
 	}

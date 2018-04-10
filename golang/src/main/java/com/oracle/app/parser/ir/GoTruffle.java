@@ -609,5 +609,12 @@ public class GoTruffle implements GoIRVisitor {
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));
 		
 	}
+	
+	@Override
+	public Object visitField(GoIRFieldNode node){
+		
+		return node.accept(this);
+		
+	}
 
 }
