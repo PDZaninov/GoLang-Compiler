@@ -14,26 +14,51 @@ public class GoSlice extends GoArrayLikeTypes {
 	int low;
 	int high;
 	
+	public GoSlice(FrameSlot array, int low, int high, int cap, GoPrimitiveTypes type){
+		this.array = array;
+		this.low = low;
+		this.high = high-1;
+		this.cap = cap;
+		len = high - low;
+		this.type = type;
+	}
+	
 	public GoSlice(FrameSlot array, int low, int high, int cap){
 		this.array = array;
 		this.low = low;
-		this.high = high;
+		this.high = high-1;
 		this.cap = cap;
 		len = high - low;
 	}
 	
 	@Override
 	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
+	public FrameSlot getSlot(){
+		return array;
+	}
+	
+	@Override
+	public int lowerBound(){
+		return low;
+	}
+	
+	@Override
+	public int len(){
+		return len;
+	}
+	
+	public int cap(){
+		return cap;
+	}
+	
 	@Override
 	public GoPrimitiveTypes getType(){
 		return type;
@@ -45,7 +70,7 @@ public class GoSlice extends GoArrayLikeTypes {
 
 	@Override
 	public FrameSlot readArray(VirtualFrame frame, int index) {
-		GoArray arr = (GoArray) FrameUtil.getObjectSafe(frame, array);
+		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
 		int realindex = index + low;
 		//Error out, index out of bounds
 		if(realindex < low || realindex > len){

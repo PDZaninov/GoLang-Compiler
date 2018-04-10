@@ -39,7 +39,6 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    @Specialization(guards = "isSliceOrIllegal(frame)")
 	    protected GoSlice writeSlice(VirtualFrame frame, GoSlice value) {
 	        getSlot().setKind(FrameSlotKind.Object);
-
 	        frame.setObject(getSlot(), value);
 	        return value;
 	    }

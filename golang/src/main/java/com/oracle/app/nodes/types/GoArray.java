@@ -2,6 +2,7 @@ package com.oracle.app.nodes.types;
 
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.truffle.api.CompilerDirectives;
+import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -18,6 +19,10 @@ public class GoArray extends GoArrayLikeTypes{
 	}
 	
 	public int len(){
+		return length;
+	}
+	
+	public int cap(){
 		return length;
 	}
 	
@@ -46,6 +51,11 @@ public class GoArray extends GoArrayLikeTypes{
 	@Override
 	public FrameSlot readArray(VirtualFrame frame, int index){
 		return arr[index];
+	}
+	
+	@Override
+	public int lowerBound(){
+		return 0;
 	}
 	
 	/**
@@ -105,7 +115,23 @@ public class GoArray extends GoArrayLikeTypes{
 	@Override
 	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts) {
 		Object[] results = elts.gatherResults(frame);
-		//GoExpressionNode[] writes = new GoExpressionNode[results.length];
+		boolean slice = false;
+		//Filling an array that was initially empty. Might be source of slow stuff
+		if(length == 0){
+			CompilerDirectives.transferToInterpreter();
+			length = results.length;
+			arr = new FrameSlot[length];
+			int hash = hashCode();
+			FrameSlot indexSlot;
+			String temporaryIdentifier;
+			FrameDescriptor frameDescriptor = frame.getFrameDescriptor();
+			for(int i = 0; i < length; i++){
+				temporaryIdentifier = String.format("_0x%x_%d", hash,i);
+				indexSlot = frameDescriptor.addFrameSlot(temporaryIdentifier);
+				insert(indexSlot, i);
+			}
+			slice = true;
+		}
 		int i = 0;
 		switch(type){
 		case BOOL:
@@ -147,6 +173,12 @@ public class GoArray extends GoArrayLikeTypes{
 		default:
 			break;
 		
+		}
+		if(slice){
+			FrameDescriptor frameDescriptor = frame.getFrameDescriptor();
+			FrameSlot slot = frameDescriptor.addFrameSlot(String.format("_0x%x", hashCode()));
+			frame.setObject(slot, this);
+			return new GoSlice(slot, 0, length, length,type);
 		}
 		return this;
 	}

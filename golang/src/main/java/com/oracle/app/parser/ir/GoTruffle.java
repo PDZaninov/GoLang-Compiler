@@ -463,7 +463,10 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitSliceExpr(GoIRSliceExprNode node){
 		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(this);
-		GoExpressionNode low = (GoExpressionNode) node.getLow().accept(this);
+		GoExpressionNode low = null;
+		if(node.getLow() != null){
+			low = (GoExpressionNode) node.getLow().accept(this);
+		}
 		GoExpressionNode high = null;
 		if(node.getHigh() != null){
 			high = (GoExpressionNode) node.getHigh().accept(this);

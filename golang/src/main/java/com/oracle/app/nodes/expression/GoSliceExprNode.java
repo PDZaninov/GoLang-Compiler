@@ -2,7 +2,7 @@ package com.oracle.app.nodes.expression;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
-import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoArrayLikeTypes;
 import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -25,19 +25,27 @@ public class GoSliceExprNode extends GoExpressionNode {
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		// TODO Auto-generated method stub
-		GoArray array = (GoArray) expr.executeGeneric(frame);
+		GoArrayLikeTypes array = (GoArrayLikeTypes) expr.executeGeneric(frame);
 		FrameSlot slot = expr.getSlot();
+		if(array instanceof GoSlice){
+			slot = ((GoSlice) array).getSlot();
+		}
 		int lowerbound = 0;
 		int highbound = 0;
 		int maxsize = 0;
-		try {
-			lowerbound = low.executeInteger(frame);
-		} catch (UnexpectedResultException e) {
+		if(low == null){
+			lowerbound = array.lowerBound();
+		}
+		else{
+			try {
+				lowerbound = low.executeInteger(frame) + array.lowerBound();
+			} catch (UnexpectedResultException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+				e.printStackTrace();
+			}
 		}
 		if(high == null){
-			highbound = array.len();
+			highbound = array.cap();
 		}
 		else{
 			try {
@@ -48,7 +56,7 @@ public class GoSliceExprNode extends GoExpressionNode {
 			}
 		}
 		if(max == null){
-			maxsize = array.len() - lowerbound;
+			maxsize = array.cap();
 		}
 		else{
 			try {

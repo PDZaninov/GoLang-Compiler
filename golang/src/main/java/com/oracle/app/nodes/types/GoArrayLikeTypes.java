@@ -8,5 +8,11 @@ public abstract class GoArrayLikeTypes extends GoNonPrimitiveType {
 	public abstract FrameSlot readArray(VirtualFrame frame, int index);
 	
 	public abstract GoPrimitiveTypes getType();
+	
+	public abstract int len();
+	
+	public abstract int cap();
+
+	public abstract int lowerBound();
 
 }

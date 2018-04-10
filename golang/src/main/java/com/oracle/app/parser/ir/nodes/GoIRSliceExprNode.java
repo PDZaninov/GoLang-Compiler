@@ -36,9 +36,6 @@ public class GoIRSliceExprNode extends GoBaseIRNode {
 	}
 
 	public GoBaseIRNode getLow() {
-		if(low == null){
-			return new GoIRIntNode(0);
-		}
 		return low;
 	}
 
