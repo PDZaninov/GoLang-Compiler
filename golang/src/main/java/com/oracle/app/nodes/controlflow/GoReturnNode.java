@@ -13,6 +13,8 @@ public final class GoReturnNode extends GoStatementNode {
 
     public GoReturnNode(GoExpressionNode valueNode) {
         this.valueNode = valueNode;
+        System.out.println("*****");
+        System.out.println(valueNode);
     }
 
     @Override
@@ -22,7 +24,7 @@ public final class GoReturnNode extends GoStatementNode {
             result = valueNode.executeGeneric(frame);
         } else {
             /*
-             * Return statement that was not followed by an expression, so return the SL null value.
+             * Return statement that was not followed by an expression, so return the null value.
              */
             result = GoNull.SINGLETON;
         }

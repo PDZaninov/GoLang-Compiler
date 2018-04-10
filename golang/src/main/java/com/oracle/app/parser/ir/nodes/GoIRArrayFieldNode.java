@@ -26,12 +26,6 @@ public class GoIRArrayFieldNode extends GoBaseIRNode {
 			children.get(x).setParent(this);
 		}
 	}
-	
-	public void printChildren() {
-		for(GoBaseIRNode child : children) {
-			System.out.println("printing children of GoIRArrayListExprNode: " + child.toString());
-		}
-	}
 
 	public int  getSize(){
 		return children.size();

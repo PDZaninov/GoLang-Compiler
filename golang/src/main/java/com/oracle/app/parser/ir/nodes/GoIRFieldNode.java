@@ -16,6 +16,11 @@ public class GoIRFieldNode extends GoBaseIRNode {
 		this.type = type;
 	}
 
+	public GoIRFieldNode(String name, GoBaseIRNode type) {
+		super(name);
+		this.type = type;
+	}
+
 	@Override
 	public void setChildParent() {
 		// TODO Auto-generated method stub
