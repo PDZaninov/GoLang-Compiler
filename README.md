@@ -6,3 +6,4 @@ This is a student project done for Oracle for CMPS 116/117 at UCSC.
 Creating Truffle Nodes/GraalVM for Go language.
 
 Weekly meetings on Wednesday at 1:00 pm.
+Meetings merge branches, redefine weekly goals.
