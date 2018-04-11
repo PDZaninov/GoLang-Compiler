@@ -57,12 +57,9 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
-<<<<<<< HEAD
 import com.oracle.app.ndoes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoNonPrimitiveType;
-=======
->>>>>>> f1fb9a86c0e36fec607bcb4c44711861174cfb3f
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
