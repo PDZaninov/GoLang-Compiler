@@ -1,6 +1,5 @@
  package com.oracle.app.nodes.types;
 
-import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -78,7 +77,7 @@ public class GoSlice extends GoArrayLikeTypes {
 		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
 		int realindex = index + low;
 		//Error out, index out of bounds
-		if(realindex < low || realindex > len || realindex > cap){
+		if(realindex < low || realindex > high || realindex > cap){
 			System.out.println("Slice index out of bounds");
 			return null;
 		}

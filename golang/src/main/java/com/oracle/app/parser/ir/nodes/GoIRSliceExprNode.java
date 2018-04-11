@@ -56,18 +56,6 @@ public class GoIRSliceExprNode extends GoBaseIRNode {
 	}
 
 	@Override
-	public void setChildParent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Object accept(GoIRVisitor visitor) {
 		return visitor.visitSliceExpr(this);
 	}

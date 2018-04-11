@@ -1,10 +1,6 @@
 package com.oracle.app.nodes.types;
 
-import com.oracle.app.nodes.GoArrayExprNode;
-import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 

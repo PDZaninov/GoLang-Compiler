@@ -9,8 +9,7 @@ import org.junit.Test;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.vm.PolyglotEngine;
 
-public class SimpleMathTest {
-	
+public class ArrayTest {
 	private PolyglotEngine engine;
 	private PolyglotEngine.Value math;
 
@@ -20,12 +19,18 @@ public class SimpleMathTest {
 		Source source = Source.newBuilder(""
 				+"package main\n"
 				+"\n"
-				+"func main() int{\n"
-				+"    var a, n int = 1, 5 \n"
-				+"	  for x:= 1; x <= n; x++ {\n"
-				+"	  	a *= x\n"
+				+"func main() int{ \n"
+				+"    var a [5] int \n"
+				+ "	  result := 0 \n"
+				+"	  for i := 0; i < len(a); i++{ \n"
+				+"	  	result += a[i] \n"
 				+"    }\n"
-				+"    return a \n"
+				+"    b := [5]int{1 , 2, 3, 4, 5} \n"
+				+ "	  b[4] = 10 \n"
+				+ "	  for j := 0; j < len(b); j++ { \n"
+				+ "		result += b[j] \n"
+				+ "	  } \n"
+				+ "	  return result \n"
 				+"}").
 		name("UnitTest.go").
 		mimeType("text/x-go").
@@ -44,8 +49,7 @@ public class SimpleMathTest {
 	public void test() throws Exception{
 		
 		Number ret = math.execute().as(Number.class);
-		assertEquals(120,ret.intValue());
+		assertEquals(20,ret.intValue());
 		
 	}
-
 }

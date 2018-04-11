@@ -1,5 +1,7 @@
 package com.oracle.app.nodes.expression;
 
+import java.util.Random;
+
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
@@ -87,7 +89,8 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 		}
 		FrameSlot[] arr = new FrameSlot[length];
 		CompilerDirectives.transferToInterpreter();
-		int hash = hashCode();
+		Random rand = new Random();
+		int hash = hashCode() + rand.nextInt();
 		FrameSlot indexSlot;
 		String temporaryIdentifier;
 		FrameDescriptor frameDescriptor = frame.getFrameDescriptor();

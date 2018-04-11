@@ -1,6 +1,13 @@
 package com.oracle.app;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
+
+import com.oracle.truffle.api.source.Source;
 
 /**
  * Runs the GoLang compiler frontend and spits out the ast tree for use on the backend
@@ -8,6 +15,13 @@ import java.io.*;
  */
 public class ToolChain {
 
+	public static void executeCommands(Source goFile) throws IOException, InterruptedException {
+		PrintWriter writer = new PrintWriter(goFile.getName(), "UTF-8");
+		writer.print(goFile.getCharacters());
+		writer.close();
+		executeCommands(goFile.getName());
+	}
+	
     public static void executeCommands(String goFile) throws IOException, InterruptedException {
 
     	String astFile = goFile.substring(0, goFile.lastIndexOf('.')) + ".ast";

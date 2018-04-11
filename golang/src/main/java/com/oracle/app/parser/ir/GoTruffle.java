@@ -572,8 +572,7 @@ public class GoTruffle implements GoIRVisitor {
 		if (node.getBody() != null) {
 			body = (GoStatementNode[]) node.getBody().accept(this);
 		}
-
-		GoCaseClauseNode result = new GoCaseClauseNode(list.getArguments(), body);
+		GoCaseClauseNode result = new GoCaseClauseNode(list, body);
 		//int startLine = node.getSourceLine();
 		//int start = node.getCaseStart();
 		//int length = node.getSourceLength();
@@ -725,8 +724,8 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitField(GoIRFieldNode node){
 		
-		return node.accept(this);
-		
+		//return node.accept(this);
+		return null;
 	}
 
 }
