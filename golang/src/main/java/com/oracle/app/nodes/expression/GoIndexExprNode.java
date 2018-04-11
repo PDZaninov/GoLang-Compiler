@@ -37,10 +37,6 @@ public class GoIndexExprNode extends GoExpressionNode{
 		return null;
 	}
     
-    protected Object doIndex(GoArray array, int index) {
-        return array.readArray(index);
-    }
-    
 	@Override
 	public String toString() {
 		return "GoIndexExprNode []";

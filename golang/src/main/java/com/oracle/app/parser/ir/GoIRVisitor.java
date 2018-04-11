@@ -187,4 +187,9 @@ public interface GoIRVisitor {
 		return null;
 	}
 
+	default Object visitSliceExpr(GoIRSliceExprNode goIRSliceExprNode){
+		System.out.println("Default Slice Expr Visit");
+		return null;
+	}
+
 }

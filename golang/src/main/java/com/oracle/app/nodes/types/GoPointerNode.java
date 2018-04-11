@@ -70,7 +70,7 @@ public abstract class GoPointerNode extends GoExpressionNode{
 	public FrameSlot getSlot() {
 		return obj;
 	}
-
+ 
 	public static class GoIntPointerNode extends GoPointerNode{
 		
 		public GoIntPointerNode(int ptr, FrameSlot obj) {

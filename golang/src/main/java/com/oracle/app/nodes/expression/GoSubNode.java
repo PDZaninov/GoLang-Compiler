@@ -8,7 +8,7 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
 /**
- * This class is similar to the extensively documented {@link SLAddNode}.
+ * This class is similar to the extensively documented {@link SLAddNode}. 
  */
 @NodeInfo(shortName = "-")
 public abstract class GoSubNode extends GoBinaryNode {

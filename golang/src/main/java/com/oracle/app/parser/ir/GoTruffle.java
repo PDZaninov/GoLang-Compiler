@@ -24,6 +24,7 @@ import com.oracle.app.nodes.controlflow.GoIfStmtNode;
 import com.oracle.app.nodes.controlflow.GoReturnNode;
 import com.oracle.app.nodes.controlflow.GoSwitchNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
+import com.oracle.app.nodes.expression.GoArrayTypeExprNode;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
@@ -46,6 +47,7 @@ import com.oracle.app.nodes.expression.GoMulNodeGen;
 import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
 import com.oracle.app.nodes.expression.GoNotEqualNodeGen;
 import com.oracle.app.nodes.expression.GoPositiveSignNodeGen;
+import com.oracle.app.nodes.expression.GoSliceExprNode;
 import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
@@ -53,11 +55,8 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
-import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
-import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
-import com.oracle.app.nodes.types.GoNonPrimitiveType;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
@@ -84,18 +83,17 @@ import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.source.Source;
-import com.oracle.truffle.api.source.SourceSection;
 
 /**
  * Constructs the Truffle tree using a visitor pattern to visit
@@ -523,17 +521,29 @@ public class GoTruffle implements GoIRVisitor {
 		//GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		String type = node.getType().getIdentifier();
 		//Catch error where length is not an int node or possibly an int const
-		GoArray result = new GoArray((GoIntNode) length);
-		result.setType(type);
-		//Fill the array with frameslots that are reachable in the framedescriptor, frameslots will have values when executed
-		int hash = result.hashCode();
-		FrameSlot indexSlot;
-		String temporaryIdentifier;
-		for(int i = 0; i < result.len(); i++){
-			temporaryIdentifier = String.format("_0x%x_%d", hash,i);
-			indexSlot = frameDescriptor.addFrameSlot(temporaryIdentifier);
-			result.insert(indexSlot, i);
+		GoArrayTypeExprNode result = new GoArrayTypeExprNode((GoIntNode) length,type);
+
+		return result;
+	}
+	
+	@Override
+	public Object visitSliceExpr(GoIRSliceExprNode node){
+		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(this);
+		GoExpressionNode low = null;
+		if(node.getLow() != null){
+			low = (GoExpressionNode) node.getLow().accept(this);
 		}
+		GoExpressionNode high = null;
+		if(node.getHigh() != null){
+			high = (GoExpressionNode) node.getHigh().accept(this);
+		}
+		GoExpressionNode max = null;
+		if(node.isSlice3()){
+			max = (GoExpressionNode) node.getMax().accept(this);
+		}
+		GoSliceExprNode result = new GoSliceExprNode(expr,low,high,max);
+		
+
 		//String lbrack = node.getSource();
 		//int startLine = Integer.parseInt(lbrack.split(":")[1]);
 		//int start = Integer.parseInt(lbrack.split(":")[2]);
@@ -547,7 +557,7 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visit(GoIRCompositeLitNode node){
 		GoExpressionNode type = (GoExpressionNode) node.getExpr().accept(this);
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
-		GoCompositeLitNode result = new GoCompositeLitNode((GoNonPrimitiveType) type, elts);
+		GoCompositeLitNode result = new GoCompositeLitNode((GoArrayTypeExprNode) type, elts);
 		return result;
 	}
 	

@@ -39,6 +39,7 @@ import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
@@ -380,6 +381,16 @@ public class Parser {
 				
 			case "SelectorExpr":
 				return new GoIRSelectorExprNode((GoIRIdentNode) body.get("X"),(GoIRIdentNode) body.get("Sel"));
+				
+			case "SliceExpr":
+				GoBaseIRNode sliceexpr = body.get("X");
+				String slbrack = attrs.get("Lbrack");
+				GoBaseIRNode low = body.get("Low");
+				GoBaseIRNode high = body.get("High");
+				GoBaseIRNode max = body.get("Max");
+				String slice3 = attrs.get("Slice3");
+				String srbrack = attrs.get("Rbrack");
+				return new GoIRSliceExprNode(sliceexpr,slbrack,low,high,max,slice3,srbrack);
 				
 			case "Spec":
 				ArrayList<GoBaseIRNode> speclist = new ArrayList<>();
