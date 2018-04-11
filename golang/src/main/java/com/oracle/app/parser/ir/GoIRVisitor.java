@@ -169,4 +169,22 @@ public interface GoIRVisitor {
 		return null;
 	}
 
+	default Object visitArrayField(GoIRArrayFieldNode goIRArrayFieldNode)
+	{
+		System.out.println("Default ArrayField Visit");
+		return null;
+	}
+	
+	default Object visitField(GoIRFieldNode goIRFieldNode)
+	{
+		System.out.println("Default Field Visit");
+		return null;
+	}
+
+	default Object visitReturnStmt(GoIRReturnStmtNode goIRReturnStmtNode) {
+
+		System.out.println("Default Return Stmt Visit");
+		return null;
+	}
+
 }

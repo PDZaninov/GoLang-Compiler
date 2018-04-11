@@ -9,7 +9,6 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class GoIdentNode extends GoExpressionNode{
 	
 	String name;
-	public GoBasicNode parent;
 	@Child private GoExpressionNode child;
 	
 	private final ContextReference<GoContext> reference;
