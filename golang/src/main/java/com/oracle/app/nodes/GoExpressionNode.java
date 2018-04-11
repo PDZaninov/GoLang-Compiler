@@ -114,4 +114,8 @@ public abstract class GoExpressionNode extends GoStatementNode {
 		return GoTypesGen.expectGoSlice(executeGeneric(frame));
 	}
 
+	public double executeDouble(VirtualFrame frame) throws UnexpectedResultException{
+		return GoTypesGen.expectDouble(executeGeneric(frame));
+	}
+
 }

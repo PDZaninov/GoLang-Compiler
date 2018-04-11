@@ -42,9 +42,9 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){
 		switch(name){
 			case "INT":
-				return new GoIRIntNode(value);
+				return new GoIRIntNode(value,source);
 			case "STRING":
-				return new GoIRStringNode(value);
+				return new GoIRStringNode(value,source);
 			case "FLOAT32":
 				return new GoIRFloat32Node(value);
 			case "FLOAT64":

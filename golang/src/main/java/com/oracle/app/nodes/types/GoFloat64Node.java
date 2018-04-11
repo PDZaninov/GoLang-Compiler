@@ -11,7 +11,7 @@ public class GoFloat64Node extends GoExpressionNode {
     }
 
     @Override
-    public float executeFloat64(VirtualFrame virtualFrame) {
+    public double executeDouble(VirtualFrame virtualFrame) {
         return this.number;
     }
 
