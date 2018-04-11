@@ -1,10 +1,8 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.app.parser.ir.StringEscape;
+import com.oracle.truffle.api.source.Source;
+import com.oracle.truffle.api.source.SourceSection;
 
 /**
  * Abstract BasicLiteral node class for any basic type node.
@@ -21,26 +19,29 @@ import com.oracle.app.parser.ir.StringEscape;
 public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 
 	String type;
+	String source;
 	
-	public GoIRBasicLitNode() {
+	public GoIRBasicLitNode(String source) {
 		super("Basic Lit Node");
+		this.source = source;
 	}
 	
 	public String getType() {
 		return type;
 	}
 	
-	@Override
-	public void setChildParent() {
-	}
+	/**
+	 * Create a source section based off of the source file. In theory that should be the actual Gofile.
+	 * Split the source by the colon and the first index is the line number
+	 * The charindex is the right hand side. Might need to change it so that it can capture the whole number
+	 * @param section The source code file
+	 * @return The created source section
+	 */
+	public abstract SourceSection getSource(Source section);
 
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		return null;
-	}
-
-	public static GoIRBasicLitNode createBasicLit(String name, String value){
+	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){
 		switch(name){
+<<<<<<< HEAD
 			case "INT":
 				return new GoIRIntNode(value);
 			case "STRING":
@@ -52,9 +53,19 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 			default:
 				System.out.println("Unimplemented Basic Lit type");
 				return null;
+=======
+		case "INT":
+			return new GoIRIntNode(value,source);
+		case "STRING":
+			return new GoIRStringNode(value, source);
+		default:
+			System.out.println("Unimplemented Basic Lit type "+ name);
+			return null;
+>>>>>>> f1fb9a86c0e36fec607bcb4c44711861174cfb3f
 		}
 	
 	}
+
 }
 
 

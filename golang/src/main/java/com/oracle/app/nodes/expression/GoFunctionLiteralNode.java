@@ -1,16 +1,13 @@
 package com.oracle.app.nodes.expression;
 
-import com.oracle.truffle.api.CallTarget;
-import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
-import com.oracle.truffle.api.TruffleLanguage.ContextReference;
-import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.runtime.GoContext;
 import com.oracle.app.runtime.GoFunction;
-import com.oracle.app.runtime.GoFunctionRegistry;
+import com.oracle.truffle.api.CallTarget;
+import com.oracle.truffle.api.TruffleLanguage.ContextReference;
+import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.nodes.NodeInfo;
 
 /**
  * Constant literal for a {@link SLFunction function} value, created when a function name occurs as

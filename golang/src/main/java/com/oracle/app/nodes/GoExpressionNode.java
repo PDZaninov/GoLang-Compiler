@@ -58,7 +58,7 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
  */
 @TypeSystemReference(GoTypes.class)
 @NodeInfo(description = "The abstract base node for all expressions")
-//@Instrumentable(factory = GoExpressionNodeWrapper.class)
+@Instrumentable(factory = GoExpressionNodeWrapper.class)
 public abstract class GoExpressionNode extends GoStatementNode {
 
     /**

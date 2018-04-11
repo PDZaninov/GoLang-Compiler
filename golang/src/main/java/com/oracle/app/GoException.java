@@ -3,6 +3,7 @@ package com.oracle.app;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.oracle.app.nodes.GoRootNode;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.FrameInstance;
@@ -11,7 +12,6 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
-import com.oracle.app.nodes.GoRootNode;
 
 
 public class GoException extends RuntimeException {

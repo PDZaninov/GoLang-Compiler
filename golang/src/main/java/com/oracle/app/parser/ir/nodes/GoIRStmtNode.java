@@ -12,25 +12,15 @@ public class GoIRStmtNode extends GoBaseIRNode {
 	public GoIRStmtNode(ArrayList<GoBaseIRNode> children) {
 		super("Stmt");
 		this.children = children;
-		setChildParent();
 	}
 	
 	public int getSize(){
 		return children.size();
 	}
 	
-	@Override
-	public void setChildParent() {
-		for(GoBaseIRNode child : children){
-			child.setParent(this);
-		}
-	}
-	
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
+	public ArrayList<GoBaseIRNode> getChildren(){
 		return children;
 	}
-	
 	
 	@Override
 	public Object accept(GoIRVisitor visitor) { 

@@ -37,7 +37,7 @@ public class GoUnaryAddressNode extends GoUnaryNode {
 	public Object executeGeneric(VirtualFrame frame) {
 		if(isIndex){
 			GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, value);
-			value = array.readArray(index);
+			value = array.readArray(frame, index);
 		}
 		return GoPointerNode.createPointer(value, value.getKind());
 	}

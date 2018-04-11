@@ -1,25 +1,24 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
+import com.oracle.truffle.api.source.Source;
 
 public class GoIRGenDeclNode extends GoBaseIRNode {
 
-	private String token;
-	private GoIRArrayListExprNode children;
+	String token;
+	GoIRArrayListExprNode children;
+	String tokpos;
+	String lparen;
+	String rparen;
 	
-	public GoIRGenDeclNode(String token, GoIRArrayListExprNode children) {
+	public GoIRGenDeclNode(String token, GoIRArrayListExprNode children,String tokpos, String lparen, String rparen) {
 		super("GenDecl Node");
 		this.token = token;
 		this.children = children;
-		setChildParent();
-	}
-
-	@Override
-	public void setChildParent() {
-		children.setParent(this);
+		this.tokpos = tokpos;
+		this.lparen = lparen;
+		this.rparen = rparen;
 	}
 	
 	public GoIRArrayListExprNode getChild(){
@@ -30,12 +29,12 @@ public class GoIRGenDeclNode extends GoBaseIRNode {
 		return token;
 	}
 
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+	public int getTokPos(){
+		String[] split = tokpos.split(":");
+		int tokindex = Integer.parseInt(split[2]);
+		return tokindex;
 	}
-
+	
 	@Override
 	public Object accept(GoIRVisitor visitor) {
 		return visitor.visitGenDecl(this);

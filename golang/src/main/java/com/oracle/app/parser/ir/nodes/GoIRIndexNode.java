@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -9,12 +7,15 @@ public class GoIRIndexNode extends GoBaseIRNode {
 
 	GoIRIdentNode name;
 	GoBaseIRNode index;
+	String lbrack;
+	String rbrack;
 	
-	public GoIRIndexNode(GoIRIdentNode name, GoBaseIRNode index) {
+	public GoIRIndexNode(GoIRIdentNode name, GoBaseIRNode index, String lbrack, String rbrack) {
 		super("Index Node");
 		this.name = name;
 		this.index = index;
-		setChildParent();
+		this.lbrack = lbrack;
+		this.rbrack = rbrack;
 	}
 	
 	public GoIRIdentNode getName(){
@@ -29,19 +30,25 @@ public class GoIRIndexNode extends GoBaseIRNode {
 	public GoBaseIRNode getIndex(){
 		return index;
 	}
-
-	@Override
-	public void setChildParent() {
-		name.setParent(this);
-		index.setParent(this);
+	
+	public int getLineNumber(){
+		return Integer.parseInt(rbrack.split(":")[1]);
 	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public int getRBrack(){
+		return Integer.parseInt(rbrack.split(":")[2]);
 	}
-
+	
+	public int getLBrack(){
+		return Integer.parseInt(lbrack.split(":")[2]);
+	}
+	
+	public int getSourceSize(){
+		int start = Integer.parseInt(lbrack.split(":")[2]);
+		int end = Integer.parseInt(rbrack.split(":")[2]);
+		return end - start;
+	}
+	
 	@Override
 	public Object accept(GoIRVisitor visitor) {
 		return visitor.visitIndexNode(this);

@@ -1,34 +1,28 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRIncDecStmtNode extends GoBaseIRNode {
 	
-	private String op;
+	String op;
+	GoBaseIRNode child;
+	String tokpos;
 	
-	private GoBaseIRNode child;
-	
-	public GoIRIncDecStmtNode(String op, GoBaseIRNode child) {
+	public GoIRIncDecStmtNode(String op, GoBaseIRNode child, String tokpos) {
 		super("IncDec");
 		this.op = op;
 		this.child = child;
+		this.tokpos = tokpos;
 	}
 	
-	@Override
-	public void setChildParent() {
-		child.setParent(this);
+	public GoBaseIRNode getChild() { 
+		return child; 
 	}
 	
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getTokPos(){
+		return tokpos;
 	}
-	
-	public GoBaseIRNode getChild() { return child; }
 	
 	public String getOp() {
 		return op;

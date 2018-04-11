@@ -3,7 +3,6 @@ package com.oracle.app.nodes.SpecDecl;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.Node.Child;
 
 public class GoFieldNode extends GoExpressionNode{
 

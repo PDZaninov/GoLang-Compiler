@@ -1,34 +1,31 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRArrayTypeNode extends GoBaseIRNode{
 	GoBaseIRNode len;
 	GoBaseIRNode type;
+	String source;
 	
 	boolean isSlice = false;
 	
-	public GoIRArrayTypeNode(GoBaseIRNode length, GoBaseIRNode type) {
+	public GoIRArrayTypeNode(GoBaseIRNode length, GoBaseIRNode type, String source) {
 		super("IR Array Type Node");
 		len = length;
 		this.type = type;
-		setChildParent();
+		this.source = source;
 	}
 	
-	public GoIRArrayTypeNode(GoBaseIRNode type, boolean isSlice) {
+	public GoIRArrayTypeNode(GoBaseIRNode type, boolean isSlice, String source) {
 		super("IR Array Type Node");
 		this.type = type;
 		this.isSlice = true;
+		this.source = source;
 	}
-
-	@Override
-	public void setChildParent() {
-		len.setParent(this);
-		type.setParent(this);
-		
+	
+	public String getSource(){
+		return source;
 	}
 	
 	public GoBaseIRNode getLength(){
@@ -41,14 +38,6 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 	
 	public boolean getIsSlice() {
 		return isSlice;
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		ArrayList<GoBaseIRNode> m = new ArrayList<GoBaseIRNode>();;
-		m.add(len);
-		m.add(type);
-		return m;
 	}
 
 	@Override

@@ -1,6 +1,9 @@
 package com.oracle.app.runtime;
 
-public class GoNull {
+import com.oracle.truffle.api.interop.ForeignAccess;
+import com.oracle.truffle.api.interop.TruffleObject;
+
+public class GoNull implements TruffleObject{
 
 	public static final GoNull SINGLETON = new GoNull();
 	
@@ -10,5 +13,11 @@ public class GoNull {
 	public String toString(){
 		return "nil";
 	}
+
+	@Override
+	public ForeignAccess getForeignAccess() {
+		return GoNullMessageResolutionForeign.ACCESS;
+	}
+	
 
 }
