@@ -22,6 +22,7 @@ import com.oracle.app.nodes.controlflow.GoContinueNode;
 import com.oracle.app.nodes.controlflow.GoForNode;
 import com.oracle.app.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.controlflow.GoIfStmtNode;
+import com.oracle.app.nodes.controlflow.GoReturnNode;
 import com.oracle.app.nodes.controlflow.GoSwitchNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
@@ -156,7 +157,6 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitObject(GoBaseIRNode node) {
-		//System.out.println("Visited Truffle temp: " + node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)
 				child.accept(this);
@@ -166,7 +166,6 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdent();
-		//System.out.println("name of ident: " + name);
 		GoExpressionNode result = null;
 		//Cannot check for if writing value yet
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
@@ -602,6 +601,20 @@ public class GoTruffle implements GoIRVisitor {
 		GoIdentNode importPackage = (GoIdentNode) goIRSelectorExprNode.getImportName().accept(this);
 		GoIdentNode importMethod = (GoIdentNode) goIRSelectorExprNode.getImportMethod().accept(this);
 		return new GoSelectorExprNode(language, importPackage, importMethod);
+	}
+	
+	@Override
+	public Object visitReturnStmt(GoIRReturnStmtNode node){
+		
+		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));
+		
+	}
+	
+	@Override
+	public Object visitField(GoIRFieldNode node){
+		
+		return node.accept(this);
+		
 	}
 
 }

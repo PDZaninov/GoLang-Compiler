@@ -236,6 +236,15 @@ public class Parser {
 			case "ExprStmt":
 				return new GoIRExprStmtNode(body.get("X"));
 				
+			case "Field":
+				if(body.size()==2) {
+					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")).getChildren().get(0), body.get("Type"));
+				}else {
+					return new GoIRFieldNode(nodeType, body.get("Type"));
+				}
+				
+			case "]*ast.Field":
+				return new GoTempIRNode(nodeType,attrs,body);
 			case "FieldList":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
@@ -299,6 +308,9 @@ public class Parser {
 			case "ParenExpr":
 				return new GoIRExprStmtNode(body.get("X"));
 				
+			case "ReturnStmt":
+				return new GoIRReturnStmtNode((GoIRArrayListExprNode)body.get("Results"));
+				
 			case "Scope":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
@@ -343,6 +355,7 @@ public class Parser {
 				
 			default:
 				System.out.println("Error, in default: " + nodeType);
+				System.out.println(attrs);
 				
 		}
 		return new GoTempIRNode(nodeType,attrs,body);
