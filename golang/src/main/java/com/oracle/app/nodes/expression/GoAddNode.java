@@ -26,6 +26,11 @@ public abstract class GoAddNode extends GoBinaryNode {
         return left + right;
     }
 
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected double add(double left, double right) {
+        return left + right;
+    }
+
     @Specialization
     @TruffleBoundary
     protected BigInteger add(BigInteger left, BigInteger right) {

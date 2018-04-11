@@ -27,6 +27,11 @@ public abstract class GoSubNode extends GoBinaryNode {
     protected float sub(float left, float right) {
         return left - right;
     }
+
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected double sub(double left, double right) {
+        return left - right;
+    }
     
     @Specialization
     @TruffleBoundary

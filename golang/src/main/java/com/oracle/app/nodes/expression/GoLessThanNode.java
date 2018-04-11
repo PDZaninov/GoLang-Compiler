@@ -34,6 +34,11 @@ public abstract class GoLessThanNode extends GoBinaryNode {
     protected boolean  lessThan(float left, float right) {
         return left < right;
     }
+
+    @Specialization
+    protected boolean  lessThan(double left, double right) {
+        return left < right;
+    }
     
     @Specialization
     protected boolean  lessThan(String left, String right) {

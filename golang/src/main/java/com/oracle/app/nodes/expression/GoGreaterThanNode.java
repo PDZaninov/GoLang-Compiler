@@ -29,6 +29,11 @@ public abstract class GoGreaterThanNode extends GoBinaryNode{
     protected boolean  greaterThan(float left, float right) {
         return left > right;
     }
+
+    @Specialization
+    protected boolean  greaterThan(double left, double right) {
+        return left > right;
+    }
     
     @Specialization
     protected boolean  greaterThan(String left, String right) {

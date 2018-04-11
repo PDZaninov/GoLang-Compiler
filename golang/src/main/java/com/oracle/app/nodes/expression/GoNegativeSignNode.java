@@ -23,4 +23,9 @@ public abstract class GoNegativeSignNode extends GoUnaryNode{
     protected float negativeSign(float value) {
         return 0 - value;
     }
+
+    @Specialization
+    protected double negativeSign(double value) {
+        return 0 - value;
+    }
 }

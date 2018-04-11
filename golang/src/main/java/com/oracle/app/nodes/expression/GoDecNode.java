@@ -21,4 +21,9 @@ public abstract class GoDecNode extends GoIncDecStmtNode {
     protected float decrement(float value) {
         return value--;
     }
+
+    @Specialization
+    protected double decrement(double value) {
+        return value--;
+    }
 }

@@ -52,6 +52,14 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return value;
 	    }
 
+		@Specialization(guards = "isDoubleOrIllegal(frame)")
+		protected float writeDouble(VirtualFrame frame, double value) {
+			getSlot().setKind(FrameSlotKind.Double);
+
+			frame.setDouble(getSlot(), value);
+			return value;
+		}
+
 	    @Specialization(guards = "isLongOrIllegal(frame)")
 	    protected long writeLong(VirtualFrame frame, long value) {
 
@@ -79,7 +87,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 
 
-	    @Specialization(replaces = {"writeInt", "writeFloat", "writeLong", "writeBoolean", "writeString", "writeArray", "writeSlice"})
+	    @Specialization(replaces = {"writeInt", "writeFloat", "writeDouble", "writeLong", "writeBoolean", "writeString", "writeArray", "writeSlice"})
 	    protected Object write(VirtualFrame frame, Object value) {
 	        getSlot().setKind(FrameSlotKind.Object);
 
@@ -102,6 +110,10 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    protected boolean isFloatOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Float || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
+
+		protected boolean isDoubleOrIllegal(VirtualFrame frame) {
+			return getSlot().getKind() == FrameSlotKind.Double || getSlot().getKind() == FrameSlotKind.Illegal;
+		}
 	    
 	    protected boolean isLongOrIllegal(VirtualFrame frame) {
 	        return getSlot().getKind() == FrameSlotKind.Long || getSlot().getKind() == FrameSlotKind.Illegal;

@@ -37,6 +37,9 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	return FrameUtil.getFloatSafe(frame, getSlot());
     }
 
+    @specialization(guards = "isDoule(frame)")
+    protected double readDoule(VirtualFrame frame) { return FrameUtil.getDoubleSafe(frame, getSlot()); }
+
     @Specialization(guards = "isLong(frame)")
     protected long readLong(VirtualFrame frame) {
         return FrameUtil.getLongSafe(frame, getSlot());
@@ -64,7 +67,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return FrameUtil.getObjectSafe(frame, getSlot());
     }
 
-    @Specialization(replaces = {"readInt", "readFloat", "readLong", "readBoolean", "readArray", "readSlice", "readString"})
+    @Specialization(replaces = {"readInt", "readFloat", "readDouble", "readLong", "readBoolean", "readArray", "readSlice", "readString"})
     protected Object readObject(VirtualFrame frame) {
         if (!frame.isObject(getSlot())) {
             CompilerDirectives.transferToInterpreter();
@@ -83,6 +86,8 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     protected boolean isFloat(VirtualFrame frame){
     	return getSlot().getKind() == FrameSlotKind.Float;
     }
+
+    protected boolean isDouble(VirtualFrame frame) { return getSlot().getKind() == FrameSlotKind.Double; }
     
     protected boolean isLong(VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Long;
@@ -119,7 +124,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 			case BOOL:
 				return FrameUtil.getBooleanSafe(frame, slot);
 			case FLOAT64:
-				return FrameUtil.getFloatSafe(frame, slot);
+				return FrameUtil.getDoubleSafe(frame, slot);
 			case INT:
 				return FrameUtil.getIntSafe(frame, slot);
 			case STRING:

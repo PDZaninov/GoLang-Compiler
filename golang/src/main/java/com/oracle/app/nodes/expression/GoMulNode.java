@@ -28,6 +28,11 @@ public abstract class GoMulNode extends GoBinaryNode {
         return left * right;
     }
 
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected double mul(double left, double right) {
+        return left * right;
+    }
+
     @Specialization
     @TruffleBoundary
     protected BigInteger mul(BigInteger left, BigInteger right) {
