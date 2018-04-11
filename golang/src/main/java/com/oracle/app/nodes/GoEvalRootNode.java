@@ -52,6 +52,8 @@ public final class GoEvalRootNode extends GoRootNode {
             slot.setKind(FrameSlotKind.Int);
             frame.setInt(slot, 0);
             slot = f.findFrameSlot("float64");
+            frame.setDouble(slot, 0);
+            slot = f.findFrameSlot("float32");
             frame.setFloat(slot, 0);
             slot = f.findFrameSlot("string");
             frame.setObject(slot, "");

@@ -57,6 +57,8 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoIntNode;
+import com.oracle.app.ndoes.types.GoFloat32Node;
+import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoNonPrimitiveType;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.*;
@@ -116,8 +118,10 @@ public class GoTruffle implements GoIRVisitor {
         FrameSlot frameSlot;
         frameSlot = frameDescriptor.addFrameSlot("int",FrameSlotKind.Int);
 		lexicalscope.locals.put("int", frameSlot);
-		frameSlot = frameDescriptor.addFrameSlot("float64", FrameSlotKind.Float);
+		frameSlot = frameDescriptor.addFrameSlot("float64", FrameSlotKind.Double);
 		lexicalscope.locals.put("float64", frameSlot);
+		frameSlot = frameDescriptor.addFrameSlot("float32", FrameSlotKind.Float);
+		lexicalscope.locals.put("float32", frameSlot);
 		frameSlot = frameDescriptor.addFrameSlot("bool", FrameSlotKind.Boolean);
 		lexicalscope.locals.put("bool", frameSlot);
 		frameSlot = frameDescriptor.addFrameSlot("true", FrameSlotKind.Boolean);
@@ -247,6 +251,10 @@ public class GoTruffle implements GoIRVisitor {
 	public GoIntNode visitIRIntNode(GoIRIntNode node){
 		return new GoIntNode(node.getValue());
 	}
+
+	public GoFloat32Node visitIRFloat32Node(GoIRFloat32Node node) { return new GoFloat32Node(node.getValue()); }
+
+	public GoFloat64Node visitIRFloat64Node(GoIRFloat64Node node) { return new GoFloat64Node(node.getValue()); }
 	
 	public GoStringNode visitIRStringNode(GoIRStringNode node){
 		return new GoStringNode(node.getValue());

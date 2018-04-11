@@ -139,6 +139,16 @@ public interface GoIRVisitor {
 		return null;
 	}
 
+	default GoFloat32Node visitIRFloat32Node(GoIRFloat32Node goIRFloat32Node){
+		System.out.println("Default Basic Float 32 visit");
+		return null;
+	}
+
+	default GoFloat64Node visitIRFloat64Node(GoIRFloat64Node goIRFloat64Node){
+		System.out.println("Default Basic Float 64 visit");
+		return null;
+	}
+
 	default GoStringNode visitIRStringNode(GoIRStringNode goIRStringNode){
 		System.out.println("Default Basic String Visit");
 		return null;
