@@ -22,4 +22,9 @@ public abstract class GoPositiveSignNode extends GoUnaryNode{
     protected float positiveSign(float value) {
         return 0 + value;
     }
+
+    @Specialization
+    protected double positiveSign(double value) {
+        return 0 + value;
+    }
 }

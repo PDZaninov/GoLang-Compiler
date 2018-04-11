@@ -21,4 +21,9 @@ public abstract class GoIncNode extends GoIncDecStmtNode {
     protected float increment(float value) {
         return value++;
     }
+
+    @Specialization
+    protected double increment(double value) {
+        return value++;
+    }
 }

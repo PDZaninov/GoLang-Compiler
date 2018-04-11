@@ -20,6 +20,12 @@ public abstract class GoPrintfBuiltin extends GoBuiltinNode {
         System.out.print(value);
         return value;
     }
+
+    @Specialization
+    public double printf(double value) {
+        System.out.print(value);
+        return value;
+    }
     
     @Specialization
     public int printf(int value) {

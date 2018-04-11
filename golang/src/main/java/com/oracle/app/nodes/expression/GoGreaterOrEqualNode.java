@@ -30,6 +30,11 @@ public abstract class GoGreaterOrEqualNode extends GoBinaryNode {
     protected boolean greaterOrEqual(float left, float right) {
         return left >= right;
     }
+
+    @Specialization
+    protected boolean greaterOrEqual(double left, double right) {
+        return left >= right;
+    }
     
     @Specialization
     protected boolean greaterOrEqual(String left, String right) {

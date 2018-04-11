@@ -26,6 +26,11 @@ public abstract class GoModNode extends GoBinaryNode {
     	return left % right;
     }
 
+    @Specialization(rewriteOn = ArithmeticException.class)
+    protected double mod(double left, double right) {
+        return left % right;
+    }
+
     @Specialization
     @TruffleBoundary
     protected BigInteger mod(BigInteger left, BigInteger right) {

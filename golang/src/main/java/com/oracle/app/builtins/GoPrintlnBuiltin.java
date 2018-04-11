@@ -19,6 +19,12 @@ public abstract class GoPrintlnBuiltin extends GoBuiltinNode {
         System.out.println(value);
         return value;
     }
+
+    @Specialization
+    public double println(double value) {
+        System.out.println(value);
+        return value;
+    }
     
     @Specialization
     public int println(int value) {

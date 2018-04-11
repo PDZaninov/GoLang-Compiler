@@ -52,6 +52,7 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 @TypeSystem({
 	int.class,
 	float.class,
+	double.class,
 	long.class,
 	BigInteger.class,
 	boolean.class,

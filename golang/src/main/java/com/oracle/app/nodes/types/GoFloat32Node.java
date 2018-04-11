@@ -3,15 +3,15 @@ package com.oracle.app.nodes.types;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class GoFloatNode extends GoExpressionNode {
+public class GoFloat32Node extends GoExpressionNode {
     public final float number;
 
-    public GoFloatNode(float number) {
+    public GoFloat32Node(float number) {
         this.number = number;
     }
 
     @Override
-    public float executeFloat(VirtualFrame virtualFrame) {
+    public float executeFloat32(VirtualFrame virtualFrame) {
         return this.number;
     }
 
