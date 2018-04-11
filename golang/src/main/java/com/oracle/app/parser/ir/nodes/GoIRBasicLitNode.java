@@ -41,7 +41,6 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 
 	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){
 		switch(name){
-<<<<<<< HEAD
 			case "INT":
 				return new GoIRIntNode(value);
 			case "STRING":
@@ -53,15 +52,6 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 			default:
 				System.out.println("Unimplemented Basic Lit type");
 				return null;
-=======
-		case "INT":
-			return new GoIRIntNode(value,source);
-		case "STRING":
-			return new GoIRStringNode(value, source);
-		default:
-			System.out.println("Unimplemented Basic Lit type "+ name);
-			return null;
->>>>>>> f1fb9a86c0e36fec607bcb4c44711861174cfb3f
 		}
 	
 	}
