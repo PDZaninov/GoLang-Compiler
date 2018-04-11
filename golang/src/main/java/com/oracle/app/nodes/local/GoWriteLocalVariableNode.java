@@ -53,7 +53,7 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    }
 
 		@Specialization(guards = "isDoubleOrIllegal(frame)")
-		protected float writeDouble(VirtualFrame frame, double value) {
+		protected double writeDouble(VirtualFrame frame, double value) {
 			getSlot().setKind(FrameSlotKind.Double);
 
 			frame.setDouble(getSlot(), value);

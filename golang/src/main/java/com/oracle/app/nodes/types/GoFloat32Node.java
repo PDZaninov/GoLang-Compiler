@@ -11,7 +11,7 @@ public class GoFloat32Node extends GoExpressionNode {
     }
 
     @Override
-    public float executeFloat32(VirtualFrame virtualFrame) {
+    public float executeFloat(VirtualFrame virtualFrame) {
         return this.number;
     }
 
