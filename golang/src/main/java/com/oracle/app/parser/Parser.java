@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -14,9 +15,36 @@ import java.util.regex.Pattern;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.GoIRVisitor;
 import com.oracle.app.parser.ir.GoTruffle;
-import com.oracle.app.parser.ir.nodes.*;
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
+import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRImportSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRStarNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
 /**
@@ -50,7 +78,7 @@ public class Parser {
 	 * @throws FileNotFoundException
 	 */
 	public Parser(GoLanguage language, Source source) throws FileNotFoundException {
-		this.file = source.getName();
+		this.file = source.getName().substring(0, source.getName().lastIndexOf('.')) + ".ast";;
 		this.language = language;
 		this.source = source;
 		reader = new BufferedReader(new FileReader(this.file));
@@ -139,6 +167,14 @@ public class Parser {
 		return null;
 	}
 	
+	public ArrayList<GoBaseIRNode> packIntoArrayList(Collection<GoBaseIRNode> body){
+		ArrayList<GoBaseIRNode> list = new ArrayList<>();
+		for(GoBaseIRNode child : body){
+			list.add(child);
+		}
+		return list;
+	}
+	
 	/**
 	 * Create the IRNode.
 	 * Match the nodetype to a switch case to create the specific IRNode that corresponds to
@@ -151,15 +187,8 @@ public class Parser {
 	public GoBaseIRNode getIRNode(String nodeType, Map<String,String> attrs, Map<String,GoBaseIRNode> body) {
 		switch(nodeType) {
 			case "ArrayType":
-				return new GoIRArrayTypeNode(body.get("Len"),body.get("Elt"));
-				/*
-				//If has a len
-				if(body.containsKey("Len")) {
-					return new GoIRArrayTypeNode(body.get("Len"),body.get("Elt"));
-				}
-				else {
-					return new GoIRArrayTypeNode(body.get("Elt"), true);
-				}*/
+				return new GoIRArrayTypeNode(body.get("Len"),body.get("Elt"),attrs.get("Lbrack"));
+				
 			case "AssignStmt":
 				GoIRArrayListExprNode lhs = (GoIRArrayListExprNode) body.get("Lhs");
 				GoIRArrayListExprNode rhs = (GoIRArrayListExprNode) body.get("Rhs");
@@ -170,14 +199,14 @@ public class Parser {
 					//Might need to distinguish between = and :=. 
 					//= is only for defined variables
 					//:= can be used for defined or undefined variables
-					return createAssignment(lhs,rhs);
+					return createAssignment(lhs,rhs,attrs.get("TokPos"));
 				case "+=":
 				case "-=":
 				case "*=":
 				case "/=":
 				case "%=":
 					assigntype = assigntype.substring(0,1);
-					return assignNormalize(assigntype,lhs,rhs);
+					return assignNormalize(assigntype,lhs,rhs,attrs.get("TokPos"));
 				
 				default:
 					System.out.println("Error unknown assignment: " + assigntype);
@@ -185,24 +214,42 @@ public class Parser {
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "BasicLit":
-				return GoIRBasicLitNode.createBasicLit(attrs.get("Kind"),attrs.get("Value"));
+				return GoIRBasicLitNode.createBasicLit(attrs.get("Kind"),
+						attrs.get("Value"),
+						attrs.get("ValuePos")
+						);
 				
 			case "BinaryExpr":
-				return new GoIRBinaryExprNode(attrs.get("Op"),body.get("X"),body.get("Y"));
+				return new GoIRBinaryExprNode(attrs.get("Op"),
+						body.get("X"),
+						body.get("Y"),
+						attrs.get("OpPos")
+						);
 				
 			case "BranchStmt":
-				return new GoIRBranchStmtNode(attrs.get("Tok"),body.get("Label"));
+				return new GoIRBranchStmtNode(attrs.get("Tok"),
+						body.get("Label"),
+						attrs.get("TokPos")
+						);
 				
 			case "UnaryExpr":
-				return new GoIRUnaryNode(attrs.get("Op"),body.get("X"));
+				return new GoIRUnaryNode(attrs.get("Op"),body.get("X"),attrs.get("OpPos"));
 				
 			case "BlockStmt":
-				return new GoIRBlockStmtNode((GoIRStmtNode) body.get("List"));
+				return new GoIRBlockStmtNode((GoIRStmtNode) body.get("List"),
+						attrs.get("Lbrace"),
+						attrs.get("Rbrace")
+						);
 				
 			case "CallExpr":
 				GoBaseIRNode functionNode = body.get("Fun");
 				GoIRArrayListExprNode args = (GoIRArrayListExprNode) body.get("Args");
-				return new GoIRInvokeNode(functionNode,args);
+				return new GoIRInvokeNode(functionNode,
+						args,
+						attrs.get("Lparen"),
+						attrs.get("Ellipsis"),
+						attrs.get("Rparen")
+						);
 
 			case "CompositeLit":
 				GoBaseIRNode expr = body.get("Type");
@@ -212,26 +259,20 @@ public class Parser {
 				return new GoIRCompositeLitNode(expr,lbrace,elts,rbrace);
 				
 			case "CaseClause":
-				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"), (GoIRStmtNode) body.get("Body"));
+				return new GoIRCaseClauseNode((GoIRArrayListExprNode) body.get("List"),
+						(GoIRStmtNode) body.get("Body"),
+						attrs.get("Case"),
+						attrs.get("Colon")
+						);
 				
 			case "DeclStmt":
 				return new GoIRDeclStmtNode(body.get("Decl"));
 				
 			case "Decl":
-				ArrayList<GoBaseIRNode> list = new ArrayList<>();
-				for(GoBaseIRNode child : body.values()){
-					list.add(child);
-				}
-				return new GoIRDeclNode(list);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 				
 			case "Expr":
-				
-				ArrayList<GoBaseIRNode> list1 = new ArrayList<>();
-				for(GoBaseIRNode child : body.values()){
-					list1.add(child);
-				}
-				
-				return new GoIRArrayListExprNode(list1);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 				
 			case "ExprStmt":
 				return new GoIRExprStmtNode(body.get("X"));
@@ -246,6 +287,7 @@ public class Parser {
 			case "]*ast.Field":
 				return new GoTempIRNode(nodeType,attrs,body);
 			case "FieldList":
+				//Didn't even know we were missing this node
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "File":
@@ -256,57 +298,80 @@ public class Parser {
 				GoBaseIRNode cond = body.get("Cond");
 				GoBaseIRNode post = body.get("Post");
 				GoBaseIRNode for_body = body.get("Body");
-				return new GoIRForNode(init,cond,post,for_body);
+				return new GoIRForNode(init,
+						cond,
+						post,
+						for_body,
+						attrs.get("For"));
 				
 			case "FuncDecl"://(GoBaseIRNode receiver, GoBaseIRNode name, GoBaseIRNode type, GoBaseIRNode body)
 				GoBaseIRNode recv = body.get("Recv");
 				GoBaseIRNode name = body.get("Name");
 				GoBaseIRNode type = body.get("Type");
 				GoBaseIRNode func_body = body.get("Body");
-				return new GoIRFuncDeclNode(recv,name,type,func_body);
+				return new GoIRFuncDeclNode(recv,
+						name,
+						type,
+						func_body);
 				
 			case "FuncType":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "GenDecl":
-				return new GoIRGenDeclNode(attrs.get("Tok"),(GoIRArrayListExprNode) body.get("Specs"));
+				return new GoIRGenDeclNode(attrs.get("Tok"),
+						(GoIRArrayListExprNode) body.get("Specs"),
+						attrs.get("TokPos"),attrs.get("Lparen"),
+						attrs.get("Rparen")
+						);
 				
 			case "]*ast.Ident":
-				ArrayList<GoBaseIRNode> identlist = new ArrayList<>();
-				for(GoBaseIRNode child : body.values()){
-					identlist.add(child);
-				}
-				
-				return new GoIRArrayListExprNode(identlist);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 				
 			case "Ident":
 				GoBaseIRNode obj = body.get("Obj");
-				return new GoIRIdentNode(attrs.get("Name"),obj);
-			case "IndexExpr":
-				//return new GoIRBinaryExprNode("IndexExpr", body.get("X"),body.get("Index"));
-				return new GoIRIndexNode((GoIRIdentNode) body.get("X"),body.get("Index"));
-
+				return new GoIRIdentNode(attrs.get("Name"),
+						obj,
+						attrs.get("NamePos")
+						);
+			
 			case "IfStmt":
 				GoBaseIRNode ifinit = body.get("Init");
 				GoBaseIRNode ifcond = body.get("Cond");
 				GoBaseIRNode ifblock = body.get("Body");
 				GoBaseIRNode elseblock = body.get("Else");
-				return new GoIRIfStmtNode(ifinit,ifcond, ifblock, elseblock);
-
+				return new GoIRIfStmtNode(ifinit,
+						ifcond,
+						ifblock,
+						elseblock,
+						attrs.get("If")
+						);
+				
+			case "IndexExpr":
+				return new GoIRIndexNode((GoIRIdentNode) body.get("X"),
+						body.get("Index"),
+						attrs.get("Lbrack"),
+						attrs.get("Rbrack")
+						);
 			case "]*ast.ImportSpec":
 				return new GoTempIRNode(nodeType,attrs,body);
-
+				
 			case "ImportSpec":
 				return new GoIRImportSpecNode((GoIRBasicLitNode) body.get("Path"));
 
 			case "IncDecStmt":
-				return new GoIRIncDecStmtNode(attrs.get("Tok"),body.get("X"));
-
+				return new GoIRIncDecStmtNode(attrs.get("Tok"),
+						body.get("X"),
+						attrs.get("TokPos")
+						);
+				
 			case "Object":
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "ParenExpr":
-				return new GoIRExprStmtNode(body.get("X"));
+				return new GoIRExprStmtNode(body.get("X"),
+						attrs.get("Lparen"),
+						attrs.get("Rparen")
+						);
 				
 			case "ReturnStmt":
 				return new GoIRReturnStmtNode((GoIRArrayListExprNode)body.get("Results"));
@@ -316,6 +381,16 @@ public class Parser {
 				
 			case "SelectorExpr":
 				return new GoIRSelectorExprNode((GoIRIdentNode) body.get("X"),(GoIRIdentNode) body.get("Sel"));
+				
+			case "SliceExpr":
+				GoBaseIRNode sliceexpr = body.get("X");
+				String slbrack = attrs.get("Lbrack");
+				GoBaseIRNode low = body.get("Low");
+				GoBaseIRNode high = body.get("High");
+				GoBaseIRNode max = body.get("Max");
+				String slice3 = attrs.get("Slice3");
+				String srbrack = attrs.get("Rbrack");
+				return new GoIRSliceExprNode(sliceexpr,slbrack,low,high,max,slice3,srbrack);
 				
 			case "Spec":
 				ArrayList<GoBaseIRNode> speclist = new ArrayList<>();
@@ -329,27 +404,27 @@ public class Parser {
 				return new GoIRStarNode(body.get("X"), attrs.get("Star"));
 				
 			case "Stmt":
-				ArrayList<GoBaseIRNode> stmtlist = new ArrayList<>();
-				for(GoBaseIRNode children : body.values()){
-					stmtlist.add(children);
-				}
-				return new GoIRStmtNode(stmtlist);
+				return new GoIRStmtNode(packIntoArrayList(body.values()));
 
 			case "SwitchStmt":
 				GoIRStmtNode switchinit = (GoIRStmtNode) body.get("Init");
 				GoBaseIRNode tag = body.get("Tag");
 				GoIRBlockStmtNode switchbody = (GoIRBlockStmtNode) body.get("Body");
-				return new GoIRSwitchStmtNode(switchinit, tag, switchbody);
+				return new GoIRSwitchStmtNode(switchinit,
+						tag,
+						switchbody,
+						attrs.get("Switch")
+						);
 				
 			case "ValueSpec":
 				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");
 				GoBaseIRNode valuetype = body.get("Type");
 				GoIRArrayListExprNode values = (GoIRArrayListExprNode) body.get("Values");
 				if(values == null){
-					return createAssignment(names, valuetype);
+					return createAssignment(names, valuetype, null);
 				}
 				else{
-					return createAssignment(names,valuetype,values);
+					return createAssignment(names,valuetype,values,null);
 				}
 				//return new GoIRValueSpecNode(names,valuetype,values);
 				
@@ -363,8 +438,9 @@ public class Parser {
 
 	/*
 	 * Should throw an error when either side have unbalanced arrays or if either is empty
+	 * 
 	 */
-	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoIRArrayListExprNode rhs){
+	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoIRArrayListExprNode rhs, String source){
 		if(lhs.getSize() != rhs.getSize()){
 			System.out.println("Parse error uneven assignment");
 			return null;
@@ -376,25 +452,27 @@ public class Parser {
 			writeto = lhs.getChildren().get(i);
 			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i) ));
 		}
-		return new GoIRArrayListExprNode(result);
+		return new GoIRArrayListExprNode(result, source);
 	}
 	
 	/*
 	 * Given no right hand side, set default values of the type to each ident
+	 * Called by valuespec
 	 */
-	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type){
+	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, String source){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		for(GoBaseIRNode node : lhs.getChildren()){
 			result.add(new GoIRAssignmentStmtNode(node,type));
 		}
-		return new GoIRArrayListExprNode(result);
+		return new GoIRArrayListExprNode(result, source);
 	}
 	
 	/*
 	 * Given a type and a right hand side, the right hand side should match the type given
 	 * Assuming that the type matches the right hand side always for now
+	 * Called by valuespec
 	 */
-	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs){
+	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
 		if(lhs.getSize() != rhs.getSize()){
 			//Throw Error
 			System.out.println("Variable Declaration Error");
@@ -405,7 +483,7 @@ public class Parser {
 		for(int i = 0; i < size;i++){
 			result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 		}
-		return new GoIRArrayListExprNode(result);
+		return new GoIRArrayListExprNode(result, source);
 	}
 	
 	/**
@@ -416,10 +494,10 @@ public class Parser {
 	 * @param r
 	 * @return
 	 */
-	public GoIRArrayListExprNode assignNormalize(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r){
-		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0));
+	public GoIRArrayListExprNode assignNormalize(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r, String source){
+		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0),null);
 		r.getChildren().set(0, temp);
-		return createAssignment(l,r);
+		return createAssignment(l,r,source);
 	}
 	
 	/**

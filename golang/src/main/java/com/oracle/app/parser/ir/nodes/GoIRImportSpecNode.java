@@ -12,18 +12,6 @@ public class GoIRImportSpecNode extends GoBaseIRNode {
     public GoIRImportSpecNode(GoIRBasicLitNode child) {
         super("ImportSpec");
         this.child = child;
-        setChildParent();
-    }
-
-    @Override
-    public void setChildParent() {
-        if(child != null)
-            child.setParent(this);
-    }
-
-    @Override
-    public ArrayList<GoBaseIRNode> getChildren() {
-        return null;
     }
 
     public GoIRBasicLitNode getChild() {

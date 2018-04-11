@@ -1,5 +1,6 @@
 package com.oracle.app.nodes.controlflow;
 
+import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -13,11 +14,14 @@ public final class GoCaseClauseNode extends GoStatementNode {
     @Children private final GoStatementNode[]  body;
     public String caseType = "case";
 
-    public GoCaseClauseNode(GoExpressionNode[] list, GoStatementNode[] body) {
-        this.list = list;
+    public GoCaseClauseNode(GoArrayExprNode list, GoStatementNode[] body) {
         this.body = body;
         if(list == null){
             caseType = "default";
+            this.list = null;
+        }
+        else{
+        	this.list = list.getArguments();
         }
     }
 

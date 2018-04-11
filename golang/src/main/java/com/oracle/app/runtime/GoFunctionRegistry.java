@@ -7,12 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.oracle.truffle.api.RootCallTarget;
-import com.oracle.truffle.api.Truffle;
-import com.oracle.truffle.api.source.Source;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.parser.Parser;
+import com.oracle.truffle.api.RootCallTarget;
+import com.oracle.truffle.api.Truffle;
 
 /**
  * Manages the mapping from function names to {@link GoFunction function objects}.

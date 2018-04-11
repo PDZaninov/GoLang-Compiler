@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.GoIRVisitable;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoTempIRNode extends GoBaseIRNode {
 
 	Map<String, String> attrs = new HashMap<>();
-	public Map<String,GoBaseIRNode> children;
+	Map<String,GoBaseIRNode> children;
+	GoBaseIRNode parent;
 	
 	public GoTempIRNode(String name, Map<String, String> attributes, Map<String, GoBaseIRNode> childs) {
 		super(name);
@@ -21,17 +21,19 @@ public class GoTempIRNode extends GoBaseIRNode {
 		setChildParent();
 	}
 
-	@Override
+	public void setParent(GoBaseIRNode node) { 
+		this.parent = node; 
+	}
+	
 	public void setChildParent() {
 		if(children.isEmpty()){
 			for(GoBaseIRNode child : children.values()){
-				child.setParent(this);
+				((GoTempIRNode) child).setParent(this);
 			}
 		}
 		
 	}
 
-	@Override
 	public ArrayList<GoBaseIRNode> getChildren() {
 		ArrayList<GoBaseIRNode> temp = new ArrayList<>();
 		for(GoBaseIRNode child : children.values()){
@@ -41,7 +43,6 @@ public class GoTempIRNode extends GoBaseIRNode {
 		
 	}
 	
-	@Override
 	public Object accept(GoIRVisitor visitor) { 
 		return visitor.visitObject(this); 
 	}

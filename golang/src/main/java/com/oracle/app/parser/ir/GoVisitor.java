@@ -1,13 +1,33 @@
 package com.oracle.app.parser.ir;
 
-import com.oracle.app.parser.ir.nodes.*;
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 public class GoVisitor implements GoIRVisitor {
 
 
 
 	@Override
-	public Object visitObject(GoBaseIRNode node) {
+	public Object visitObject(GoTempIRNode node) {
 		System.out.println("Temp node: " + node.toString());
 		for(GoBaseIRNode child : node.getChildren())
 			if(child != null)
@@ -38,13 +58,6 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getArgumentNode() != null){
 			node.getArgumentNode().accept(this);
 		}
-		node.getDispatchNode().accept(this);
-		return null;
-	}
-
-	@Override
-	public Object visitGenericDispatch(GoIRGenericDispatchNode node) {
-		System.out.println("Dispatch node: " + node.toString());
 		return null;
 	}
 

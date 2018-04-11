@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitable;
 import com.oracle.app.parser.ir.GoIRVisitor;
@@ -10,18 +8,26 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 
 	GoBaseIRNode functionNode;
 	GoIRArrayListExprNode argumentNodes;
-	GoIRGenericDispatchNode dispatchNode;
+	String lparen;
+	String ellipsis;
+	String rparen;
 	
-	public GoIRInvokeNode(GoBaseIRNode functionNode, GoIRArrayListExprNode argumentNodes) {
+	public GoIRInvokeNode(GoBaseIRNode functionNode, GoIRArrayListExprNode argumentNodes,String lparen,String ellipsis,String rparen) {
 		super("Call Expr (Invoke)");
 		this.functionNode = functionNode;
 		this.argumentNodes = argumentNodes;
-		this.dispatchNode = new GoIRGenericDispatchNode();
-		setChildParent();
+		this.lparen = lparen;
+		this.ellipsis = ellipsis;
+		this.rparen = rparen;
 	}
 	
 	public GoBaseIRNode getFunctionNode() {
 		return functionNode;
+	}
+	
+	public int getEndPos(){
+		int endpos = Integer.parseInt(rparen.split(":")[2]);
+		return endpos;
 	}
 	
 	/*
@@ -33,27 +39,6 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 	
 	public int getArgumentsSize(){
 		return argumentNodes.getSize();
-	}
-	
-	
-	public GoIRGenericDispatchNode getDispatchNode(){
-		return dispatchNode;
-	}
-	
-	//TODO
-	@Override
-	public void setChildParent() {
-		functionNode.setParent(this);
-		if(argumentNodes != null){
-			argumentNodes.setParent(this);
-		}
-		dispatchNode.setParent(this);
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		System.out.println("Invoke Node needs getChildren Function");
-		return null;
 	}
 	
 	@Override

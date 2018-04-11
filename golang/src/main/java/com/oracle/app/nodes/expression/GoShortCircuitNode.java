@@ -1,11 +1,11 @@
 package com.oracle.app.nodes.expression;
 
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.dsl.UnsupportedSpecializationException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.UnexpectedResultException;
 import com.oracle.truffle.api.profiles.ConditionProfile;
-import com.oracle.app.nodes.GoExpressionNode;
 
 /**
  * Logical operations in Go use short circuit evaluation: if the evaluation of the left operand

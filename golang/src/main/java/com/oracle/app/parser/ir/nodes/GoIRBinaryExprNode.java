@@ -1,34 +1,23 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
+import com.oracle.truffle.api.source.Source;
+import com.oracle.truffle.api.source.SourceSection;
 
 public class GoIRBinaryExprNode extends GoBaseIRNode {
 	
-	private String op;
+	String op;
+	GoBaseIRNode left;
+	GoBaseIRNode right;
+	String source;
 	
-	private GoBaseIRNode left;
-	private GoBaseIRNode right;
-	
-	public GoIRBinaryExprNode(String op, GoBaseIRNode left, GoBaseIRNode right) {
+	public GoIRBinaryExprNode(String op, GoBaseIRNode left, GoBaseIRNode right, String source) {
 		super("BinaryExpr");
 		this.op = op;
 		this.left = left;
 		this.right = right;
-	}
-	
-	@Override
-	public void setChildParent() {
-		left.setParent(this);
-		right.setParent(this);
-	}
-	
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+		this.source = source;
 	}
 	
 	public GoBaseIRNode getLeft() { return left; }

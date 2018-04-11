@@ -1,39 +1,40 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRBlockStmtNode extends GoBaseIRNode {
 
-	private GoBaseIRNode body;
+	GoBaseIRNode body;
+	String lbrace;
+	String rbrace;
 	
-	public GoIRBlockStmtNode(GoBaseIRNode body) {
+	public GoIRBlockStmtNode(GoBaseIRNode body,String lbrace, String rbrace) {
 		super("Block Statement Node");
 		this.body = body;
-		setChildParent();
+		this.lbrace = lbrace;
+		this.rbrace = rbrace;
 	}
 	
 	public GoBaseIRNode getChild() {
 		return body;
 	}
+	
+	public int getLbrace(){
+		String[] split = lbrace.split(":");
+		int lbraceindex = Integer.parseInt(split[2]);
+		return lbraceindex;
+	}
 
-	@Override
-	public Object accept(GoIRVisitor visitor){
-		return visitor.visitBlockStmt(this);
+	public int getRbrace(){
+		String[] split = rbrace.split(":");
+		int endindex = Integer.parseInt(split[2]);
+		return endindex;
 	}
 	
 	@Override
-	public void setChildParent() {
-		body.setParent(this);
-
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object accept(GoIRVisitor visitor){
+		return visitor.visitBlockStmt(this);
 	}
 
 }

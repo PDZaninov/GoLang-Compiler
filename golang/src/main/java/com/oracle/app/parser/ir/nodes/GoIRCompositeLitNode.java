@@ -1,7 +1,5 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
@@ -18,18 +16,6 @@ public class GoIRCompositeLitNode extends GoBaseIRNode {
 		this.lbrace = lbrace;
 		this.elts = elts;
 		this.rbrace = rbrace;
-	}
-
-	@Override
-	public void setChildParent() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

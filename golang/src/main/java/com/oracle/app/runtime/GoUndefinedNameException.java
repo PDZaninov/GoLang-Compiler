@@ -1,7 +1,7 @@
 package com.oracle.app.runtime;
 
-import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.app.GoException;
+import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 
 public final class GoUndefinedNameException extends GoException {
 

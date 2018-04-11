@@ -9,7 +9,7 @@ import com.oracle.app.parser.ir.nodes.*;
 
 public interface GoIRVisitor {
 	
-	default Object visitObject(GoBaseIRNode node){
+	default Object visitObject(GoTempIRNode	 node){
 		System.out.println("Default Base IR Node visit");
 		return null;
 	}
@@ -27,12 +27,7 @@ public interface GoIRVisitor {
 	default Object visitInvoke(GoIRInvokeNode node){
 		System.out.println("Default Invoke Visit");
 		return null;
-	}
-	
-	default Object visitGenericDispatch(GoIRGenericDispatchNode node){
-		System.out.println("Default Generic Dispatch Visit, USELESS NODE");
-		return null;
-	}
+	}	
 
 	default Object visitFuncDecl(GoIRFuncDeclNode node){
 		System.out.println("Default Function Declaration Visit");
@@ -191,4 +186,10 @@ public interface GoIRVisitor {
 		System.out.println("Default Return Stmt Visit");
 		return null;
 	}
+
+	default Object visitSliceExpr(GoIRSliceExprNode goIRSliceExprNode){
+		System.out.println("Default Slice Expr Visit");
+		return null;
+	}
+
 }

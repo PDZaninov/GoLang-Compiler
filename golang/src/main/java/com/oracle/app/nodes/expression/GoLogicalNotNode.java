@@ -1,10 +1,8 @@
 package com.oracle.app.nodes.expression;
 
-import com.oracle.truffle.api.dsl.NodeChild;
+import com.oracle.app.nodes.GoUnaryNode;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoUnaryNode;
 
 /**
  * Example of a simple unary node that uses type specialization. See {@link SLAddNode} for

@@ -1,8 +1,7 @@
 package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoSlice;
+import com.oracle.app.nodes.types.GoArrayLikeTypes;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -113,8 +112,9 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	//Rip specialization. No way to check for what type of array is being read, if a way is found change this
     	@Specialization
     	public Object readArray(VirtualFrame frame, int index){
-    		GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, getSlot());
-    		FrameSlot slot = array.readArray(index);
+    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
+    		FrameSlot slot = array.readArray(frame, index);
+
     		switch(array.getType()){
 			case BOOL:
 				return FrameUtil.getBooleanSafe(frame, slot);
@@ -130,15 +130,5 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	}
     	
     }
-    
-    @NodeChild(value="index",type=GoExpressionNode.class)
-    public abstract static class GoReadSliceNode extends GoReadLocalVariableNode{
-    	
-    	@Specialization
-    	public Object readSlice(VirtualFrame frame, int index){
-    		GoSlice slice = (GoSlice) FrameUtil.getObjectSafe(frame, getSlot());
-    		return slice.readSlice(index);
-    	}
-    	
-    }
+   
 }

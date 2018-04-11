@@ -1,7 +1,7 @@
 package com.oracle.app.nodes.expression;
 
-import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.truffle.api.nodes.NodeInfo;
 
 /**
  * Logical disjunction node with short circuit evaluation.

@@ -1,7 +1,11 @@
 package com.oracle.app;
 
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 
 import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.Truffle;
@@ -14,7 +18,6 @@ public class GoMain
 {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-    	toolchain tool = new toolchain();
 
 //		tool.run(args[0]);
      	Source source;
@@ -26,7 +29,10 @@ public class GoMain
                     build();
         }
         else{
-        	source = Source.newBuilder(new File(args[0])).build();
+        	
+        	String goFile  = args[0];
+        	ToolChain.executeCommands(goFile);
+        	source = Source.newBuilder(new File(goFile)).build();
         }
         executeSource(source, System.in, System.out);
 
@@ -50,6 +56,7 @@ public class GoMain
     	//A Parse error goes here
     	catch (Throwable ex){
     		//Other error catching stuff, refer to GoMain....
+
     		ex.printStackTrace(out);
     	}
     	

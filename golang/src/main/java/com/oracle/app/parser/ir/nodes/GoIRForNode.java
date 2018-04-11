@@ -1,40 +1,27 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRForNode extends GoBaseIRNode {
 	
-	private GoBaseIRNode init;
+	GoBaseIRNode init;
+	GoBaseIRNode cond;
+	GoBaseIRNode post;
+	GoBaseIRNode body;
+	String fortok;
 	
-	private GoBaseIRNode cond;
-	
-	private GoBaseIRNode post;
-	
-	private GoBaseIRNode body;
-	
-	public GoIRForNode(GoBaseIRNode init, GoBaseIRNode cond, GoBaseIRNode post, GoBaseIRNode body) {
+	public GoIRForNode(GoBaseIRNode init, GoBaseIRNode cond, GoBaseIRNode post, GoBaseIRNode body,String fortok) {
 		super("For Loop");
 		this.init = init;
 		this.cond = cond;
 		this.post = post;
 		this.body = body;
+		this.fortok = fortok;
 	}
 	
-	@Override
-	public void setChildParent() {
-		init.setParent(this);
-		cond.setParent(this);
-		post.setParent(this);
-		body.setParent(this);
-	}
-	
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+	public int getSourceLine(){
+		return Integer.parseInt(fortok.split(":")[1]);
 	}
 	
 	public GoBaseIRNode getInit() { return init; }

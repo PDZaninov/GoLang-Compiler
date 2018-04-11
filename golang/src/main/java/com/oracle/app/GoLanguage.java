@@ -22,7 +22,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 
 	public static volatile int counter;
 	
-	public static final String MIME_TYPE = "text/plain";
+	public static final String MIME_TYPE = "text/x-go";
 	
 	public GoLanguage(){
 		counter++;
@@ -83,9 +83,6 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 
     @Override
     protected Object getLanguageGlobal(GoContext context) {
-        /*
-         * The context itself is the global function registry. Go does not have global variables.
-         */
         return context;
     }
 

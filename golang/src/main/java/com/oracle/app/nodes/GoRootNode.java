@@ -1,5 +1,8 @@
 package com.oracle.app.nodes;
 
+import com.oracle.app.GoLanguage;
+//import com.oracle.truffle.Go.builtins.GoBuiltinNode;
+//import com.oracle.truffle.Go.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -7,18 +10,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.SourceSection;
 
-import com.oracle.app.GoLanguage;
-//import com.oracle.truffle.Go.builtins.GoBuiltinNode;
-//import com.oracle.truffle.Go.nodes.controlflow.GoFunctionBodyNode;
-
-
-
-/**
- * The root of all SL execution trees. It is a Truffle requirement that the tree root extends the
- * class {@link RootNode}. This class is used for both builtin and user-defined functions. For
- * builtin functions, the {@link #bodyNode} is a subclass of {@link SLBuiltinNode}. For user-defined
- * functions, the {@link #bodyNode} is a {@link SLFunctionBodyNode}.
- */
 @NodeInfo(language = "Go", description = "The root of all Go execution trees")
 public class GoRootNode extends RootNode {
     /** The function body that is executed, and specialized during execution. */

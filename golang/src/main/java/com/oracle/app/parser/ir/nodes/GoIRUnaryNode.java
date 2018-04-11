@@ -1,34 +1,30 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRUnaryNode extends GoBaseIRNode {
 	
-	private String op;
+	String op;
+	String source;
+	GoBaseIRNode child;
 	
-	private GoBaseIRNode child;
-	
-	public GoIRUnaryNode(String op, GoBaseIRNode child) {
+	public GoIRUnaryNode(String op, GoBaseIRNode child,String source) {
 		super("Unary");
 		this.op = op;
 		this.child = child;
+		this.source = source;
 	}
 	
-	@Override
-	public void setChildParent() {
-		child.setParent(this);
+	public GoBaseIRNode getChild() { 
+		return child; 
 	}
 	
-	@Override
-	public ArrayList<GoBaseIRNode> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+	public int getOpTok(){
+		String[] split = source.split(":");
+		int endindex = Integer.parseInt(split[1]);
+		return endindex;
 	}
-	
-	public GoBaseIRNode getChild() { return child; }
 	
 	public String getOp() {
 		return op;

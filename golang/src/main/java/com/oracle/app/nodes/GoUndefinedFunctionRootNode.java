@@ -1,10 +1,9 @@
 package com.oracle.app.nodes;
 
+import com.oracle.app.GoLanguage;
+import com.oracle.app.runtime.GoUndefinedNameException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
-import com.oracle.app.GoLanguage;
-import com.oracle.app.runtime.GoFunction;
-import com.oracle.app.runtime.GoUndefinedNameException;
 
 /**
  * The initial {@link RootNode} of {@link SLFunction functions} when they are created, i.e., when

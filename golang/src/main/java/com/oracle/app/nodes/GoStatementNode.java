@@ -9,13 +9,8 @@ import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.SourceSection;
 
-/**
- * The base class of all Truffle nodes for SL. All nodes (even expressions) can be used as
- * statements, i.e., without returning a value. The {@link VirtualFrame} provides access to the
- * local variables.
- */
 @NodeInfo(language = "Go", description = "The abstract base node for all SL statements")
-//@Instrumentable(factory = GoStatementNodeWrapper.class)
+@Instrumentable(factory = GoStatementNodeWrapper.class)
 public abstract class GoStatementNode extends Node {
 
     private SourceSection sourceSection;
@@ -29,7 +24,7 @@ public abstract class GoStatementNode extends Node {
     }
 
     public void setSourceSection(SourceSection section) {
-        assert this.sourceSection == null : "overwriting existing SourceSection";
+        //assert this.sourceSection == null : "overwriting existing SourceSection";
         this.sourceSection = section;
     }
 
