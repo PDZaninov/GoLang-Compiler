@@ -18,13 +18,21 @@ public class SimpleMathTest {
 	
 	private PolyglotEngine engine;
 	private PolyglotEngine.Value math;
-	private ByteArrayOutputStream os;
 
 	@Before
 	public void setUp() throws Exception {
-		os = new ByteArrayOutputStream();
-		engine = PolyglotEngine.newBuilder().setOut(os).build();
-		
+		engine = PolyglotEngine.newBuilder().build();
+		engine.eval(
+				Source.newBuilder(""
+						+"package main\n"
+						+"\n"
+						+"func variable() int{\n"
+						+"    var a int = 5 \n"
+						+"    return a \n"
+						+"\\}").
+				name("VariablesTest.go").
+				mimeType("text/x-go").
+				build());
 	}
 
 	@After
@@ -34,23 +42,10 @@ public class SimpleMathTest {
 
 	@Test
 	public void test() throws Exception{
-		engine.eval(
-				Source.newBuilder(""
-						+"package main\n"
-						+"\n"
-						+"func main() {\n"
-						+"    var a int = 5 \n"
-						+"    println(a) \n"
-						+"\\}").
-				name("VariablesTest.go").
-				mimeType("text/x-go").
-				build());
-		math = engine.findGlobalSymbol("main");
-		final Object value = math.get();
-		assertTrue("It's truffle object", value instanceof TruffleObject);
-		Runnable runnable = JavaInterop.asJavaFunction(Runnable.class, (TruffleObject) value);
-        runnable.run();
-		assertEquals("5\n", os.toString("UTF-8"));
+		
+		math = engine.findGlobalSymbol("variable");
+		Number ret = math.execute().as(Number.class);
+		assertEquals(5,ret.intValue());
 		
 	}
 
