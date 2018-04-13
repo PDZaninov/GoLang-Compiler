@@ -6,20 +6,12 @@ import "fmt"
 
  
 
+var globalVar string = "saying hi"
+
+ 
+
 func main() {
 
-  k := 3
-
-  switch k {
-
-    case 1:
-
-        fmt.Println("one")
-
-    case 20:
-
-        fmt.Println("twenty")
-
-  }
+            fmt.Println(globalVar)
 
 }
