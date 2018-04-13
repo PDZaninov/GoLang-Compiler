@@ -127,6 +127,8 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     		switch(array.getType()){
 			case BOOL:
 				return FrameUtil.getBooleanSafe(frame, slot);
+			case FLOAT32:
+				return FrameUtil.getFloatSafe(frame, slot);
 			case FLOAT64:
 				return FrameUtil.getDoubleSafe(frame, slot);
 			case INT:

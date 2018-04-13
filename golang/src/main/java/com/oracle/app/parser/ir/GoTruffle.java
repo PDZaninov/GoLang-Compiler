@@ -495,7 +495,7 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	public Object visitStarNode(GoIRStarNode node){
-		GoStarExpressionNode result = new GoStarExpressionNode((GoReadLocalVariableNode) node.getChild().accept(this));
+		GoStarExpressionNode result = new GoStarExpressionNode((GoExpressionNode) node.getChild().accept(this));
 		return result;
 	}
 	
