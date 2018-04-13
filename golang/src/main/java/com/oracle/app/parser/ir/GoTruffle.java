@@ -500,7 +500,7 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	/**
-	 * Only called when needing to read from an array so return a read.
+	 * Only called when needing to read from an arraylike object so return a read.
 	 */
 	@Override
 	public Object visitIndexNode(GoIRIndexNode node){

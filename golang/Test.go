@@ -1,18 +1,25 @@
 package main
 
+ 
+
 import "fmt"
 
-/*
-Global block comment
-*/
-//Single line comment
+ 
+
 func main() {
-    /*
-    block comment
-    */
-    var k int = 20
-    ptr := &k
-    ptr2 := &ptr
-    ptr3 := &ptr2
-    fmt.Println(***ptr3)
+
+  k := 3
+
+  switch k {
+
+    case 1:
+
+        fmt.Println("one")
+
+    case 20:
+
+        fmt.Println("twenty")
+
+  }
+
 }
