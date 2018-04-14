@@ -1,17 +1,9 @@
 package main
 
- 
-
 import "fmt"
 
- 
+func main(){
 
-var globalVar string = "saying hi"
-
- 
-
-func main() {
-
-            fmt.Println(globalVar)
-
+    fmt.Println("2" + "3")
+    
 }
