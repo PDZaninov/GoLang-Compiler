@@ -91,6 +91,22 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 	
 	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts){
 		Object[] results = elts.gatherResults(frame);
+		if(results[0] instanceof Integer){
+			this.type = GoPrimitiveTypes.INT;
+		}
+		else if(results[0] instanceof Float){
+			this.type = GoPrimitiveTypes.FLOAT32;
+		}
+		else if(results[0] instanceof Double){
+			this.type = GoPrimitiveTypes.FLOAT64;
+		}
+		else if(results[0] instanceof String){
+			this.type = GoPrimitiveTypes.STRING;
+		}
+		else{
+			this.type = GoPrimitiveTypes.OBJECT;
+			//System.out.println("Array Type "+type+" not implemented");
+		}
 		return fillCompositeFields(frame, results);
 	}
 	/**

@@ -1,6 +1,7 @@
 package com.oracle.app.nodes.types;
 
 import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 
@@ -28,6 +29,7 @@ public class GoArray extends GoArrayLikeTypes{
 		return length;
 	}
 	
+	@Override
 	public void insert(VirtualFrame frame, int index, int value){
 		if(index > length || index < 0){
 			//Throws error
@@ -37,6 +39,7 @@ public class GoArray extends GoArrayLikeTypes{
 		frame.setInt(arr[index], value);
 	}
 	
+	@Override
 	public void insert(VirtualFrame frame, int index, float value){
 		if(index > length || index < 0){
 			//Throws error
@@ -46,6 +49,17 @@ public class GoArray extends GoArrayLikeTypes{
 		frame.setFloat(arr[index], value);
 	}
 	
+	@Override
+	public void insert(VirtualFrame frame, int index, double value){
+		if(index > length || index < 0){
+			//Throws error
+			System.out.println("Invalid array index");
+			return;
+		}
+		frame.setDouble(arr[index], value);
+	}
+	
+	@Override
 	public void insert(VirtualFrame frame, int index, boolean value){
 		if(index > length || index < 0){
 			//Throws error
@@ -55,6 +69,7 @@ public class GoArray extends GoArrayLikeTypes{
 		frame.setBoolean(arr[index], value);
 	}
 
+	@Override
 	public void insert(VirtualFrame frame, int index, Object value){
 		if(index > length || index < 0){
 			//Throws error
@@ -78,9 +93,28 @@ public class GoArray extends GoArrayLikeTypes{
 		arr[index] = slot;
 	}
 	
+	/**
+	 * Returns the value stored in the frameslot of the index.
+	 */
 	@Override
-	public FrameSlot readArray(VirtualFrame frame, int index){
-		return arr[index];
+	public Object readArray(VirtualFrame frame, int index){
+		FrameSlot frameSlot = arr[index];
+		switch(type){
+		case BOOL:
+			return FrameUtil.getBooleanSafe(frame, frameSlot);
+		case FLOAT32:
+			return FrameUtil.getFloatSafe(frame, frameSlot);
+		case FLOAT64:
+			return FrameUtil.getDoubleSafe(frame, frameSlot);
+		case INT:
+			return FrameUtil.getIntSafe(frame, frameSlot);
+		case OBJECT:
+		case STRING:
+			return FrameUtil.getObjectSafe(frame, frameSlot);
+		default:
+			System.out.println("Read array Error");
+			return null;
+		}
 	}
 	
 	@Override
@@ -89,7 +123,7 @@ public class GoArray extends GoArrayLikeTypes{
 	}
 	
 	/**
-	 * Will need to change to account for objects, not just primitives
+	 * Will need to change to account for objects, not just primitives/ JK
 	 * @return - The type of array
 	 */
 	@Override
@@ -108,6 +142,10 @@ public class GoArray extends GoArrayLikeTypes{
 	@Override
 	public GoArray executeGeneric(VirtualFrame frame){
 		return this;
+	}
+
+	public FrameSlot getSlot(VirtualFrame frame, int index) {
+		return arr[index];
 	}
 
 }

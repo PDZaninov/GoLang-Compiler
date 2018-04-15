@@ -51,10 +51,10 @@ import com.oracle.app.nodes.expression.GoSliceExprNode;
 import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
+import com.oracle.app.nodes.local.GoArrayReadNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
-import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
@@ -490,9 +490,11 @@ public class GoTruffle implements GoIRVisitor {
 	 */
 	@Override
 	public Object visitIndexNode(GoIRIndexNode node){
-		FrameSlot slot = frameDescriptor.findFrameSlot(node.getIdentifier());
+		//FrameSlot slot = frameDescriptor.findFrameSlot(node.getIdentifier());
+		GoExpressionNode expr = (GoExpressionNode) node.getName().accept(this);
 		GoExpressionNode index = (GoExpressionNode) node.getIndex().accept(this);
-		GoReadArrayNode read = GoReadArrayNodeGen.create(index, slot);
+		GoArrayReadNode read = new GoArrayReadNode(expr,index);
+		//GoReadArrayNode read = GoReadArrayNodeGen.create(index, slot);
 		//int start = node.getLBrack();
 		//int startLine = node.getLineNumber();
 		//int length = node.getSourceSize();
@@ -551,7 +553,10 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visit(GoIRCompositeLitNode node){
-		GoExpressionNode type = (GoExpressionNode) node.getExpr().accept(this);
+		GoExpressionNode type = null;
+		if(node.getExpr() != null){
+			type = (GoExpressionNode) node.getExpr().accept(this);
+		}
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
 		GoCompositeLitNode result = new GoCompositeLitNode((GoArrayTypeExprNode) type, elts);
 		return result;
