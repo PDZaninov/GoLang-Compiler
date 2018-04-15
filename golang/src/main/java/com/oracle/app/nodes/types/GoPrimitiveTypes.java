@@ -5,5 +5,6 @@ public enum GoPrimitiveTypes {
 	FLOAT32,
 	FLOAT64,
 	STRING,
-	BOOL
+	BOOL,
+	OBJECT
 }

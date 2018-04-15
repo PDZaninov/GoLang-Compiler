@@ -135,6 +135,8 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 				return FrameUtil.getIntSafe(frame, slot);
 			case STRING:
 				return FrameUtil.getObjectSafe(frame, slot);
+			case OBJECT:
+				return FrameUtil.getObjectSafe(frame, slot);
 			default:
 				return null;
     		}

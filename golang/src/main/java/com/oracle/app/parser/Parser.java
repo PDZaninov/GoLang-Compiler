@@ -347,7 +347,7 @@ public class Parser {
 						);
 				
 			case "IndexExpr":
-				return new GoIRIndexNode((GoIRIdentNode) body.get("X"),
+				return new GoIRIndexNode((GoBaseIRNode) body.get("X"),
 						body.get("Index"),
 						attrs.get("Lbrack"),
 						attrs.get("Rbrack")

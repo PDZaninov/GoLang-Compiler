@@ -8,19 +8,10 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 	GoBaseIRNode type;
 	String source;
 	
-	boolean isSlice = false;
-	
 	public GoIRArrayTypeNode(GoBaseIRNode length, GoBaseIRNode type, String source) {
 		super("IR Array Type Node");
 		len = length;
 		this.type = type;
-		this.source = source;
-	}
-	
-	public GoIRArrayTypeNode(GoBaseIRNode type, boolean isSlice, String source) {
-		super("IR Array Type Node");
-		this.type = type;
-		this.isSlice = true;
 		this.source = source;
 	}
 	
@@ -34,10 +25,6 @@ public class GoIRArrayTypeNode extends GoBaseIRNode{
 	
 	public GoBaseIRNode getType(){
 		return type;
-	}
-	
-	public boolean getIsSlice() {
-		return isSlice;
 	}
 
 	@Override

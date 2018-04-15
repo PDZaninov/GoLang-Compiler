@@ -68,7 +68,6 @@ import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
@@ -182,17 +181,6 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = lexicalscope.outer;
     }
     
-    /*TODO Remove this after removing GoIRDeclNode
-    public GoStatementNode[] arrayListtoArray(GoBaseIRNode node) {
-    	ArrayList<GoBaseIRNode> children = node.getChildren();
-    	int argumentsize = children.size();
-		GoStatementNode[] arguments = new GoStatementNode[argumentsize];
-		for(int i = 0; i < argumentsize; i++){
-			arguments[i] = (GoStatementNode) children.get(i).accept(this);
-		}
-		return arguments;
-    }
-	*/
 	@Override
 	public Object visitObject(GoTempIRNode node) {
 		for(GoBaseIRNode child : node.getChildren())
@@ -294,9 +282,13 @@ public class GoTruffle implements GoIRVisitor {
 		return result;
 	}
 
-	public GoFloat32Node visitIRFloat32Node(GoIRFloat32Node node) { return new GoFloat32Node(node.getValue()); }
+	public GoFloat32Node visitIRFloat32Node(GoIRFloat32Node node) { 
+		return new GoFloat32Node(node.getValue());
+	}
 
-	public GoFloat64Node visitIRFloat64Node(GoIRFloat64Node node) { return new GoFloat64Node(node.getValue()); }
+	public GoFloat64Node visitIRFloat64Node(GoIRFloat64Node node) { 
+		return new GoFloat64Node(node.getValue()); 
+	}
 	
 	public GoStringNode visitIRStringNode(GoIRStringNode node){
 		GoStringNode result = new GoStringNode(node.getValue());
@@ -340,12 +332,6 @@ public class GoTruffle implements GoIRVisitor {
 		finishBlock();
 		
 		//frameDescriptor = null;
-		return null;
-	}
-
-	@Override
-	public Object visitDecl(GoIRDeclNode node) {
-		//TODO check if this can be removed, replaced with GoIRArraylistExprNode
 		return null;
 	}
 
@@ -470,7 +456,7 @@ public class GoTruffle implements GoIRVisitor {
 			break;
 		default:
 			System.out.println("GenDecl Error Checking Implementation");
-			result = null;
+			return null;
 		}
 
 		GoArrayExprNode results = new GoArrayExprNode(result.getArguments());
@@ -528,8 +514,8 @@ public class GoTruffle implements GoIRVisitor {
 		else {
 			length = (GoExpressionNode) node.getLength().accept(this);
 		}
-		//GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
-		String type = node.getType().getIdentifier();
+		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		//String type = node.getType().getIdentifier();
 		//Catch error where length is not an int node or possibly an int const
 		GoArrayTypeExprNode result = new GoArrayTypeExprNode((GoIntNode) length,type);
 
