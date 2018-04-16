@@ -286,9 +286,10 @@ public class Parser {
 				
 			case "]*ast.Field":
 				return new GoTempIRNode(nodeType,attrs,body);
+
 			case "FieldList":
-				//Didn't even know we were missing this node
-				return new GoTempIRNode(nodeType,attrs,body);
+				GoIRArrayListExprNode fields = (GoIRArrayListExprNode) body.get("List");
+				return  new GoIRFieldListNode(fields);
 				
 			case "File":
 				return new GoTempIRNode(nodeType,attrs,body);
@@ -406,6 +407,10 @@ public class Parser {
 			case "Stmt":
 				return new GoIRStmtNode(packIntoArrayList(body.values()));
 
+			case "StructType":
+				GoIRFieldList fields = (GoIRFieldListNode) body.get("Fields");
+				return new GoIRStructTypeNode(fields);
+
 			case "SwitchStmt":
 				GoIRStmtNode switchinit = (GoIRStmtNode) body.get("Init");
 				GoBaseIRNode tag = body.get("Tag");
@@ -415,6 +420,11 @@ public class Parser {
 						switchbody,
 						attrs.get("Switch")
 						);
+
+			case "TypeSpec":
+				GoBaseIRNode name = body.get("Name");
+				GoBaseIRNode type = body.get("Type");
+				return new GoIRTypeSpecNode(name, type);
 				
 			case "ValueSpec":
 				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");

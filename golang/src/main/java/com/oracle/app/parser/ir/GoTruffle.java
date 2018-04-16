@@ -13,6 +13,9 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
+import com.oracle.app.nodes.SpecDecl.GoFieldListNode;
+import com.oracle.app.nodes.SpecDecl.GoFieldNode;
+import com.oracle.app.nodes.SpecDecl.GoTypeSpecNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
@@ -98,6 +101,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.source.Source;
+
 
 /**
  * Constructs the Truffle tree using a visitor pattern to visit
@@ -737,5 +741,7 @@ public class GoTruffle implements GoIRVisitor {
 		//return node.accept(this);
 		return null;
 	}
+
+	@Override
 
 }

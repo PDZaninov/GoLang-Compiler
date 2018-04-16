@@ -240,4 +240,19 @@ public interface GoIRVisitor {
 		return null;
 	}
 
+	default Object visitTypeSpec(GoIRTypeSpecNode goIRTypeSpecNode){
+		System.out.println("Default Type Spec visit");
+		return null;
+	}
+
+	default Object visitStructType(GoIRStructTypeNode goIRStructTypeNode){
+		System.out.println("Default Struct Type visit");
+		return null;
+	}
+
+	default Object visitFieldList(GoIRFieldListNode goIRFieldListNode){
+		System.out.println("Default Field List visit");
+		return null;
+	}
+
 }
