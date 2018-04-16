@@ -12,7 +12,7 @@ import com.oracle.truffle.api.nodes.RootNode;
  */
 public class GoUndefinedFunctionRootNode extends GoRootNode {
     public GoUndefinedFunctionRootNode(GoLanguage language, String name) {
-        super(language, null, null, null, name);
+        super(language,null,null,null, null, null, name);
     }
 
     @Override

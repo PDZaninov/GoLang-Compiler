@@ -56,9 +56,6 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		Map<String, GoRootNode> function;
 		function = Parser.parseGo(this, source);
 		
-		//GoRootNode evalMain = new GoRootNode(this,null,man,null,"main");
-		
-		
 		GoRootNode main = function.get("main");
 		GoRootNode evalMain;
 		if(main != null) {
