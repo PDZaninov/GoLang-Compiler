@@ -328,17 +328,16 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
 
 		startFunction();
-
+		GoIdentNode nameNode = (GoIdentNode) node.getName().accept(this);
+		GoFuncTypeNode typeNode = (GoFuncTypeNode) node.getType().accept(this);
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
-		GoExpressionNode typeNode = (GoExpressionNode) node.getType().accept(this);
-		GoExpressionNode nameNode = (GoExpressionNode) node.getName().accept(this);
 		String name = node.getIdentifier();
 		//int start = nameNode.getSourceSection().getCharIndex();
 		//int end = blockNode.getSourceSection().getCharEndIndex();
 		//SourceSection section = source.createSection(start, end);
 		//System.out.println(section);
-		GoRootNode root = new GoRootNode(language,frameDescriptor,bodyNode,null,name);
+		GoRootNode root = new GoRootNode(language,frameDescriptor,nameNode,typeNode,bodyNode,null,name);
 		allFunctions.put(name,root);
 		finishBlock();
 		
