@@ -20,7 +20,10 @@ public class GoFieldNode extends GoExpressionNode{
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return names.executeGeneric(frame);
+		if(names != null) {
+			return names.executeGeneric(frame);
+		}
+		return null;
 	}
 	
 	
