@@ -12,3 +12,5 @@ bin/
 /.metadata/
 *.iml
 printast
+UnitTest.ast
+UnitTest.go

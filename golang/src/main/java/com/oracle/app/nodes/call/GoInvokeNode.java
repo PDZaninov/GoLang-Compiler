@@ -67,14 +67,18 @@ public class GoInvokeNode extends GoExpressionNode {
     }
     
     public void assignToSlot(VirtualFrame frame, Object[] argumentValues) {
+    	if(functionReference.getParameters() == null) {
+    		return;
+    	}
     	GoExpressionNode[] params = ((GoArrayExprNode) functionReference.getParameters().getArguments()[0]).getArguments();
+    	
     	if(params.length != argumentValues.length) {
     		throw new RuntimeException("Parameter mismatch: " + functionReference.toString());
     	}
-    	System.out.println(params.length);
+    	
     	for(int i = 0; i < argumentValues.length; i++) {
-    		
-    	}
-    		
+    		System.out.println(((GoFieldNode) params[i]).getName());
+    		System.out.println(argumentValues[i].toString());
+        }
     }
 }

@@ -18,6 +18,10 @@ public class GoFieldNode extends GoExpressionNode{
 		this.typeName = typeName;
 	}
 	
+	public String getName() {
+		return ((GoIdentNode) names.getArguments()[0]).getName();
+	}
+	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		if(names != null) {
