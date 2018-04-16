@@ -309,6 +309,7 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
+		String functionName = node.getFunctionNode().getIdentifier();
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
@@ -317,7 +318,7 @@ public class GoTruffle implements GoIRVisitor {
 		else{
 			arguments = new GoArrayExprNode(new GoExpressionNode[0]);
 		}
-		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments());
+		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments(), allFunctions.get(functionName));
 		//int start = functionNode.getSourceSection().getCharIndex();
 		//int end = arguments.getSourceSection().getCharEndIndex() + 1 - start;
 		//result.setSourceSection(source.createSection(start,end));

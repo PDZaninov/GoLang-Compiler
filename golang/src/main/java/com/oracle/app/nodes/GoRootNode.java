@@ -47,6 +47,10 @@ public class GoRootNode extends RootNode {
         }
         return bodyNode.executeGeneric(frame);
     }
+    
+    public GoArrayExprNode getParameters() {
+    	return typeNode.getParams();
+    }
         
     public GoExpressionNode getBodyNode() {
         return bodyNode;

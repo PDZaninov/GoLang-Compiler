@@ -1,7 +1,9 @@
 package com.oracle.app.nodes.call;
 
+import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
+import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.CompilerAsserts;
@@ -16,10 +18,13 @@ public class GoInvokeNode extends GoExpressionNode {
     @Child protected GoExpressionNode functionNode;
     @Children protected final GoExpressionNode[] argumentNodes;
     @Child protected GoGenericDispatchNode dispatchNode;
+    
+    GoRootNode functionReference;
 
-    public GoInvokeNode(GoExpressionNode functionNode, GoExpressionNode[] argumentNodes) {
+    public GoInvokeNode(GoExpressionNode functionNode, GoExpressionNode[] argumentNodes, GoRootNode root) {
         this.functionNode = functionNode;
         this.argumentNodes = argumentNodes;
+        this.functionReference = root;
         this.dispatchNode = GoGenericDispatchNodeGen.create();
     }
 
@@ -36,6 +41,7 @@ public class GoInvokeNode extends GoExpressionNode {
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
+        assignToSlot(frame, argumentValues);
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 
@@ -60,8 +66,15 @@ public class GoInvokeNode extends GoExpressionNode {
         return function;
     }
     
-    public void assignToSlot(VirtualFrame frame) {
-    	GoFunction function = getFunctionIdentifier();
-    	//need to get funcType node params
+    public void assignToSlot(VirtualFrame frame, Object[] argumentValues) {
+    	GoExpressionNode[] params = ((GoArrayExprNode) functionReference.getParameters().getArguments()[0]).getArguments();
+    	if(params.length != argumentValues.length) {
+    		throw new RuntimeException("Parameter mismatch: " + functionReference.toString());
+    	}
+    	System.out.println(params.length);
+    	for(int i = 0; i < argumentValues.length; i++) {
+    		
+    	}
+    		
     }
 }

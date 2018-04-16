@@ -16,6 +16,10 @@ public class GoFuncTypeNode extends GoExpressionNode{
 		this.results = results;
 	}
 	
+	public GoArrayExprNode getParams() {
+		return params;
+	}
+	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		return params.executeGeneric(frame);
