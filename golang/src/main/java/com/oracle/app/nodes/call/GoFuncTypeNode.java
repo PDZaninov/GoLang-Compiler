@@ -20,7 +20,4 @@ public class GoFuncTypeNode extends GoExpressionNode{
 	public Object executeGeneric(VirtualFrame frame) {
 		return params.executeGeneric(frame);
 	}
-	
-	
-	
 }

@@ -22,7 +22,6 @@ public class GoInvokeNode extends GoExpressionNode {
         this.argumentNodes = argumentNodes;
         this.dispatchNode = GoGenericDispatchNodeGen.create();
     }
-    
 
     /*
      * Executes only the generic function call. So only the slow route is available for function calls
@@ -30,15 +29,8 @@ public class GoInvokeNode extends GoExpressionNode {
     @ExplodeLoop
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        GoFunction function;
-        if(functionNode instanceof GoIdentNode) {
-            function = ((GoIdentNode) functionNode).getFunction();
-        }
-        else {
-            GoSelectorExprNode select = (GoSelectorExprNode) functionNode;
-            select.loadBuiltIn();
-            function = select.getFunction();
-        }
+        GoFunction function = getFunctionIdentifier();
+
         CompilerAsserts.compilationConstant(argumentNodes.length);
         Object[] argumentValues = new Object[argumentNodes.length];
         for (int i = 0; i < argumentNodes.length; i++) {
@@ -53,5 +45,23 @@ public class GoInvokeNode extends GoExpressionNode {
             return true;
         }
         return super.isTaggedWith(tag);
+    }
+    
+    public GoFunction getFunctionIdentifier() {
+    	GoFunction function;
+        if(functionNode instanceof GoIdentNode) {
+            function = ((GoIdentNode) functionNode).getFunction();
+        }
+        else {
+            GoSelectorExprNode select = (GoSelectorExprNode) functionNode;
+            select.loadBuiltIn();
+            function = select.getFunction();
+        }
+        return function;
+    }
+    
+    public void assignToSlot(VirtualFrame frame) {
+    	GoFunction function = getFunctionIdentifier();
+    	//need to get funcType node params
     }
 }

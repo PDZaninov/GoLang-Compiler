@@ -25,21 +25,4 @@ public class GoFieldNode extends GoExpressionNode{
 		}
 		return null;
 	}
-	
-	
-	
 }
-//type Field
-//A Field represents a Field declaration list in a struct type, a method list in an interface type, or a parameter/result declaration in a signature.
-//
-//type Field struct {
-//        Doc     *CommentGroup // associated documentation; or nil
-//        Names   []*Ident      // field/method/parameter names; or nil if anonymous field
-//        Type    Expr          // field/method/parameter type
-//        Tag     *BasicLit     // field tag; or nil
-//        Comment *CommentGroup // line comments; or nil
-//}
-//func (*Field) End
-//func (f *Field) End() token.Pos
-//func (*Field) Pos
-//func (f *Field) Pos() token.Pos
