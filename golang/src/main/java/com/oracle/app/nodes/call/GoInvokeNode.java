@@ -5,8 +5,11 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.CompilerAsserts;
+import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
@@ -41,7 +44,7 @@ public class GoInvokeNode extends GoExpressionNode {
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
-        assignToSlot(frame, argumentValues);
+        assignToSlot();
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 
@@ -66,19 +69,26 @@ public class GoInvokeNode extends GoExpressionNode {
         return function;
     }
     
-    public void assignToSlot(VirtualFrame frame, Object[] argumentValues) {
+    public void assignToSlot() {
     	if(functionReference == null || functionReference.getParameters() == null) {
     		return;
     	}
     	GoExpressionNode[] params = ((GoArrayExprNode) functionReference.getParameters().getArguments()[0]).getArguments();
     	
-    	if(params.length != argumentValues.length) {
+    	if(params.length != argumentNodes.length) {
     		throw new RuntimeException("Parameter mismatch: " + functionReference.toString());
     	}
-    	
-    	for(int i = 0; i < argumentValues.length; i++) {
-    		System.out.println(((GoFieldNode) params[i]).getName());
-    		System.out.println(argumentValues[i].toString());
+
+    	FrameDescriptor frameDescriptor = functionReference.getFrameDescriptor();
+
+    	for(int i = 0; i < argumentNodes.length; i++) {
+            writeValue(frameDescriptor, ((GoFieldNode) params[i]).getName(), argumentNodes[i]);
         }
+    }
+
+    public void writeValue(FrameDescriptor frameDescriptor, String name , GoExpressionNode value) {
+        FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
+        GoExpressionNode write = GoWriteLocalVariableNodeGen.create(value, slot);
+
     }
 }
