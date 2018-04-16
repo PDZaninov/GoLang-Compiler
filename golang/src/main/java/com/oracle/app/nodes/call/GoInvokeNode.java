@@ -67,7 +67,7 @@ public class GoInvokeNode extends GoExpressionNode {
     }
     
     public void assignToSlot(VirtualFrame frame, Object[] argumentValues) {
-    	if(functionReference.getParameters() == null) {
+    	if(functionReference == null || functionReference.getParameters() == null) {
     		return;
     	}
     	GoExpressionNode[] params = ((GoArrayExprNode) functionReference.getParameters().getArguments()[0]).getArguments();
