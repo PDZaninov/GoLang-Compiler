@@ -1,18 +1,26 @@
-package com.oracle.app.nodes.SpecDecl;
+package com.oracle.app.nodes.call;
 
+import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class GoFieldNode extends GoExpressionNode{
 
-	String type;
-	@Child GoIdentNode[] Names;
+	@Child GoArrayExprNode names;
+	@Child GoIdentNode type;
+	
+	String typeName;
+	
+	public GoFieldNode(GoArrayExprNode names, GoIdentNode type, String typeName) {
+		this.names = names;
+		this.type = type;
+		this.typeName = typeName;
+	}
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		// TODO Auto-generated method stub
-		return null;
+		return names.executeGeneric(frame);
 	}
 	
 	

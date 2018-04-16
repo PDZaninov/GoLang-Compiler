@@ -13,6 +13,8 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
+import com.oracle.app.nodes.call.GoFieldNode;
+import com.oracle.app.nodes.call.GoFuncTypeNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
@@ -77,6 +79,7 @@ import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
@@ -341,6 +344,26 @@ public class GoTruffle implements GoIRVisitor {
 		
 		//frameDescriptor = null;
 		return null;
+	}
+	
+	@Override
+	public Object visitFuncType(GoIRFuncTypeNode node) {
+		GoArrayExprNode params = (GoArrayExprNode) node.getParams().accept(this);
+		GoArrayExprNode results = (GoArrayExprNode) node.getResults().accept(this);
+		return new GoFuncTypeNode(params, results);
+	}
+	
+	@Override
+	public Object visitField(GoIRFieldNode node){
+		GoArrayExprNode names = (GoArrayExprNode) node.getNames().accept(this);
+		GoIdentNode type = (GoIdentNode) node.getType().accept(this);
+		String typeName = node.getTypeName();
+		return new GoFieldNode(names, type, typeName);
+	}
+	
+	@Override
+	public Object visitReturnStmt(GoIRReturnStmtNode node){
+		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	
 	}
 
 	@Override
@@ -722,20 +745,6 @@ public class GoTruffle implements GoIRVisitor {
 		GoIdentNode importPackage = (GoIdentNode) goIRSelectorExprNode.getImportName().accept(this);
 		GoIdentNode importMethod = (GoIdentNode) goIRSelectorExprNode.getImportMethod().accept(this);
 		return new GoSelectorExprNode(language, importPackage, importMethod);
-	}
-	
-	@Override
-	public Object visitReturnStmt(GoIRReturnStmtNode node){
-		
-		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));
-		
-	}
-	
-	@Override
-	public Object visitField(GoIRFieldNode node){
-		
-		//return node.accept(this);
-		return null;
 	}
 
 }

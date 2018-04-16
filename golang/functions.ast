@@ -1,0 +1,155 @@
+     0  *ast.File {
+     1  .  Package: functions.go:1:1
+     2  .  Name: *ast.Ident {
+     3  .  .  NamePos: functions.go:1:9
+     4  .  .  Name: "main"
+     5  .  }
+     6  .  Decls: []ast.Decl (len = 2) {
+     7  .  .  0: *ast.FuncDecl {
+     8  .  .  .  Name: *ast.Ident {
+     9  .  .  .  .  NamePos: functions.go:4:6
+    10  .  .  .  .  Name: "addnums"
+    11  .  .  .  .  Obj: *ast.Object {
+    12  .  .  .  .  .  Kind: func
+    13  .  .  .  .  .  Name: "addnums"
+    14  .  .  .  .  .  Decl: *(obj @ 7)
+    15  .  .  .  .  }
+    16  .  .  .  }
+    17  .  .  .  Type: *ast.FuncType {
+    18  .  .  .  .  Func: functions.go:4:1
+    19  .  .  .  .  Params: *ast.FieldList {
+    20  .  .  .  .  .  Opening: functions.go:4:13
+    21  .  .  .  .  .  List: []*ast.Field (len = 2) {
+    22  .  .  .  .  .  .  0: *ast.Field {
+    23  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+    24  .  .  .  .  .  .  .  .  0: *ast.Ident {
+    25  .  .  .  .  .  .  .  .  .  NamePos: functions.go:4:14
+    26  .  .  .  .  .  .  .  .  .  Name: "x"
+    27  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+    28  .  .  .  .  .  .  .  .  .  .  Kind: var
+    29  .  .  .  .  .  .  .  .  .  .  Name: "x"
+    30  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 22)
+    31  .  .  .  .  .  .  .  .  .  }
+    32  .  .  .  .  .  .  .  .  }
+    33  .  .  .  .  .  .  .  }
+    34  .  .  .  .  .  .  .  Type: *ast.Ident {
+    35  .  .  .  .  .  .  .  .  NamePos: functions.go:4:16
+    36  .  .  .  .  .  .  .  .  Name: "int"
+    37  .  .  .  .  .  .  .  }
+    38  .  .  .  .  .  .  }
+    39  .  .  .  .  .  .  1: *ast.Field {
+    40  .  .  .  .  .  .  .  Names: []*ast.Ident (len = 1) {
+    41  .  .  .  .  .  .  .  .  0: *ast.Ident {
+    42  .  .  .  .  .  .  .  .  .  NamePos: functions.go:4:21
+    43  .  .  .  .  .  .  .  .  .  Name: "y"
+    44  .  .  .  .  .  .  .  .  .  Obj: *ast.Object {
+    45  .  .  .  .  .  .  .  .  .  .  Kind: var
+    46  .  .  .  .  .  .  .  .  .  .  Name: "y"
+    47  .  .  .  .  .  .  .  .  .  .  Decl: *(obj @ 39)
+    48  .  .  .  .  .  .  .  .  .  }
+    49  .  .  .  .  .  .  .  .  }
+    50  .  .  .  .  .  .  .  }
+    51  .  .  .  .  .  .  .  Type: *ast.Ident {
+    52  .  .  .  .  .  .  .  .  NamePos: functions.go:4:23
+    53  .  .  .  .  .  .  .  .  Name: "int"
+    54  .  .  .  .  .  .  .  }
+    55  .  .  .  .  .  .  }
+    56  .  .  .  .  .  }
+    57  .  .  .  .  .  Closing: functions.go:4:26
+    58  .  .  .  .  }
+    59  .  .  .  }
+    60  .  .  .  Body: *ast.BlockStmt {
+    61  .  .  .  .  Lbrace: functions.go:4:28
+    62  .  .  .  .  List: []ast.Stmt (len = 1) {
+    63  .  .  .  .  .  0: *ast.ExprStmt {
+    64  .  .  .  .  .  .  X: *ast.CallExpr {
+    65  .  .  .  .  .  .  .  Fun: *ast.Ident {
+    66  .  .  .  .  .  .  .  .  NamePos: functions.go:5:2
+    67  .  .  .  .  .  .  .  .  Name: "println"
+    68  .  .  .  .  .  .  .  }
+    69  .  .  .  .  .  .  .  Lparen: functions.go:5:9
+    70  .  .  .  .  .  .  .  Args: []ast.Expr (len = 1) {
+    71  .  .  .  .  .  .  .  .  0: *ast.BinaryExpr {
+    72  .  .  .  .  .  .  .  .  .  X: *ast.Ident {
+    73  .  .  .  .  .  .  .  .  .  .  NamePos: functions.go:5:10
+    74  .  .  .  .  .  .  .  .  .  .  Name: "x"
+    75  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 27)
+    76  .  .  .  .  .  .  .  .  .  }
+    77  .  .  .  .  .  .  .  .  .  OpPos: functions.go:5:11
+    78  .  .  .  .  .  .  .  .  .  Op: +
+    79  .  .  .  .  .  .  .  .  .  Y: *ast.Ident {
+    80  .  .  .  .  .  .  .  .  .  .  NamePos: functions.go:5:12
+    81  .  .  .  .  .  .  .  .  .  .  Name: "y"
+    82  .  .  .  .  .  .  .  .  .  .  Obj: *(obj @ 44)
+    83  .  .  .  .  .  .  .  .  .  }
+    84  .  .  .  .  .  .  .  .  }
+    85  .  .  .  .  .  .  .  }
+    86  .  .  .  .  .  .  .  Ellipsis: -
+    87  .  .  .  .  .  .  .  Rparen: functions.go:5:13
+    88  .  .  .  .  .  .  }
+    89  .  .  .  .  .  }
+    90  .  .  .  .  }
+    91  .  .  .  .  Rbrace: functions.go:6:1
+    92  .  .  .  }
+    93  .  .  }
+    94  .  .  1: *ast.FuncDecl {
+    95  .  .  .  Name: *ast.Ident {
+    96  .  .  .  .  NamePos: functions.go:8:6
+    97  .  .  .  .  Name: "main"
+    98  .  .  .  .  Obj: *ast.Object {
+    99  .  .  .  .  .  Kind: func
+   100  .  .  .  .  .  Name: "main"
+   101  .  .  .  .  .  Decl: *(obj @ 94)
+   102  .  .  .  .  }
+   103  .  .  .  }
+   104  .  .  .  Type: *ast.FuncType {
+   105  .  .  .  .  Func: functions.go:8:1
+   106  .  .  .  .  Params: *ast.FieldList {
+   107  .  .  .  .  .  Opening: functions.go:8:10
+   108  .  .  .  .  .  Closing: functions.go:8:11
+   109  .  .  .  .  }
+   110  .  .  .  }
+   111  .  .  .  Body: *ast.BlockStmt {
+   112  .  .  .  .  Lbrace: functions.go:8:13
+   113  .  .  .  .  List: []ast.Stmt (len = 1) {
+   114  .  .  .  .  .  0: *ast.ExprStmt {
+   115  .  .  .  .  .  .  X: *ast.CallExpr {
+   116  .  .  .  .  .  .  .  Fun: *ast.Ident {
+   117  .  .  .  .  .  .  .  .  NamePos: functions.go:9:2
+   118  .  .  .  .  .  .  .  .  Name: "addnums"
+   119  .  .  .  .  .  .  .  .  Obj: *(obj @ 11)
+   120  .  .  .  .  .  .  .  }
+   121  .  .  .  .  .  .  .  Lparen: functions.go:9:9
+   122  .  .  .  .  .  .  .  Args: []ast.Expr (len = 2) {
+   123  .  .  .  .  .  .  .  .  0: *ast.BasicLit {
+   124  .  .  .  .  .  .  .  .  .  ValuePos: functions.go:9:10
+   125  .  .  .  .  .  .  .  .  .  Kind: INT
+   126  .  .  .  .  .  .  .  .  .  Value: "42"
+   127  .  .  .  .  .  .  .  .  }
+   128  .  .  .  .  .  .  .  .  1: *ast.BasicLit {
+   129  .  .  .  .  .  .  .  .  .  ValuePos: functions.go:9:14
+   130  .  .  .  .  .  .  .  .  .  Kind: INT
+   131  .  .  .  .  .  .  .  .  .  Value: "13"
+   132  .  .  .  .  .  .  .  .  }
+   133  .  .  .  .  .  .  .  }
+   134  .  .  .  .  .  .  .  Ellipsis: -
+   135  .  .  .  .  .  .  .  Rparen: functions.go:9:16
+   136  .  .  .  .  .  .  }
+   137  .  .  .  .  .  }
+   138  .  .  .  .  }
+   139  .  .  .  .  Rbrace: functions.go:10:1
+   140  .  .  .  }
+   141  .  .  }
+   142  .  }
+   143  .  Scope: *ast.Scope {
+   144  .  .  Objects: map[string]*ast.Object (len = 2) {
+   145  .  .  .  "addnums": *(obj @ 11)
+   146  .  .  .  "main": *(obj @ 98)
+   147  .  .  }
+   148  .  }
+   149  .  Unresolved: []*ast.Ident (len = 3) {
+   150  .  .  0: *(obj @ 34)
+   151  .  .  1: *(obj @ 51)
+   152  .  .  2: *(obj @ 65)
+   153  .  }
+   154  }

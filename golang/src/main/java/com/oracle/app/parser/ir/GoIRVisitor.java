@@ -24,6 +24,7 @@ import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
@@ -237,6 +238,11 @@ public interface GoIRVisitor {
 
 	default Object visitSliceExpr(GoIRSliceExprNode goIRSliceExprNode){
 		System.out.println("Default Slice Expr Visit");
+		return null;
+	}
+	
+	default Object visitFuncType(GoIRFuncTypeNode node){
+		System.out.println("Default Func Type Visit");
 		return null;
 	}
 
