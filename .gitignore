@@ -11,3 +11,4 @@ bin/
 .recommenders/
 /.metadata/
 *.iml
+printast
