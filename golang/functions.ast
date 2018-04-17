@@ -152,8 +152,8 @@
    151  .  }
    152  .  Scope: *ast.Scope {
    153  .  .  Objects: map[string]*ast.Object (len = 2) {
-   154  .  .  .  "addnums": *(obj @ 11)
-   155  .  .  .  "main": *(obj @ 107)
+   154  .  .  .  "main": *(obj @ 107)
+   155  .  .  .  "addnums": *(obj @ 11)
    156  .  .  }
    157  .  }
    158  .  Unresolved: []*ast.Ident (len = 4) {

@@ -73,7 +73,7 @@ public class GoRootNode extends RootNode {
     }
 
     public void assignToSlot(VirtualFrame frame) {
-        if(this.getParameters() == null) {
+        if(this.getParameters().getArguments().length == 0) {
             return;
         }
         GoExpressionNode[] params = ((GoArrayExprNode) this.getParameters().getArguments()[0]).getArguments();
