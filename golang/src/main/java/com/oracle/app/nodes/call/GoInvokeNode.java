@@ -44,7 +44,9 @@ public class GoInvokeNode extends GoExpressionNode {
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
-        functionReference.setArgumentValues(argumentNodes);
+        if(functionReference != null) {
+            functionReference.setArgumentValues(argumentNodes);
+        }
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 

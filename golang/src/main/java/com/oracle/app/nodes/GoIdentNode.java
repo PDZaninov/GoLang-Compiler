@@ -43,7 +43,4 @@ public class GoIdentNode extends GoExpressionNode{
 		}
 		return null;
 	}
-	
-	
-
 }
