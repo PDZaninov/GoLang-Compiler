@@ -33,19 +33,15 @@ public abstract class GoPointerNode extends GoExpressionNode{
 	public static GoPointerNode createPointer(FrameSlot obj, FrameSlotKind type){
 		switch(type){
 		case Boolean:
-			break;
-		case Byte:
-			break;
+			return new GoBooleanPointerNode(obj.hashCode(), obj);
 		case Double:
-			break;
+			return new GoFloat64PointerNode(obj.hashCode(), obj);
 		case Float:
-			break;
+			return new GoFloat32PointerNode(obj.hashCode(), obj);
 		case Illegal:
 			return new GoObjectPointerNode(obj.hashCode(),obj);
 		case Int:
 			return new GoIntPointerNode(obj.hashCode(),obj);
-		case Long:
-			break;
 		case Object:
 			return new GoObjectPointerNode(obj.hashCode(),obj);
 		default:
@@ -64,7 +60,7 @@ public abstract class GoPointerNode extends GoExpressionNode{
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return String.format("0x%x", ptr);
+		return this;
 	}
 	 
 	public FrameSlot getSlot() {
@@ -75,7 +71,6 @@ public abstract class GoPointerNode extends GoExpressionNode{
 		
 		public GoIntPointerNode(int ptr, FrameSlot obj) {
 			super(ptr, obj);
-			// TODO Auto-generated constructor stub
 		}
 		
 		@Specialization
@@ -85,15 +80,62 @@ public abstract class GoPointerNode extends GoExpressionNode{
 
 		@Override
 		public Object executeStar(VirtualFrame frame) {
-			return FrameUtil.getIntSafe(frame, getSlot());
+			return doInt(frame);
 		}
+	}
+	
+	public static class GoFloat32PointerNode extends GoPointerNode{
+		public GoFloat32PointerNode(int ptr, FrameSlot obj){
+			super(ptr, obj);
+		}
+		
+		@Specialization 
+		public float doFloat(VirtualFrame frame){
+			return FrameUtil.getFloatSafe(frame, getSlot());
+		}
+		
+		@Override public Object executeStar(VirtualFrame frame) {
+			return doFloat(frame);
+		}
+		
+	}
+	
+	public static class GoFloat64PointerNode extends GoPointerNode{
+		public GoFloat64PointerNode(int ptr, FrameSlot obj){
+			super(ptr, obj);
+		}
+		
+		@Specialization 
+		public double doDouble(VirtualFrame frame){
+			return FrameUtil.getDoubleSafe(frame, getSlot());
+		}
+		
+		@Override public Object executeStar(VirtualFrame frame) {
+			return doDouble(frame);
+		}
+		
+	}
+	
+	public static class GoBooleanPointerNode extends GoPointerNode{
+		public GoBooleanPointerNode(int ptr, FrameSlot obj){
+			super(ptr, obj);
+		}
+		
+		@Specialization 
+		public boolean doBool(VirtualFrame frame){
+			return FrameUtil.getBooleanSafe(frame, getSlot());
+		}
+		
+		@Override public Object executeStar(VirtualFrame frame) {
+			return doBool(frame);
+		}
+		
 	}
 	
 	public static class GoObjectPointerNode extends GoPointerNode{
 		
 		public GoObjectPointerNode(int ptr, FrameSlot obj) {
 			super(ptr, obj);
-			// TODO Auto-generated constructor stub
 		}
 		
 		@Specialization
@@ -103,7 +145,7 @@ public abstract class GoPointerNode extends GoExpressionNode{
 
 		@Override
 		public Object executeStar(VirtualFrame frame) {
-			return FrameUtil.getObjectSafe(frame, getSlot());
+			return doObject(frame);
 		}
 	}
 	

@@ -1,13 +1,16 @@
 package com.oracle.app.nodes.expression;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
+import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoPrimitiveTypes;
 import com.oracle.app.nodes.types.GoSlice;
+import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -18,64 +21,97 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 
 	private int length;
 	private GoPrimitiveTypes type;
+	private GoExpressionNode typenode;
 	
-	public GoArrayTypeExprNode(GoIntNode length,String type){
+	public GoArrayTypeExprNode(GoIntNode length,GoExpressionNode typenode){
 		this.length = length.executeInteger(null);
-		switch(type){
-		case "int":
+		this.typenode = typenode;
+		/*
+		if(typenode instanceof GoIntNode){
 			this.type = GoPrimitiveTypes.INT;
-			break;
-		case "string":
-			this.type = GoPrimitiveTypes.STRING;
-			break;
-		default:
-			System.out.println("Array Type "+type+" not implemented");
 		}
+		else if(typenode instanceof GoFloat32Node){
+			this.type = GoPrimitiveTypes.FLOAT32;
+		}
+		else if(typenode instanceof GoFloat64Node){
+			this.type = GoPrimitiveTypes.FLOAT64;
+		}
+		else if(typenode instanceof GoStringNode){
+			this.type = GoPrimitiveTypes.STRING;
+		}
+		else{
+			this.type = GoPrimitiveTypes.OBJECT;
+			System.out.println("Array Type "+type+" not implemented");
+		}*/
 	}
-	
+	//Needs to execute the element type expression first
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		CompilerDirectives.transferToInterpreter();
+		//CompilerDirectives.transferToInterpreter();
 		//GoArray result = new GoArray(length, type);
 		Object[] temp = new Object[length];
+		Object result = typenode.executeGeneric(frame);
+		Arrays.fill(temp, result);
+		if(result instanceof Integer){
+			this.type = GoPrimitiveTypes.INT;
+		}
+		else if(result instanceof Float){
+			this.type = GoPrimitiveTypes.FLOAT32;
+		}
+		else if(result instanceof Double){
+			this.type = GoPrimitiveTypes.FLOAT64;
+		}
+		else if(result instanceof String){
+			this.type = GoPrimitiveTypes.STRING;
+		}
+		else{
+			this.type = GoPrimitiveTypes.OBJECT;
+			//System.out.println("Array Type "+type+" not implemented");
+		}
+		return fillCompositeFields(frame, temp);
+		/*
 		switch(type){
 		case BOOL:
-			for(int i = 0; i < length; i++){
-				temp[i] = false;
-			}
 			return fillCompositeFields(frame, temp);
 			
 		case FLOAT64:
-			for(int i = 0; i < length; i++){
-				temp[i] = (float)0;
-			}
 			return fillCompositeFields(frame, temp);
 			
 		case INT:
-			for(int i = 0; i < length; i++){
-				temp[i] = 0;
-			}
 			return fillCompositeFields(frame, temp);
 			
 		case STRING:
-			for(int i = 0; i < length; i++){
-				temp[i] = "";
-			}
 			return fillCompositeFields(frame, temp);
 			
 		default:
-			break;
-		}
-		return null;
+			return fillCompositeFields(frame, temp);
+		}*/
+		//return null;
 	}
 	
 	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts){
 		Object[] results = elts.gatherResults(frame);
+		if(results[0] instanceof Integer){
+			this.type = GoPrimitiveTypes.INT;
+		}
+		else if(results[0] instanceof Float){
+			this.type = GoPrimitiveTypes.FLOAT32;
+		}
+		else if(results[0] instanceof Double){
+			this.type = GoPrimitiveTypes.FLOAT64;
+		}
+		else if(results[0] instanceof String){
+			this.type = GoPrimitiveTypes.STRING;
+		}
+		else{
+			this.type = GoPrimitiveTypes.OBJECT;
+			//System.out.println("Array Type "+type+" not implemented");
+		}
 		return fillCompositeFields(frame, results);
 	}
 	/**
 	 * Creates an arraylike type object and returns it.
-	 * 
+	 * Bug - Currently cannot create 2D arrays or bigger with a composite lit
 	 * @param frame
 	 * @param results - Array of values to initialize the array with
 	 * @return - A GoArray object or a Slice if the size was zero
@@ -136,6 +172,15 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 			for(; i < arr.length; i++){
 				arr[i].setKind(FrameSlotKind.Object);
 				frame.setObject(arr[i], "");
+			}
+			break;
+		case OBJECT:
+			for(; i < results.length; i++){
+				frame.setObject(arr[i], results[i]);
+			}
+			for(; i < arr.length; i++){
+				arr[i].setKind(FrameSlotKind.Object);
+				frame.setObject(arr[i], GoNull.SINGLETON);
 			}
 			break;
 		default:

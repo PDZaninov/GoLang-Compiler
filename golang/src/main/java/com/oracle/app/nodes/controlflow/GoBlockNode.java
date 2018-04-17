@@ -55,14 +55,14 @@ public final class GoBlockNode extends GoStatementNode {
      * @param value: Value of the tag passed in from Switch statement.
      */
     public void switchExecute(VirtualFrame frame, Object value) {
-        boolean caseDefault = true;
+        boolean caseDefault = false;
         int caseDefIndx = -1;
         for (int i = 0; i < bodyNodes.length; i++){
             if(((GoCaseClauseNode) bodyNodes[i]).caseType == "default"){
+            	caseDefault = true;
                 caseDefIndx = i;
             }
             else if (((GoCaseClauseNode) bodyNodes[i]).caseExecute(frame, value)){
-                caseDefault = false;
                 break;
             }
         }
