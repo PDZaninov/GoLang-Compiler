@@ -4,7 +4,7 @@ import com.oracle.app.nodes.GoBinaryNode;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-//shares same shortname as bitwise complement node
+//shares same shortname as bitwise complement node 
 @NodeInfo(shortName = "^")
 public abstract class GoBitwiseXORNode extends GoBinaryNode{
     @Specialization

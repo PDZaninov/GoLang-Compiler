@@ -5,12 +5,12 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRIndexNode extends GoBaseIRNode {
 
-	GoIRIdentNode name;
+	GoBaseIRNode name;
 	GoBaseIRNode index;
 	String lbrack;
 	String rbrack;
 	
-	public GoIRIndexNode(GoIRIdentNode name, GoBaseIRNode index, String lbrack, String rbrack) {
+	public GoIRIndexNode(GoBaseIRNode name, GoBaseIRNode index, String lbrack, String rbrack) {
 		super("Index Node");
 		this.name = name;
 		this.index = index;
@@ -18,7 +18,7 @@ public class GoIRIndexNode extends GoBaseIRNode {
 		this.rbrack = rbrack;
 	}
 	
-	public GoIRIdentNode getName(){
+	public GoBaseIRNode getName(){
 		return name;
 	}
 	
