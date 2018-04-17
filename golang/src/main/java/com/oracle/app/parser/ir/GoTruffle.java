@@ -327,7 +327,6 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
-
 		startFunction();
 		GoIdentNode nameNode = (GoIdentNode) node.getName().accept(this);
 		GoFuncTypeNode typeNode = (GoFuncTypeNode) node.getType().accept(this);

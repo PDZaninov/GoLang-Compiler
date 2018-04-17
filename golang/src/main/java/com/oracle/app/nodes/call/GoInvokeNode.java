@@ -44,7 +44,7 @@ public class GoInvokeNode extends GoExpressionNode {
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
-        assignToSlot();
+        functionReference.setArgumentValues(argumentNodes);
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 
@@ -67,28 +67,5 @@ public class GoInvokeNode extends GoExpressionNode {
             function = select.getFunction();
         }
         return function;
-    }
-    
-    public void assignToSlot() {
-    	if(functionReference == null || functionReference.getParameters() == null) {
-    		return;
-    	}
-    	GoExpressionNode[] params = ((GoArrayExprNode) functionReference.getParameters().getArguments()[0]).getArguments();
-    	
-    	if(params.length != argumentNodes.length) {
-    		throw new RuntimeException("Parameter mismatch: " + functionReference.toString());
-    	}
-
-    	FrameDescriptor frameDescriptor = functionReference.getFrameDescriptor();
-
-    	for(int i = 0; i < argumentNodes.length; i++) {
-            writeValue(frameDescriptor, ((GoFieldNode) params[i]).getName(), argumentNodes[i]);
-        }
-    }
-
-    public void writeValue(FrameDescriptor frameDescriptor, String name , GoExpressionNode value) {
-        FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
-        GoExpressionNode write = GoWriteLocalVariableNodeGen.create(value, slot);
-
     }
 }

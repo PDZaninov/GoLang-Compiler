@@ -19,6 +19,10 @@ public class GoIdentNode extends GoExpressionNode{
 		reference = language.getContextReference();
 	}
 
+	public void setChild(GoExpressionNode child) {
+		this.child = child;
+	}
+
 	@Override
 	public String toString() {
 		return name;
