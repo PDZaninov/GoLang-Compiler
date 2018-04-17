@@ -27,6 +27,7 @@ import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
@@ -42,7 +43,9 @@ import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
@@ -408,8 +411,7 @@ public class Parser {
 				return new GoIRStmtNode(packIntoArrayList(body.values()));
 
 			case "StructType":
-				GoIRFieldList fields = (GoIRFieldListNode) body.get("Fields");
-				return new GoIRStructTypeNode(fields);
+				return new GoIRStructTypeNode((GoIRFieldListNode) body.get("Fields"),attrs.get("Incomplete"));
 
 			case "SwitchStmt":
 				GoIRStmtNode switchinit = (GoIRStmtNode) body.get("Init");
@@ -422,9 +424,7 @@ public class Parser {
 						);
 
 			case "TypeSpec":
-				GoBaseIRNode name = body.get("Name");
-				GoBaseIRNode type = body.get("Type");
-				return new GoIRTypeSpecNode(name, type);
+				return new GoIRTypeSpecNode(body.get("Name"), body.get("Type"));
 				
 			case "ValueSpec":
 				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");

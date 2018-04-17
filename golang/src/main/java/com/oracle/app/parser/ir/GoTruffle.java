@@ -15,7 +15,6 @@ import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.nodes.SpecDecl.GoFieldListNode;
 import com.oracle.app.nodes.SpecDecl.GoFieldNode;
-import com.oracle.app.nodes.SpecDecl.GoTypeSpecNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
@@ -58,7 +57,6 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
-import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -741,7 +739,5 @@ public class GoTruffle implements GoIRVisitor {
 		//return node.accept(this);
 		return null;
 	}
-
-	@Override
 
 }
