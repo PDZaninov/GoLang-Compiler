@@ -111,7 +111,7 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 	}
 	/**
 	 * Creates an arraylike type object and returns it.
-	 * 
+	 * Bug - Currently cannot create 2D arrays or bigger with a composite lit
 	 * @param frame
 	 * @param results - Array of values to initialize the array with
 	 * @return - A GoArray object or a Slice if the size was zero
