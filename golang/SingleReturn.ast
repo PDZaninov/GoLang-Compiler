@@ -101,8 +101,8 @@
    100  .  }
    101  .  Scope: *ast.Scope {
    102  .  .  Objects: map[string]*ast.Object (len = 2) {
-   103  .  .  .  "vals": *(obj @ 11)
-   104  .  .  .  "main": *(obj @ 57)
+   103  .  .  .  "main": *(obj @ 57)
+   104  .  .  .  "vals": *(obj @ 11)
    105  .  .  }
    106  .  }
    107  .  Unresolved: []*ast.Ident (len = 2) {
