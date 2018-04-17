@@ -116,7 +116,6 @@ public class GoTruffle implements GoIRVisitor {
     static class LexicalScope {
         protected final LexicalScope outer;
         protected final Map<String, FrameSlot> locals;
-        protected final Map<String, String> types;
 
         LexicalScope(LexicalScope outer) {
         	//Sets the outerscope to be the calling scope
@@ -124,12 +123,10 @@ public class GoTruffle implements GoIRVisitor {
             //Creates the local scope
             this.locals = new HashMap<>();
             
-            this.types = new HashMap<>();
             //If there is an outerscope then put all the variables in there
             //into this scope
             if (outer != null) {
                 locals.putAll(outer.locals);
-                types.putAll(outer.types);
             }
         }
     }
@@ -738,7 +735,10 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitTypeSpec(GoIRTypeSpecNode node){
 		String name = node.getIdentifier();
+		FrameSlot slot = frameDescriptor.addFrameSlot(name);
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		lexicalscope.locals.put(name,slot);
+		//Should actually be a frame descriptor write. So returns a write local variable with a struct object???
 		return null;
 	}
 	
