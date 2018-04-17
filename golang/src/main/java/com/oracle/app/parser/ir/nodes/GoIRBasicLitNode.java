@@ -49,6 +49,8 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 				return new GoIRFloat32Node(value);
 			case "FLOAT64":
 				return new GoIRFloat64Node(value);
+			case "FLOAT":
+				return new GoIRFloat32Node(value);
 			default:
 				System.out.println("Unimplemented Basic Lit type");
 				return null;

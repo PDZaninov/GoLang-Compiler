@@ -15,7 +15,6 @@ import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
@@ -41,7 +40,6 @@ import com.oracle.app.parser.ir.nodes.GoIRStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 
@@ -77,11 +75,6 @@ public interface GoIRVisitor {
 		return null;
 	}
 	
-	default Object visitDecl(GoIRDeclNode node){
-		System.out.println("Default Decl Visit");
-		return null;
-	}
-
 	default Object visitBlockStmt(GoIRBlockStmtNode node){
 		System.out.println("Default Block Statement Visit");
 		return null;
@@ -189,11 +182,6 @@ public interface GoIRVisitor {
 
 	default Object visitAssignment(GoIRAssignmentStmtNode goIRAssignmentStmtNode){
 		System.out.println("Default Assignment Statement Visit");
-		return null;
-	}
-
-	default Object visitWriteIndex(GoIRWriteIndexNode goIRWriteIndexNode){
-		System.out.println("Default Write Index Visit");
 		return null;
 	}
 

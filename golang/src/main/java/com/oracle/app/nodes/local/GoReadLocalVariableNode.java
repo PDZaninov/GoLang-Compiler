@@ -118,20 +118,23 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     	
     	public abstract GoExpressionNode getIndex();
     	
-    	//Rip specialization. No way to check for what type of array is being read, if a way is found change this
+    	//TO-DO Possibly delete this as there is a GoArrayRead node now
     	@Specialization
     	public Object readArray(VirtualFrame frame, int index){
     		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-    		FrameSlot slot = array.readArray(frame, index);
-
+    		FrameSlot slot = (FrameSlot) array.readArray(frame, index);
     		switch(array.getType()){
 			case BOOL:
 				return FrameUtil.getBooleanSafe(frame, slot);
+			case FLOAT32:
+				return FrameUtil.getFloatSafe(frame, slot);
 			case FLOAT64:
 				return FrameUtil.getDoubleSafe(frame, slot);
 			case INT:
 				return FrameUtil.getIntSafe(frame, slot);
 			case STRING:
+				return FrameUtil.getObjectSafe(frame, slot);
+			case OBJECT:
 				return FrameUtil.getObjectSafe(frame, slot);
 			default:
 				return null;
