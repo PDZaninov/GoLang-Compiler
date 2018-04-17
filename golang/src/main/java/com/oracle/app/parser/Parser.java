@@ -288,7 +288,7 @@ public class Parser {
 				}
 				
 			case "]*ast.Field":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
 
 			case "FieldList":
 				GoIRArrayListExprNode fields = (GoIRArrayListExprNode) body.get("List");

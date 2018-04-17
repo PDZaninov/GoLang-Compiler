@@ -13,8 +13,6 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
-import com.oracle.app.nodes.SpecDecl.GoFieldListNode;
-import com.oracle.app.nodes.SpecDecl.GoFieldNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
@@ -57,6 +55,7 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -73,6 +72,7 @@ import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
 import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
@@ -92,7 +92,9 @@ import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRStringNode;
+import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -460,7 +462,7 @@ public class GoTruffle implements GoIRVisitor {
 			result = (GoArrayExprNode) node.getChild().accept(this);
 			break;
 		case "type":
-			System.out.println("GenDecl Token: TYPE needs implementation");
+			result = (GoArrayExprNode) node.getChild().accept(this);
 			result = null;
 			break;
 		case "const":
@@ -731,6 +733,25 @@ public class GoTruffle implements GoIRVisitor {
 		
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));
 		
+	}
+	
+	@Override
+	public Object visitTypeSpec(GoIRTypeSpecNode node){
+		String name = node.getIdentifier();
+		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		return null;
+	}
+	
+	@Override
+	public Object visitStructType(GoIRStructTypeNode node){
+		GoArrayExprNode fields = (GoArrayExprNode) node.getFieldListNode().accept(this);
+		return null;
+	}
+	
+	//TO-DO Remove this IR node with a DeclStmt node because they do the same thing. But the only difference is the source section of it
+	@Override
+	public Object visitFieldList(GoIRFieldListNode node){
+		return node.getFields().accept(this);
 	}
 	
 	@Override
