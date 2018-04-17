@@ -20,7 +20,14 @@ public final class GoReturnNode extends GoStatementNode {
     public void executeVoid(VirtualFrame frame) {
         Object result;
         if (valueNode != null) {
-            result = ((GoArrayExprNode) valueNode).getArguments()[0].executeGeneric(frame);
+        	if( ((GoArrayExprNode) valueNode).getArguments().length ==1) {
+        		result = ((GoArrayExprNode) valueNode).getArguments()[0].executeGeneric(frame);
+        	}
+        	else {
+        		System.out.println("__________");
+        		System.out.println(((GoArrayExprNode) valueNode).getArguments());
+        		result = ((GoArrayExprNode) valueNode).executeGeneric(frame);
+        	}
         } else {
             /*
              * Return statement that was not followed by an expression, so return the null value.

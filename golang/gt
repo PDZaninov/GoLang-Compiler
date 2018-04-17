@@ -24,4 +24,14 @@ done
 
 TRUFFLE_LIB=./graalvm/jre/lib/truffle
 
-$JAVACMD $JAVA_ARGS -XX:-UseJVMCIClassLoader -Xbootclasspath/a:$TRUFFLE_LIB/truffle-api.jar:$TRUFFLE_LIB/locator.jar:$TRUFFLE_LIB/truffle-nfi.jar -cp ./target/classes com.oracle.app.GoMain $PROGRAM_ARGS
+TruffleOutput="${PROGRAM_ARGS}.Truffle.output"
+GoOutput="${PROGRAM_ARGS}.Go.output"
+echo $GoOutput $TruffleOutput
+$JAVACMD $JAVA_ARGS -XX:-UseJVMCIClassLoader -Xbootclasspath/a:$TRUFFLE_LIB/truffle-api.jar:$TRUFFLE_LIB/locator.jar:$TRUFFLE_LIB/truffle-nfi.jar -cp ./target/classes com.oracle.app.GoMain $PROGRAM_ARGS | tee ${TruffleOutput}
+
+echo "GO program running"
+go run $PROGRAM_ARGS &>${GoOutput}
+echo "cat go file output"
+
+echo "diff result"
+diff ${GoOutput} ${TruffleOutput}

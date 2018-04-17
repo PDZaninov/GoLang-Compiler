@@ -1,10 +1,12 @@
 package main
 
-func add() int{
-return 5
+func vals() (int,int){
+return 5,7
 
 }
 
 func main() {
-	println(add())
+	var x,y = vals()
+	println(x)
+	println(y)
 }
