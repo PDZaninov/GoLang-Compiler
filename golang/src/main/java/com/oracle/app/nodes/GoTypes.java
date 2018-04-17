@@ -45,7 +45,6 @@ import java.math.BigInteger;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoPointerNode;
 import com.oracle.app.nodes.types.GoSlice;
-import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.dsl.TypeSystem;

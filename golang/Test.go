@@ -1,42 +1,14 @@
 package main
 
+import "fmt"
+
+type Vertex struct {
+	X int
+	Y int
+}
+
 func main() {
-
-    var k int = 20
-    var a string = "Hello, World!"
-
-	for j := 5; j <= 9; j++ {
-        println(j)
-    }
-
-    for {
-        println("loop")
-        break
-    }
-
-    for n := 0; n <= 5; n++ {
-        if n%2 == 0 {
-            n++
-            continue
-        }
-        println(n)
-    }
-
-    i := 1
-    for i <= 3 {
-        println(i)
-        i = i + 1
-    }
-
-    switch k {
-    case 1:
-        println("one")
-    case 20:
-        println("twenty")
-    }
-
-
-
-    println(a + i)
-    println(k + i)
+	v := Vertex{1, 2}
+	v.X = 4
+	fmt.Println(v.X)
 }

@@ -1,6 +1,4 @@
 package com.oracle.app.nodes.expression;
-import java.math.BigInteger;
-
 import com.oracle.app.nodes.GoBinaryNode;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -29,18 +27,12 @@ public abstract class GoAddNode extends GoBinaryNode {
     @Specialization(rewriteOn = ArithmeticException.class)
     protected double add(double left, double right) {
         return left + right;
-    }
-
-    @Specialization
-    @TruffleBoundary
-    protected BigInteger add(BigInteger left, BigInteger right) {
-        return left.add(right);
-    }
+    }	
 
     @Specialization(guards = "isString(left, right)")
     @TruffleBoundary
-    protected String add(Object left, Object right) {
-        return left.toString() + right.toString();
+    protected String add(String left, String right) {
+        return left + right;
     }
 
     protected boolean isString(Object a, Object b) {

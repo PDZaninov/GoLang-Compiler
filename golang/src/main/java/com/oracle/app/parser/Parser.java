@@ -347,7 +347,7 @@ public class Parser {
 						);
 				
 			case "IndexExpr":
-				return new GoIRIndexNode((GoIRIdentNode) body.get("X"),
+				return new GoIRIndexNode((GoBaseIRNode) body.get("X"),
 						body.get("Index"),
 						attrs.get("Lbrack"),
 						attrs.get("Rbrack")
@@ -426,8 +426,15 @@ public class Parser {
 				else{
 					return createAssignment(names,valuetype,values,null);
 				}
-				//return new GoIRValueSpecNode(names,valuetype,values);
-				
+			//Idk if comments are supposed to do anything technically so they are just null
+			case "Comment":
+				return null;
+			case "]*ast.Comment":
+				return null;
+			case "CommentGroup":
+				return null;
+			case "]*ast.CommentGroup":
+				return null;
 			default:
 				System.out.println("Error, in default: " + nodeType);
 				System.out.println(attrs);
