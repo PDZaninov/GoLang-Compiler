@@ -351,8 +351,16 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitField(GoIRFieldNode node){
 		GoArrayExprNode names = null;
 		if(node.getNames() != null) {
-			names = (GoArrayExprNode) node.getNames().accept(this);
-		}
+            names = (GoArrayExprNode) node.getNames().accept(this);
+
+            ArrayList<GoBaseIRNode> children = node.getNames().getChildren();
+            for (int i = 0; i < children.size(); i++) {
+                String name = children.get(i).getIdentifier();
+                FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
+                lexicalscope.locals.put(name, slot);
+            }
+        }
+
 		// TODO 
 		// return types like "int". However they're ident nodes, and int is already in hashmap
 		// so accept ident returns read node but can't cast to ident

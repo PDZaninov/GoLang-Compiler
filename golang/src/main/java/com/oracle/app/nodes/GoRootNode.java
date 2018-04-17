@@ -6,6 +6,7 @@ import com.oracle.app.nodes.call.GoFuncTypeNode;
 //import com.oracle.truffle.Go.builtins.GoBuiltinNode;
 //import com.oracle.truffle.Go.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
+import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -54,7 +55,7 @@ public class GoRootNode extends RootNode {
         assert getLanguage(GoLanguage.class).getContextReference().get() != null;
         if(typeNode != null) {
         	typeNode.executeGeneric(frame);
-        	assignToSlot(frame);
+        	//assignToSlot(frame);
         }
 
         return bodyNode.executeGeneric(frame);
@@ -78,16 +79,35 @@ public class GoRootNode extends RootNode {
         }
         GoExpressionNode[] params = ((GoArrayExprNode) this.getParameters().getArguments()[0]).getArguments();
 
-        if(params.length != argumentNodes.length) {
+        Object[] args = frame.getArguments();
+        GoExpressionNode result = null;
+
+        if(params.length != args.length) {
             throw new RuntimeException("Parameter mismatch: " + this.toString());
         }
 
         GoIdentNode child;
-        for(int i = 0; i < argumentNodes.length; i++) {
+        for(int i = 0; i < args.length; i++) {
+            result =  createArgument(args[i]);
             child = ((GoFieldNode) params[i]).getIdentifier();
-            child.setChild(argumentNodes[i]);
-            writeValue(frame, child.getName(), argumentNodes[i]);
+            child.setChild(result);
+            writeValue(frame, child.getName(), result);
         }
+    }
+
+    public GoExpressionNode createArgument(Object arg) {
+        String type = arg.getClass().getTypeName();
+        GoExpressionNode result = null;
+        switch(type) {
+            case "java.lang.Integer":
+                result = new GoIntNode((int) arg);
+                break;
+            case "java.lang.String":
+                System.out.println("string " + type);
+            default:
+                System.out.println("Type not yet implemented for method call: " + type);
+        }
+        return result;
     }
 
     public void writeValue(VirtualFrame frame, String name , GoExpressionNode value) {
