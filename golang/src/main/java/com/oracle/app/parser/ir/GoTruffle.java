@@ -8,9 +8,11 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.nodes.call.GoFieldNode;
@@ -78,6 +80,7 @@ import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
+import com.oracle.app.parser.ir.nodes.GoIRFileNode;
 import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
@@ -180,6 +183,7 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = new LexicalScope(lexicalscope);
     }
     
+    //Still trying to figure out the right place to insert a new frameDescriptor
     public void startFunction(){
     	startBlock();
     }
@@ -196,6 +200,18 @@ public class GoTruffle implements GoIRVisitor {
 		return null;
 	}
 
+	@Override
+	public GoFileNode visitFile(GoIRFileNode node){
+		String name = node.getName().getIdentifier();
+		GoArrayExprNode decls = (GoArrayExprNode) node.getDecls().accept(this);
+		GoImportSpec imports = (GoImportSpec) node.getImports().accept(this);
+		//Subject to change because what if unit testing doesnt have a main file or something like that :(
+		GoRootNode functionstart = allFunctions.get("main");
+		GoFileNode result = new GoFileNode(language,frameDescriptor,decls,imports,functionstart,allFunctions,name);
+		frameDescriptor = null;
+		return result;
+	}
+	
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdentifier();

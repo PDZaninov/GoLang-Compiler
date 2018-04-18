@@ -2,7 +2,11 @@ package main
 
 import "fmt"
 
-var x int = 5
+func add(x int, y int){
+    fmt.Println(x+y)
+}
+var x , y int = 10, 10
 func main() {
-	fmt.Println(x)
+
+	add(x,y)
 }
