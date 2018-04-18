@@ -13,6 +13,8 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
+import com.oracle.app.nodes.call.GoFieldNode;
+import com.oracle.app.nodes.call.GoFuncTypeNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
 import com.oracle.app.nodes.controlflow.GoBlockNode;
 import com.oracle.app.nodes.controlflow.GoBreakNode;
@@ -51,10 +53,13 @@ import com.oracle.app.nodes.expression.GoSliceExprNode;
 import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
+import com.oracle.app.nodes.local.GoArrayReadNode;
+import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
-import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNode;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
@@ -68,7 +73,6 @@ import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
@@ -78,6 +82,7 @@ import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
@@ -183,17 +188,6 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = lexicalscope.outer;
     }
     
-    /*TODO Remove this after removing GoIRDeclNode
-    public GoStatementNode[] arrayListtoArray(GoBaseIRNode node) {
-    	ArrayList<GoBaseIRNode> children = node.getChildren();
-    	int argumentsize = children.size();
-		GoStatementNode[] arguments = new GoStatementNode[argumentsize];
-		for(int i = 0; i < argumentsize; i++){
-			arguments[i] = (GoStatementNode) children.get(i).accept(this);
-		}
-		return arguments;
-    }
-	*/
 	@Override
 	public Object visitObject(GoTempIRNode node) {
 		for(GoBaseIRNode child : node.getChildren())
@@ -295,9 +289,13 @@ public class GoTruffle implements GoIRVisitor {
 		return result;
 	}
 
-	public GoFloat32Node visitIRFloat32Node(GoIRFloat32Node node) { return new GoFloat32Node(node.getValue()); }
+	public GoFloat32Node visitIRFloat32Node(GoIRFloat32Node node) { 
+		return new GoFloat32Node(node.getValue());
+	}
 
-	public GoFloat64Node visitIRFloat64Node(GoIRFloat64Node node) { return new GoFloat64Node(node.getValue()); }
+	public GoFloat64Node visitIRFloat64Node(GoIRFloat64Node node) { 
+		return new GoFloat64Node(node.getValue()); 
+	}
 	
 	public GoStringNode visitIRStringNode(GoIRStringNode node){
 		GoStringNode result = new GoStringNode(node.getValue());
@@ -307,6 +305,7 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
+		String functionName = node.getFunctionNode().getIdentifier();
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
@@ -315,7 +314,7 @@ public class GoTruffle implements GoIRVisitor {
 		else{
 			arguments = new GoArrayExprNode(new GoExpressionNode[0]);
 		}
-		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments());
+		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments(), allFunctions.get(functionName));
 		//int start = functionNode.getSourceSection().getCharIndex();
 		//int end = arguments.getSourceSection().getCharEndIndex() + 1 - start;
 		//result.setSourceSection(source.createSection(start,end));
@@ -324,30 +323,59 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
-
 		startFunction();
-
+		GoIdentNode nameNode = (GoIdentNode) node.getName().accept(this);
+		GoFuncTypeNode typeNode = (GoFuncTypeNode) node.getType().accept(this);
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
-		GoExpressionNode typeNode = (GoExpressionNode) node.getType().accept(this);
-		GoExpressionNode nameNode = (GoExpressionNode) node.getName().accept(this);
 		String name = node.getIdentifier();
 		//int start = nameNode.getSourceSection().getCharIndex();
 		//int end = blockNode.getSourceSection().getCharEndIndex();
 		//SourceSection section = source.createSection(start, end);
 		//System.out.println(section);
-		GoRootNode root = new GoRootNode(language,frameDescriptor,bodyNode,null,name);
+		GoRootNode root = new GoRootNode(language,frameDescriptor,nameNode,typeNode,bodyNode,null,name);
 		allFunctions.put(name,root);
 		finishBlock();
 		
 		//frameDescriptor = null;
 		return null;
 	}
-
+	
 	@Override
-	public Object visitDecl(GoIRDeclNode node) {
-		//TODO check if this can be removed, replaced with GoIRArraylistExprNode
-		return null;
+	public Object visitFuncType(GoIRFuncTypeNode node) {
+		GoArrayExprNode params = (GoArrayExprNode) node.getParams().accept(this);
+		GoArrayExprNode results = null;
+		if(node.getResults() != null) {
+			results = (GoArrayExprNode) node.getResults().accept(this);
+		}
+		return new GoFuncTypeNode(params, results);
+	}
+	
+	@Override
+	public Object visitField(GoIRFieldNode node){
+		GoArrayExprNode names = null;
+		if(node.getNames() != null) {
+            names = (GoArrayExprNode) node.getNames().accept(this);
+
+            ArrayList<GoBaseIRNode> children = node.getNames().getChildren();
+            for (int i = 0; i < children.size(); i++) {
+                String name = children.get(i).getIdentifier();
+                FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
+                lexicalscope.locals.put(name, slot);
+            }
+        }
+
+		// TODO 
+		// return types like "int". However they're ident nodes, and int is already in hashmap
+		// so accept ident returns read node but can't cast to ident
+		//GoIdentNode type = (GoIdentNode) node.getType().accept(this);
+		//String typeName = node.getTypeName();
+		return new GoFieldNode(names, null, null);
+	}
+	
+	@Override
+	public Object visitReturnStmt(GoIRReturnStmtNode node){
+		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	
 	}
 
 	@Override
@@ -447,7 +475,10 @@ public class GoTruffle implements GoIRVisitor {
 	//Skips over itself and returns the child node to the parent of this node
 	@Override
 	public Object visitDeclStmt(GoIRDeclStmtNode node) {
-		return node.getChild().accept(this);
+		if(node.getChild() != null){
+			return node.getChild().accept(this);
+		}
+		return null;
 	}
 
 	@Override
@@ -471,7 +502,7 @@ public class GoTruffle implements GoIRVisitor {
 			break;
 		default:
 			System.out.println("GenDecl Error Checking Implementation");
-			result = null;
+			return null;
 		}
 
 		GoArrayExprNode results = new GoArrayExprNode(result.getArguments());
@@ -496,18 +527,20 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	public Object visitStarNode(GoIRStarNode node){
-		GoStarExpressionNode result = new GoStarExpressionNode((GoReadLocalVariableNode) node.getChild().accept(this));
+		GoStarExpressionNode result = new GoStarExpressionNode((GoExpressionNode) node.getChild().accept(this));
 		return result;
 	}
 	
 	/**
-	 * Only called when needing to read from an array so return a read.
+	 * Only called when needing to read from an arraylike object so return a read.
 	 */
 	@Override
 	public Object visitIndexNode(GoIRIndexNode node){
-		FrameSlot slot = frameDescriptor.findFrameSlot(node.getIdentifier());
+		//FrameSlot slot = frameDescriptor.findFrameSlot(node.getIdentifier());
+		GoExpressionNode expr = (GoExpressionNode) node.getName().accept(this);
 		GoExpressionNode index = (GoExpressionNode) node.getIndex().accept(this);
-		GoReadArrayNode read = GoReadArrayNodeGen.create(index, slot);
+		GoArrayReadNode read = new GoArrayReadNode(expr,index);
+		//GoReadArrayNode read = GoReadArrayNodeGen.create(index, slot);
 		//int start = node.getLBrack();
 		//int startLine = node.getLineNumber();
 		//int length = node.getSourceSize();
@@ -529,8 +562,8 @@ public class GoTruffle implements GoIRVisitor {
 		else {
 			length = (GoExpressionNode) node.getLength().accept(this);
 		}
-		//GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
-		String type = node.getType().getIdentifier();
+		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
+		//String type = node.getType().getIdentifier();
 		//Catch error where length is not an int node or possibly an int const
 		GoArrayTypeExprNode result = new GoArrayTypeExprNode((GoIntNode) length,type);
 
@@ -566,7 +599,10 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visit(GoIRCompositeLitNode node){
-		GoExpressionNode type = (GoExpressionNode) node.getExpr().accept(this);
+		GoExpressionNode type = null;
+		if(node.getExpr() != null){
+			type = (GoExpressionNode) node.getExpr().accept(this);
+		}
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
 		GoCompositeLitNode result = new GoCompositeLitNode((GoArrayTypeExprNode) type, elts);
 		return result;
@@ -726,13 +762,6 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	@Override
-	public Object visitReturnStmt(GoIRReturnStmtNode node){
-		
-		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));
-		
-	}
-	
-	@Override
 	public Object visitTypeSpec(GoIRTypeSpecNode node){
 		String name = node.getIdentifier();
 		FrameSlot slot = frameDescriptor.addFrameSlot(name);
@@ -747,17 +776,37 @@ public class GoTruffle implements GoIRVisitor {
 		GoArrayExprNode fields = (GoArrayExprNode) node.getFieldListNode().accept(this);
 		return null;
 	}
-	
-	//TO-DO Remove this IR node with a DeclStmt node because they do the same thing. But the only difference is the source section of it
+
+	/**
+	 * Runs through the entire field list parameters and assigns them to a write variable by reading
+	 * from the argument list given by a function call. Has a lot of nesting going on due to fields being able to 
+	 * contain multiple idents and there are many fields in a fieldlist. So we need to go through every field
+	 * then every ident contained in a field. For every ident it finds it assigns a frameslot and a write from the readarguments.
+	 * 
+	 * This does not run through the return results yet.....
+	 */
 	@Override
 	public Object visitFieldList(GoIRFieldListNode node){
-		return node.getFields().accept(this);
-	}
-	
-	@Override
-	public Object visitField(GoIRFieldNode node){
-		
-		//return node.accept(this);
+		if(node.getFields() != null){
+			ArrayList<GoWriteLocalVariableNode> result = new ArrayList<>();
+			GoArrayExprNode args = (GoArrayExprNode) node.getFields().accept(this);
+			GoExpressionNode[] fields = (GoExpressionNode[]) args.getArguments();
+			int argumentindex = 0;
+			for(GoExpressionNode child : fields){
+				for(GoExpressionNode name : ((GoFieldNode) child).getNames()){
+					String fieldname = ((GoIdentNode) name).getName();
+					FrameSlot slot = frameDescriptor.findOrAddFrameSlot(fieldname);
+					GoReadArgumentsNode value = new GoReadArgumentsNode(argumentindex++);
+					result.add(GoWriteLocalVariableNodeGen.create(value, slot));
+				}
+			}
+			GoExpressionNode[] temp = new GoExpressionNode[result.size()];
+			for(int i = 0; i < temp.length; i++){
+				temp[i] = result.get(i);
+			}
+			GoArrayExprNode results = new GoArrayExprNode(temp);
+			return results;
+		}
 		return null;
 	}
 

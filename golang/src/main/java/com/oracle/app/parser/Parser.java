@@ -31,6 +31,7 @@ import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
@@ -282,17 +283,17 @@ public class Parser {
 				
 			case "Field":
 				if(body.size()==2) {
-					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")).getChildren().get(0), body.get("Type"));
-				}else {
-					return new GoIRFieldNode(nodeType, body.get("Type"));
+					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")), (GoIRIdentNode) body.get("Type"));
+				}
+				else {
+					return new GoIRFieldNode(nodeType, (GoIRIdentNode) body.get("Type"));
 				}
 				
 			case "]*ast.Field":
 				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
-
+		
 			case "FieldList":
-				GoIRArrayListExprNode fields = (GoIRArrayListExprNode) body.get("List");
-				return  new GoIRFieldListNode(fields);
+				return new GoIRFieldListNode((GoIRArrayListExprNode) body.get("List"));
 				
 			case "File":
 				return new GoTempIRNode(nodeType,attrs,body);
@@ -319,7 +320,7 @@ public class Parser {
 						func_body);
 				
 			case "FuncType":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRFuncTypeNode(body.get("Params"), body.get("Results"));
 				
 			case "GenDecl":
 				return new GoIRGenDeclNode(attrs.get("Tok"),
@@ -351,7 +352,7 @@ public class Parser {
 						);
 				
 			case "IndexExpr":
-				return new GoIRIndexNode((GoIRIdentNode) body.get("X"),
+				return new GoIRIndexNode((GoBaseIRNode) body.get("X"),
 						body.get("Index"),
 						attrs.get("Lbrack"),
 						attrs.get("Rbrack")
@@ -436,8 +437,15 @@ public class Parser {
 				else{
 					return createAssignment(names,valuetype,values,null);
 				}
-				//return new GoIRValueSpecNode(names,valuetype,values);
-				
+			//Idk if comments are supposed to do anything technically so they are just null
+			case "Comment":
+				return null;
+			case "]*ast.Comment":
+				return null;
+			case "CommentGroup":
+				return null;
+			case "]*ast.CommentGroup":
+				return null;
 			default:
 				System.out.println("Error, in default: " + nodeType);
 				System.out.println(attrs);

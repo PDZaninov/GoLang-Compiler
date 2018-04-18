@@ -42,6 +42,7 @@ public class GoSlice extends GoArrayLikeTypes {
 		return this;
 	}
 
+	//Used by slice expression, should look for a better way to handle this
 	public FrameSlot getSlot(){
 		return array;
 	}
@@ -56,6 +57,7 @@ public class GoSlice extends GoArrayLikeTypes {
 		return len;
 	}
 	
+	@Override
 	public int cap(){
 		return cap;
 	}
@@ -73,7 +75,7 @@ public class GoSlice extends GoArrayLikeTypes {
 	 * When reading from an array in a slice, the index needs to be adjusted for the slice size.
 	 */
 	@Override
-	public FrameSlot readArray(VirtualFrame frame, int index) {
+	public Object readArray(VirtualFrame frame, int index) {
 		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
 		int realindex = index + low;
 		//Error out, index out of bounds
@@ -81,8 +83,67 @@ public class GoSlice extends GoArrayLikeTypes {
 			System.out.println("Slice index out of bounds");
 			return null;
 		}
-		FrameSlot result = arr.readArray(frame, realindex);
-		return result;
+		return arr.readArray(frame, realindex);
+	}
+
+	@Override
+	public void insert(VirtualFrame frame, int index, int value) {
+		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
+		int realindex = index + low;
+		//Error out, index out of bounds
+		if(realindex < low || realindex > high || realindex > cap){
+			System.out.println("Slice index out of bounds");
+			return;
+		}
+		arr.insert(frame, realindex, value);
+	}
+
+	@Override
+	public void insert(VirtualFrame frame, int index, float value) {
+		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
+		int realindex = index + low;
+		//Error out, index out of bounds
+		if(realindex < low || realindex > high || realindex > cap){
+			System.out.println("Slice index out of bounds");
+			return;
+		}
+		arr.insert(frame, realindex, value);
+	}
+
+	@Override
+	public void insert(VirtualFrame frame, int index, double value) {
+		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
+		int realindex = index + low;
+		//Error out, index out of bounds
+		if(realindex < low || realindex > high || realindex > cap){
+			System.out.println("Slice index out of bounds");
+			return;
+		}
+		arr.insert(frame, realindex, value);
+	}
+
+	@Override
+	public void insert(VirtualFrame frame, int index, boolean value) {
+		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
+		int realindex = index + low;
+		//Error out, index out of bounds
+		if(realindex < low || realindex > high || realindex > cap){
+			System.out.println("Slice index out of bounds");
+			return;
+		}
+		arr.insert(frame, realindex, value);
+	}
+
+	@Override
+	public void insert(VirtualFrame frame, int index, Object value) {
+		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
+		int realindex = index + low;
+		//Error out, index out of bounds
+		if(realindex < low || realindex > high || realindex > cap){
+			System.out.println("Slice index out of bounds");
+			return;
+		}
+		arr.insert(frame, realindex, value);
 	}
 
 }

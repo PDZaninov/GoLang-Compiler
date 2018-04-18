@@ -5,7 +5,6 @@ import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
@@ -72,15 +71,6 @@ public class GoVisitor implements GoIRVisitor {
 		if(node.getBody() != null){
 			node.getBody().accept(this);
 		}
-		return null;
-	}
-
-	@Override
-	public Object visitDecl(GoIRDeclNode node) {
-		System.out.println("Decl node: " + node.toString());
-		for(GoBaseIRNode child : node.getChildren())
-			if(child != null)
-				child.accept(this);
 		return null;
 	}
 

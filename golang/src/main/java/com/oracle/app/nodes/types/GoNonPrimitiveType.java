@@ -9,7 +9,5 @@ import com.oracle.app.nodes.GoExpressionNode;
  *
  */
 public abstract class GoNonPrimitiveType extends GoExpressionNode {
-	
-	//public abstract Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts);
 
 }
