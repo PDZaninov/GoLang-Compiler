@@ -23,7 +23,6 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    protected int writeInt(VirtualFrame frame, int value) {
 	    	
 	        getSlot().setKind(FrameSlotKind.Int);
-
 	        frame.setInt(getSlot(), value);
 	        return value;
 	    }

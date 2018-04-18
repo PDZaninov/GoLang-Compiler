@@ -33,7 +33,7 @@ public final class GoEvalRootNode extends GoRootNode {
     private final ContextReference<GoContext> reference;
 
     public GoEvalRootNode(GoLanguage language, FrameDescriptor frameDescriptor, GoExpressionNode bodyNode, SourceSection sourceSection, String name, Map<String, GoRootNode> functions) {
-        super(language, frameDescriptor, bodyNode, sourceSection, name);
+        super(language, frameDescriptor, null,null, bodyNode, sourceSection, name);
         this.functions = functions;
         this.reference = language.getContextReference();
     }

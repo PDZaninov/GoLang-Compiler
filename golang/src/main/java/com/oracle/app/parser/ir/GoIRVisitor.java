@@ -18,11 +18,13 @@ import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
 import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
@@ -37,7 +39,9 @@ import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRStringNode;
+import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
@@ -225,6 +229,26 @@ public interface GoIRVisitor {
 
 	default Object visitSliceExpr(GoIRSliceExprNode goIRSliceExprNode){
 		System.out.println("Default Slice Expr Visit");
+		return null;
+	}
+	
+	default Object visitFuncType(GoIRFuncTypeNode node){
+		System.out.println("Default Func Type Visit");
+		return null;
+	}
+
+	default Object visitTypeSpec(GoIRTypeSpecNode goIRTypeSpecNode){
+		System.out.println("Default Type Spec visit");
+		return null;
+	}
+
+	default Object visitStructType(GoIRStructTypeNode goIRStructTypeNode){
+		System.out.println("Default Struct Type visit");
+		return null;
+	}
+
+	default Object visitFieldList(GoIRFieldListNode goIRFieldListNode){
+		System.out.println("Default Field List visit");
 		return null;
 	}
 
