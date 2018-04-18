@@ -385,7 +385,7 @@ public class Parser {
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "SelectorExpr":
-				return new GoIRSelectorExprNode((GoIRIdentNode) body.get("X"),(GoIRIdentNode) body.get("Sel"));
+				return new GoIRSelectorExprNode(body.get("X"),(GoIRIdentNode) body.get("Sel"));
 				
 			case "SliceExpr":
 				GoBaseIRNode sliceexpr = body.get("X");

@@ -114,7 +114,7 @@ import com.oracle.truffle.api.source.Source;
 /**
  * Constructs the Truffle tree using a visitor pattern to visit
  * every node in the IRTree and translate the information into Truffle
- *
+ * Source sections for Truffle nodes are currently on hold and are currently commented out
  */
 public class GoTruffle implements GoIRVisitor {
 	/**
@@ -362,7 +362,8 @@ public class GoTruffle implements GoIRVisitor {
 		GoArrayExprNode params = (GoArrayExprNode) node.getParams().accept(this);
 		GoArrayExprNode results = null;
 		if(node.getResults() != null) {
-			results = (GoArrayExprNode) node.getResults().accept(this);
+			//Temporarily broken as visiting a fieldlist only works for parameters currently or if the returns are named
+			//results = (GoArrayExprNode) node.getResults().accept(this);
 		}
 		return new GoFuncTypeNode(params, results);
 	}
@@ -762,19 +763,20 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
+		/* I don't think imports need to be added to the variables hashmap
 		String name = goIRImportSpecNode.getIdentifier();
 		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 		lexicalscope.locals.put(name, frameSlot);
-
+		*/
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
-		return new GoImportSpec(ident);
+		return new GoImportSpec(ident, language);
 	}
 
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
-		GoIdentNode importPackage = (GoIdentNode) goIRSelectorExprNode.getImportName().accept(this);
-		GoIdentNode importMethod = (GoIdentNode) goIRSelectorExprNode.getImportMethod().accept(this);
-		return new GoSelectorExprNode(language, importPackage, importMethod);
+		GoExpressionNode expr = (GoExpressionNode) goIRSelectorExprNode.getExpr().accept(this);
+		GoIdentNode name = (GoIdentNode) goIRSelectorExprNode.getName().accept(this);
+		return new GoSelectorExprNode(expr, name);
 	}
 	
 	@Override

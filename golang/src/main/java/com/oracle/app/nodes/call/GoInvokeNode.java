@@ -1,15 +1,10 @@
 package com.oracle.app.nodes.call;
 
-import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
-import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.CompilerAsserts;
-import com.oracle.truffle.api.frame.FrameDescriptor;
-import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
@@ -37,7 +32,7 @@ public class GoInvokeNode extends GoExpressionNode {
     @ExplodeLoop
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        GoFunction function = getFunctionIdentifier();
+        Object function = getFunctionIdentifier();
 
         CompilerAsserts.compilationConstant(argumentNodes.length);
         Object[] argumentValues = new Object[argumentNodes.length];
@@ -63,14 +58,8 @@ public class GoInvokeNode extends GoExpressionNode {
     
     public GoFunction getFunctionIdentifier() {
     	GoFunction function;
-        if(functionNode instanceof GoIdentNode) {
-            function = ((GoIdentNode) functionNode).getFunction();
-        }
-        else {
-            GoSelectorExprNode select = (GoSelectorExprNode) functionNode;
-            select.loadBuiltIn();
-            function = select.getFunction();
-        }
+        function = ((GoIdentNode) functionNode).getFunction();
+        
         return function;
     }
 }
