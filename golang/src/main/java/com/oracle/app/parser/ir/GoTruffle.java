@@ -8,9 +8,11 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
+import com.oracle.app.nodes.SpecDecl.GoDeclNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.nodes.call.GoFieldNode;
@@ -78,6 +80,7 @@ import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
+import com.oracle.app.parser.ir.nodes.GoIRFileNode;
 import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
@@ -111,7 +114,7 @@ import com.oracle.truffle.api.source.Source;
 /**
  * Constructs the Truffle tree using a visitor pattern to visit
  * every node in the IRTree and translate the information into Truffle
- *
+ * Source sections for Truffle nodes are currently on hold and are currently commented out
  */
 public class GoTruffle implements GoIRVisitor {
 	/**
@@ -180,6 +183,7 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = new LexicalScope(lexicalscope);
     }
     
+    //Still trying to figure out the right place to insert a new frameDescriptor
     public void startFunction(){
     	startBlock();
     }
@@ -196,6 +200,18 @@ public class GoTruffle implements GoIRVisitor {
 		return null;
 	}
 
+	@Override
+	public GoFileNode visitFile(GoIRFileNode node){
+		String name = node.getName().getIdentifier();
+		GoArrayExprNode decls = (GoArrayExprNode) node.getDecls().accept(this);
+		GoImportSpec imports = (GoImportSpec) node.getImports().accept(this);
+		//Subject to change because what if unit testing doesnt have a main file or something like that :(
+		GoRootNode functionstart = allFunctions.get("main");
+		GoFileNode result = new GoFileNode(language,frameDescriptor,decls,imports,functionstart,allFunctions,name);
+		frameDescriptor = null;
+		return result;
+	}
+	
 	@Override
 	public Object visitIdent(GoIRIdentNode node) {
 		String name = node.getIdentifier();
@@ -348,6 +364,7 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		GoArrayExprNode results = null;
 		if(node.getResults() != null) {
+			//Temporarily broken as visiting a fieldlist only works for parameters currently or if the returns are named
 			//results = (GoArrayExprNode) node.getResults().accept(this);
 		}
 		return new GoFuncTypeNode(params, results);
@@ -749,19 +766,20 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
+		/* I don't think imports need to be added to the variables hashmap
 		String name = goIRImportSpecNode.getIdentifier();
 		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 		lexicalscope.locals.put(name, frameSlot);
-
+		*/
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
-		return new GoImportSpec(ident);
+		return new GoImportSpec(ident, language);
 	}
 
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
-		GoIdentNode importPackage = (GoIdentNode) goIRSelectorExprNode.getImportName().accept(this);
-		GoIdentNode importMethod = (GoIdentNode) goIRSelectorExprNode.getImportMethod().accept(this);
-		return new GoSelectorExprNode(language, importPackage, importMethod);
+		GoExpressionNode expr = (GoExpressionNode) goIRSelectorExprNode.getExpr().accept(this);
+		GoIdentNode name = (GoIdentNode) goIRSelectorExprNode.getName().accept(this);
+		return new GoSelectorExprNode(expr, name);
 	}
 	
 	@Override

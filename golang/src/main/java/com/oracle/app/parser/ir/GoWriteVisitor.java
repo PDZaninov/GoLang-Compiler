@@ -16,7 +16,7 @@ import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
 /**
- * Mini visitor called inside {@link GoTruffle} which will handle all assignment visits
+ * Mini visitor called inside {@link GoTruffle} which will handle all assignment visits on the write side
  * to simplify deciding between a read and write variable.
  * @author Trevor
  *
@@ -39,10 +39,8 @@ public class GoWriteVisitor implements GoIRVisitor {
 		return node.accept(this);
 	}
 	
-	/*
+	/**
 	 * Might need to change always inserting into the lexicalscope. Does not check if the name already exists.
-	 * (non-Javadoc)
-	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitIdent(com.oracle.app.parser.ir.nodes.GoIRIdentNode)
 	 */
 	public Object visitIdent(GoIRIdentNode node){
 		String name = assignmentNode.getIdentifier();

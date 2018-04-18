@@ -1,9 +1,6 @@
 package com.oracle.app;
 
-import java.util.Map;
-
-import com.oracle.app.nodes.GoEvalRootNode;
-import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.parser.Parser;
 import com.oracle.app.runtime.GoContext;
@@ -53,7 +50,11 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 	@Override
 	protected CallTarget parse(ParsingRequest request) throws Exception{
 		Source source = request.getSource();
+		GoFileNode mainfile = Parser.parseGo(this, source);
+		return Truffle.getRuntime().createCallTarget(mainfile);
+		/*
 		Map<String, GoRootNode> function;
+		
 		function = Parser.parseGo(this, source);
 		
 		GoRootNode main = function.get("main");
@@ -66,6 +67,7 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 		}
 		
 		return Truffle.getRuntime().createCallTarget(evalMain);
+		*/
 	}
 
 	@Override
