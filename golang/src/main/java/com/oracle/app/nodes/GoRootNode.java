@@ -32,7 +32,6 @@ public class GoRootNode extends RootNode {
     @CompilationFinal private boolean isCloningAllowed;
 
     private final SourceSection sourceSection;
-
     
     public GoRootNode(GoLanguage language, FrameDescriptor frameDescriptor, GoIdentNode nameNode, GoFuncTypeNode typeNode, GoExpressionNode bodyNode, SourceSection sourceSection, String name) {
         super(language, frameDescriptor);
