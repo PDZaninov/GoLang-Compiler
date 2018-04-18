@@ -22,6 +22,9 @@ public class GoFuncTypeNode extends GoExpressionNode{
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
+		if(params == null) {
+			return null;
+		}
 		return params.executeGeneric(frame);
 	}
 }

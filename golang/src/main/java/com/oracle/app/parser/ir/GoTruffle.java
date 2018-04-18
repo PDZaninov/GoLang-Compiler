@@ -342,10 +342,13 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitFuncType(GoIRFuncTypeNode node) {
-		GoArrayExprNode params = (GoArrayExprNode) node.getParams().accept(this);
+		GoArrayExprNode params = null;
+		if(node.getParams() != null) {
+			params = (GoArrayExprNode) node.getParams().accept(this);
+		}
 		GoArrayExprNode results = null;
 		if(node.getResults() != null) {
-			results = (GoArrayExprNode) node.getResults().accept(this);
+			//results = (GoArrayExprNode) node.getResults().accept(this);
 		}
 		return new GoFuncTypeNode(params, results);
 	}
