@@ -39,7 +39,7 @@ public class GoMain
     }
 
   	private static void executeSource(Source source, InputStream in, PrintStream out){
-  		out.println("== running on " + Truffle.getRuntime().getName());
+  		//out.println("== running on " + Truffle.getRuntime().getName());
     	PolyglotEngine engine = PolyglotEngine.newBuilder().setIn(in).setOut(out).build();
     	//Don't know about this yet
     	assert engine.getLanguages().containsKey(GoLanguage.MIME_TYPE);

@@ -491,13 +491,17 @@ public class Parser {
 	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
-		if(lhs.getSize() != rhs.getSize()){
-			//Throw Error
-			System.out.println("Variable Declaration Error");
-			return null;
-		}
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
+		if(lhs.getSize() != rhs.getSize()){
+			//Todo, check for rhs being multiple return of correct size
+			//TODO, to do
+			for(int i = 0; i < size;i++){
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
+			}
+			return new GoIRArrayListExprNode(result, source);
+		}
+
 		for(int i = 0; i < size;i++){
 			result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 		}
