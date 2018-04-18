@@ -25,7 +25,6 @@ public class GoIRStarNode extends GoBaseIRNode {
 
 	@Override
 	public Object accept(GoIRVisitor visitor) {
-		// TODO Auto-generated method stub
 		return visitor.visitStarNode(this);
 	}
 

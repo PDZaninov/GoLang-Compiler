@@ -16,6 +16,9 @@ public class GoCompositeLitNode extends GoExpressionNode {
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
+		if(type == null){
+			return elts.gatherResults(frame);
+		}
 		return type.fillCompositeFields(frame, elts);
 	}
 

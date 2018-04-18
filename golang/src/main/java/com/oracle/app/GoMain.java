@@ -50,7 +50,8 @@ public class GoMain
     			//Throw error GoException
     		}
     		else if (result.get() != GoNull.SINGLETON ) {
-    			out.println(result.get());
+    			//This thing here is actually the reason why we get that last null LOL
+    			//out.println(result.get());
     		}
     	}
     	//A Parse error goes here

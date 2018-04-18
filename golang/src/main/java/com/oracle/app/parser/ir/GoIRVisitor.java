@@ -15,7 +15,6 @@ import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
@@ -25,6 +24,7 @@ import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
 import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
@@ -44,7 +44,6 @@ import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRWriteIndexNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 
@@ -80,11 +79,6 @@ public interface GoIRVisitor {
 		return null;
 	}
 	
-	default Object visitDecl(GoIRDeclNode node){
-		System.out.println("Default Decl Visit");
-		return null;
-	}
-
 	default Object visitBlockStmt(GoIRBlockStmtNode node){
 		System.out.println("Default Block Statement Visit");
 		return null;
@@ -195,11 +189,6 @@ public interface GoIRVisitor {
 		return null;
 	}
 
-	default Object visitWriteIndex(GoIRWriteIndexNode goIRWriteIndexNode){
-		System.out.println("Default Write Index Visit");
-		return null;
-	}
-
 	default Object visitStarNode(GoIRStarNode goIRStarNode){
 		System.out.println("Default Star Node");
 		return null;
@@ -240,6 +229,11 @@ public interface GoIRVisitor {
 
 	default Object visitSliceExpr(GoIRSliceExprNode goIRSliceExprNode){
 		System.out.println("Default Slice Expr Visit");
+		return null;
+	}
+	
+	default Object visitFuncType(GoIRFuncTypeNode node){
+		System.out.println("Default Func Type Visit");
 		return null;
 	}
 

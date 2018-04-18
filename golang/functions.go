@@ -1,8 +1,9 @@
 package main
 
 
-func addnums(x int, y int) {
-	println(x+y)
+func addnums(x , y int) {
+	println(x)
+    println(y)
 }
 
 func main() {

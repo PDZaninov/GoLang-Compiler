@@ -23,7 +23,6 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    protected int writeInt(VirtualFrame frame, int value) {
 	    	
 	        getSlot().setKind(FrameSlotKind.Int);
-
 	        frame.setInt(getSlot(), value);
 	        return value;
 	    }
@@ -133,32 +132,35 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    	@Specialization
 	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
 	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(frame, index);
-	    		frame.setInt(slot, value);
+	    		array.insert(frame, index, value);
 	    		return null;
 	    	}
 	    	
 	    	@Specialization
-	    	public GoArray writeFloatArray(VirtualFrame frame, float value, int index){
+	    	public GoArray writeFloat32Array(VirtualFrame frame, float value, int index){
 	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(frame, index);
-	    		frame.setFloat(slot, value);
+	    		array.insert(frame, index, value);
+	    		return null;
+	    	}
+	    	
+	    	@Specialization
+	    	public GoArray writeFloat64Array(VirtualFrame frame, double value, int index){
+	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
+	    		array.insert(frame, index, value);
 	    		return null;
 	    	}
 	    	
 	    	@Specialization
 	    	public GoArray writeBooleanArray(VirtualFrame frame, boolean value, int index){
 	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(frame, index);
-	    		frame.setBoolean(slot, value);
+	    		array.insert(frame, index, value);
 	    		return null;
 	    	}
 	    	
 	    	@Specialization
 	    	public GoArray writeObjectArray(VirtualFrame frame, Object value, int index){
 	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		FrameSlot slot = array.readArray(frame, index);
-	    		frame.setObject(slot, value);
+	    		array.insert(frame, index, value);
 	    		return null;
 	    	}
 	    } 
