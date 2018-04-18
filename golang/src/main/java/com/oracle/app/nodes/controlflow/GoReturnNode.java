@@ -11,7 +11,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 public final class GoReturnNode extends GoStatementNode {
 
     @Child private GoExpressionNode valueNode;
-
+    public int paramNum = 0;
     public GoReturnNode(GoExpressionNode valueNode) {
         this.valueNode = valueNode;
     }
@@ -20,7 +20,16 @@ public final class GoReturnNode extends GoStatementNode {
     public void executeVoid(VirtualFrame frame) {
         Object result;
         if (valueNode != null) {
-            result = ((GoArrayExprNode) valueNode).getArguments()[0].executeGeneric(frame);
+        	if( ((GoArrayExprNode) valueNode).getArguments().length ==1) {
+        		result = ((GoArrayExprNode) valueNode).getArguments()[0].executeGeneric(frame);
+        	}
+        	else {
+        		result = ((GoArrayExprNode) valueNode).getArguments()[paramNum].executeGeneric(frame);
+        		paramNum++;
+        		if(paramNum >=((GoArrayExprNode) valueNode).getArguments().length ) {
+        			paramNum = 0;
+        		}
+        	}
         } else {
             /*
              * Return statement that was not followed by an expression, so return the null value.

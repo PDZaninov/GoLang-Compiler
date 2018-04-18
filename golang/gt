@@ -24,4 +24,14 @@ done
 
 TRUFFLE_LIB=./graalvm/jre/lib/truffle
 
-$JAVACMD $JAVA_ARGS -XX:-UseJVMCIClassLoader -Xbootclasspath/a:$TRUFFLE_LIB/truffle-api.jar:$TRUFFLE_LIB/locator.jar:$TRUFFLE_LIB/truffle-nfi.jar -cp ./target/classes com.oracle.app.GoMain $PROGRAM_ARGS
+TruffleOutput="${PROGRAM_ARGS}.Truffle.output"
+GoOutput="${PROGRAM_ARGS}.Go.output"
+DIRO="TestOutputs/"
+echo "Truffle Output"
+$JAVACMD $JAVA_ARGS -XX:-UseJVMCIClassLoader -Xbootclasspath/a:$TRUFFLE_LIB/truffle-api.jar:$TRUFFLE_LIB/locator.jar:$TRUFFLE_LIB/truffle-nfi.jar -cp ./target/classes com.oracle.app.GoMain $PROGRAM_ARGS | tee "$DIRO""${TruffleOutput}"
+
+go run $PROGRAM_ARGS &>"$DIRO""${GoOutput}"
+
+echo "diff result, if nothing it means perfect"
+diff "$DIRO""${GoOutput}" "$DIRO""${TruffleOutput}"
+rm *.ast
