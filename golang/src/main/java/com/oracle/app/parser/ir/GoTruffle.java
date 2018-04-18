@@ -204,7 +204,10 @@ public class GoTruffle implements GoIRVisitor {
 	public GoFileNode visitFile(GoIRFileNode node){
 		String name = node.getName().getIdentifier();
 		GoArrayExprNode decls = (GoArrayExprNode) node.getDecls().accept(this);
-		GoImportSpec imports = (GoImportSpec) node.getImports().accept(this);
+		GoImportSpec imports = null;
+		if(node.getImports() != null){
+			imports = (GoImportSpec) node.getImports().accept(this);
+		}
 		//Subject to change because what if unit testing doesnt have a main file or something like that :(
 		GoRootNode functionstart = allFunctions.get("main");
 		GoFileNode result = new GoFileNode(language,frameDescriptor,decls,imports,functionstart,allFunctions,name);
