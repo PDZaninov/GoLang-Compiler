@@ -324,7 +324,6 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
-		String functionName = node.getFunctionNode().getIdentifier();
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
@@ -333,7 +332,7 @@ public class GoTruffle implements GoIRVisitor {
 		else{
 			arguments = new GoArrayExprNode(new GoExpressionNode[0]);
 		}
-		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments(), allFunctions.get(functionName));
+		GoInvokeNode result = new GoInvokeNode(functionNode, arguments.getArguments());
 		//int start = functionNode.getSourceSection().getCharIndex();
 		//int end = arguments.getSourceSection().getCharEndIndex() + 1 - start;
 		//result.setSourceSection(source.createSection(start,end));
@@ -362,7 +361,10 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitFuncType(GoIRFuncTypeNode node) {
-		GoArrayExprNode params = (GoArrayExprNode) node.getParams().accept(this);
+		GoArrayExprNode params = null;
+		if(node.getParams() != null) {
+			params = (GoArrayExprNode) node.getParams().accept(this);
+		}
 		GoArrayExprNode results = null;
 		if(node.getResults() != null) {
 			//Temporarily broken as visiting a fieldlist only works for parameters currently or if the returns are named
@@ -404,6 +406,7 @@ public class GoTruffle implements GoIRVisitor {
 		int argumentsize = node.getSize();
 		GoExpressionNode[] arguments = new GoExpressionNode[argumentsize];
 		ArrayList<GoBaseIRNode> children = node.getChildren();
+		//System.out.println("------");
 		for(int i = 0; i < argumentsize; i++){
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}

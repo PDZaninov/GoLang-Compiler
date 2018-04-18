@@ -16,13 +16,11 @@ public class GoInvokeNode extends GoExpressionNode {
     @Child protected GoExpressionNode functionNode;
     @Children protected final GoExpressionNode[] argumentNodes;
     @Child protected GoGenericDispatchNode dispatchNode;
-    
-    GoRootNode functionReference;
 
-    public GoInvokeNode(GoExpressionNode functionNode, GoExpressionNode[] argumentNodes, GoRootNode root) {
+
+    public GoInvokeNode(GoExpressionNode functionNode, GoExpressionNode[] argumentNodes) {
         this.functionNode = functionNode;
         this.argumentNodes = argumentNodes;
-        this.functionReference = root;
         this.dispatchNode = GoGenericDispatchNodeGen.create();
     }
 
@@ -39,12 +37,7 @@ public class GoInvokeNode extends GoExpressionNode {
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
-        if(functionReference != null) {
-            functionReference.setArgumentValues(argumentNodes);
-        }
-        if(frame.getArguments().length == argumentValues.length) {
-            argumentValues = frame.getArguments();
-        }
+
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 
