@@ -33,7 +33,6 @@ public class GoRootNode extends RootNode {
 
     private final SourceSection sourceSection;
 
-    private FrameDescriptor frameDescriptor;
     
     public GoRootNode(GoLanguage language, FrameDescriptor frameDescriptor, GoIdentNode nameNode, GoFuncTypeNode typeNode, GoExpressionNode bodyNode, SourceSection sourceSection, String name) {
         super(language, frameDescriptor);
@@ -42,7 +41,6 @@ public class GoRootNode extends RootNode {
         this.bodyNode = bodyNode;
         this.name = name;
         this.sourceSection = sourceSection;
-        this.frameDescriptor = frameDescriptor;
     }
 
     @Override
@@ -55,7 +53,6 @@ public class GoRootNode extends RootNode {
         assert getLanguage(GoLanguage.class).getContextReference().get() != null;
         if(typeNode != null) {
         	typeNode.executeGeneric(frame);
-        	//assignToSlot(frame);
         }
 
         return bodyNode.executeGeneric(frame);
@@ -71,49 +68,6 @@ public class GoRootNode extends RootNode {
 
     public GoExpressionNode getBodyNode() {
         return bodyNode;
-    }
-
-    public void assignToSlot(VirtualFrame frame) {
-        if(this.getParameters().getArguments().length == 0) {
-            return;
-        }
-        GoExpressionNode[] params = ((GoArrayExprNode) this.getParameters().getArguments()[0]).getArguments();
-
-        Object[] args = frame.getArguments();
-        GoExpressionNode result = null;
-
-        if(params.length != args.length) {
-            throw new RuntimeException("Parameter mismatch: " + this.toString());
-        }
-
-        GoIdentNode child;
-        for(int i = 0; i < args.length; i++) {
-            result =  createArgument(args[i]);
-            child = ((GoFieldNode) params[i]).getIdentifier();
-            child.setChild(result);
-            writeValue(frame, child.getName(), result);
-        }
-    }
-
-    public GoExpressionNode createArgument(Object arg) {
-        String type = arg.getClass().getTypeName();
-        GoExpressionNode result = null;
-        switch(type) {
-            case "java.lang.Integer":
-                result = new GoIntNode((int) arg);
-                break;
-            case "java.lang.String":
-                System.out.println("string " + type);
-            default:
-                System.out.println("Type not yet implemented for method call: " + type);
-        }
-        return result;
-    }
-
-    public void writeValue(VirtualFrame frame, String name , GoExpressionNode value) {
-        FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
-        GoExpressionNode write = GoWriteLocalVariableNodeGen.create(value, slot);
-        write.executeGeneric(frame);
     }
 
     @Override
