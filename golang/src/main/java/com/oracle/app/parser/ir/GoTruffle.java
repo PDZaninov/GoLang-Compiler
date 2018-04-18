@@ -343,8 +343,6 @@ public class GoTruffle implements GoIRVisitor {
 		ArrayList<GoBaseIRNode> children = node.getChildren();
 		//System.out.println("------");
 		for(int i = 0; i < argumentsize; i++){
-			//System.out.println(children.size());
-			//System.out.println(argumentsize);
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
 		GoArrayExprNode result = new GoArrayExprNode(arguments);

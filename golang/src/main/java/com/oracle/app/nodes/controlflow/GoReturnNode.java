@@ -11,7 +11,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 public final class GoReturnNode extends GoStatementNode {
 
     @Child private GoExpressionNode valueNode;
-
+    public int paramNum = 0;
     public GoReturnNode(GoExpressionNode valueNode) {
         this.valueNode = valueNode;
     }
@@ -24,9 +24,11 @@ public final class GoReturnNode extends GoStatementNode {
         		result = ((GoArrayExprNode) valueNode).getArguments()[0].executeGeneric(frame);
         	}
         	else {
-        		System.out.println("__________");
-        		System.out.println(((GoArrayExprNode) valueNode).getArguments());
-        		result = ((GoArrayExprNode) valueNode).executeGeneric(frame);
+        		result = ((GoArrayExprNode) valueNode).getArguments()[paramNum].executeGeneric(frame);
+        		paramNum++;
+        		if(paramNum >=((GoArrayExprNode) valueNode).getArguments().length ) {
+        			paramNum = 0;
+        		}
         	}
         } else {
             /*

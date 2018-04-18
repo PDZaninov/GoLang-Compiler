@@ -9,4 +9,7 @@ func main() {
 	var x,y = vals()
 	println(x)
 	println(y)
+	var a,s = vals()
+	println(a)
+	println(s)	
 }
