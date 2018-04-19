@@ -3,6 +3,7 @@ package com.oracle.app.nodes.call;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
+import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -10,14 +11,11 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class GoFieldNode extends GoExpressionNode{
 
 	@Child GoArrayExprNode names;
-	@Child GoIdentNode type;
+	@Child GoReadLocalVariableNode type;
 	
-	String typeName;
-	
-	public GoFieldNode(GoArrayExprNode names, GoIdentNode type, String typeName) {
+	public GoFieldNode(GoArrayExprNode names, GoReadLocalVariableNode type) {
 		this.names = names;
 		this.type = type;
-		this.typeName = typeName;
 	}
 
 	public GoExpressionNode[] getNames(){
@@ -32,7 +30,7 @@ public class GoFieldNode extends GoExpressionNode{
 		return ((GoIdentNode) names.getArguments()[0]).getName();
 	}
 
-	public GoIdentNode getType() { return type; }
+	public GoReadLocalVariableNode getType() { return type; }
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {

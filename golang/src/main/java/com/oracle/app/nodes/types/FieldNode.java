@@ -1,14 +1,13 @@
 package com.oracle.app.nodes.types;
 
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameUtil;
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class FieldNode extends GoExpressionNode{
     protected Object value;
     protected String type;
 
-    public FieldNode(String value, Object type){
+    public FieldNode(Object value, String type){
         this.value = value;
         this.type = type;
     }
@@ -20,5 +19,11 @@ public class FieldNode extends GoExpressionNode{
     public Object read(){
         return this.value;
     }
+
+	@Override
+	public Object executeGeneric(VirtualFrame frame) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -6,7 +6,6 @@ import java.util.Random;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoPrimitiveTypes;
 import com.oracle.app.nodes.types.GoSlice;
@@ -26,23 +25,6 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 	public GoArrayTypeExprNode(GoIntNode length,GoExpressionNode typenode){
 		this.length = length.executeInteger(null);
 		this.typenode = typenode;
-		/*
-		if(typenode instanceof GoIntNode){
-			this.type = GoPrimitiveTypes.INT;
-		}
-		else if(typenode instanceof GoFloat32Node){
-			this.type = GoPrimitiveTypes.FLOAT32;
-		}
-		else if(typenode instanceof GoFloat64Node){
-			this.type = GoPrimitiveTypes.FLOAT64;
-		}
-		else if(typenode instanceof GoStringNode){
-			this.type = GoPrimitiveTypes.STRING;
-		}
-		else{
-			this.type = GoPrimitiveTypes.OBJECT;
-			System.out.println("Array Type "+type+" not implemented");
-		}*/
 	}
 	//Needs to execute the element type expression first
 	@Override
@@ -69,24 +51,7 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 			//System.out.println("Array Type "+type+" not implemented");
 		}
 		return fillCompositeFields(frame, temp);
-		/*
-		switch(type){
-		case BOOL:
-			return fillCompositeFields(frame, temp);
-			
-		case FLOAT64:
-			return fillCompositeFields(frame, temp);
-			
-		case INT:
-			return fillCompositeFields(frame, temp);
-			
-		case STRING:
-			return fillCompositeFields(frame, temp);
-			
-		default:
-			return fillCompositeFields(frame, temp);
-		}*/
-		//return null;
+
 	}
 	
 	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts){

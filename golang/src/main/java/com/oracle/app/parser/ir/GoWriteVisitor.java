@@ -3,14 +3,16 @@ package com.oracle.app.parser.ir;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.expression.GoIndexExprNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
-import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
-import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen.GoReadArrayNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteStructNodeGen;
 import com.oracle.app.nodes.local.GoWriteMemoryNodeGen;
+import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
+import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -52,8 +54,10 @@ public class GoWriteVisitor implements GoIRVisitor {
 	
 	public Object visitIndexNode(GoIRIndexNode node){
 		GoReadLocalVariableNode name = (GoReadLocalVariableNode) node.getName().accept(truffleVisitor);
+		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoIndexExprNode array = new GoIndexExprNode(name,(GoExpressionNode)node.getIndex().accept(truffleVisitor));
-		return array;
+		FrameSlot frameSlot = scope.locals.get(node.getIdentifier());
+		return GoWriteArrayNodeGen.create(value, array.getIndex(), frameSlot);
 	}
 	
 	public Object visitStarNode(GoIRStarNode node){
@@ -61,5 +65,13 @@ public class GoWriteVisitor implements GoIRVisitor {
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		FrameSlot frameSlot = frame.findOrAddFrameSlot(name);
 		return GoWriteMemoryNodeGen.create(value, frameSlot);
+	}
+	
+	@Override
+	public Object visitSelectorExpr(GoIRSelectorExprNode node){
+		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(truffleVisitor);
+		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
+		String name = node.getName().getIdentifier();
+		return GoWriteStructNodeGen.create(value, new GoStringNode(name), expr.getSlot());
 	}
 }
