@@ -792,13 +792,15 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		lexicalscope.locals.put(name,slot);
 		//Should actually be a frame descriptor write. So returns a write local variable with a struct object???
-		return null;
+		GoWriteLocalVariableNode result = GoWriteLocalVariableNodeGen.create(type,slot);
+		return result;
 	}
 	
 	@Override
 	public Object visitStructType(GoIRStructTypeNode node){
 		GoArrayExprNode fields = (GoArrayExprNode) node.getFieldListNode().accept(this);
-		return null;
+		GoStructTypeExprNode result = new GoStructTypeExprNode(fields.getArguments());
+		return result;
 	}
 
 	/**

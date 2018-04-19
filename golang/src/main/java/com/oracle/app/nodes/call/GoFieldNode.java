@@ -32,6 +32,8 @@ public class GoFieldNode extends GoExpressionNode{
 		return ((GoIdentNode) names.getArguments()[0]).getName();
 	}
 
+	public GoIdentNode getType() { return type; }
+
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		if(names != null) {
