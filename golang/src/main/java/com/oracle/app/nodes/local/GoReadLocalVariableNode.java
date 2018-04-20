@@ -1,7 +1,7 @@
 package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.types.GoArrayLikeTypes;
+import com.oracle.app.nodes.types.GoArray.GoIntArray;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -111,36 +111,6 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     
     protected boolean isSlice( VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Object;
-    }
-    
-    @NodeChild(value="index",type = GoExpressionNode.class)
-    public abstract static class GoReadArrayNode extends GoReadLocalVariableNode{
-    	
-    	public abstract GoExpressionNode getIndex();
-    	
-    	//TO-DO Possibly delete this as there is a GoArrayRead node now
-    	@Specialization
-    	public Object readArray(VirtualFrame frame, int index){
-    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-    		FrameSlot slot = (FrameSlot) array.readArray(frame, index);
-    		switch(array.getType()){
-			case BOOL:
-				return FrameUtil.getBooleanSafe(frame, slot);
-			case FLOAT32:
-				return FrameUtil.getFloatSafe(frame, slot);
-			case FLOAT64:
-				return FrameUtil.getDoubleSafe(frame, slot);
-			case INT:
-				return FrameUtil.getIntSafe(frame, slot);
-			case STRING:
-				return FrameUtil.getObjectSafe(frame, slot);
-			case OBJECT:
-				return FrameUtil.getObjectSafe(frame, slot);
-			default:
-				return null;
-    		}
-    	}
-    	
     }
    
 }

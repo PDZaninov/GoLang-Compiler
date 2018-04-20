@@ -152,7 +152,7 @@ public class GoArrayTypeExprNode extends GoExpressionNode {
 			break;
 		
 		}
-		GoArray result = new GoArray(length,type,arr);
+		GoArray result = null;
 		if(slice){
 			FrameSlot slot = frameDescriptor.addFrameSlot(String.format("_0x%x", hashCode()));
 			frame.setObject(slot, result);

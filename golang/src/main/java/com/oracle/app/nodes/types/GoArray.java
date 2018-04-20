@@ -1,120 +1,41 @@
 package com.oracle.app.nodes.types;
 
-import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameUtil;
+import java.util.Arrays;
+
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-
+/**
+ * Arrays are initially empty and undefined arrays until executed. When executed
+ * a specialized array type is created.
+ * Missing boolean type array
+ * When length = 0, a slice should be created
+ * @author Trevor
+ *
+ */
 public class GoArray extends GoArrayLikeTypes{
+	protected GoIntNode lengthnode;
 	protected int length;
-	protected GoPrimitiveTypes type;
-	protected FrameSlot[] arr;
+	protected GoExpressionNode typeexpr;
 	
-	public GoArray(int length, GoPrimitiveTypes type, FrameSlot[] arr){
-		this.length = length;
-		this.arr = arr;
-		this.type = type;
+	public GoArray(GoIntNode length, GoExpressionNode typeexpression){
+		this.lengthnode = length;
+		this.typeexpr = typeexpression;
 	}
 	
-	public GoArray(int length) {
-		this.length = length;
-		arr = new FrameSlot[this.length];
+	@Override
+	public GoPrimitiveTypes getType() {
+		return null;
 	}
-
+	
+	@Override
 	public int len(){
 		return length;
 	}
 	
+	@Override
 	public int cap(){
 		return length;
-	}
-	
-	@Override
-	public void insert(VirtualFrame frame, int index, int value){
-		if(index > length || index < 0){
-			//Throws error
-			System.out.println("Invalid array index");
-			return;
-		}
-		frame.setInt(arr[index], value);
-	}
-	
-	@Override
-	public void insert(VirtualFrame frame, int index, float value){
-		if(index > length || index < 0){
-			//Throws error
-			System.out.println("Invalid array index");
-			return;
-		}
-		frame.setFloat(arr[index], value);
-	}
-	
-	@Override
-	public void insert(VirtualFrame frame, int index, double value){
-		if(index > length || index < 0){
-			//Throws error
-			System.out.println("Invalid array index");
-			return;
-		}
-		frame.setDouble(arr[index], value);
-	}
-	
-	@Override
-	public void insert(VirtualFrame frame, int index, boolean value){
-		if(index > length || index < 0){
-			//Throws error
-			System.out.println("Invalid array index");
-			return;
-		}
-		frame.setBoolean(arr[index], value);
-	}
-
-	@Override
-	public void insert(VirtualFrame frame, int index, Object value){
-		if(index > length || index < 0){
-			//Throws error
-			System.out.println("Invalid array index");
-			return;
-		}
-		frame.setObject(arr[index], value);
-	}
-	
-	/**
-	 * Inserts new frameslots for a new array
-	 * @param slot - The new slot to insert
-	 * @param index - The index to insert the new frameslot in
-	 */
-	public void insert(FrameSlot slot, int index){
-		if(index > length || index < 0){
-			//Throws error
-			System.out.println("Invalid array index");
-			return;
-		}
-		arr[index] = slot;
-	}
-	
-	/**
-	 * Returns the value stored in the frameslot of the index.
-	 */
-	@Override
-	public Object readArray(VirtualFrame frame, int index){
-		FrameSlot frameSlot = arr[index];
-		switch(type){
-		case BOOL:
-			return FrameUtil.getBooleanSafe(frame, frameSlot);
-		case FLOAT32:
-			return FrameUtil.getFloatSafe(frame, frameSlot);
-		case FLOAT64:
-			return FrameUtil.getDoubleSafe(frame, frameSlot);
-		case INT:
-			return FrameUtil.getIntSafe(frame, frameSlot);
-		case OBJECT:
-		case STRING:
-			return FrameUtil.getObjectSafe(frame, frameSlot);
-		default:
-			System.out.println("Read array Error");
-			return null;
-		}
 	}
 	
 	@Override
@@ -122,30 +43,233 @@ public class GoArray extends GoArrayLikeTypes{
 		return 0;
 	}
 	
-	/**
-	 * Will need to change to account for objects, not just primitives/ JK
-	 * @return - The type of array
-	 */
 	@Override
-	public GoPrimitiveTypes getType(){
-		return type;
+	public Object executeGeneric(VirtualFrame frame){
+		length = lengthnode.executeInteger(frame);
+		Object kind = typeexpr.executeGeneric(frame);
+		GoArray result = null;
+		if(kind instanceof Integer){
+			result = new GoIntArray(length);
+		}
+		else if(kind instanceof Float){
+			result =  new GoFloat32Array(length);
+		}
+		else if(kind instanceof Double){
+			result =  new GoFloat64Array(length);
+		}
+		else if(kind instanceof String){
+			result =  new GoStringArray(length);
+		}
+		else{
+			result =  new GoObjectArray(length);
+		}
+		return result;
 	}
 	
-	@Override
-	public String toString() {
-		return "GoArray [length=" + length + "]";
-	}
+	public static class GoIntArray extends GoArray{
 
-	/**
-	 * Needs to return a copy of itself?? or a reference to itself??
-	 */
-	@Override
-	public GoArray executeGeneric(VirtualFrame frame){
-		return this;
+		private int[] array;
+		
+		public GoIntArray(int length) {
+			super(null, null);
+			this.length = length;
+			array = new int[length];
+		}
+		
+		@Override
+		public GoPrimitiveTypes getType(){
+			return GoPrimitiveTypes.INT;
+		}
+		
+		@Override
+		public String toString(){
+			return Arrays.toString(array);
+		}
+		
+		@Override
+		public Object executeGeneric(VirtualFrame frame){
+			return this.deepCopy();
+		}
+		
+		public void insert(int index, int value){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			array[index] = value;
+		}
+		
+		public int read(int index){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			return array[index];
+		}
+		
 	}
+	
+	public static class GoFloat32Array extends GoArray{
 
-	public FrameSlot getSlot(VirtualFrame frame, int index) {
-		return arr[index];
+		private float[] array;
+		
+		public GoFloat32Array(int length) {
+			super(null, null);
+			this.length = length;
+			array = new float[length];
+		}
+		
+		@Override
+		public GoPrimitiveTypes getType(){
+			return GoPrimitiveTypes.FLOAT32;
+		}
+		
+		@Override
+		public String toString(){
+			return Arrays.toString(array);
+		}
+		
+		@Override
+		public Object executeGeneric(VirtualFrame frame){
+			return this.deepCopy();
+		}
+		
+		public void insert(int index, float value){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			array[index] = value;
+		}
+		
+		public float read(int index){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			return array[index];
+		}
+		
+	}
+	
+	public static class GoFloat64Array extends GoArray{
+
+		private double[] array;
+		
+		public GoFloat64Array(int length) {
+			super(null, null);
+			this.length = length;
+			array = new double[length];
+		}
+		
+		@Override
+		public String toString(){
+			return Arrays.toString(array);
+		}
+		
+		@Override
+		public GoPrimitiveTypes getType(){
+			return GoPrimitiveTypes.FLOAT64;
+		}
+		
+		@Override
+		public Object executeGeneric(VirtualFrame frame){
+			return this.deepCopy();
+		}
+		
+		public void insert(int index, double value){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			array[index] = value;
+		}
+		
+		public double read(int index){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			return array[index];
+		}
+		
+	}
+	
+	public static class GoStringArray extends GoArray{
+
+		private String[] array;
+		
+		public GoStringArray(int length) {
+			super(null, null);
+			this.length = length;
+			array = new String[length];
+			Arrays.fill(array, "");
+		}
+		
+		@Override
+		public String toString(){
+			return Arrays.toString(array);
+		}
+		
+		@Override
+		public GoPrimitiveTypes getType(){
+			return GoPrimitiveTypes.STRING;
+		}
+		
+		@Override
+		public Object executeGeneric(VirtualFrame frame){
+			return this.deepCopy();
+		}
+		
+		public void insert(int index, String value){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			array[index] = value;
+		}
+		
+		public String read(int index){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			return array[index];
+		}
+		
+	}
+	
+	public static class GoObjectArray extends GoArray{
+
+		private Object[] array;
+		
+		public GoObjectArray(int length) {
+			super(null, null);
+			this.length = length;
+			array = new Object[length];
+		}
+		
+		@Override
+		public GoPrimitiveTypes getType(){
+			return GoPrimitiveTypes.OBJECT;
+		}
+		
+		@Override
+		public String toString(){
+			return Arrays.toString(array);
+		}
+		
+		@Override
+		public Object executeGeneric(VirtualFrame frame){
+			return this.deepCopy();
+		}
+		
+		public void insert(int index, Object value){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			array[index] = value;
+		}
+		
+		public Object read(int index){
+			if(index < 0 || index > array.length){
+				System.out.println("Index out of bounds");
+			}
+			return array[index];
+		}
+		
 	}
 
 }

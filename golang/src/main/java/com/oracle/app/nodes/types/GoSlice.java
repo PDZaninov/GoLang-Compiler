@@ -70,10 +70,10 @@ public class GoSlice extends GoArrayLikeTypes {
 	public void setType(GoPrimitiveTypes type) {
 		this.type = type;
 	}
-
+/*
 	/**
 	 * When reading from an array in a slice, the index needs to be adjusted for the slice size.
-	 */
+	 
 	@Override
 	public Object readArray(VirtualFrame frame, int index) {
 		GoArrayLikeTypes arr = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, array);
@@ -145,5 +145,5 @@ public class GoSlice extends GoArrayLikeTypes {
 		}
 		arr.insert(frame, realindex, value);
 	}
-
+*/
 }

@@ -2,7 +2,6 @@ package com.oracle.app.parser.ir;
 
 
 import com.oracle.app.nodes.GoFileNode;
-import com.oracle.app.nodes.expression.GoIndexExprNode;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -35,6 +34,7 @@ import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
@@ -46,7 +46,6 @@ import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 
@@ -159,11 +158,6 @@ public interface GoIRVisitor {
 
 	default Object visitIndexNode(GoIRIndexNode goIRIndexNode){
 		System.out.println("Default Index Node Visit");
-		return null;
-	}
-
-	default Object writeIndexExprNode(GoIndexExprNode node){
-		System.out.println("Default Write Index Visit");
 		return null;
 	}
 
