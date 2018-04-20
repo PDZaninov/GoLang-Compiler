@@ -1,7 +1,6 @@
  package com.oracle.app.nodes.types;
 
 import com.oracle.truffle.api.frame.FrameSlot;
-import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 /**
@@ -13,29 +12,28 @@ import com.oracle.truffle.api.frame.VirtualFrame;
  */
 public class GoSlice extends GoArrayLikeTypes {
 
-	FrameSlot array;
+	GoArray array;
 	GoPrimitiveTypes type;
 	int cap;
 	int len;
 	int low;
 	int high;
 	
-	public GoSlice(FrameSlot array, int low, int high, int cap, GoPrimitiveTypes type){
+	public GoSlice(GoArray array, int low, int high, int cap){
 		this.array = array;
 		this.low = low;
 		this.high = high-1;
 		this.cap = cap;
 		len = high - low;
-		this.type = type;
 	}
-	
+	/*
 	public GoSlice(FrameSlot array, int low, int high, int cap){
 		this.array = array;
 		this.low = low;
 		this.high = high-1;
 		this.cap = cap;
 		len = high - low;
-	}
+	}*/
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
@@ -44,7 +42,7 @@ public class GoSlice extends GoArrayLikeTypes {
 
 	//Used by slice expression, should look for a better way to handle this
 	public FrameSlot getSlot(){
-		return array;
+		return null;
 	}
 	
 	@Override
@@ -146,4 +144,10 @@ public class GoSlice extends GoArrayLikeTypes {
 		arr.insert(frame, realindex, value);
 	}
 */
+
+	@Override
+	public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

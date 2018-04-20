@@ -1,7 +1,7 @@
 package main
 
 func main() {
-	var array [10]string
+	array := [5]int{1,2,3,4,5}
 
     println(array)
 }

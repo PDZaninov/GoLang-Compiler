@@ -1,6 +1,7 @@
 package com.oracle.app.nodes.types;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.truffle.api.frame.VirtualFrame;
 
 /**
  * Objects that are not listed as a primitive type under {@link GoPrimitiveTypes}
@@ -9,5 +10,5 @@ import com.oracle.app.nodes.GoExpressionNode;
  *
  */
 public abstract class GoNonPrimitiveType extends GoExpressionNode {
-
+	public abstract GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results);
 }

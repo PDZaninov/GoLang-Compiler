@@ -44,6 +44,11 @@ public class GoArray extends GoArrayLikeTypes{
 	}
 	
 	@Override
+	public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results) {
+		return null;
+	}
+	
+	@Override
 	public Object executeGeneric(VirtualFrame frame){
 		length = lengthnode.executeInteger(frame);
 		Object kind = typeexpr.executeGeneric(frame);
@@ -79,6 +84,14 @@ public class GoArray extends GoArrayLikeTypes{
 		@Override
 		public GoPrimitiveTypes getType(){
 			return GoPrimitiveTypes.INT;
+		}
+		
+		@Override
+		public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results) {
+			for(int i = 0; i < results.length; i++){
+				array[i] = (int) results[i];
+			}
+			return this;
 		}
 		
 		@Override
@@ -123,6 +136,14 @@ public class GoArray extends GoArrayLikeTypes{
 		}
 		
 		@Override
+		public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results) {
+			for(int i = 0; i < results.length; i++){
+				array[i] = (float) results[i];
+			}
+			return this;
+		}
+		
+		@Override
 		public String toString(){
 			return Arrays.toString(array);
 		}
@@ -161,6 +182,14 @@ public class GoArray extends GoArrayLikeTypes{
 		@Override
 		public String toString(){
 			return Arrays.toString(array);
+		}
+		
+		@Override
+		public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results) {
+			for(int i = 0; i < results.length; i++){
+				array[i] = (double) results[i];
+			}
+			return this;
 		}
 		
 		@Override
@@ -203,6 +232,14 @@ public class GoArray extends GoArrayLikeTypes{
 		@Override
 		public String toString(){
 			return Arrays.toString(array);
+		}
+		
+		@Override
+		public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results) {
+			for(int i = 0; i < results.length; i++){
+				array[i] = (String) results[i];
+			}
+			return this;
 		}
 		
 		@Override
@@ -249,6 +286,14 @@ public class GoArray extends GoArrayLikeTypes{
 		@Override
 		public String toString(){
 			return Arrays.toString(array);
+		}
+		
+		@Override
+		public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results) {
+			for(int i = 0; i < results.length; i++){
+				array[i] = results[i];
+			}
+			return this;
 		}
 		
 		@Override

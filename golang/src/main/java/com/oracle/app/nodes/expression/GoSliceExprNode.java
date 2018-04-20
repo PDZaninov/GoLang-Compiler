@@ -71,9 +71,9 @@ public class GoSliceExprNode extends GoExpressionNode {
 				e.printStackTrace();
 			}
 		}
-		GoSlice slice = new GoSlice(slot,lowerbound,highbound,maxsize);
-		slice.setType(array.getType());
-		return slice;
+		//GoSlice slice = new GoSlice(slot,lowerbound,highbound,maxsize);
+		//slice.setType(array.getType());
+		return null;
 	}
 
 }

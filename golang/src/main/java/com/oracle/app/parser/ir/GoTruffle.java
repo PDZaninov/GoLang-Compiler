@@ -567,8 +567,7 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	/**
-	 * 
-	 * return - A GoArray with filled frameSlots, but values are not written in yet
+	 * return - An undefined GoArray
 	 */
 	@Override
 	public Object visitArrayType(GoIRArrayTypeNode node){
