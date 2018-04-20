@@ -29,7 +29,7 @@ public class GoIdentNode extends GoExpressionNode{
 	}
 	
 	public GoFunction getFunction(){
-		return reference.get().getFunctionRegistry().lookup(name, true);
+		return reference.get().getFunctionRegistry().lookup(name, false);
 	}
 	
 	public String getName(){

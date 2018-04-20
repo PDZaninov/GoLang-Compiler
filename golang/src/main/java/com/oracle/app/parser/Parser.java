@@ -158,7 +158,6 @@ public class Parser {
 	    		//adding attributes
 	    		matchedTerm = attrPattern.matcher(currentLine);
 	    		if(matchedTerm.find()){
-	    			//TO-DO: Maybe shouldnt be hardcoded?????
 	    			if(matchedTerm.group(stringAttr) == null){
 	    				attrs.put(matchedTerm.group(regularAttr), matchedTerm.group(regularVal));
 	    			}

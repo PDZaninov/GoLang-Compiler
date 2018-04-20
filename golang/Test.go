@@ -10,5 +10,5 @@ type Vertex struct {
 func main() {
 	v := Vertex{Y:2}
 	//v.X = 4
-    println(v.Y)
+    fmt.Println(v.Y)
 }

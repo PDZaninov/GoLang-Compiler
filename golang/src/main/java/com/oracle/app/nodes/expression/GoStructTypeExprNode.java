@@ -19,8 +19,7 @@ public class GoStructTypeExprNode extends GoExpressionNode{
         GoStruct result = new GoStruct();
         for(GoFieldNode child : fields){
             GoReadLocalVariableNode type = child.getType();
-            GoIdentNode name = (GoIdentNode) child.getNames()[0]; // This is the name of the variable
-            //type.execute = Object value of the type field, type.name = the type name such as int
+            GoIdentNode name = (GoIdentNode) child.getNames()[0]; // This is the name of the field
             FieldNode field = new FieldNode(type.executeGeneric(frame), (String) type.getSlot().getIdentifier());
             result.insertField(name.getName(),field);
         }

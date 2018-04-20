@@ -43,7 +43,6 @@ public class GoStruct extends GoNonPrimitiveType{
 
 	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts) {
 		Object[] vals = elts.gatherResults(frame);
-		//TO-DO Add case for Key value expressions, when the fields are named
 		if(vals.length != 0){
 			if(vals[0] instanceof GoKeyValueNode){
 				for(int i = 0; i < vals.length; i++){

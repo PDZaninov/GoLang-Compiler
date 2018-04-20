@@ -21,13 +21,15 @@ public class GoSelectorExprNode extends GoExpressionNode {
     //TO-DO Make sure this does not overlap with import selectors
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-    	if(expr instanceof GoReadLocalVariableNode){
-    		GoStruct struct = (GoStruct) expr.executeGeneric(frame);
-    		return struct.read(name.getName());
+    	GoExpressionNode result = (GoExpressionNode) expr.executeGeneric(frame);
+    	if(result instanceof GoStruct){
+    		return ((GoStruct) result).read(name.getName());
     	}
-        return null;
+    	else{
+    		//The selector expression variable was not found in the framedescriptor, error
+    		System.out.println("Undefined selector");
+    		return null;
+    	}
     }
-
-
 
 }
