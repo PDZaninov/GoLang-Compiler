@@ -46,6 +46,7 @@ import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 
@@ -256,6 +257,11 @@ public interface GoIRVisitor {
 
 	default GoFileNode visitFile(GoIRFileNode goIRFileNode){
 		System.out.println("Default File Node visit");
+		return null;
+	}
+
+	default Object visitKeyValue(GoIRKeyValueNode goKeyValueExprNode){
+		System.out.println("Default Key Value Node visit");
 		return null;
 	}
 

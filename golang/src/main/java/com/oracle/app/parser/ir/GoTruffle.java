@@ -39,7 +39,7 @@ import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterThanNodeGen;
-import com.oracle.app.nodes.expression.GoIndexExprNode;
+import com.oracle.app.nodes.expression.GoKeyValueNode;
 import com.oracle.app.nodes.expression.GoLessOrEqualNodeGen;
 import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
@@ -62,7 +62,6 @@ import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNode;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
-import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteArrayNodeGen;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -94,6 +93,7 @@ import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
@@ -861,4 +861,15 @@ public class GoTruffle implements GoIRVisitor {
 		return null;
 	}
 
+	/**
+	 * Currently only works for structs. Assumes the key is going to be an identifier, but cannot search
+	 * through the lexical scope for it, else it gets a readlocalvariable node if the variable exists.
+	 */
+	public Object visitKeyValue(GoIRKeyValueNode node){
+		String key = node.getIdentifier();
+		GoExpressionNode value = (GoExpressionNode) node.getValue().accept(this);
+		GoKeyValueNode result = new GoKeyValueNode(key,value);
+		return result;
+	}
+	
 }

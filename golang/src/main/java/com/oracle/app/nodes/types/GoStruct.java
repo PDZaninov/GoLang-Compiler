@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.oracle.app.nodes.GoArrayExprNode;
+import com.oracle.app.nodes.expression.GoKeyValueNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 /**
@@ -43,12 +44,22 @@ public class GoStruct extends GoNonPrimitiveType{
 	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts) {
 		Object[] vals = elts.gatherResults(frame);
 		//TO-DO Add case for Key value expressions, when the fields are named
-		int index = 0;
-		for(FieldNode node : symbolTable.values()){
-			if(index >= vals.length || index > size){
-				break;
+		if(vals.length != 0){
+			if(vals[0] instanceof GoKeyValueNode){
+				for(int i = 0; i < vals.length; i++){
+					write(((GoKeyValueNode) vals[i]).getKey(), ((GoKeyValueNode) vals[i]).getResult());
+				}
 			}
-			node.insert(vals[index++]);
+			else{
+				if(vals.length != size){
+					System.out.println("Too few values in struct initializer");
+					return null;
+				}
+				int index = 0;
+				for(FieldNode node : symbolTable.values()){
+					node.insert(vals[index++]);
+				}
+			}
 		}
 		return this;
 	}

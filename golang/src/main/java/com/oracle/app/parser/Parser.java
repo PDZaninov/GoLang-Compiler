@@ -50,6 +50,7 @@ import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.source.Source;
 
@@ -368,7 +369,8 @@ public class Parser {
 						body.get("X"),
 						attrs.get("TokPos")
 						);
-				
+			case "KeyValueExpr":
+				return new GoIRKeyValueNode(body.get("Key"),attrs.get("Colon"),body.get("Value"));
 			case "Object":
 				return new GoTempIRNode(nodeType,attrs,body);
 				

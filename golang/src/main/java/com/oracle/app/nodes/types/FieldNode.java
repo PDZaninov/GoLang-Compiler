@@ -1,6 +1,7 @@
 package com.oracle.app.nodes.types;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.expression.GoKeyValueNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class FieldNode extends GoExpressionNode{
@@ -12,6 +13,10 @@ public class FieldNode extends GoExpressionNode{
         this.type = type;
     }
 
+    public void insert(GoKeyValueNode value){
+    	
+    }
+    
     public void insert(Object value){
         this.value = value;
     }
