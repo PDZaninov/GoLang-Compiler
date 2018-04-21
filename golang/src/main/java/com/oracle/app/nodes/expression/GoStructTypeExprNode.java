@@ -21,7 +21,13 @@ public class GoStructTypeExprNode extends GoExpressionNode{
             GoReadLocalVariableNode type = child.getType();
             GoIdentNode name = (GoIdentNode) child.getNames()[0]; // This is the name of the field
             FieldNode field = new FieldNode(type.executeGeneric(frame), (String) type.getSlot().getIdentifier());
-            result.insertField(name.getName(),field);
+
+            //If name is null (check fieldNode handler function in GoTruffle)
+            if(name != null){
+                result.insertField(name.getName(),field);
+            } else {
+                result.insertField((String) type.getSlot().getIdentifier(), field);
+            }
         }
         return result;
     }
