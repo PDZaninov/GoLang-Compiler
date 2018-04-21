@@ -14,10 +14,20 @@ import com.oracle.app.nodes.types.GoSlice.GoStringSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 @NodeChildren({@NodeChild(value = "index", type = GoExpressionNode.class),@NodeChild(value = "array", type = GoReadLocalVariableNode.class)})
 public abstract class GoArrayReadNode extends GoExpressionNode {
+	
+	public abstract GoExpressionNode getIndex();
+	
+	protected abstract GoReadLocalVariableNode getArray();
+	
+	//LOL
+	public FrameSlot getSlot(){
+		return getArray().getSlot();
+	}
 	
 	@Specialization
 	protected int readInt(VirtualFrame frame, int index, GoIntArray array){

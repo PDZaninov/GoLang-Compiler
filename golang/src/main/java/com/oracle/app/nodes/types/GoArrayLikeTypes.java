@@ -11,11 +11,9 @@ public abstract class GoArrayLikeTypes extends GoNonPrimitiveType {
 	public abstract int cap();
 
 	public abstract int lowerBound();
-	/*
-	public abstract void insert(VirtualFrame frame, int index, int value);
-	public abstract void insert(VirtualFrame frame, int index, float value);
-	public abstract void insert(VirtualFrame frame, int index, double value);
-	public abstract void insert(VirtualFrame frame, int index, boolean value);
-	public abstract void insert(VirtualFrame frame, int index, Object value);
-	*/
+	
+	public abstract Object read(Object index);
+
+	public abstract void insert(Object index, Object value);
+	
 }

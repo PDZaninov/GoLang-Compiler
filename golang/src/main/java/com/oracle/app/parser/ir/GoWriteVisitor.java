@@ -59,10 +59,9 @@ public class GoWriteVisitor implements GoIRVisitor {
 	}
 	
 	public Object visitStarNode(GoIRStarNode node){
-		String name = assignmentNode.getIdentifier();
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
-		FrameSlot frameSlot = frame.findOrAddFrameSlot(name);
-		return GoWriteMemoryNodeGen.create(value, frameSlot);
+		GoReadLocalVariableNode pointee = (GoReadLocalVariableNode) node.getChild().accept(truffleVisitor);
+		return GoWriteMemoryNodeGen.create(value, pointee);
 	}
 	
 	@Override

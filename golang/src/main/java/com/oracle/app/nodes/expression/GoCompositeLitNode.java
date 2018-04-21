@@ -22,8 +22,6 @@ public class GoCompositeLitNode extends GoExpressionNode {
 		if(type == null){
 			return elts.gatherResults(frame);
 		}
-		//Temporary workaround until I change arrays and slices and pointers
-		//TO-DO REMOVE IF STATEMENTS
 		GoNonPrimitiveType result = (GoNonPrimitiveType) type.executeGeneric(frame);
 		Object[] elements = elts.gatherResults(frame);
 		return result.doCompositeLit(frame, elements);

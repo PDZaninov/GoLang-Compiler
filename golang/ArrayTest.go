@@ -1,14 +1,8 @@
 package main
 
 func main() {
-	s := []int{2, 3, 5, 7, 11, 13}
+	s := [6]int{2, 3, 5, 7, 11, 13}
+    ptr := &s[3]
+    *ptr = 4
     println(s)
-	s = s[:0]
-	println(s)
-
-	s = s[:4]
-	println(s)
-
-	s = s[2:]
-	println(s)
 }

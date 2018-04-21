@@ -53,6 +53,7 @@ import com.oracle.app.nodes.expression.GoSliceExprNode;
 import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoStructTypeExprNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
+import com.oracle.app.nodes.expression.GoUnaryAddressNode;
 import com.oracle.app.nodes.local.GoArrayReadNode;
 import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
@@ -476,16 +477,16 @@ public class GoTruffle implements GoIRVisitor {
 			case"-":
 				result = GoNegativeSignNodeGen.create(child);
 				break;
-				/*
+				
 			case "&":
-				if(child instanceof GoReadArrayNode){
-					FrameSlot array = ((GoReadArrayNode)child).getSlot();
-					GoIntNode index = (GoIntNode) ((GoReadArrayNode)child).getIndex();
-					result = new GoUnaryAddressNode(array,true,index);
+				if(child instanceof GoArrayReadNode){
+					FrameSlot array = ((GoArrayReadNode)child).getSlot();
+					GoExpressionNode index = ((GoArrayReadNode)child).getIndex();
+					result = new GoUnaryAddressNode(array,index);
 				}else{
 					result = new GoUnaryAddressNode(((GoReadLocalVariableNode) child).getSlot());
 				}
-				break;*/
+				break;
 			default:
 				throw new RuntimeException("Unexpected Operation: "+op);
 		}

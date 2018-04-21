@@ -49,6 +49,15 @@ public class GoArray extends GoArrayLikeTypes{
 	}
 	
 	@Override
+	public Object read(Object index){
+		return null;
+	}
+	
+	@Override
+	public void insert(Object index, Object value) {
+	}
+	
+	@Override
 	public Object executeGeneric(VirtualFrame frame){
 		length = lengthnode.executeInteger(frame);
 		Object kind = typeexpr.executeGeneric(frame);
@@ -107,6 +116,16 @@ public class GoArray extends GoArrayLikeTypes{
 			return this.deepCopy();
 		}
 		
+		@Override
+		public Object read(Object index){
+			return array[(int) index];
+		}
+		
+		@Override
+		public void insert(Object index, Object value) {
+			array[(int) index] = (int) value;
+		}
+		
 		public void insert(int index, int value){
 			if(index < 0 || index > array.length){
 				System.out.println("Index out of bounds");
@@ -156,6 +175,16 @@ public class GoArray extends GoArrayLikeTypes{
 			return this.deepCopy();
 		}
 		
+		@Override
+		public Object read(Object index){
+			return array[(int) index];
+		}
+		
+		@Override
+		public void insert(Object index, Object value) {
+			array[(int) index] = (float) value;
+		}
+		
 		public void insert(int index, float value){
 			if(index < 0 || index > array.length){
 				System.out.println("Index out of bounds");
@@ -203,6 +232,16 @@ public class GoArray extends GoArrayLikeTypes{
 		@Override
 		public Object executeGeneric(VirtualFrame frame){
 			return this.deepCopy();
+		}
+		
+		@Override
+		public Object read(Object index){
+			return array[(int) index];
+		}
+		
+		@Override
+		public void insert(Object index, Object value) {
+			array[(int) index] = (double) value;
 		}
 		
 		public void insert(int index, double value){
@@ -255,6 +294,16 @@ public class GoArray extends GoArrayLikeTypes{
 			return this.deepCopy();
 		}
 		
+		@Override
+		public Object read(Object index){
+			return array[(int) index];
+		}
+		
+		@Override
+		public void insert(Object index, Object value) {
+			array[(int) index] = (String) value;
+		}
+		
 		public void insert(int index, String value){
 			if(index < 0 || index > array.length){
 				System.out.println("Index out of bounds");
@@ -304,6 +353,16 @@ public class GoArray extends GoArrayLikeTypes{
 			return this.deepCopy();
 		}
 		
+		@Override
+		public Object read(Object index){
+			return array[(int) index];
+		}
+		
+		@Override
+		public void insert(Object index, Object value) {
+			array[(int) index] = value;
+		}
+		
 		public void insert(int index, Object value){
 			if(index < 0 || index > array.length){
 				System.out.println("Index out of bounds");
@@ -319,5 +378,7 @@ public class GoArray extends GoArrayLikeTypes{
 		}
 		
 	}
+
+	
 
 }

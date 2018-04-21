@@ -1,9 +1,10 @@
 package com.oracle.app.nodes.expression;
 
+import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoUnaryNode;
-import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoIntNode;
+import com.oracle.app.nodes.types.GoArrayLikeTypes;
 import com.oracle.app.nodes.types.GoPointerNode;
+import com.oracle.app.nodes.types.GoPointerNode.GoArrayIndexPointerNode;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameUtil;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -14,18 +15,17 @@ public class GoUnaryAddressNode extends GoUnaryNode {
 
 	private FrameSlot value;
 	private boolean isIndex;
-	private int index;
+	private GoExpressionNode index;
 	
-	public GoUnaryAddressNode(FrameSlot value, boolean isIndex, GoIntNode index){
+	public GoUnaryAddressNode(FrameSlot value, GoExpressionNode index){
 		this.value = value;
-		this.isIndex = isIndex;
-		this.index = index.executeInteger(null);
+		this.isIndex = true;
+		this.index = index;
 	}
 	
 	public GoUnaryAddressNode(FrameSlot value){
 		this.value = value;
 		this.isIndex = false;
-		this.index = -1;
 	}
 
 	@Override
@@ -36,8 +36,9 @@ public class GoUnaryAddressNode extends GoUnaryNode {
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		if(isIndex){
-			GoArray array = (GoArray) FrameUtil.getObjectSafe(frame, value);
-			//value = array.getSlot(frame, index);
+			GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, value);
+			Object arrayindex = index.executeGeneric(frame);
+			return new GoArrayIndexPointerNode(array.hashCode(),array,arrayindex);
 		}
 		return GoPointerNode.createPointer(value, value.getKind());
 	}
