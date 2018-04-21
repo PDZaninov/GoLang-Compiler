@@ -52,7 +52,7 @@ public class GoArray extends GoArrayLikeTypes{
 	public Object executeGeneric(VirtualFrame frame){
 		length = lengthnode.executeInteger(frame);
 		Object kind = typeexpr.executeGeneric(frame);
-		GoArray result = null;
+		GoArrayLikeTypes result = null;
 		if(kind instanceof Integer){
 			result = new GoIntArray(length);
 		}
@@ -67,6 +67,9 @@ public class GoArray extends GoArrayLikeTypes{
 		}
 		else{
 			result =  new GoObjectArray(length);
+		}
+		if(length == 0){
+			result = GoSlice.createGoSlice(result, 0, 0, 0);
 		}
 		return result;
 	}

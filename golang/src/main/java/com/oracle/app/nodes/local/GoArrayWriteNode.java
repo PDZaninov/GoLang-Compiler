@@ -7,6 +7,11 @@ import com.oracle.app.nodes.types.GoArray.GoFloat64Array;
 import com.oracle.app.nodes.types.GoArray.GoIntArray;
 import com.oracle.app.nodes.types.GoArray.GoObjectArray;
 import com.oracle.app.nodes.types.GoArray.GoStringArray;
+import com.oracle.app.nodes.types.GoSlice.GoFloat32Slice;
+import com.oracle.app.nodes.types.GoSlice.GoFloat64Slice;
+import com.oracle.app.nodes.types.GoSlice.GoIntSlice;
+import com.oracle.app.nodes.types.GoSlice.GoObjectSlice;
+import com.oracle.app.nodes.types.GoSlice.GoStringSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -45,6 +50,36 @@ public abstract class GoArrayWriteNode extends GoExpressionNode {
 	    
 	    @Specialization
 	    public GoArray writeObjectArray(VirtualFrame frame, int index, Object value, GoObjectArray array){
+	    	array.insert(index, value);
+	    	return null;
+	    }
+	    
+	    @Specialization
+	    public GoArray writeIntSlice(VirtualFrame frame, int index, int value, GoIntSlice array){
+	    	array.insert(index, value);
+	    	return null;
+	    }
+	    	
+	    @Specialization
+	    public GoArray writeFloatSlice(VirtualFrame frame, int index, float value, GoFloat32Slice array){
+	    	array.insert(index, value);
+	    	return null;
+	    }
+	    
+	    @Specialization
+	    public GoArray writeDoubleSlice(VirtualFrame frame, int index, double value, GoFloat64Slice array){
+	    	array.insert(index, value);
+	    	return null;
+	    }
+	    
+	    @Specialization
+	    public GoArray writeStringSlice(VirtualFrame frame, int index, String value, GoStringSlice array){
+	    	array.insert(index, value);
+	    	return null;
+	    }
+	    
+	    @Specialization
+	    public GoArray writeObjectSlice(VirtualFrame frame, int index, Object value, GoObjectSlice array){
 	    	array.insert(index, value);
 	    	return null;
 	    }

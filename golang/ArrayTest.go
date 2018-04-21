@@ -1,7 +1,14 @@
 package main
 
 func main() {
-	array := [5]int{1,2,3,4,5}
+	s := []int{2, 3, 5, 7, 11, 13}
+    println(s)
+	s = s[:0]
+	println(s)
 
-    println(array)
+	s = s[:4]
+	println(s)
+
+	s = s[2:]
+	println(s)
 }

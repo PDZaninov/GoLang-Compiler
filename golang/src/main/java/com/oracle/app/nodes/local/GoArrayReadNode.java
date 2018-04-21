@@ -6,6 +6,11 @@ import com.oracle.app.nodes.types.GoArray.GoFloat64Array;
 import com.oracle.app.nodes.types.GoArray.GoIntArray;
 import com.oracle.app.nodes.types.GoArray.GoObjectArray;
 import com.oracle.app.nodes.types.GoArray.GoStringArray;
+import com.oracle.app.nodes.types.GoSlice.GoFloat32Slice;
+import com.oracle.app.nodes.types.GoSlice.GoFloat64Slice;
+import com.oracle.app.nodes.types.GoSlice.GoIntSlice;
+import com.oracle.app.nodes.types.GoSlice.GoObjectSlice;
+import com.oracle.app.nodes.types.GoSlice.GoStringSlice;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -36,6 +41,31 @@ public abstract class GoArrayReadNode extends GoExpressionNode {
 	
 	@Specialization
 	protected Object readObject(VirtualFrame frame, int index, GoObjectArray array){
+		return array.read(index);
+	}
+	
+	@Specialization
+	protected int readInt(VirtualFrame frame, int index, GoIntSlice array){
+		return array.read(index);
+	}
+	
+	@Specialization
+	protected float readFloat(VirtualFrame frame, int index, GoFloat32Slice array){
+		return array.read(index);
+	}
+	
+	@Specialization
+	protected double readDouble(VirtualFrame frame, int index, GoFloat64Slice array){
+		return array.read(index);
+	}
+	
+	@Specialization
+	protected String readString(VirtualFrame frame, int index, GoStringSlice array){
+		return array.read(index);
+	}
+	
+	@Specialization
+	protected Object readObject(VirtualFrame frame, int index, GoObjectSlice array){
 		return array.read(index);
 	}
 
