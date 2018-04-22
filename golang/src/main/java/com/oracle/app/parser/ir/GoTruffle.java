@@ -790,7 +790,11 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitObjectNode(GoIRObjectNode node) {
 		GoBaseIRNode functionNode = node.getFunctionNode();
 		if(functionNode != null) {
-            return functionNode.accept(this);
+			//Lexical scope issue when calling a function not yet inserted
+			//LexicalScope tempLex = lexicalscope;
+			//finishBlock();
+            functionNode.accept(this);
+            //lexicalscope = tempLex;
         }
 		return null;
 	}
