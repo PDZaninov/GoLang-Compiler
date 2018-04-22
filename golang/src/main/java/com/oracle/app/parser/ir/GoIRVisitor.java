@@ -6,45 +6,7 @@ import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayFieldNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
-import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
-import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
-import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRImportSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRIntNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRStarNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
-import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.app.parser.ir.nodes.*;
 
 
 public interface GoIRVisitor {
@@ -249,6 +211,11 @@ public interface GoIRVisitor {
 
 	default Object visitFieldList(GoIRFieldListNode goIRFieldListNode){
 		System.out.println("Default Field List visit");
+		return null;
+	}
+
+	default Object visitObjectNode(GoIRObjectNode node){
+		System.out.println("Default Object visit");
 		return null;
 	}
 
