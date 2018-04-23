@@ -9,6 +9,7 @@ import com.oracle.app.nodes.local.GoWriteMemoryNodeGen;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
@@ -40,32 +41,95 @@ public class GoWriteVisitor implements GoIRVisitor {
 		return node.accept(this);
 	}
 	
+	public boolean typeCheck(GoIRIdentNode lhs, GoBaseIRNode rhs, FrameSlot frameslot) {
+		System.out.println(frameslot.toString());
+		GoIRBasicLitNode value = (GoIRBasicLitNode) rhs;
+		String kind = value.getType();
+		String frameKind = frameslot.getKind().toString();
+		switch(frameKind) {
+			case "Object":
+				break;
+			case "Illegal":
+				break;
+			case "Long":
+				break;
+			case "Int":
+				break;
+			case "Double":
+				break;
+			case "Float":
+				break;
+			case "Boolean":
+				break;
+			default:
+				System.out.println("Type checking not implemented for this type");
+		}
+		
+		return false;
+	}
+	
+	public boolean typeCheck(GoIRIndexNode lhs, GoBaseIRNode rhs) {
+		
+		return false;
+	}
+	
+	public boolean typeCheck(GoIRStarNode lhs, GoBaseIRNode rhs) {
+		
+		return false;
+	}
+	
+	public boolean typeCheck(GoIRSelectorExprNode lhs, GoBaseIRNode rhs) {
+		
+		return false;
+	} 
+	
 	/**
 	 * Might need to change always inserting into the lexicalscope. Does not check if the name already exists.
 	 */
-	public Object visitIdent(GoIRIdentNode node){
+	public Object visitIdent(GoIRIdentNode node) {
+		
 		String name = assignmentNode.getIdentifier();
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		FrameSlot frameSlot = frame.findOrAddFrameSlot(name);
+		
+		if(!typeCheck(node, assignmentNode.getRHS(), frameSlot)) {
+			System.out.println("Type Error Ident");
+		}
+		
 		scope.locals.put(name,frameSlot);
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 	}
 	
-	public Object visitIndexNode(GoIRIndexNode node){
+	public Object visitIndexNode(GoIRIndexNode node) {
+		
+		if(!typeCheck(node, assignmentNode.getRHS())) {
+			System.out.println("Type Error Index");
+		}
+		
 		GoReadLocalVariableNode array = (GoReadLocalVariableNode) node.getName().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoExpressionNode index = (GoExpressionNode)node.getIndex().accept(truffleVisitor);
 		return GoArrayWriteNodeGen.create(index,value, array);
 	}
 	
-	public Object visitStarNode(GoIRStarNode node){
+	public Object visitStarNode(GoIRStarNode node) {
+		
+		if(!typeCheck(node, assignmentNode.getRHS())) {
+			System.out.println("Type Error Star");
+		}
+		
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoReadLocalVariableNode pointee = (GoReadLocalVariableNode) node.getChild().accept(truffleVisitor);
 		return GoWriteMemoryNodeGen.create(value, pointee);
 	}
 	
 	@Override
-	public Object visitSelectorExpr(GoIRSelectorExprNode node){
+	public Object visitSelectorExpr(GoIRSelectorExprNode node) {
+		
+		if(!typeCheck(node, assignmentNode.getRHS())) {
+			System.out.println("Type Error Selector");
+		}
+		
 		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		String name = node.getName().getIdentifier();
