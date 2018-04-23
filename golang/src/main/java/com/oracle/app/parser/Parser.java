@@ -17,41 +17,7 @@ import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
-import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
-import com.oracle.app.parser.ir.nodes.GoIRFileNode;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRImportSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRStarNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
-import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.source.Source;
 
 /**
@@ -94,7 +60,7 @@ public class Parser {
 	
 	/**
 	 * The starting point for the parse function. Initiates the call
-	 * for the {@link GoTruffle.class} visitor.
+	 * for the { Go Truffle.class} visitor.
 	 * @return A Hashmap containing all function definitions
 	 * @throws IOException
 	 */
@@ -371,7 +337,7 @@ public class Parser {
 			case "KeyValueExpr":
 				return new GoIRKeyValueNode(body.get("Key"),attrs.get("Colon"),body.get("Value"));
 			case "Object":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRObjectNode(body.get("Decl"), attrs.get("Kind"));
 				
 			case "ParenExpr":
 				return new GoIRExprStmtNode(body.get("X"),

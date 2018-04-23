@@ -55,7 +55,6 @@ import com.oracle.app.nodes.expression.GoStructTypeExprNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
 import com.oracle.app.nodes.local.GoArrayReadNode;
-import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
@@ -66,45 +65,8 @@ import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
-import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
-import com.oracle.app.parser.ir.nodes.GoIRFileNode;
-import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
-import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRImportSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRIntNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
-import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRStarNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.app.parser.ir.nodes.*;
+import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -221,13 +183,22 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode result = null;
 		//System.out.println(name+" "+lexicalscope.locals);
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
-	    
+
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
 	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	    } else {
 	    	result = new GoIdentNode(language, name, result);
 	    }
+
+	    if(node.getChild() != null) {
+			GoIRObjectNode child = (GoIRObjectNode) node.getChild();
+			String kind = child.getKind();
+			if(kind.equals("func")) {
+				child.accept(this);
+			}
+		}
+
 	    //result.setSourceSection(node.getSource(source));
 	    return result;
 	}
@@ -860,6 +831,19 @@ public class GoTruffle implements GoIRVisitor {
 		return null;
 	}
 
+	@Override
+	public Object visitObjectNode(GoIRObjectNode node) {
+		GoBaseIRNode functionNode = node.getFunctionNode();
+		if(functionNode != null) {
+			//Lexical scope issue when calling a function not yet inserted
+			//LexicalScope tempLex = lexicalscope;
+			//finishBlock();
+            functionNode.accept(this);
+            //lexicalscope = tempLex;
+        }
+		return null;
+	}
+
 	/**
 	 * Currently only works for structs. Assumes the key is going to be an identifier, but cannot search
 	 * through the lexical scope for it, else it gets a readlocalvariable node if the variable exists.
@@ -870,5 +854,4 @@ public class GoTruffle implements GoIRVisitor {
 		GoKeyValueNode result = new GoKeyValueNode(key,value);
 		return result;
 	}
-	
 }
