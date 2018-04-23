@@ -1,5 +1,14 @@
 To Do:
 -Lexical Scoping
+-Type Checking
+-Closure
+-Builtins
+    -Range
+    -Append
+    -Make
+-Maps
+-Function Literals
+-Error handling
 
 Done:
 -Visitor for constructing truffle tree
