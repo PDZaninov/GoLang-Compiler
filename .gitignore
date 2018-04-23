@@ -11,3 +11,7 @@ bin/
 .recommenders/
 /.metadata/
 *.iml
+printast
+UnitTest.ast
+UnitTest.go
+*.output

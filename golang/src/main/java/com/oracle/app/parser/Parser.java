@@ -13,38 +13,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
-import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
-import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
-import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
-import com.oracle.app.parser.ir.nodes.GoIRForNode;
-import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
-import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
-import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRImportSpecNode;
-import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
-import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
-import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
-import com.oracle.app.parser.ir.nodes.GoIRStarNode;
-import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.truffle.api.source.Source;
 
 /**
@@ -87,11 +60,11 @@ public class Parser {
 	
 	/**
 	 * The starting point for the parse function. Initiates the call
-	 * for the {@link GoTruffle.class} visitor.
+	 * for the { Go Truffle.class} visitor.
 	 * @return A Hashmap containing all function definitions
 	 * @throws IOException
 	 */
-	public Map<String, GoRootNode> beginParse() throws IOException{
+	public GoFileNode beginParse() throws IOException{
 		String type;
 		GoBaseIRNode k = null;
 		while((currentLine = reader.readLine()) != null){
@@ -108,9 +81,7 @@ public class Parser {
 		//k.accept(visitor);
 		
 		GoTruffle truffleVisitor = new GoTruffle(language, source).initialize();
-		k.accept(truffleVisitor);
-		
-		return truffleVisitor.getAllFunctions();
+		return (GoFileNode) k.accept(truffleVisitor);
 	}
 	
 	/**
@@ -153,7 +124,6 @@ public class Parser {
 	    		//adding attributes
 	    		matchedTerm = attrPattern.matcher(currentLine);
 	    		if(matchedTerm.find()){
-	    			//TO-DO: Maybe shouldnt be hardcoded?????
 	    			if(matchedTerm.group(stringAttr) == null){
 	    				attrs.put(matchedTerm.group(regularAttr), matchedTerm.group(regularVal));
 	    			}
@@ -279,20 +249,20 @@ public class Parser {
 				
 			case "Field":
 				if(body.size()==2) {
-					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")).getChildren().get(0), body.get("Type"));
-				}else {
-					return new GoIRFieldNode(nodeType, body.get("Type"));
+					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")), (GoIRIdentNode) body.get("Type"));
+				}
+				else {
+					return new GoIRFieldNode(nodeType, (GoIRIdentNode) body.get("Type"));
 				}
 				
 			case "]*ast.Field":
-				return new GoTempIRNode(nodeType,attrs,body);
-
+				return new GoIRArrayListExprNode(packIntoArrayList(body.values()));
+		
 			case "FieldList":
-				GoIRArrayListExprNode fields = (GoIRArrayListExprNode) body.get("List");
-				return  new GoIRFieldListNode(fields);
+				return new GoIRFieldListNode((GoIRArrayListExprNode) body.get("List"));
 				
 			case "File":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRFileNode((GoIRIdentNode) body.get("Name"),body.get("Decls"),body.get("Imports"));
 				
 			case "ForStmt":
 				GoBaseIRNode init = body.get("Init");
@@ -316,7 +286,7 @@ public class Parser {
 						func_body);
 				
 			case "FuncType":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRFuncTypeNode(body.get("Params"), body.get("Results"));
 				
 			case "GenDecl":
 				return new GoIRGenDeclNode(attrs.get("Tok"),
@@ -364,9 +334,10 @@ public class Parser {
 						body.get("X"),
 						attrs.get("TokPos")
 						);
-				
+			case "KeyValueExpr":
+				return new GoIRKeyValueNode(body.get("Key"),attrs.get("Colon"),body.get("Value"));
 			case "Object":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRObjectNode(body.get("Decl"), attrs.get("Kind"));
 				
 			case "ParenExpr":
 				return new GoIRExprStmtNode(body.get("X"),
@@ -381,7 +352,7 @@ public class Parser {
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "SelectorExpr":
-				return new GoIRSelectorExprNode((GoIRIdentNode) body.get("X"),(GoIRIdentNode) body.get("Sel"));
+				return new GoIRSelectorExprNode(body.get("X"),(GoIRIdentNode) body.get("Sel"));
 				
 			case "SliceExpr":
 				GoBaseIRNode sliceexpr = body.get("X");
@@ -408,8 +379,7 @@ public class Parser {
 				return new GoIRStmtNode(packIntoArrayList(body.values()));
 
 			case "StructType":
-				GoIRFieldList fields = (GoIRFieldListNode) body.get("Fields");
-				return new GoIRStructTypeNode(fields);
+				return new GoIRStructTypeNode((GoIRFieldListNode) body.get("Fields"),attrs.get("Incomplete"));
 
 			case "SwitchStmt":
 				GoIRStmtNode switchinit = (GoIRStmtNode) body.get("Init");
@@ -422,9 +392,7 @@ public class Parser {
 						);
 
 			case "TypeSpec":
-				GoBaseIRNode name = body.get("Name");
-				GoBaseIRNode type = body.get("Type");
-				return new GoIRTypeSpecNode(name, type);
+				return new GoIRTypeSpecNode(body.get("Name"), body.get("Type"));
 				
 			case "ValueSpec":
 				GoIRArrayListExprNode names = (GoIRArrayListExprNode) body.get("Names");
@@ -490,13 +458,17 @@ public class Parser {
 	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
-		if(lhs.getSize() != rhs.getSize()){
-			//Throw Error
-			System.out.println("Variable Declaration Error");
-			return null;
-		}
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
+		if(lhs.getSize() != rhs.getSize()){
+			//Todo, check for rhs being multiple return of correct size
+			//TODO, to do
+			for(int i = 0; i < size;i++){
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
+			}
+			return new GoIRArrayListExprNode(result, source);
+		}
+
 		for(int i = 0; i < size;i++){
 			result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 		}
@@ -524,7 +496,7 @@ public class Parser {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source) throws IOException{
+	public static GoFileNode parseGo(GoLanguage language, Source source) throws IOException{
 		Parser parser = new Parser(language, source);
 		return parser.beginParse();
 	}

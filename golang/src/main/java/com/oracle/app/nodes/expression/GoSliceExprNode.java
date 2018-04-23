@@ -31,10 +31,6 @@ public class GoSliceExprNode extends GoExpressionNode {
 	public Object executeGeneric(VirtualFrame frame) {
 		// TODO Auto-generated method stub
 		GoArrayLikeTypes array = (GoArrayLikeTypes) expr.executeGeneric(frame);
-		FrameSlot slot = expr.getSlot();
-		if(array instanceof GoSlice){
-			slot = ((GoSlice) array).getSlot();
-		}
 		int lowerbound = 0;
 		int highbound = 0;
 		int maxsize = 0;
@@ -50,11 +46,11 @@ public class GoSliceExprNode extends GoExpressionNode {
 			}
 		}
 		if(high == null){
-			highbound = array.cap();
+			highbound = array.len() + array.lowerBound();
 		}
 		else{
 			try {
-				highbound = high.executeInteger(frame);
+				highbound = high.executeInteger(frame) + array.lowerBound();
 			} catch (UnexpectedResultException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -71,8 +67,7 @@ public class GoSliceExprNode extends GoExpressionNode {
 				e.printStackTrace();
 			}
 		}
-		GoSlice slice = new GoSlice(slot,lowerbound,highbound,maxsize);
-		slice.setType(array.getType());
+		GoSlice slice = GoSlice.createGoSlice(array,lowerbound,highbound,maxsize);
 		return slice;
 	}
 

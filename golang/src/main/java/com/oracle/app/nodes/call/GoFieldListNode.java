@@ -1,4 +1,4 @@
-package com.oracle.app.nodes.SpecDecl;
+package com.oracle.app.nodes.call;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;

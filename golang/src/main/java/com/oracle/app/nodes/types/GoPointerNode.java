@@ -1,6 +1,5 @@
 package com.oracle.app.nodes.types;
 
-import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.local.GoWriteMemoryNode;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -15,11 +14,10 @@ import com.oracle.truffle.api.frame.VirtualFrame;
  * When executed it will return the value to read in the frameslot
  * Printing the toString of the pointer will return the makeshift ptr address
  * Dereferencing the address is handled in {@link GoWriteMemoryNode}
- * TO-DO - add PrimitiveType field to identify the pointer type
  * @author Trevor
  *
  */
-public abstract class GoPointerNode extends GoExpressionNode{
+public abstract class GoPointerNode extends GoNonPrimitiveType{
 
 	protected int ptr;
 	protected FrameSlot obj;
@@ -60,13 +58,39 @@ public abstract class GoPointerNode extends GoExpressionNode{
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return this;
+		return this.copy();
 	}
 	 
 	public FrameSlot getSlot() {
 		return obj;
 	}
  
+	@Override
+	public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] results){
+		return null;
+	}
+	
+	public static class GoArrayIndexPointerNode extends GoPointerNode{
+		
+		GoArrayLikeTypes array;
+		Object index;
+		
+		public GoArrayIndexPointerNode(int ptr, GoArrayLikeTypes array, Object index){
+			super(ptr,null);
+			this.array = array;
+			this.index = index;
+		}
+
+		@Override
+		public Object executeStar(VirtualFrame frame) {
+			return array.read(index);
+		}
+
+		public void insert(Object value) {
+			array.insert(index,value);
+		}
+	}
+	
 	public static class GoIntPointerNode extends GoPointerNode{
 		
 		public GoIntPointerNode(int ptr, FrameSlot obj) {
@@ -94,7 +118,8 @@ public abstract class GoPointerNode extends GoExpressionNode{
 			return FrameUtil.getFloatSafe(frame, getSlot());
 		}
 		
-		@Override public Object executeStar(VirtualFrame frame) {
+		@Override 
+		public Object executeStar(VirtualFrame frame) {
 			return doFloat(frame);
 		}
 		

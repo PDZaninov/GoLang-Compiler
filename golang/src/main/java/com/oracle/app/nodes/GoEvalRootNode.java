@@ -27,22 +27,15 @@ import com.oracle.truffle.api.source.SourceSection;
  */
 public final class GoEvalRootNode extends GoRootNode {
 
-    private final Map<String, GoRootNode> functions;
-    @CompilationFinal private boolean registered;
-
-    private final ContextReference<GoContext> reference;
-
-    public GoEvalRootNode(GoLanguage language, FrameDescriptor frameDescriptor, GoExpressionNode bodyNode, SourceSection sourceSection, String name, Map<String, GoRootNode> functions) {
-        super(language, frameDescriptor, bodyNode, sourceSection, name);
-        this.functions = functions;
-        this.reference = language.getContextReference();
+    public GoEvalRootNode(GoLanguage language, FrameDescriptor frameDescriptor, GoExpressionNode bodyNode, SourceSection sourceSection, String name) {
+        super(language, frameDescriptor, null,null, bodyNode, sourceSection, name);
     }
 
     @Override
     public Object execute(VirtualFrame frame) {
-        /* Lazy registrations of functions on first execution. */
+        /* Lazy registrations of functions on first execution. 
         if (!registered) {
-            /* Function registration is a Goow-path operation that must not be compiled. And default variable initialization*/
+             Function registration is a Goow-path operation that must not be compiled. And default variable initialization
             CompilerDirectives.transferToInterpreterAndInvalidate();
             reference.get().getFunctionRegistry().register(functions);
             registered = true;
@@ -64,7 +57,7 @@ public final class GoEvalRootNode extends GoRootNode {
             slot = f.findFrameSlot("false");
             frame.setBoolean(slot, false);
         }
-
+         */
         if (getBodyNode() == null) {
             /* The source code did not have a "main" function, so nothing to execute. */
         	System.out.println("FAILURE NO BODYNODE");

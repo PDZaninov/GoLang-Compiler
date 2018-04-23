@@ -124,7 +124,7 @@ public final class GoContext {
 		String name = lookupNodeInfo(builtinBodyNode.getClass()).shortName();
 		//Source section goes here and into the rootnode where null is at
 		
-		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), builtinBodyNode, null, name);
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, builtinBodyNode, null, name);
 		getFunctionRegistry().register(name, rootNode);
 	}
 	

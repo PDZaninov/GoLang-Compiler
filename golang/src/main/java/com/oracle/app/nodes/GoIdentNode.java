@@ -19,13 +19,17 @@ public class GoIdentNode extends GoExpressionNode{
 		reference = language.getContextReference();
 	}
 
+	public void setChild(GoExpressionNode child) {
+		this.child = child;
+	}
+
 	@Override
 	public String toString() {
 		return name;
 	}
 	
 	public GoFunction getFunction(){
-		return reference.get().getFunctionRegistry().lookup(name, true);
+		return reference.get().getFunctionRegistry().lookup(name, false);
 	}
 	
 	public String getName(){
@@ -37,9 +41,6 @@ public class GoIdentNode extends GoExpressionNode{
 		if(child != null) {
 			return child.executeGeneric(frame);
 		}
-		return null;
+		return name;
 	}
-	
-	
-
 }

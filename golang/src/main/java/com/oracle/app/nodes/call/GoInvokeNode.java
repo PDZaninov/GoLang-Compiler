@@ -2,7 +2,7 @@ package com.oracle.app.nodes.call;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
-import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
+import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -17,12 +17,12 @@ public class GoInvokeNode extends GoExpressionNode {
     @Children protected final GoExpressionNode[] argumentNodes;
     @Child protected GoGenericDispatchNode dispatchNode;
 
+
     public GoInvokeNode(GoExpressionNode functionNode, GoExpressionNode[] argumentNodes) {
         this.functionNode = functionNode;
         this.argumentNodes = argumentNodes;
         this.dispatchNode = GoGenericDispatchNodeGen.create();
     }
-    
 
     /*
      * Executes only the generic function call. So only the slow route is available for function calls
@@ -30,20 +30,14 @@ public class GoInvokeNode extends GoExpressionNode {
     @ExplodeLoop
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        GoFunction function;
-        if(functionNode instanceof GoIdentNode) {
-            function = ((GoIdentNode) functionNode).getFunction();
-        }
-        else {
-            GoSelectorExprNode select = (GoSelectorExprNode) functionNode;
-            select.loadBuiltIn();
-            function = select.getFunction();
-        }
+        Object function = getFunctionIdentifier();
+
         CompilerAsserts.compilationConstant(argumentNodes.length);
         Object[] argumentValues = new Object[argumentNodes.length];
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
+
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 
@@ -53,5 +47,12 @@ public class GoInvokeNode extends GoExpressionNode {
             return true;
         }
         return super.isTaggedWith(tag);
+    }
+    
+    public GoFunction getFunctionIdentifier() {
+    	GoFunction function;
+        function = ((GoIdentNode) functionNode).getFunction();
+        
+        return function;
     }
 }

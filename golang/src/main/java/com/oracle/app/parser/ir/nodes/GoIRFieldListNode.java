@@ -2,7 +2,6 @@ package com.oracle.app.parser.ir.nodes;
 
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.app.parser.ir.GoIRFieldNode;
 
 public class GoIRFieldListNode extends GoBaseIRNode {
 
