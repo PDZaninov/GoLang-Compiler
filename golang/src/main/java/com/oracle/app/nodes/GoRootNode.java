@@ -3,16 +3,12 @@ package com.oracle.app.nodes;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.call.GoFieldNode;
 import com.oracle.app.nodes.call.GoFuncTypeNode;
-//import com.oracle.truffle.Go.builtins.GoBuiltinNode;
-//import com.oracle.truffle.Go.nodes.controlflow.GoFunctionBodyNode;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
-import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
-import com.oracle.truffle.api.nodes.Node;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;
 import com.oracle.truffle.api.source.SourceSection;
@@ -49,7 +45,7 @@ public class GoRootNode extends RootNode {
 
     @Override
     public Object execute(VirtualFrame frame) {
-        assert getLanguage(GoLanguage.class).getContextReference().get() != null;
+	        assert getLanguage(GoLanguage.class).getContextReference().get() != null;
         if(typeNode != null) {
         	typeNode.executeGeneric(frame);
         }

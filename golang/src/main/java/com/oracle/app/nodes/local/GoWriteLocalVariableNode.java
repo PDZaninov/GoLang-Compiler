@@ -2,8 +2,9 @@ package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
-import com.oracle.app.nodes.types.GoArrayLikeTypes;
 import com.oracle.app.nodes.types.GoSlice;
+import com.oracle.app.nodes.types.GoStringNode;
+import com.oracle.app.nodes.types.GoStruct;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
@@ -126,42 +127,15 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return getSlot().getKind() == FrameSlotKind.Object || getSlot().getKind() == FrameSlotKind.Illegal;
 	    }
 
-	    @NodeChild(value = "indexNode",type = GoExpressionNode.class)
-	    public abstract static class GoWriteArrayNode extends GoWriteLocalVariableNode{
+	    @NodeChild(value = "fieldName",type = GoStringNode.class)
+	    public abstract static class GoWriteStructNode extends GoWriteLocalVariableNode{
 	    	
 	    	@Specialization
-	    	public GoArray writeIntArray(VirtualFrame frame, int value, int index){
-	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		array.insert(frame, index, value);
+	    	public GoStruct writeField(VirtualFrame frame, Object value, String name){
+	    		GoStruct struct = (GoStruct) FrameUtil.getObjectSafe(frame, getSlot());
+	    		struct.write(name, value);
 	    		return null;
 	    	}
 	    	
-	    	@Specialization
-	    	public GoArray writeFloat32Array(VirtualFrame frame, float value, int index){
-	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		array.insert(frame, index, value);
-	    		return null;
-	    	}
-	    	
-	    	@Specialization
-	    	public GoArray writeFloat64Array(VirtualFrame frame, double value, int index){
-	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		array.insert(frame, index, value);
-	    		return null;
-	    	}
-	    	
-	    	@Specialization
-	    	public GoArray writeBooleanArray(VirtualFrame frame, boolean value, int index){
-	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		array.insert(frame, index, value);
-	    		return null;
-	    	}
-	    	
-	    	@Specialization
-	    	public GoArray writeObjectArray(VirtualFrame frame, Object value, int index){
-	    		GoArrayLikeTypes array = (GoArrayLikeTypes) FrameUtil.getObjectSafe(frame, getSlot());
-	    		array.insert(frame, index, value);
-	    		return null;
-	    	}
-	    } 
+	    }
 }

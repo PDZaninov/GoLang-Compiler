@@ -1,7 +1,7 @@
 package com.oracle.app.parser.ir;
 
 
-import com.oracle.app.nodes.expression.GoIndexExprNode;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -121,11 +121,6 @@ public interface GoIRVisitor {
 		return null;
 	}
 
-	default Object writeIndexExprNode(GoIndexExprNode node){
-		System.out.println("Default Write Index Visit");
-		return null;
-	}
-
 	default GoIntNode visitIRIntNode(GoIRIntNode goIRIntNode){
 		System.out.println("Default Basic Int Visit");
 		return null;
@@ -214,8 +209,18 @@ public interface GoIRVisitor {
 		return null;
 	}
 
-	default Object visitObjectNode(GoIRObjectNode node){
+	default GoFileNode visitFile(GoIRFileNode goIRFileNode){
+		System.out.println("Default File Node visit");
+		return null;
+	}
+
+	default Object visitObjectNode(GoIRObjectNode node) {
 		System.out.println("Default Object visit");
+		return null;
+	}
+
+	default Object visitKeyValue(GoIRKeyValueNode goKeyValueExprNode){
+		System.out.println("Default Key Value Node visit");
 		return null;
 	}
 

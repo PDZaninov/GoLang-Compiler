@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
@@ -63,7 +64,7 @@ public class Parser {
 	 * @return A Hashmap containing all function definitions
 	 * @throws IOException
 	 */
-	public Map<String, GoRootNode> beginParse() throws IOException{
+	public GoFileNode beginParse() throws IOException{
 		String type;
 		GoBaseIRNode k = null;
 		while((currentLine = reader.readLine()) != null){
@@ -80,9 +81,7 @@ public class Parser {
 		//k.accept(visitor);
 		
 		GoTruffle truffleVisitor = new GoTruffle(language, source).initialize();
-		k.accept(truffleVisitor);
-		
-		return truffleVisitor.getAllFunctions();
+		return (GoFileNode) k.accept(truffleVisitor);
 	}
 	
 	/**
@@ -125,7 +124,6 @@ public class Parser {
 	    		//adding attributes
 	    		matchedTerm = attrPattern.matcher(currentLine);
 	    		if(matchedTerm.find()){
-	    			//TO-DO: Maybe shouldnt be hardcoded?????
 	    			if(matchedTerm.group(stringAttr) == null){
 	    				attrs.put(matchedTerm.group(regularAttr), matchedTerm.group(regularVal));
 	    			}
@@ -264,7 +262,7 @@ public class Parser {
 				return new GoIRFieldListNode((GoIRArrayListExprNode) body.get("List"));
 				
 			case "File":
-				return new GoTempIRNode(nodeType,attrs,body);
+				return new GoIRFileNode((GoIRIdentNode) body.get("Name"),body.get("Decls"),body.get("Imports"));
 				
 			case "ForStmt":
 				GoBaseIRNode init = body.get("Init");
@@ -336,7 +334,8 @@ public class Parser {
 						body.get("X"),
 						attrs.get("TokPos")
 						);
-				
+			case "KeyValueExpr":
+				return new GoIRKeyValueNode(body.get("Key"),attrs.get("Colon"),body.get("Value"));
 			case "Object":
 				return new GoIRObjectNode(body.get("Decl"), attrs.get("Kind"));
 				
@@ -353,7 +352,7 @@ public class Parser {
 				return new GoTempIRNode(nodeType,attrs,body);
 				
 			case "SelectorExpr":
-				return new GoIRSelectorExprNode((GoIRIdentNode) body.get("X"),(GoIRIdentNode) body.get("Sel"));
+				return new GoIRSelectorExprNode(body.get("X"),(GoIRIdentNode) body.get("Sel"));
 				
 			case "SliceExpr":
 				GoBaseIRNode sliceexpr = body.get("X");
@@ -497,7 +496,7 @@ public class Parser {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Map<String, GoRootNode> parseGo(GoLanguage language, Source source) throws IOException{
+	public static GoFileNode parseGo(GoLanguage language, Source source) throws IOException{
 		Parser parser = new Parser(language, source);
 		return parser.beginParse();
 	}
