@@ -27,7 +27,6 @@ import com.oracle.app.nodes.controlflow.GoIfStmtNode;
 import com.oracle.app.nodes.controlflow.GoReturnNode;
 import com.oracle.app.nodes.controlflow.GoSwitchNode;
 import com.oracle.app.nodes.expression.GoAddNodeGen;
-import com.oracle.app.nodes.expression.GoArrayTypeExprNode;
 import com.oracle.app.nodes.expression.GoBinaryLeftShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBinaryRightShiftNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseAndNodeGen;
@@ -56,12 +55,13 @@ import com.oracle.app.nodes.expression.GoStructTypeExprNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
 import com.oracle.app.nodes.local.GoArrayReadNode;
+import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
-import com.oracle.app.nodes.local.GoReadLocalVariableNode.GoReadArrayNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNode;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
+import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
@@ -477,11 +477,12 @@ public class GoTruffle implements GoIRVisitor {
 			case"-":
 				result = GoNegativeSignNodeGen.create(child);
 				break;
+				
 			case "&":
-				if(child instanceof GoReadArrayNode){
-					FrameSlot array = ((GoReadArrayNode)child).getSlot();
-					GoIntNode index = (GoIntNode) ((GoReadArrayNode)child).getIndex();
-					result = new GoUnaryAddressNode(array,true,index);
+				if(child instanceof GoArrayReadNode){
+					FrameSlot array = ((GoArrayReadNode)child).getSlot();
+					GoExpressionNode index = ((GoArrayReadNode)child).getIndex();
+					result = new GoUnaryAddressNode(array,index);
 				}else{
 					result = new GoUnaryAddressNode(((GoReadLocalVariableNode) child).getSlot());
 				}
@@ -557,7 +558,7 @@ public class GoTruffle implements GoIRVisitor {
 		//FrameSlot slot = frameDescriptor.findFrameSlot(node.getIdentifier());
 		GoExpressionNode expr = (GoExpressionNode) node.getName().accept(this);
 		GoExpressionNode index = (GoExpressionNode) node.getIndex().accept(this);
-		GoArrayReadNode read = new GoArrayReadNode(expr,index);
+		GoArrayReadNode read = GoArrayReadNodeGen.create(index,(GoReadLocalVariableNode) expr);
 		//GoReadArrayNode read = GoReadArrayNodeGen.create(index, slot);
 		//int start = node.getLBrack();
 		//int startLine = node.getLineNumber();
@@ -567,8 +568,7 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	/**
-	 * 
-	 * return - A GoArray with filled frameSlots, but values are not written in yet
+	 * return - An undefined GoArray
 	 */
 	@Override
 	public Object visitArrayType(GoIRArrayTypeNode node){
@@ -583,7 +583,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		//String type = node.getType().getIdentifier();
 		//Catch error where length is not an int node or possibly an int const
-		GoArrayTypeExprNode result = new GoArrayTypeExprNode((GoIntNode) length,type);
+		GoArray result = new GoArray((GoIntNode) length,type);
 
 		return result;
 	}

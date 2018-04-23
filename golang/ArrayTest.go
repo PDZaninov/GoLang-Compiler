@@ -1,11 +1,8 @@
 package main
 
 func main() {
-	var array [10]int
-
-	for i := 0; i < len(array); i++ {
-        array[i] = 2
-    }
-
-    println(array[2])
+	s := [6]int{2, 3, 5, 7, 11, 13}
+    ptr := &s[3]
+    *ptr = 4
+    println(s)
 }

@@ -41,8 +41,8 @@ public class GoStruct extends GoNonPrimitiveType{
         return this.deepCopy();
     }
 
-	public Object fillCompositeFields(VirtualFrame frame, GoArrayExprNode elts) {
-		Object[] vals = elts.gatherResults(frame);
+    @Override
+	public GoNonPrimitiveType doCompositeLit(VirtualFrame frame, Object[] vals) {
 		if(vals.length != 0){
 			if(vals[0] instanceof GoKeyValueNode){
 				for(int i = 0; i < vals.length; i++){
