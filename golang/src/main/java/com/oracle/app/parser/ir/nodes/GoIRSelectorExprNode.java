@@ -5,24 +5,23 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRSelectorExprNode extends GoBaseIRNode {
 
-    private GoIRIdentNode importName;
+    private GoBaseIRNode expr;
+	private GoIRIdentNode name;
 
-    private GoIRIdentNode importMethod;
-
-    public GoIRSelectorExprNode(GoIRIdentNode importName, GoIRIdentNode importMethod) {
+    public GoIRSelectorExprNode(GoBaseIRNode expr, GoIRIdentNode name) {
         super("SelectorExpr");
-        this.importName = importName;
-        this.importMethod = importMethod;
+        this.expr = expr;
+        this.name = name;
     }
 
-    public GoIRIdentNode getImportName() {
-        return importName;
-    }
+    public GoBaseIRNode getExpr() {
+		return expr;
+	}
 
-    public GoIRIdentNode getImportMethod() {
-        return importMethod;
-    }
-
+	public GoIRIdentNode getName() {
+		return name;
+	}
+    
     @Override
     public Object accept(GoIRVisitor visitor) {
         return visitor.visitSelectorExpr(this);

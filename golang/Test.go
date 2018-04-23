@@ -2,10 +2,13 @@ package main
 
 import "fmt"
 
-func addnum(x, y int){
-    fmt.Println(x + y)
+type Vertex struct {
+	X int
+	Y int
 }
 
 func main() {
-	addnum(10,100)
+	v := Vertex{X:1, Y:2}
+	v.X = 4
+	Println(v.X)
 }
