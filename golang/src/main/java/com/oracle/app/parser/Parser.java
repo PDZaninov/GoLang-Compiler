@@ -480,11 +480,7 @@ public class Parser {
 				
 			}
 			else {
-				System.out.println("New assignment");
-				GoIRBasicLitNode m = (GoIRBasicLitNode) rhs.getChildren().get(i);
-				m.changeType(type.getIdentifier());
-				System.out.println(type.getIdentifier());
-				System.out.println(m.getType());
+				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),Integer.toString(((GoIRIntNode) rhs.getChildren().get(i)).getValue()),"");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
 			}
 			
