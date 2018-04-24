@@ -34,4 +34,10 @@ public class GoIRFloat64Node extends GoIRBasicLitNode{
 		return null;
 	}
 
+	@Override
+	public String getValString() {
+		// TODO Auto-generated method stub
+		return Double.toString(value);
+	}
+
 }

@@ -20,6 +20,7 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 
 	String type;
 	String source;
+	String val;
 	
 	public GoIRBasicLitNode(String source) {
 		super("Basic Lit Node");
@@ -29,6 +30,8 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 	public String getType() {
 		return type;
 	}
+	
+	public abstract String getValString();
 	
 	/**
 	 * Create a source section based off of the source file. In theory that should be the actual Gofile.
@@ -44,7 +47,11 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 		switch(name){
 			case "INT":
 				return new GoIRIntNode(value,source);
+			case "int":
+				return new GoIRIntNode(value,source);
 			case "STRING":
+				return new GoIRStringNode(value,source);
+			case "string":
 				return new GoIRStringNode(value,source);
 			case "float32":
 				return new GoIRFloat32Node(value);
@@ -52,12 +59,15 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 				return new GoIRFloat64Node(value);
 			case "FLOAT":
 				return new GoIRFloat32Node(value);
+			case "float":
+				return new GoIRFloat32Node(value);
 			default:
-				System.out.println("Unimplemented Basic Lit type");
+				System.out.println("Unimplemented Basic Lit type: " + name);
 				return null;
 		}
 	
 	}
+
 
 }
 

@@ -473,16 +473,15 @@ public class Parser {
 		}
 
 		for(int i = 0; i < size;i++){
-			if(type.getIdentifier().equals(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
+			if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
 				{
-				System.out.println("Old assignment");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 				
 			}
 			else {
 				// var c float32 = 3
 				// the above sets the basic lit as an int node, so i need to make a new basiclit node of the correct type
-				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),Integer.toString(((GoIRIntNode) rhs.getChildren().get(i)).getValue()),"");
+				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
 			}
 			

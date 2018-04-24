@@ -23,6 +23,7 @@ public class GoIRFloat32Node extends GoIRBasicLitNode{
         return value;
     }
 
+
     @Override
     public Object accept(GoIRVisitor visitor) {
         return visitor.visitIRFloat32Node(this);
@@ -32,6 +33,12 @@ public class GoIRFloat32Node extends GoIRBasicLitNode{
 	public SourceSection getSource(Source section) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public String getValString() {
+		// TODO Auto-generated method stub
+		return Float.toString(value);
 	}
 
 }
