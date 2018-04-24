@@ -16,6 +16,7 @@ import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
+import com.oracle.app.parser.ir.nodes.GoIRTypes;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 
@@ -43,38 +44,46 @@ public class GoWriteVisitor implements GoIRVisitor {
 		return node.accept(this);
 	}
 	
-	public String getRhsKind(GoBaseIRNode rhs) {
-		GoIRBasicLitNode value = (GoIRBasicLitNode) rhs;
-		return value.getType();
-	}
-	
 	public boolean typeCheck(GoBaseIRNode rhs, TypeInfo type) {
-		String kind = getRhsKind(rhs);
+		if(!(rhs instanceof GoIRTypes)) {
+			return true;
+		}
+		String kind = ((GoIRTypes) rhs).getValueType();
 		if(kind.equals(type.getType())) {
 			return true;
 		}
 		return false;
 	}
 	
+	public void typeChecker(String name, GoBaseIRNode rhs) {
+		boolean typeCheck = typeCheck(rhs, scope.locals.get(name));
+		if(typeCheck == false) {
+			String kind = scope.locals.get(name).getType();
+			String typeVal = ((GoIRBasicLitNode) rhs).getValString();
+			String typeName = ((GoIRBasicLitNode) assignmentNode.getRHS()).getType();
+			throw new GoException("cannot use \"" + typeVal + "\" (type " + typeName.toLowerCase() + ") as type " + kind.toLowerCase() + " in assignment");
+		}
+	}
 	
 	/**
 	 * Might need to change always inserting into the lexicalscope. Does not check if the name already exists.
 	 */
 	public Object visitIdent(GoIRIdentNode node) {
-		
 		String name = assignmentNode.getIdentifier();
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
 		
 		if(scope.locals.get(name) != null) {
-			boolean typeCheck = typeCheck(assignmentNode.getRHS(), scope.locals.get(name));
-			if(typeCheck == false) {
-				throw new GoException("wrong assignment type for \"" + name + "\"");
-			}
+			typeChecker(name, assignmentNode.getRHS());
 		}
 		
-		scope.locals.put(name,new TypeInfo(name, ((GoIRBasicLitNode) assignmentNode.getRHS()).getType(), false, slot));
+		if(assignmentNode.getRHS() instanceof GoIRTypes) {
+			scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) assignmentNode.getRHS()).getValueType(), false, slot));
+		}
+		else {
+			scope.locals.put(name,  new TypeInfo(name, "object", false, slot));
+		}
 		return GoWriteLocalVariableNodeGen.create(value, slot);
 	}
 	
@@ -84,21 +93,15 @@ public class GoWriteVisitor implements GoIRVisitor {
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoExpressionNode index = (GoExpressionNode)node.getIndex().accept(truffleVisitor);
 		
-		FrameSlot slot = array.getSlot();
 		String name = node.getIdentifier();
 		if(scope.locals.get(name) != null) {
-			boolean typeCheck = typeCheck(assignmentNode.getRHS(), scope.locals.get(name));
-			if(typeCheck == false) {
-				throw new GoException("wrong assignment type for \"" + name + "\"");
-			}
+			typeChecker(name, assignmentNode.getRHS());
 		}
 		
 		return GoArrayWriteNodeGen.create(index,value, array);
 	}
 	
 	public Object visitStarNode(GoIRStarNode node) {
-		
-		
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoReadLocalVariableNode pointee = (GoReadLocalVariableNode) node.getChild().accept(truffleVisitor);
 		return GoWriteMemoryNodeGen.create(value, pointee);
@@ -106,7 +109,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 	
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode node) {
-		
 		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		String name = node.getName().getIdentifier();

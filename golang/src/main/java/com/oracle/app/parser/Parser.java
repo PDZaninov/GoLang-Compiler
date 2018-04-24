@@ -481,8 +481,8 @@ public class Parser {
 			}
 			else if(((GoIRBasicLitNode) rhs.getChildren().get(i)).getType().equalsIgnoreCase("INT") &&
 					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
-				// var c float32 = 3
-				// the above sets the basic lit as an int node, so i need to make a new basiclit node of the correct type
+				// var c float32 = 3 -- example of this case
+				// the above sets the basic lit as an int node, so I need to make a new basiclit node of the correct type
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
 			}else {
