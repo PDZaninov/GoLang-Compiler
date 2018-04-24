@@ -10,11 +10,15 @@ import com.oracle.app.nodes.local.GoWriteMemoryNodeGen;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.GoTruffle.TypeInfo;
+import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
 import com.oracle.app.parser.ir.nodes.GoIRTypes;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -69,17 +73,35 @@ public class GoWriteVisitor implements GoIRVisitor {
 	 * Might need to change always inserting into the lexicalscope. Does not check if the name already exists.
 	 */
 	public Object visitIdent(GoIRIdentNode node) {
+		GoBaseIRNode rhs = assignmentNode.getRHS();
 		String name = assignmentNode.getIdentifier();
-		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
+		GoExpressionNode value = (GoExpressionNode) rhs.accept(truffleVisitor);
 		
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
 		
 		if(scope.locals.get(name) != null) {
-			typeChecker(name, assignmentNode.getRHS());
+			typeChecker(name, rhs);
 		}
 		
-		if(assignmentNode.getRHS() instanceof GoIRTypes) {
-			scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) assignmentNode.getRHS()).getValueType(), false, slot));
+		if(rhs instanceof GoIRTypes) {
+			scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) rhs).getValueType(), false, slot));
+		}
+//		else if (rhs instanceof GoIRBinaryExprNode){
+//			GoBaseIRNode child = ((GoIRBinaryExprNode) rhs).getRight();
+//			if(child instanceof GoIRTypes) {
+//				scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) child).getValueType(), false, slot));
+//			}
+//			else {
+//				scope.locals.put(name,  new TypeInfo(name, "object", false, slot));
+//			}
+//		}
+		else if(rhs instanceof GoIRCompositeLitNode) {
+			GoIRArrayTypeNode child = (GoIRArrayTypeNode) ((GoIRCompositeLitNode) rhs).getExpr();
+			scope.locals.put(name,  new TypeInfo(name, child.getType().getIdentifier().toUpperCase(), false, slot));
+		}
+		else if(rhs instanceof GoIRSliceExprNode) {
+			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
+			scope.locals.put(name,  new TypeInfo(name, scope.locals.get(childName).getType(), false, slot));
 		}
 		else {
 			scope.locals.put(name,  new TypeInfo(name, "object", false, slot));
@@ -88,7 +110,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 	}
 	
 	public Object visitIndexNode(GoIRIndexNode node) {
-		
 		GoReadLocalVariableNode array = (GoReadLocalVariableNode) node.getName().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoExpressionNode index = (GoExpressionNode)node.getIndex().accept(truffleVisitor);
