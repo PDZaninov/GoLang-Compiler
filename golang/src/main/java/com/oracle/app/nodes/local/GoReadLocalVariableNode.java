@@ -34,7 +34,6 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     
     @Specialization(guards = "isFloat(frame)")
     protected float readFloat(VirtualFrame frame){
-    	System.out.println("reading float");
     	return FrameUtil.getFloatSafe(frame, getSlot());
     }
 

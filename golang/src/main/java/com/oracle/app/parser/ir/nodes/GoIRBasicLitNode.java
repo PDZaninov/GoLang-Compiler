@@ -38,6 +38,10 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 	 * @return The created source section
 	 */
 	public abstract SourceSection getSource(Source section);
+	
+	public void changeType(String newType) {
+		type = newType;
+	}
 
 	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){
 		switch(name){

@@ -458,6 +458,9 @@ public class Parser {
 	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
+		
+
+		
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
 		if(lhs.getSize() != rhs.getSize()){
@@ -470,7 +473,22 @@ public class Parser {
 		}
 
 		for(int i = 0; i < size;i++){
-			result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+			if(type.getIdentifier().equals(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
+				{
+				System.out.println("Old assignment");
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+				
+			}
+			else {
+				System.out.println("New assignment");
+				GoIRBasicLitNode m = (GoIRBasicLitNode) rhs.getChildren().get(i);
+				m.changeType(type.getIdentifier());
+				System.out.println(type.getIdentifier());
+				System.out.println(m.getType());
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
+			}
+			
+			
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}
