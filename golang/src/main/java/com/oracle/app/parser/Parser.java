@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
@@ -478,11 +479,16 @@ public class Parser {
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 				
 			}
-			else {
+			else if(((GoIRBasicLitNode) rhs.getChildren().get(i)).getType().equalsIgnoreCase("INT") &&
+					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
 				// var c float32 = 3
 				// the above sets the basic lit as an int node, so i need to make a new basiclit node of the correct type
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
+			}else {
+				throw new GoException("cannot use \"" + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString() +
+						"\" (type " + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getType() +") as type " 
+						+ type.getIdentifier() + " in assignment");
 			}
 			
 			
