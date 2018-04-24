@@ -85,7 +85,7 @@ public class GoTruffle implements GoIRVisitor {
 	 */
     static class LexicalScope {
         protected final LexicalScope outer;
-        protected final Map<String, FrameSlot> locals;
+        protected final Map<String, TypeInfo> locals;
 
         LexicalScope(LexicalScope outer) {
         	//Sets the outerscope to be the calling scope
@@ -99,6 +99,35 @@ public class GoTruffle implements GoIRVisitor {
                 locals.putAll(outer.locals);
             }
         }
+    }
+    
+    static class TypeInfo {
+    	String name;
+    	String type;
+    	boolean isConst;
+    	FrameSlot slot;
+    	TypeInfo(String name, String type, boolean isConst, FrameSlot slot) {
+    		this.name = name;
+    		this.type = type;
+    		this.isConst = isConst;
+    		this.slot = slot;
+    	}
+    	
+    	public String getName() {
+    		return name;
+    	}
+    	
+    	public String getType() {
+    		return type;
+    	}
+    	
+    	public boolean getConst() {
+    		return isConst;
+    	}
+    	
+    	public FrameSlot getSlot() {
+    		return slot;
+    	}
     }
     
 	GoLanguage language;
@@ -121,19 +150,19 @@ public class GoTruffle implements GoIRVisitor {
         startFunction();
         FrameSlot frameSlot;
         frameSlot = frameDescriptor.addFrameSlot("int",FrameSlotKind.Int);
-		lexicalscope.locals.put("int", frameSlot);
+		lexicalscope.locals.put("int", new TypeInfo("int", "int", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("float64", FrameSlotKind.Double);
-		lexicalscope.locals.put("float64", frameSlot);
+		lexicalscope.locals.put("float64", new TypeInfo("float64", "float64", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("float32", FrameSlotKind.Float);
-		lexicalscope.locals.put("float32", frameSlot);
+		lexicalscope.locals.put("float32", new TypeInfo("float32", "float32", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("bool", FrameSlotKind.Boolean);
-		lexicalscope.locals.put("bool", frameSlot);
+		lexicalscope.locals.put("bool", new TypeInfo("bool", "bool", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("true", FrameSlotKind.Boolean);
-		lexicalscope.locals.put("true", frameSlot);
+		lexicalscope.locals.put("true", new TypeInfo("true", "true", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("false", FrameSlotKind.Boolean);
-		lexicalscope.locals.put("false", frameSlot);
+		lexicalscope.locals.put("false", new TypeInfo("false", "false", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("string", FrameSlotKind.Object);
-		lexicalscope.locals.put("string", frameSlot);
+		lexicalscope.locals.put("string", new TypeInfo("string", "string", false, frameSlot));
 		return this;
 	}
 
@@ -182,11 +211,11 @@ public class GoTruffle implements GoIRVisitor {
 		String name = node.getIdentifier();
 		GoExpressionNode result = null;
 		//System.out.println(name+" "+lexicalscope.locals);
-	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
+		final TypeInfo info = lexicalscope.locals.get(name);
 
-	    if (frameSlot != null) {
+	    if (info != null) {
 	            /* Read of a local variable. */
-	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
+	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(info.getSlot());
 	    } else {
 	    	result = new GoIdentNode(language, name, result);
 	    }
@@ -355,7 +384,7 @@ public class GoTruffle implements GoIRVisitor {
             for (int i = 0; i < children.size(); i++) {
                 String name = children.get(i).getIdentifier();
                 FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
-                lexicalscope.locals.put(name, slot);
+                lexicalscope.locals.put(name, new TypeInfo(name, node.getTypeName(), false, slot));
             }
         }
 
@@ -736,8 +765,9 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
 		String name = goIRImportSpecNode.getIdentifier();
-		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
-		lexicalscope.locals.put(name, frameSlot);
+		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
+		
+		lexicalscope.locals.put(name, new TypeInfo(name, name, false, slot));
 		
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
 		return new GoImportSpec(ident, language);
@@ -754,7 +784,7 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitTypeSpec(GoIRTypeSpecNode node){
 		String name = node.getIdentifier();
 		FrameSlot slot = frameDescriptor.addFrameSlot(name);
-		lexicalscope.locals.put(name,slot);
+		lexicalscope.locals.put(name,new TypeInfo(name, node.getTypeName(), false, slot));
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		
 		GoWriteLocalVariableNode result = GoWriteLocalVariableNodeGen.create(type,slot);
@@ -816,7 +846,7 @@ public class GoTruffle implements GoIRVisitor {
 			for(GoExpressionNode child : fields){
 				for(GoExpressionNode name : ((GoFieldNode) child).getNames()){
 					String fieldname = ((GoIdentNode) name).getName();
-					FrameSlot slot = lexicalscope.locals.get(fieldname);
+					FrameSlot slot = lexicalscope.locals.get(fieldname).getSlot();
 					GoReadArgumentsNode value = new GoReadArgumentsNode(argumentindex++);
 					result.add(GoWriteLocalVariableNodeGen.create(value, slot));
 				}

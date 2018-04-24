@@ -67,7 +67,7 @@ public class GoException extends RuntimeException {
                      */
                     lineNumber = -1;
                 }
-                stackTrace.add(new StackTraceElement("SL", methodName, sourceName, lineNumber));
+                stackTrace.add(new StackTraceElement("Go", methodName, sourceName, lineNumber));
                 return null;
             }
         });

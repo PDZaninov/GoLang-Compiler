@@ -24,6 +24,8 @@ public class GoIRTypeSpecNode extends GoBaseIRNode {
     public GoBaseIRNode getName() { return name; }
 
     public GoBaseIRNode getType() { return type; }
+    
+    public String getTypeName() { return type.getIdentifier(); }
 
     @Override
     public Object accept(GoIRVisitor visitor) {  
