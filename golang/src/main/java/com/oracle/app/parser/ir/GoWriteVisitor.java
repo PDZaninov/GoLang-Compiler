@@ -96,8 +96,14 @@ public class GoWriteVisitor implements GoIRVisitor {
 //			}
 //		}
 		else if(rhs instanceof GoIRCompositeLitNode) {
-			GoIRArrayTypeNode child = (GoIRArrayTypeNode) ((GoIRCompositeLitNode) rhs).getExpr();
-			scope.locals.put(name,  new TypeInfo(name, child.getType().getIdentifier().toUpperCase(), false, slot));
+			if(((GoIRCompositeLitNode) rhs).getExpr() instanceof GoIRArrayTypeNode) {
+				GoIRArrayTypeNode child = (GoIRArrayTypeNode) ((GoIRCompositeLitNode) rhs).getExpr();
+				scope.locals.put(name,  new TypeInfo(name, child.getType().getIdentifier().toUpperCase(), false, slot));
+			}
+			else {
+				String childName = ((GoIRIdentNode) ((GoIRCompositeLitNode) rhs).getExpr()).getIdentifier();
+				scope.locals.put(name,  new TypeInfo(name, scope.locals.get(childName).getType(), false, slot));
+			}
 		}
 		else if(rhs instanceof GoIRSliceExprNode) {
 			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
