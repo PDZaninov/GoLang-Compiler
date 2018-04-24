@@ -22,8 +22,6 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	    
 	    @Specialization(guards = "isIntOrIllegal(frame)")
 	    protected int writeInt(VirtualFrame frame, int value) {
-	    	System.out.println("writing int");
-	    	
 	        getSlot().setKind(FrameSlotKind.Int);
 	        frame.setInt(getSlot(), value);
 	        return value;
@@ -90,8 +88,6 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 
 	    @Specialization(replaces = {"writeInt", "writeFloat", "writeDouble", "writeLong", "writeBoolean", "writeString", "writeArray", "writeSlice"})
 	    protected Object write(VirtualFrame frame, Object value) {
-
-			System.out.println("writing object");
 	        getSlot().setKind(FrameSlotKind.Object);
 
 	        frame.setObject(getSlot(), value);
