@@ -83,6 +83,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 			typeChecker(name, rhs);
 		}
 		
+		// Check if the rhs is an instance of types, then just directly get the value type
 		if(rhs instanceof GoIRTypes) {
 			scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) rhs).getValueType(), false, slot));
 		}
@@ -95,6 +96,10 @@ public class GoWriteVisitor implements GoIRVisitor {
 //				scope.locals.put(name,  new TypeInfo(name, "object", false, slot));
 //			}
 //		}
+		
+		/*
+		 * Various other instances. Specific to those cases in the IR, get type by the identifier.
+		 */
 		else if(rhs instanceof GoIRCompositeLitNode) {
 			if(((GoIRCompositeLitNode) rhs).getExpr() instanceof GoIRArrayTypeNode) {
 				GoIRArrayTypeNode child = (GoIRArrayTypeNode) ((GoIRCompositeLitNode) rhs).getExpr();
