@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.nodes.GoRootNode;
@@ -458,6 +459,9 @@ public class Parser {
 	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
+		
+
+		
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
 		if(lhs.getSize() != rhs.getSize()){
@@ -470,7 +474,24 @@ public class Parser {
 		}
 
 		for(int i = 0; i < size;i++){
-			result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+			if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
+				{
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+				
+			}
+			else if(((GoIRBasicLitNode) rhs.getChildren().get(i)).getType().equalsIgnoreCase("INT") &&
+					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
+				// var c float32 = 3
+				// the above sets the basic lit as an int node, so i need to make a new basiclit node of the correct type
+				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
+			}else {
+				throw new GoException("cannot use \"" + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString() +
+						"\" (type " + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getType() +") as type " 
+						+ type.getIdentifier() + " in assignment");
+			}
+			
+			
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}

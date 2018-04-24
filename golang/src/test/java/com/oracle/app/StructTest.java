@@ -25,7 +25,7 @@ public class StructTest {
                 +"    Y int\n"
                 +"}\n"
                 +"\n"
-                +"func main() {\n"
+                +"func main() int {\n"
                 +"    v := Vertex{X:1, Y:2}\n"
                 +"    v.X = 4\n"
                 +"    return v.X\n"

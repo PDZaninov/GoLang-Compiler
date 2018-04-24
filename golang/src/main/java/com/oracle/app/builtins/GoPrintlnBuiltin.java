@@ -28,9 +28,16 @@ public abstract class GoPrintlnBuiltin extends GoBuiltinNode {
 
     @Specialization
     public double println(double value) {
-        System.out.println(value);
+		System.out.printf("%e\n", value);
         return value;
     }
+    
+    @Specialization
+    public float println(float value) {
+    	System.out.printf("%e\n", value);
+        return value;
+    }
+    
     
     @TruffleBoundary
     private static void doPrint(PrintWriter out, long value) {
