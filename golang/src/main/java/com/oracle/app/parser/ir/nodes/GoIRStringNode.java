@@ -35,5 +35,12 @@ public class GoIRStringNode extends GoIRBasicLitNode{
 			int charindex = Integer.parseInt(split[2]);
 			return section.createSection(linenum,charindex,value.length());
 		}
+
+		@Override
+		public String getValString() {
+			// TODO Auto-generated method stub
+			System.out.println("String val:" + value);
+			return value;
+		}
 		
 }
