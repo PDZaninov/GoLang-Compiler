@@ -1,9 +1,14 @@
 To Do:
--variables
-    -Simple variable case
--if/else
--toolchain (run from go source code)
--Test cases running compilation from go and truffle and comparing output
+-Lexical Scoping
+-Type Checking
+-Closure
+-Builtins
+    -Range
+    -Append
+    -Make
+-Maps
+-Function Literals
+-Error handling
 
 Done:
 -Visitor for constructing truffle tree
@@ -13,4 +18,19 @@ Done:
 -Comparison(less than, less than or equal, greater than, greater than or equal, equals, not equals)
 -Logic(&&, ||, !)
 -Builtin functions (println)
--Basic Types (String, int, boolean)
+-Types 
+    - (String, int, boolean)
+    - Basic Structs
+    - Arrays
+    - Slices
+    - Pointers
+-variables
+    -Simple variable case
+-if/else
+-toolchain (run from go source code)
+-Test cases running compilation from go and truffle and comparing output
+-Functions
+    - Multiple Parameters
+    - Multiple returns
+    - Recursion
+
