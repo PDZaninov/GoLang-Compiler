@@ -45,7 +45,7 @@ public class GoRootNode extends RootNode {
 
     @Override
     public Object execute(VirtualFrame frame) {
-	        assert getLanguage(GoLanguage.class).getContextReference().get() != null;
+	    assert getLanguage(GoLanguage.class).getContextReference().get() != null;
         if(typeNode != null) {
         	typeNode.executeGeneric(frame);
         }

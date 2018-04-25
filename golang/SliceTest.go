@@ -6,14 +6,12 @@ func main() {
     s[1] = "b"
     s[2] = "c"
 
-    s = append(s, "d")
-    l := s[2:5]
+    s = append(s, "d","ASD")
 
     a := make([]int, 2, 5)
     a[0] = 0
     a[1] = 1
 
     println(s)
-    println(l)
     println(a)
 }

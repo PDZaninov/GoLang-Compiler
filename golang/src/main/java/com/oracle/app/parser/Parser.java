@@ -344,7 +344,8 @@ public class Parser {
 						attrs.get("Lparen"),
 						attrs.get("Rparen")
 						);
-				
+			case "RangeStmt":
+				return null;
 			case "ReturnStmt":
 				return new GoIRReturnStmtNode((GoIRArrayListExprNode)body.get("Results"));
 				
