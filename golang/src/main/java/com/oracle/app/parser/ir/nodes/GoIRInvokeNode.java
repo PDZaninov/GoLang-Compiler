@@ -11,6 +11,7 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 	String lparen;
 	String ellipsis;
 	String rparen;
+	int numReturns;// the number of returns expect, like from example: var x,y = vals() expects 2
 	
 	public GoIRInvokeNode(GoBaseIRNode functionNode, GoIRArrayListExprNode argumentNodes,String lparen,String ellipsis,String rparen) {
 		super("Call Expr (Invoke)");
@@ -30,6 +31,13 @@ public class GoIRInvokeNode extends GoBaseIRNode implements GoIRVisitable {
 		return endpos;
 	}
 	
+	public void setNumReturns(int a) {
+		numReturns = a;
+	}
+	
+	public int getNumReturns() {
+		return numReturns;
+	}
 	/*
 	 * Maybe not needed
 	 */

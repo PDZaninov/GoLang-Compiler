@@ -427,14 +427,35 @@ public class Parser {
 	 * 
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoIRArrayListExprNode rhs, String source){
-		if(lhs.getSize() != rhs.getSize()){
-			System.out.println("Parse error uneven assignment");
-			return null;
-		}
-		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
 		GoBaseIRNode writeto;
+		ArrayList<GoBaseIRNode> result = new ArrayList<>();
+		
+		if(size != rhs.getSize()){
+			
+			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
+			{
+				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
+			}else {
+			
+			
+			System.out.println("Parse error uneven assignment");
+			return null;
+			}
+		}
+		
+
 		for(int i = 0; i < size;i++){
+			
+			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
+			{
+				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
+				writeto = lhs.getChildren().get(i);
+				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ));
+				continue;
+				
+			}
+			
 			writeto = lhs.getChildren().get(i);
 			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i) ));
 		}
@@ -457,24 +478,36 @@ public class Parser {
 	 * Given a type and a right hand side, the right hand side should match the type given
 	 * Assuming that the type matches the right hand side always for now
 	 * Called by valuespec
+	 * var x = vals()
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
-		
-
 		
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
 		if(lhs.getSize() != rhs.getSize()){
 			//Todo, check for rhs being multiple return of correct size
 			//TODO, to do
-			for(int i = 0; i < size;i++){
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
+			if(((GoIRInvokeNode) rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
+			{
+				System.out.print("invoke size: ");
+				System.out.println(size);
+				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
+				for(int i = 0; i < size;i++){
+					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
+				}
+				return new GoIRArrayListExprNode(result, source);
 			}
-			return new GoIRArrayListExprNode(result, source);
 		}
 
 		for(int i = 0; i < size;i++){
-			if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
+			if(( rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
+			{
+				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
+			}
+			if(type==null) {
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+			}
+			else if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
 				{
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 				
@@ -485,7 +518,8 @@ public class Parser {
 				// the above sets the basic lit as an int node, so I need to make a new basiclit node of the correct type
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
-			}else {
+			}
+			else {
 				throw new GoException("cannot use \"" + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString() +
 						"\" (type " + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getType() +") as type " 
 						+ type.getIdentifier() + " in assignment");
@@ -505,6 +539,10 @@ public class Parser {
 	 * @return
 	 */
 	public GoIRArrayListExprNode assignNormalize(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r, String source){
+		if(( r.getChildren().get(0)) instanceof GoIRInvokeNode)
+		{
+			((GoIRInvokeNode) r.getChildren().get(0)).setNumReturns(l.getSize());
+		}
 		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0),null);
 		r.getChildren().set(0, temp);
 		return createAssignment(l,r,source);

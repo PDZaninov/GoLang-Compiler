@@ -5,11 +5,14 @@ return 5,7
 
 }
 
+func me() int {
+return 1
+}
+
 func main() {
-	var x,y = vals()
+	 var x,y  = vals()
+	 z := me()
 	println(x)
 	println(y)
-	var a,s = vals()
-	println(a)
-	println(s)	
+	println(z)
 }
