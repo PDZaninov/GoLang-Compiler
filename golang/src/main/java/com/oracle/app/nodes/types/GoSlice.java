@@ -25,7 +25,6 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 	public static GoSlice createGoSlice(GoArrayLikeTypes array, int low, int high, int cap){
 		if(array instanceof GoSlice){
 			array = ((GoSlice) array).getArray();
-			
 		}
 		switch(array.getType()){
 		case FLOAT32:
@@ -44,11 +43,8 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 	}
 	
 	protected abstract GoArrayLikeTypes getArray();
-
-	@Override
-	public Object executeGeneric(VirtualFrame frame) {
-		return this;
-	}
+	
+	public abstract GoSlice make(int length, int capacity);
 	
 	@Override
 	public int lowerBound(){
@@ -81,6 +77,15 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			this.cap = cap;
 			len = high - low;
 			this.type = array.getType();
+		}
+		
+		public GoSlice make(int length, int capacity){
+			array = new GoIntArray(capacity);
+			this.cap = capacity;
+			this.len = length;
+			this.high = length - 1;
+			this.low = 0;
+			return this;
 		}
 		
 		@Override
@@ -172,6 +177,15 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			this.type = array.getType();
 		}
 		
+		public GoSlice make(int length, int capacity){
+			array = new GoFloat32Array(capacity);
+			this.cap = capacity;
+			this.len = length;
+			this.high = length - 1;
+			this.low = 0;
+			return this;
+		}
+		
 		@Override
 		public String toString(){
 			StringBuilder sb = new StringBuilder("[");
@@ -259,6 +273,15 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			this.cap = cap;
 			len = high - low;
 			this.type = array.getType();
+		}
+		
+		public GoSlice make(int length, int capacity){
+			array = new GoFloat64Array(capacity);
+			this.cap = capacity;
+			this.len = length;
+			this.high = length - 1;
+			this.low = 0;
+			return this;
 		}
 		
 		@Override
@@ -350,6 +373,15 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			this.type = array.getType();
 		}
 		
+		public GoSlice make(int length, int capacity){
+			array = new GoStringArray(capacity);
+			this.cap = capacity;
+			this.len = length;
+			this.high = length - 1;
+			this.low = 0;
+			return this;
+		}
+		
 		@Override
 		public String toString(){
 			StringBuilder sb = new StringBuilder("[");
@@ -437,6 +469,15 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			this.cap = cap;
 			len = high - low;
 			this.type = array.getType();
+		}
+		
+		public GoSlice make(int length, int capacity){
+			array = new GoObjectArray(capacity);
+			this.cap = capacity;
+			this.len = length;
+			this.high = length - 1;
+			this.low = 0;
+			return this;
 		}
 		
 		@Override

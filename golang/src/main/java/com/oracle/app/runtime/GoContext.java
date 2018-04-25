@@ -6,14 +6,13 @@ import java.io.PrintWriter;
 import java.math.BigInteger;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.builtins.GoAppendBuiltin;
 import com.oracle.app.builtins.GoBuiltinNode;
 import com.oracle.app.builtins.GoCapBuiltinFactory;
-import com.oracle.app.builtins.GoFalseEqualsFalseFactory;
 import com.oracle.app.builtins.GoLenBuiltinFactory;
+import com.oracle.app.builtins.GoMakeBuiltinFactory;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
-import com.oracle.app.builtins.GoTrueEqualsTrueFactory;
-import com.oracle.app.builtins.fmt.GoFmtPrintln;
 import com.oracle.app.builtins.fmt.GoFmtPrintlnFactory;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
@@ -91,6 +90,12 @@ public final class GoContext {
 		return env.parse(source);
 	}
 	
+	public void installMultArgsBuiltins(){
+		GoExpressionNode bodyNode = GoAppendBuiltin.getAppendBuiltin();
+		String name = lookupNodeInfo(bodyNode.getClass()).shortName();
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, bodyNode, null, name);
+		getFunctionRegistry().register(name, rootNode);
+	}
 	
 	/*
 	 * Builtin functions get installed in this class
@@ -98,11 +103,10 @@ public final class GoContext {
 	private void installBuiltins(){
 		installBuiltin(GoPrintfBuiltinFactory.getInstance());
 		installBuiltin(GoPrintlnBuiltinFactory.getInstance());
-		installBuiltin(GoTrueEqualsTrueFactory.getInstance());
-		installBuiltin(GoFalseEqualsFalseFactory.getInstance());
 		installBuiltin(GoLenBuiltinFactory.getInstance());
 		installBuiltin(GoCapBuiltinFactory.getInstance());
-		//installBuiltin(GoMakeBuiltinFactory.getInstance());
+		installBuiltin(GoMakeBuiltinFactory.getInstance());
+		installMultArgsBuiltins();
 	}
 
 	public void installFmt() {
