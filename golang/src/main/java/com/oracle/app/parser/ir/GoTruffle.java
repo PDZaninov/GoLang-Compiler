@@ -2,8 +2,10 @@ package com.oracle.app.parser.ir;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExprNode;
@@ -326,6 +328,12 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
 		GoArrayExprNode arguments = null;
+		GoRootNode j = allFunctions.get(node.getFunctionNode().getIdentifier());
+		if(j != null ) {//cant be a builtin
+			if(node.getNumReturns() !=  j.getNumReturns() && !(node.getNumReturns() == 0 && j.getNumReturns()==1)) {
+				throw new GoException("assignment mismatch: " +node.getNumReturns() + " but " + j.getNumReturns()+ " values");
+			}
+		}
 		if(node.getArgumentNode() != null){
 			arguments = (GoArrayExprNode) node.getArgumentNode().accept(this);
 		}
@@ -365,10 +373,18 @@ public class GoTruffle implements GoIRVisitor {
 		if(node.getParams() != null) {
 			params = (GoArrayExprNode) node.getParams().accept(this);
 		}
-		GoArrayExprNode results = null;
+		String[] results = null;
 		if(node.getResults() != null) {
 			//Temporarily broken as visiting a fieldlist only works for parameters currently or if the returns are named
-			//results = (GoArrayExprNode) node.getResults().accept(this);
+			ArrayList<GoBaseIRNode> children = ((GoIRFieldListNode) node.getResults()).getFields().getChildren();
+			results = new String[children.size()];
+			System.out.print("Children size: ");
+			System.out.println(children.size());
+			for(int i = 0; i < children.size(); i++) {
+				// put return names in 2d array
+				results[i] = ((GoIRFieldNode) children.get(i)).getTypeName();
+			}
+			
 		}
 		return new GoFuncTypeNode(params, results);
 	}

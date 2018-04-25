@@ -117,6 +117,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		else {
 			scope.locals.put(name,  new TypeInfo(name, "object", false, slot));
 		}
+
 		return GoWriteLocalVariableNodeGen.create(value, slot);
 	}
 	

@@ -64,6 +64,15 @@ public class GoRootNode extends RootNode {
     public GoExpressionNode getBodyNode() {
         return bodyNode;
     }
+    
+    public int getNumReturns() {
+    	if(typeNode != null) {
+    		if(typeNode.getResults()!= null) {
+        		return typeNode.getResults().length;
+    		}
+    	}
+    	return 0;
+    }
 
     @Override
     public String getName() {
