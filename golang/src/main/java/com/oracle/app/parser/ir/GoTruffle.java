@@ -849,9 +849,17 @@ public class GoTruffle implements GoIRVisitor {
 	 * through the lexical scope for it, else it gets a readlocalvariable node if the variable exists.
 	 */
 	public Object visitKeyValue(GoIRKeyValueNode node){
-		String key = node.getIdentifier();
+		GoExpressionNode key = (GoExpressionNode) node.getKey().accept(this);
 		GoExpressionNode value = (GoExpressionNode) node.getValue().accept(this);
 		GoKeyValueNode result = new GoKeyValueNode(key,value);
+		return result;
+	}
+
+	public Object visitMapType(GoIRMapTypeNode node){
+		//Get the types of the map (key, value)
+		GoExpressionNode keyType = node.getKey.accept(this);
+		GoExpressionNode valueType = node.getValue.accept(this);
+		GoMapTypeExprNode result = new GoMapTypeExprNode(keyType, valueType);
 		return result;
 	}
 }

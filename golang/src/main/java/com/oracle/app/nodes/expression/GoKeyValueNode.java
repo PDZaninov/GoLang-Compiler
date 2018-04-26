@@ -5,23 +5,26 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class GoKeyValueNode extends GoExpressionNode {
 
-	private String key;
+	private GoExpressionNode key;
 	private GoExpressionNode value;
 	private Object result;
+	private Obhect keyResult;
 
-	public GoKeyValueNode(String key, GoExpressionNode value) {
+	public GoKeyValueNode(GoExpressionNode key, GoExpressionNode value) {
 		this.key = key;
 		this.value = value;
 		result = null;
+		keyResult = null;
 	}
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		result = value.executeGeneric(frame);
+		keyResult = key.executeGeneric(frame);
 		return this;
 	}
 
-	public String getKey() {
+	public GoExpressionNode getKey() {
 		return key;
 	}
 
@@ -32,5 +35,7 @@ public class GoKeyValueNode extends GoExpressionNode {
 	public Object getResult() {
 		return result;
 	}
+
+	public Object getKeyResult() { return keyResult; }
 
 }
