@@ -29,6 +29,19 @@ public class GoMap extends GoArrayLikeTypes {
 	public Object read(Object key){
 		return this.mapp.get(key).read();
 	}
+	
+	@Override
+	public String toString(){
+		StringBuilder sb = new StringBuilder("map[");
+		for(FieldNode key : mapp.keySet()){
+			sb.append(key.read()+": "+mapp.get(key).read()+" ");
+		}
+		if(sb.length() > 4){
+			sb.deleteCharAt(sb.length()-1);
+		}
+		sb.append("]");
+		return sb.toString();
+	}
 
 	@Override
 	public void insert(Object key, Object value){

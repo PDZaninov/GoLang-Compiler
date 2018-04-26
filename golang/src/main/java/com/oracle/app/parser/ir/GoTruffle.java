@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExprNode;
@@ -306,7 +307,7 @@ public class GoTruffle implements GoIRVisitor {
 			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
 			break;
 		default:
-			throw new RuntimeException("Unexpected Operation: "+op);
+			throw new GoException("Unexpected Operation: "+op);
 		}
 		//int start = leftNode.getSourceSection().getCharIndex();
 		//int end = rightNode.getSourceSection().getCharEndIndex() - start;
