@@ -7,6 +7,7 @@ import com.oracle.app.nodes.types.GoArray.GoFloat64Array;
 import com.oracle.app.nodes.types.GoArray.GoIntArray;
 import com.oracle.app.nodes.types.GoArray.GoObjectArray;
 import com.oracle.app.nodes.types.GoArray.GoStringArray;
+import com.oracle.app.nodes.types.GoMap;
 import com.oracle.app.nodes.types.GoSlice.GoFloat32Slice;
 import com.oracle.app.nodes.types.GoSlice.GoFloat64Slice;
 import com.oracle.app.nodes.types.GoSlice.GoIntSlice;
@@ -82,5 +83,10 @@ public abstract class GoArrayWriteNode extends GoExpressionNode {
 	    public GoArray writeObjectSlice(VirtualFrame frame, int index, Object value, GoObjectSlice array){
 	    	array.insert(index, value);
 	    	return null;
+	    }
+	    
+	    @Specialization
+	    public void writeMap(VirtualFrame frame, Object key, Object value, GoMap map){
+	    	map.insert(key, value);
 	    }
 }
