@@ -25,6 +25,7 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 	GoFunction.class,
 	GoPointerNode.class,
 	GoStruct.class,
-	GoNull.class})
+	GoNull.class,
+	Object[].class})
 public abstract class GoTypes {
 }

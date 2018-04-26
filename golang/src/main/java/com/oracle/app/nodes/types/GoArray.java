@@ -2,6 +2,7 @@ package com.oracle.app.nodes.types;
 
 import java.util.Arrays;
 
+import com.oracle.app.GoException;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
@@ -128,14 +129,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, int value){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			array[index] = value;
 		}
 		
 		public int read(int index){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			return array[index];
 		}
@@ -187,14 +188,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, float value){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			array[index] = value;
 		}
 		
 		public float read(int index){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			return array[index];
 		}
@@ -246,14 +247,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, double value){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			array[index] = value;
 		}
 		
 		public double read(int index){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			return array[index];
 		}
@@ -306,14 +307,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, String value){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			array[index] = value;
 		}
 		
 		public String read(int index){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			return array[index];
 		}
@@ -365,14 +366,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, Object value){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			array[index] = value;
 		}
 		
 		public Object read(int index){
 			if(index < 0 || index > array.length){
-				System.out.println("Index out of bounds");
+				throw new GoException("Index out of bounds");
 			}
 			return array[index];
 		}
