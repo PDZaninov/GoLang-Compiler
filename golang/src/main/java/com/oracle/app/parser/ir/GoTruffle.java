@@ -850,7 +850,7 @@ public class GoTruffle implements GoIRVisitor {
 	 */
 	public Object visitKeyValue(GoIRKeyValueNode node){
 		GoExpressionNode key = (GoExpressionNode) node.getKey().accept(this);
-		GoExpressionNode value = (GoExpressionNode) node.getValue().accept(this);
+		GoExpressionNode value = (a) node.getValue().accept(this);
 		GoKeyValueNode result = new GoKeyValueNode(key,value);
 		return result;
 	}
