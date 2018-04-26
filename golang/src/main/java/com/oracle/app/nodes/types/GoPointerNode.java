@@ -56,6 +56,8 @@ public abstract class GoPointerNode extends GoNonPrimitiveType{
 	
 	public abstract Object executeStar(VirtualFrame frame);
 	
+	public abstract GoPrimitiveTypes getType();
+	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		return this.copy();
@@ -89,6 +91,11 @@ public abstract class GoPointerNode extends GoNonPrimitiveType{
 		public void insert(Object value) {
 			array.insert(index,value);
 		}
+
+		@Override
+		public GoPrimitiveTypes getType() {
+			return array.getType();
+		}
 	}
 	
 	public static class GoIntPointerNode extends GoPointerNode{
@@ -106,6 +113,11 @@ public abstract class GoPointerNode extends GoNonPrimitiveType{
 		public Object executeStar(VirtualFrame frame) {
 			return doInt(frame);
 		}
+
+		@Override
+		public GoPrimitiveTypes getType() {
+			return GoPrimitiveTypes.INT;
+		}
 	}
 	
 	public static class GoFloat32PointerNode extends GoPointerNode{
@@ -121,6 +133,11 @@ public abstract class GoPointerNode extends GoNonPrimitiveType{
 		@Override 
 		public Object executeStar(VirtualFrame frame) {
 			return doFloat(frame);
+		}
+
+		@Override
+		public GoPrimitiveTypes getType() {
+			return GoPrimitiveTypes.FLOAT32;
 		}
 		
 	}
@@ -138,6 +155,11 @@ public abstract class GoPointerNode extends GoNonPrimitiveType{
 		@Override public Object executeStar(VirtualFrame frame) {
 			return doDouble(frame);
 		}
+
+		@Override
+		public GoPrimitiveTypes getType() {
+			return GoPrimitiveTypes.FLOAT64;
+		}
 		
 	}
 	
@@ -154,7 +176,34 @@ public abstract class GoPointerNode extends GoNonPrimitiveType{
 		@Override public Object executeStar(VirtualFrame frame) {
 			return doBool(frame);
 		}
+
+		@Override
+		public GoPrimitiveTypes getType() {
+			return GoPrimitiveTypes.BOOL;
+		}
 		
+	}
+	
+	public static class GoStringPointerNode extends GoPointerNode{
+		
+		public GoStringPointerNode(int ptr, FrameSlot obj) {
+			super(ptr, obj);
+		}
+		
+		@Specialization
+		public Object doObject(VirtualFrame frame){
+			return FrameUtil.getObjectSafe(frame, getSlot());
+		}
+
+		@Override
+		public Object executeStar(VirtualFrame frame) {
+			return doObject(frame);
+		}
+
+		@Override
+		public GoPrimitiveTypes getType() {
+			return GoPrimitiveTypes.STRING;
+		}
 	}
 	
 	public static class GoObjectPointerNode extends GoPointerNode{
@@ -171,6 +220,11 @@ public abstract class GoPointerNode extends GoNonPrimitiveType{
 		@Override
 		public Object executeStar(VirtualFrame frame) {
 			return doObject(frame);
+		}
+
+		@Override
+		public GoPrimitiveTypes getType() {
+			return GoPrimitiveTypes.OBJECT;
 		}
 	}
 	

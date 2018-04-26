@@ -16,11 +16,11 @@ import com.oracle.truffle.api.frame.VirtualFrame;
  */
 public abstract class GoSlice extends GoArrayLikeTypes {
 
-	GoPrimitiveTypes type;
-	int cap;
-	int len;
-	int low;
-	int high;
+	protected GoPrimitiveTypes type;
+	protected int cap;
+	protected int len;
+	protected int low;
+	protected int high;
 	
 	public static GoSlice createGoSlice(GoArrayLikeTypes array, int low, int high, int cap){
 		if(array instanceof GoSlice){
@@ -45,6 +45,8 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 	protected abstract GoArrayLikeTypes getArray();
 	
 	public abstract GoSlice make(int length, int capacity);
+	
+	public abstract void insert(Object value);
 	
 	@Override
 	public int lowerBound(){
@@ -162,6 +164,22 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			}
 			array.insert(realindex, value);
 		}
+
+		@Override
+		public void insert(Object value) {
+			if(len == cap){
+				cap *= 2;
+				GoIntArray newArray = new GoIntArray(cap);
+				for(int index = 0; index < len; index++){
+					newArray.insert(index, read(index));
+				}
+				this.array = newArray;
+				high -= low;
+				low = 0;
+			}
+			len++;
+			insert(++high, value);
+		}
 	}
 	
 	public static class GoFloat32Slice extends GoSlice{
@@ -259,6 +277,22 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 				System.out.println("Slice index out of bounds");
 			}
 			array.insert(realindex, value);
+		}
+
+		@Override
+		public void insert(Object value) {
+			if(len == cap){
+				cap *= 2;
+				GoFloat32Array newArray = new GoFloat32Array(cap);
+				for(int index = 0; index < len; index++){
+					newArray.insert(index, read(index));
+				}
+				this.array = newArray;
+				high -= low;
+				low = 0;
+			}
+			len++;
+			insert(++high, value);
 		}
 	}
 
@@ -358,6 +392,22 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			}
 			array.insert(realindex, value);
 		}
+
+		@Override
+		public void insert(Object value) {
+			if(len == cap){
+				cap *= 2;
+				GoFloat64Array newArray = new GoFloat64Array(cap);
+				for(int index = 0; index < len; index++){
+					newArray.insert(index, read(index));
+				}
+				this.array = newArray;
+				high -= low;
+				low = 0;
+			}
+			len++;
+			insert(++high, value);
+		}
 	}
 	
 	public static class GoStringSlice extends GoSlice{
@@ -367,7 +417,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public GoStringSlice(GoStringArray array,int low, int high, int cap){
 			this.array = array;
 			this.low = low;
-			this.high = high - 1;
+			this.high = high;
 			this.cap = cap;
 			len = high - low;
 			this.type = array.getType();
@@ -385,7 +435,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public String toString(){
 			StringBuilder sb = new StringBuilder("[");
-			for(int i = low; i <= high; i++){
+			for(int i = low; i < len; i++){
 				sb.append(array.read(i)+" ");
 			}
 			if(sb.length() > 1){
@@ -421,8 +471,8 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			this.high = results.length - 1;
 			this.cap = results.length;
 			this.type = array.getType();
-			len = high - low;
-			for(int i = 0; i < results.length; i++){
+			len = cap;
+			for(int i = 0; i < len; i++){
 				array.insert(i,(String) results[i]);
 			}
 			return this;
@@ -456,6 +506,22 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			}
 			array.insert(realindex, value);
 		}
+
+		@Override
+		public void insert(Object value) {
+			if(len == cap){
+				cap *= 2;
+				GoStringArray newArray = new GoStringArray(cap);
+				for(int index = 0; index < len; index++){
+					newArray.insert(index, read(index));
+				}
+				this.array = newArray;
+				high -= low;
+				low = 0;
+			}
+			len++;
+			insert(++high, value);
+		}
 	}
 	
 	public static class GoObjectSlice extends GoSlice{
@@ -465,7 +531,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public GoObjectSlice(GoObjectArray array,int low, int high, int cap){
 			this.array = array;
 			this.low = low;
-			this.high = high - 1;
+			this.high = high;
 			this.cap = cap;
 			len = high - low;
 			this.type = array.getType();
@@ -553,6 +619,22 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 				System.out.println("Slice index out of bounds");
 			}
 			array.insert(realindex, value);
+		}
+
+		@Override
+		public void insert(Object value) {
+			if(len == cap){
+				cap *= 2;
+				GoObjectArray newArray = new GoObjectArray(cap);
+				for(int index = 0; index < len; index++){
+					newArray.insert(index, read(index));
+				}
+				this.array = newArray;
+				high -= low;
+				low = 0;
+			}
+			len++;
+			insert(++high, value);
 		}
 	}
 }

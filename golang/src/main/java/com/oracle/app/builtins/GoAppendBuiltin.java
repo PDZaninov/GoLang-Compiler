@@ -17,9 +17,17 @@ public class GoAppendBuiltin extends GoExpressionNode {
 		Object[] arguments = frame.getArguments();
 		GoSlice slice = (GoSlice) arguments[0];
 		for(int i = 1; i < arguments.length; i++){
-			
+			if(arguments[i] instanceof GoSlice){
+				GoSlice appendSlice = (GoSlice) arguments[i];
+				for(int j = 0; j < appendSlice.len(); j++){
+					slice.insert(appendSlice.read(j));
+				}
+			}
+			else{
+				slice.insert(arguments[i]);
+			}
 		}
-		return null;
+		return slice;
 	}
 	
 	public static GoAppendBuiltin getAppendBuiltin(){
