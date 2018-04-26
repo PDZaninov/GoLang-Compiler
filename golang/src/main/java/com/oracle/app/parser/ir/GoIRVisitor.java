@@ -75,11 +75,6 @@ public interface GoIRVisitor {
 		System.out.println("Default Gen Decl Visit");
 		return null;
 	}
-
-	default Object visitValueSpec(GoIRValueSpecNode goIRValueSpecNode){
-		System.out.println("Default Value Spec Visit");
-		return null;
-	}
 	
 	default Object visitForLoop(GoIRForNode node){
 		System.out.println("Default For Loop Visit");

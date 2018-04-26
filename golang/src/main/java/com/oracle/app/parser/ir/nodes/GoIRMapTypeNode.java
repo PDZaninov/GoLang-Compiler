@@ -5,8 +5,8 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 
 public class GoIRMapTypeNode extends GoBaseIRNode{
 
-    @Child GoBaseIRNode key;
-    @Child GoBaseIRNode value;
+    GoBaseIRNode key;
+    GoBaseIRNode value;
 
     public GoIRMapTypeNode(GoBaseIRNode key, GoBaseIRNode value){
         super("Map type node");
