@@ -1,14 +1,12 @@
 package main
 
 func main() {
-	s := []string{"a","b","c","d","e","f"}
+	s := make([]string, 3)
+    s[0] = "a"
+    s[1] = "b"
+    s[2] = "c"
 
-	s = s[1:4]
-	println(s)
-
-	s = s[:2]
-	println(s)
-
-	s = s[1:]
+    b := []string{"d","e","f"}
+	s = append(s[:1], b[1:]...)
 	println(s)
 }
