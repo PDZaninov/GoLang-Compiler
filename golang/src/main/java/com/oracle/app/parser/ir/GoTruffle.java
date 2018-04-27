@@ -135,6 +135,8 @@ public class GoTruffle implements GoIRVisitor {
 		lexicalscope.locals.put("false", frameSlot);
 		frameSlot = frameDescriptor.addFrameSlot("string", FrameSlotKind.Object);
 		lexicalscope.locals.put("string", frameSlot);
+		frameSlot = frameDescriptor.addFrameSlot("_");
+		lexicalscope.locals.put("_", frameSlot);
 		return this;
 	}
 

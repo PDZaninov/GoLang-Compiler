@@ -5,8 +5,8 @@ import java.util.Map;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.runtime.GoContext;
+import com.oracle.app.runtime.GoNull;
 import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage.ContextReference;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -48,14 +48,9 @@ public class GoFileNode extends RootNode{
 	public void executeVoid(VirtualFrame frame){
 		bodyNode.executeVoid(frame);
 	}
-
-	@Override
-	public Object execute(VirtualFrame frame) {
-		//Register functions and global variables
-		//Then execute global declarations
-		CompilerDirectives.transferToInterpreterAndInvalidate();
-        reference.get().getFunctionRegistry().register(allfunctions);
-        FrameDescriptor f = getFrameDescriptor();
+	
+	public void registerGlobalVariables(VirtualFrame frame){
+		FrameDescriptor f = getFrameDescriptor();
         FrameSlot slot;
         slot = f.findFrameSlot("int");
         slot.setKind(FrameSlotKind.Int);
@@ -72,6 +67,17 @@ public class GoFileNode extends RootNode{
         frame.setBoolean(slot,true);
         slot = f.findFrameSlot("false");
         frame.setBoolean(slot, false);
+        slot = f.findFrameSlot("_");
+        frame.setObject(slot, GoNull.SINGLETON);
+	}
+	
+	@Override
+	public Object execute(VirtualFrame frame) {
+		//Register functions and global variables
+		//Then execute global declarations
+		CompilerDirectives.transferToInterpreterAndInvalidate();
+        reference.get().getFunctionRegistry().register(allfunctions);
+        registerGlobalVariables(frame);
         
         for(GoExpressionNode decl : bodyNode.getArguments()){
         	if(decl != null){
