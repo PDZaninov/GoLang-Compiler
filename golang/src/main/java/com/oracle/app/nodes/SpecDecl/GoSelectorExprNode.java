@@ -2,23 +2,22 @@ package com.oracle.app.nodes.SpecDecl;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
-import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.types.GoStruct;
-import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.dsl.NodeChild;
+import com.oracle.truffle.api.dsl.NodeChildren;
+import com.oracle.truffle.api.dsl.Specialization;
 
-public class GoSelectorExprNode extends GoExpressionNode {
+@NodeChildren({@NodeChild(value="name"),@NodeChild(value="field",type=GoIdentNode.class)})
+public abstract class GoSelectorExprNode extends GoExpressionNode {
 
-    @Child private GoExpressionNode expr;
-    @Child private GoIdentNode name;
-
-
-    public GoSelectorExprNode(GoExpressionNode expr, GoIdentNode name) {
-        this.expr = expr;
-        this.name = name;
-    }
-
+	@Specialization
+	public Object executeStruct(GoStruct struct, String field){
+		return struct.read(field);
+	}
+	
     //Only covering for the case of a struct selector currently
     //TO-DO Make sure this does not overlap with import selectors
+	/*
     @Override
     public Object executeGeneric(VirtualFrame frame) {
     	GoExpressionNode result = (GoExpressionNode) expr.executeGeneric(frame);
@@ -31,5 +30,5 @@ public class GoSelectorExprNode extends GoExpressionNode {
     		return null;
     	}
     }
-
+	*/
 }

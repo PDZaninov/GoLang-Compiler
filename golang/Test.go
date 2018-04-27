@@ -7,21 +7,8 @@ type Vertex struct {
 	Y int
 }
 
-type Test struct {
-    X int
-    Y string
-}
-
 func main() {
-	v := make([]int,10,20)
     a := Vertex{1,2}
-	Println(v)
-    Println(a)
-    
-    v[9] = 10
-    a.X = 45
-    Println(v)
-    Println(a)
-    b := Test{X: 10, Y: "Hello!"}
-    Println(b)
+    Println(a.X, a.Y, a)
+
 }

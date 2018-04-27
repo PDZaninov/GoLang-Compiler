@@ -13,7 +13,7 @@ import com.oracle.app.builtins.GoLenBuiltinFactory;
 import com.oracle.app.builtins.GoMakeBuiltinFactory;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
-import com.oracle.app.builtins.fmt.GoFmtPrintlnFactory;
+import com.oracle.app.builtins.fmt.GoFmtPrintln;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
@@ -110,7 +110,10 @@ public final class GoContext {
 	}
 
 	public void installFmt() {
-		installBuiltin(GoFmtPrintlnFactory.getInstance());
+		GoExpressionNode bodyNode = GoFmtPrintln.getFmtPrintln();
+		String name = lookupNodeInfo(bodyNode.getClass()).shortName();
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, bodyNode, null, name);
+		getFunctionRegistry().register(name, rootNode);
 	}
 	
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){

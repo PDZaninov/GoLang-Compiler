@@ -14,6 +14,7 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
+import com.oracle.app.nodes.SpecDecl.GoSelectorExprNodeGen;
 import com.oracle.app.nodes.call.GoFieldNode;
 import com.oracle.app.nodes.call.GoFuncTypeNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
@@ -746,8 +747,8 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
 		GoExpressionNode expr = (GoExpressionNode) goIRSelectorExprNode.getExpr().accept(this);
-		GoIdentNode name = (GoIdentNode) goIRSelectorExprNode.getName().accept(this);
-		return new GoSelectorExprNode(expr, name);
+		GoIdentNode name = new GoIdentNode(language, goIRSelectorExprNode.getName().getIdentifier(),null);
+		return GoSelectorExprNodeGen.create(expr, name);
 	}
 	
 	@Override
