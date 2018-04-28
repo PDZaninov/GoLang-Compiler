@@ -1,5 +1,6 @@
 package com.oracle.app.nodes.SpecDecl;
 
+import com.oracle.app.builtins.fmt.FmtFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.types.GoStruct;
@@ -13,6 +14,11 @@ public abstract class GoSelectorExprNode extends GoExpressionNode {
 	@Specialization
 	public Object executeStruct(GoStruct struct, String field){
 		return struct.read(field);
+	}
+	
+	@Specialization
+	public Object executeImport(FmtFunctionList imports, String function){
+		return imports.getFunction(function);
 	}
 	
     //Only covering for the case of a struct selector currently

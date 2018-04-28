@@ -18,7 +18,6 @@ import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
-import com.oracle.app.parser.ir.nodes.GoIRValueSpecNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 public class GoVisitor implements GoIRVisitor {
@@ -132,19 +131,6 @@ public class GoVisitor implements GoIRVisitor {
 	public Object visitGenDecl(GoIRGenDeclNode node){
 		System.out.println("GenDecl node: "+ node.toString());
 		node.getChild().accept(this);
-		return null;
-	}
-
-	@Override
-	public Object visitValueSpec(GoIRValueSpecNode node) {
-		System.out.println("ValueSpec node: "+ node.toString());
-		node.getNames().accept(this);
-		if(node.getType() != null){
-			node.getType().accept(this);
-		}
-		if(node.getExpr() != null){
-			node.getExpr().accept(this);
-		}
 		return null;
 	}
 

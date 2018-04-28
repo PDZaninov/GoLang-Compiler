@@ -109,13 +109,6 @@ public final class GoContext {
 		installMultArgsBuiltins();
 	}
 
-	public void installFmt() {
-		GoExpressionNode bodyNode = GoFmtPrintln.getFmtPrintln();
-		String name = lookupNodeInfo(bodyNode.getClass()).shortName();
-		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, bodyNode, null, name);
-		getFunctionRegistry().register(name, rootNode);
-	}
-	
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){
 		int argumentCount = factory.getExecutionSignature().size();
 		//System.out.println(factory.toString()+" "+argumentCount);

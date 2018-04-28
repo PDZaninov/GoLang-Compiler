@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func main() {
 	s := make([]string, 3)
     s[0] = "a"
@@ -8,5 +10,5 @@ func main() {
 
     b := []string{"d","e","f"}
 	s = append(s[:1], b[1:]...)
-	println(s)
+	fmt.Println(s)
 }

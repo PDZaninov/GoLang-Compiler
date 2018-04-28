@@ -148,7 +148,6 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = new LexicalScope(lexicalscope);
     }
     
-    //Still trying to figure out the right place to insert a new frameDescriptor
     public void startFunction(){
     	startBlock();
     }
@@ -738,12 +737,13 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
-		String name = goIRImportSpecNode.getIdentifier();
+		GoStringNode namenode = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
+		String name = (String) namenode.executeGeneric(null);
 		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 		lexicalscope.locals.put(name, frameSlot);
 		
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
-		return new GoImportSpec(ident, language);
+		return new GoImportSpec(ident, language, frameSlot);
 	}
 
 	@Override

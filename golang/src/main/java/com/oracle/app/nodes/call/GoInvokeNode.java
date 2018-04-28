@@ -2,7 +2,7 @@ package com.oracle.app.nodes.call;
 
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
-import com.oracle.app.nodes.GoRootNode;
+import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
@@ -30,7 +30,7 @@ public class GoInvokeNode extends GoExpressionNode {
     @ExplodeLoop
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        Object function = getFunctionIdentifier();
+        Object function = getFunctionIdentifier(frame);
 
         CompilerAsserts.compilationConstant(argumentNodes.length);
         Object[] argumentValues = new Object[argumentNodes.length];
@@ -49,9 +49,14 @@ public class GoInvokeNode extends GoExpressionNode {
         return super.isTaggedWith(tag);
     }
     
-    public GoFunction getFunctionIdentifier() {
-    	GoFunction function;
-        function = ((GoIdentNode) functionNode).getFunction();
+    public GoFunction getFunctionIdentifier(VirtualFrame frame) {
+    	GoFunction function = null;
+    	if(functionNode instanceof GoIdentNode){
+    		function = ((GoIdentNode) functionNode).getFunction();
+    	}
+    	else if(functionNode instanceof GoSelectorExprNode){
+    		function = (GoFunction) functionNode.executeGeneric(frame);
+    	}
         
         return function;
     }
