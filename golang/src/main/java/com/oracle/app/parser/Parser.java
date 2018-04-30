@@ -490,8 +490,6 @@ public class Parser {
 			//TODO, to do
 			if(((GoIRInvokeNode) rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
 			{
-				System.out.print("invoke size: ");
-				System.out.println(size);
 				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
 				for(int i = 0; i < size;i++){
 					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));

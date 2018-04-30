@@ -17,8 +17,12 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	
-	
 	    protected abstract FrameSlot getSlot();
+	    
+	    @Specialization(guards = "isBlank(frame)")
+	    protected void writeBlank(VirtualFrame frame, Object value){
+	    	
+	    }
 	    
 	    @Specialization(guards = "isIntOrIllegal(frame)")
 	    protected int writeInt(VirtualFrame frame, int value) {
@@ -85,13 +89,16 @@ public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
 	        return value;
 	    }
 
-
 	    @Specialization(replaces = {"writeInt", "writeFloat", "writeDouble", "writeLong", "writeBoolean", "writeString", "writeArray", "writeSlice"})
 	    protected Object write(VirtualFrame frame, Object value) {
 	        getSlot().setKind(FrameSlotKind.Object);
 
 	        frame.setObject(getSlot(), value);
 	        return value;
+	    }
+	    
+	    protected boolean isBlank(VirtualFrame frame){
+	    	return getSlot().getIdentifier().equals("_");
 	    }
 	    
 	    protected boolean isIntOrIllegal(VirtualFrame frame) {

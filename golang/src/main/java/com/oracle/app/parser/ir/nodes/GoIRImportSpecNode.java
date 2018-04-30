@@ -13,6 +13,11 @@ public class GoIRImportSpecNode extends GoBaseIRNode {
         super("ImportSpec");
         this.child = child;
     }
+    
+    @Override
+    public String getIdentifier(){
+    	return child.getIdentifier();
+    }
 
     public GoIRBasicLitNode getChild() {
         return child;

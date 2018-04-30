@@ -30,7 +30,8 @@ public class GoIRValueSpecNode extends GoBaseIRNode {
 
 	@Override
 	public Object accept(GoIRVisitor visitor) {
-		return visitor.visitValueSpec(this);
+		return null;
+		//return visitor.visitValueSpec(this);
 	}
 
 }

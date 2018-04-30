@@ -5,11 +5,6 @@ import com.oracle.app.runtime.GoUndefinedNameException;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.RootNode;
 
-/**
- * The initial {@link RootNode} of {@link SLFunction functions} when they are created, i.e., when
- * they are still undefined. Executing it throws an
- * {@link SLUndefinedNameException#undefinedFunction exception}.
- */
 public class GoUndefinedFunctionRootNode extends GoRootNode {
     public GoUndefinedFunctionRootNode(GoLanguage language, String name) {
         super(language,null,null,null, null, null, name);

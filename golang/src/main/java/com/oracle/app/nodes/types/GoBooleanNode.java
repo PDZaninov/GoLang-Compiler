@@ -3,7 +3,7 @@ package com.oracle.app.nodes.types;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class GoBooleanNode extends GoExpressionNode {
+public class GoBooleanNode extends GoPrimitiveType {
     public final boolean value;
 
     public GoBooleanNode(boolean bool) {
@@ -28,5 +28,10 @@ public class GoBooleanNode extends GoExpressionNode {
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		return this.value;
+	}
+
+	@Override
+	public GoPrimitiveTypes getType() {
+		return GoPrimitiveTypes.BOOL;
 	}
 }

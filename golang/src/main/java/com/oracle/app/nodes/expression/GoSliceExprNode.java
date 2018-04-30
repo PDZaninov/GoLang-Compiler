@@ -29,7 +29,6 @@ public class GoSliceExprNode extends GoExpressionNode {
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		// TODO Auto-generated method stub
 		GoArrayLikeTypes array = (GoArrayLikeTypes) expr.executeGeneric(frame);
 		int lowerbound = 0;
 		int highbound = 0;
@@ -41,7 +40,6 @@ public class GoSliceExprNode extends GoExpressionNode {
 			try {
 				lowerbound = low.executeInteger(frame) + array.lowerBound();
 			} catch (UnexpectedResultException e) {
-			// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -52,7 +50,6 @@ public class GoSliceExprNode extends GoExpressionNode {
 			try {
 				highbound = high.executeInteger(frame) + array.lowerBound();
 			} catch (UnexpectedResultException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -63,7 +60,6 @@ public class GoSliceExprNode extends GoExpressionNode {
 			try {
 				maxsize = max.executeInteger(frame);
 			} catch (UnexpectedResultException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

@@ -1,13 +1,9 @@
 package com.oracle.app.nodes;
 
 import com.oracle.app.GoLanguage;
-import com.oracle.app.nodes.call.GoFieldNode;
 import com.oracle.app.nodes.call.GoFuncTypeNode;
-import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
-import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.truffle.api.CompilerDirectives.CompilationFinal;
 import com.oracle.truffle.api.frame.FrameDescriptor;
-import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.nodes.RootNode;

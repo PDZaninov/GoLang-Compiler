@@ -28,5 +28,10 @@ func main() {
 	r,t := vals()
 	y := me()
 	println(me())
+	array := make([]string,5)
+	array = make([]string, 10, 15)
+	sucker := append(array,"a","b")
+	println(len(array))
+	println(cap(sucker))
 	
 }

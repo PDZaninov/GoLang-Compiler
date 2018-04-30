@@ -16,6 +16,7 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
+import com.oracle.app.nodes.SpecDecl.GoSelectorExprNodeGen;
 import com.oracle.app.nodes.call.GoFieldNode;
 import com.oracle.app.nodes.call.GoFuncTypeNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
@@ -165,6 +166,8 @@ public class GoTruffle implements GoIRVisitor {
 		lexicalscope.locals.put("false", new TypeInfo("false", "false", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("string", FrameSlotKind.Object);
 		lexicalscope.locals.put("string", new TypeInfo("string", "string", false, frameSlot));
+		frameSlot = frameDescriptor.addFrameSlot("_");
+		lexicalscope.locals.put("_", new TypeInfo("_", "_", false, frameSlot));
 		return this;
 	}
 
@@ -176,7 +179,6 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = new LexicalScope(lexicalscope);
     }
     
-    //Still trying to figure out the right place to insert a new frameDescriptor
     public void startFunction(){
     	startBlock();
     }
@@ -780,20 +782,22 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitImportSpec(GoIRImportSpecNode goIRImportSpecNode){
-		String name = goIRImportSpecNode.getIdentifier();
-		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
-		
-		lexicalscope.locals.put(name, new TypeInfo(name, name, false, slot));
+		GoStringNode namenode = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
+		String name = (String) namenode.executeGeneric(null);
+		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
+		//TO DO fix typeInfo
+		//TODO
+		lexicalscope.locals.put(name, new TypeInfo(name, name, false, frameSlot));
 		
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
-		return new GoImportSpec(ident, language);
+		return new GoImportSpec(ident, language, frameSlot);
 	}
 
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
 		GoExpressionNode expr = (GoExpressionNode) goIRSelectorExprNode.getExpr().accept(this);
-		GoIdentNode name = (GoIdentNode) goIRSelectorExprNode.getName().accept(this);
-		return new GoSelectorExprNode(expr, name);
+		GoIdentNode name = new GoIdentNode(language, goIRSelectorExprNode.getName().getIdentifier(),null);
+		return GoSelectorExprNodeGen.create(expr, name);
 	}
 	
 	@Override
