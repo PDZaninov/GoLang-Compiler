@@ -16,7 +16,7 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
 
     @Override
 	public String toString() {
-		return "GoReadLocalVariableNode []";
+		return "GoReadLocalVariableNode [ "+getSlot()+" ]";
 	}
     
     @Override

@@ -82,10 +82,6 @@ public abstract class GoExpressionNode extends GoStatementNode {
      * subclasses overwrite the appropriate methods.
      */
 
-    public long executeLong(VirtualFrame frame) throws UnexpectedResultException {
-        return GoTypesGen.expectLong(executeGeneric(frame));
-    }
-
     public boolean executeBoolean(VirtualFrame frame) throws UnexpectedResultException {
         return GoTypesGen.expectBoolean(executeGeneric(frame));
     }
@@ -96,10 +92,6 @@ public abstract class GoExpressionNode extends GoStatementNode {
 
 	public String executeString(VirtualFrame frame) throws UnexpectedResultException {
 		return GoTypesGen.expectString(executeGeneric(frame));
-	}
-
-	public BigInteger executeBigInteger(VirtualFrame frame) throws UnexpectedResultException {
-		return GoTypesGen.expectBigInteger(executeGeneric(frame));
 	}
 
 	public float executeFloat(VirtualFrame frame) throws UnexpectedResultException {

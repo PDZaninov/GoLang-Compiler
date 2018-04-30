@@ -1,10 +1,10 @@
 package com.oracle.app.nodes.SpecDecl;
 
 import com.oracle.app.GoLanguage;
+import com.oracle.app.builtins.fmt.FmtFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.runtime.GoContext;
-import com.oracle.truffle.api.TruffleLanguage.ContextReference;
+import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 /**
@@ -16,11 +16,13 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class GoImportSpec extends GoExpressionNode {
 	
 	@Child private GoStringNode child;
-	private final ContextReference<GoContext> reference;
+	private final GoLanguage language;
+	private final FrameSlot slot;
 	
-	public GoImportSpec(GoStringNode child, GoLanguage language) {
+	public GoImportSpec(GoStringNode child, GoLanguage language, FrameSlot slot) {
 		this.child = child;
-		reference = language.getContextReference();
+		this.language = language;
+		this.slot = slot;
 	}
 
 	@Override
@@ -28,7 +30,7 @@ public class GoImportSpec extends GoExpressionNode {
 		String name = (String) child.executeGeneric(frame);
 		switch(name) {
         case "fmt":
-            reference.get().installFmt();
+        	frame.setObject(slot, new FmtFunctionList(language));
             break;
         default:
             System.out.println("Package not yet done");

@@ -24,12 +24,7 @@ public class GoParenExpressionNode extends GoExpressionNode {
     public Object executeGeneric(VirtualFrame frame) {
         return expression.executeGeneric(frame);
     }
-
-    @Override
-    public long executeLong(VirtualFrame frame) throws UnexpectedResultException {
-        return expression.executeLong(frame);
-    }
-
+    
     @Override
     public boolean executeBoolean(VirtualFrame frame) throws UnexpectedResultException {
         return expression.executeBoolean(frame);
