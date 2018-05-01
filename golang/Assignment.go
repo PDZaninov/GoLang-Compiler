@@ -10,7 +10,7 @@ return 1
 }
 
 func main() {
-	var yoyo string = me()
+	var yoyo int = me()
 	var x,y  = vals()
 	z := me()
 	println(x)

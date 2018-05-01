@@ -91,7 +91,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		}
 	}
 	
-	public void typeChecker(GoIRIdentNode node, GoBaseIRNode rhs) {
+	public void typeCheckInitialization(GoIRIdentNode node, GoBaseIRNode rhs, GoIRIdentNode type) {
 		boolean result = true;
 		
 		if(node.getChild()!= null) {
@@ -102,17 +102,12 @@ public class GoWriteVisitor implements GoIRVisitor {
 				GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
 				if(j == null) {
 					System.out.println("builtin");
+					return;
 				}
-				else {
-					System.out.println(j.getIndexResultType(pos));
-					System.out.println(node.getIdentifier());
+				if(type == null) {
+					return;
 				}
-				
-				if(node.getChild() instanceof GoIRObjectNode) {
-					//TODO
-					System.out.println("object");
-				}
-				else if(!((GoIRBasicLitNode) node.getChild()).getType().equalsIgnoreCase(j.getIndexResultType(pos))) {
+				if(!(type.getIdentifier().equalsIgnoreCase(j.getIndexResultType(pos)))) {
 					throw new GoException("Types do not match");
 				}
 				else {
@@ -136,14 +131,14 @@ public class GoWriteVisitor implements GoIRVisitor {
 		
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
 		
-		System.out.println("||||||||||||||||||||||||||||");
 		//check if the variable already exists
 		if(scope.locals.get(name) != null) {
 			typeChecker(name, rhs,node);
 		}else {
-			typeChecker(node,rhs);
+			System.out.println("||||||||||||||||||||||||||||");
+			typeCheckInitialization(node,rhs,assignmentNode.getType());
+			System.out.println("|||||||||||||||||||||||||||");
 		}
-		System.out.println("|||||||||||||||||||||||||||");
 		
 		// Check if the rhs is an instance of types, then just directly get the value type
 		if(rhs instanceof GoIRTypes) {

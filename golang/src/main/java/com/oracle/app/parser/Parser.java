@@ -450,13 +450,13 @@ public class Parser {
 			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
 			{
 				writeto = lhs.getChildren().get(i);
-				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ));
+				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ,null));
 				continue;
 				
 			}
 			
 			writeto = lhs.getChildren().get(i);
-			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i) ));
+			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i),null ));
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}
@@ -468,7 +468,7 @@ public class Parser {
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, String source){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		for(GoBaseIRNode node : lhs.getChildren()){
-			result.add(new GoIRAssignmentStmtNode(node,type));
+			result.add(new GoIRAssignmentStmtNode(node,type,type));
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}
@@ -488,7 +488,7 @@ public class Parser {
 			{
 				for(int i = 0; i < size;i++){
 					((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
-					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
+					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0), type ));
 				}
 				return new GoIRArrayListExprNode(result, source);
 			}
@@ -503,18 +503,18 @@ public class Parser {
 			((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
 			
 			if(type==null) {
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i),null ));
 			}
 			else if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
 				{
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) , type));
 			}
 			else if(((GoIRBasicLitNode) rhs.getChildren().get(i)).getType().equalsIgnoreCase("INT") &&
 					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
 				// var c float32 = 3 -- example of this case
 				// the above sets the basic lit as an int node, so I need to make a new basiclit node of the correct type
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ,type));
 
 			}
 			else {

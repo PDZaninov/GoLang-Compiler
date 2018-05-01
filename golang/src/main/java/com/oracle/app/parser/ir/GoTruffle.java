@@ -710,7 +710,7 @@ public class GoTruffle implements GoIRVisitor {
 		String op = node.getOp();
 		final GoIRBinaryExprNode binary_expr = new GoIRBinaryExprNode(op.substring(0,1), ident, one, null);
 
-		GoIRAssignmentStmtNode res = new GoIRAssignmentStmtNode(ident,binary_expr);
+		GoIRAssignmentStmtNode res = new GoIRAssignmentStmtNode(ident,binary_expr,null);
 		result = (GoExpressionNode) res.accept(this);
 		return result;
 	}
