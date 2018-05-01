@@ -87,6 +87,7 @@ public class GoTruffle implements GoIRVisitor {
     static class LexicalScope {
         protected final LexicalScope outer;
         protected final Map<String, FrameSlot> locals;
+        protected LexicalScope global;
 
         LexicalScope(LexicalScope outer) {
         	//Sets the outerscope to be the calling scope
@@ -98,6 +99,9 @@ public class GoTruffle implements GoIRVisitor {
             //into this scope
             if (outer != null) {
                 locals.putAll(outer.locals);
+            }
+            else {
+            	global = this;
             }
         }
     }
@@ -839,10 +843,11 @@ public class GoTruffle implements GoIRVisitor {
 		GoBaseIRNode functionNode = node.getFunctionNode();
 		if(functionNode != null) {
 			//Lexical scope issue when calling a function not yet inserted
-			//LexicalScope tempLex = lexicalscope;
+			LexicalScope tempLex = lexicalscope;
+			lexicalscope = lexicalscope.global;
 			//finishBlock();
             functionNode.accept(this);
-            //lexicalscope = tempLex;
+            lexicalscope = tempLex;
         }
 		return null;
 	}

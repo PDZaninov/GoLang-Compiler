@@ -31,7 +31,6 @@ public class LexicalScopeTest {
 	@After
 	public void tearDown() throws IOException, InterruptedException{
 		Runtime rt = Runtime.getRuntime();
-		System.out.println(goSource.toString());
 		Process p = rt.exec("rm " + filename + ".go " + filename + ".ast");
 		p.waitFor();
 		engine.dispose();

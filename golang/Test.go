@@ -1,9 +1,11 @@
 package main
 
-import "fmt"
-
 func main() {
-    _ = 5
-    x := 10
-    Println(x)
+	x := 1
+	if x <= 1 {
+    	x = 4
+    	y := 2
+    }
+    println(x)
+    println(y)
 }
