@@ -21,6 +21,7 @@ import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRObjectNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
@@ -65,10 +66,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 				System.out.println("is this builtin: " + name);
 				return true;
 			}
-			System.out.println("-------");
-			System.out.println(type.getType());
-			System.out.println(j.getIndexResultType(pos));
-			System.out.println("-------");
 			if(type.getType().equalsIgnoreCase(j.getIndexResultType(pos))||(type.getType().equals("object"))) {
 				return true;
 			}
@@ -100,10 +97,29 @@ public class GoWriteVisitor implements GoIRVisitor {
 		if(node.getChild()!= null) {
 			System.out.println("not null");
 			int pos = node.getAssignPos();
-			GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
-			if(((GoIRBasicLitNode) node.getChild()).getType().equalsIgnoreCase(j.getIndexResultType(pos))) {
-				System.out.println("rip");
+			
+			if(rhs instanceof GoIRInvokeNode) {
+				GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
+				if(j == null) {
+					System.out.println("builtin");
+				}
+				else {
+					System.out.println(j.getIndexResultType(pos));
+					System.out.println(node.getIdentifier());
+				}
+				
+				if(node.getChild() instanceof GoIRObjectNode) {
+					//TODO
+					System.out.println("object");
+				}
+				else if(!((GoIRBasicLitNode) node.getChild()).getType().equalsIgnoreCase(j.getIndexResultType(pos))) {
+					throw new GoException("Types do not match");
+				}
+				else {
+					System.out.println("made it here");
+				}
 			}
+
 		}
 
 		System.out.println("end type check");

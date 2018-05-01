@@ -7,11 +7,13 @@ public class GoIRAssignmentStmtNode extends GoBaseIRNode {
 
 	GoBaseIRNode lhs;
 	GoBaseIRNode rhs;
+	GoBaseIRNode type;
 	
-	public GoIRAssignmentStmtNode(GoBaseIRNode lhs, GoBaseIRNode rhs){
+	public GoIRAssignmentStmtNode(GoBaseIRNode lhs, GoBaseIRNode rhs, GoBaseIRNode type){
 		super("Assignment Statement Node");
 		this.lhs = lhs;
 		this.rhs = rhs;
+		this.type = type;
 	}
 
 	@Override
