@@ -75,7 +75,11 @@ public interface GoIRVisitor {
 		System.out.println("Default Gen Decl Visit");
 		return null;
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> f8a098fc90b97faae97ed182db94157e9c369b08
 	default Object visitForLoop(GoIRForNode node){
 		System.out.println("Default For Loop Visit");
 		return null;

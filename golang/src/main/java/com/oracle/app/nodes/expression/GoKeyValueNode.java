@@ -8,7 +8,7 @@ public class GoKeyValueNode extends GoExpressionNode {
 	private GoExpressionNode key;
 	private GoExpressionNode value;
 	private Object result;
-	private Obhect keyResult;
+	private Object keyResult;
 
 	public GoKeyValueNode(GoExpressionNode key, GoExpressionNode value) {
 		this.key = key;

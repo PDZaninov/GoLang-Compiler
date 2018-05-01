@@ -44,7 +44,7 @@ public class GoSliceExprNode extends GoExpressionNode {
 			}
 		}
 		if(high == null){
-			highbound = array.lenww() + array.lowerBound();
+			highbound = array.len() + array.lowerBound();
 		}
 		else{
 			try {

@@ -1,9 +1,10 @@
 package com.oracle.app.nodes.types;
 
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.truffle.api.frame.VirtualFrame;
-import java.util.*
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import com.oracle.app.nodes.expression.GoKeyValueNode;
+import com.oracle.truffle.api.frame.VirtualFrame;
 
 public class GoMap extends GoArrayLikeTypes {
 
@@ -25,19 +26,32 @@ public class GoMap extends GoArrayLikeTypes {
 	}
 
 	@Override
-	public Object read(FieldNode key){
-		return this.table.get(key).read();
+	public Object read(Object key){
+		return this.mapp.get(key).read();
+	}
+	
+	@Override
+	public String toString(){
+		StringBuilder sb = new StringBuilder("map[");
+		for(FieldNode key : mapp.keySet()){
+			sb.append(key.read()+": "+mapp.get(key).read()+" ");
+		}
+		if(sb.length() > 4){
+			sb.deleteCharAt(sb.length()-1);
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	@Override
-	public void insert(FieldNode key, FieldNode value){
+	public void insert(Object key, Object value){
 		/** An issue could be that Java hashmap cannot compare (.equals()) on abstract types like key which is a fieldNode
 		 *	Also when you insert the value read from the parameter fieldNode value, it might be a wrong type since we have no type checking.
 		 */
 		if (this.mapp.containsKey(key)){
-			this.mapp.get(key).insert(value.read());
+			this.mapp.get(key).insert(((FieldNode) value).read());
 		} else {
-			this.mapp.put(key, value);
+			this.mapp.put((FieldNode) key, (FieldNode) value);
 			size++;
 		}
 	}
@@ -63,4 +77,22 @@ public class GoMap extends GoArrayLikeTypes {
 		return this;
 	}
 
+	@Override
+	public GoPrimitiveTypes getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int cap() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int lowerBound() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
 }
