@@ -1,9 +1,8 @@
 package com.oracle.app.nodes.types;
 
-import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
-public class GoStringNode extends GoExpressionNode {
+public class GoStringNode extends GoPrimitiveType {
 	public final String str;
 
     public GoStringNode(String str) {
@@ -23,6 +22,11 @@ public class GoStringNode extends GoExpressionNode {
 	@Override
 	public String toString() {
 		return "String Node " + str;
+	}
+
+	@Override
+	public GoPrimitiveTypes getType() {
+		return GoPrimitiveTypes.STRING;
 	}
 
 	

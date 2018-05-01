@@ -42,7 +42,9 @@ public abstract class GoIRBasicLitNode extends GoBaseIRNode {
 	 */
 	public abstract SourceSection getSource(Source section);
 	
-
+	/*
+	 * TODO Make the switch case on name.toLower() or seomthing like that
+	 */
 	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){
 		switch(name){
 			case "INT":

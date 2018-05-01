@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
- 
+
 @NodeInfo(shortName = "println")
 public abstract class GoPrintlnBuiltin extends GoBuiltinNode {
 

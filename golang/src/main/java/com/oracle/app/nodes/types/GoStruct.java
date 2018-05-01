@@ -23,6 +23,19 @@ public class GoStruct extends GoNonPrimitiveType{
         this.symbolTable = new LinkedHashMap<>();
         size = 0;
     }
+    
+    @Override
+    public String toString(){
+    	StringBuilder sb = new StringBuilder("{");
+		for(FieldNode field : symbolTable.values()){
+			sb.append(field.toString());
+		}
+		if(sb.length() > 1){
+			sb.deleteCharAt(sb.length()-1);
+		}
+		sb.append("}");
+		return sb.toString();
+    }
 
     public Object read(String key){
         return this.symbolTable.get(key).read();

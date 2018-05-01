@@ -3,6 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	a := make([]int, 5, 0)
-    Println(a)
+    _ = 5
+    x := 10
+    Println(x)
 }

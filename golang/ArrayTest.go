@@ -1,8 +1,14 @@
 package main
 
+import "fmt"
+
 func main() {
-	s := [6]int{2, 3, 5, 7, 11, 13}
-    ptr := &s[3]
-    *ptr = 4
-    println(s)
+	s := make([]string, 3)
+    s[0] = "a"
+    s[1] = "b"
+    s[2] = "c"
+
+    b := []string{"d","e","f"}
+	s = append(s[:1], b[1:]...)
+	fmt.Println(s)
 }

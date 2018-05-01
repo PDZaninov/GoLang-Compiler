@@ -13,8 +13,9 @@ public class FieldNode extends GoExpressionNode{
         this.type = type;
     }
 
-    public void insert(GoKeyValueNode value){
-    	
+    @Override
+    public String toString(){
+    	return value.toString() + " ";
     }
     
     public void insert(Object value){

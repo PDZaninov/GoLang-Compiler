@@ -20,7 +20,7 @@ public final class GoFunction implements TruffleObject {
 
     private final CyclicAssumption callTargetStable;
 
-    protected GoFunction(GoLanguage language, String name) {
+    public GoFunction(GoLanguage language, String name) {
         this.name = name;
         this.callTarget = Truffle.getRuntime().createCallTarget(new GoUndefinedFunctionRootNode(language, name));
         this.callTargetStable = new CyclicAssumption(name);
@@ -30,7 +30,7 @@ public final class GoFunction implements TruffleObject {
         return name;
     }
 
-    protected void setCallTarget(RootCallTarget callTarget) {
+    public void setCallTarget(RootCallTarget callTarget) {
         this.callTarget = callTarget;
 
     }

@@ -1,7 +1,5 @@
 package com.oracle.app.nodes;
 
-import java.math.BigInteger;
-
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoPointerNode;
 import com.oracle.app.nodes.types.GoMap;
@@ -15,8 +13,6 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 	int.class,
 	float.class,
 	double.class,
-	long.class,
-	BigInteger.class,
 	boolean.class,
 	GoArray.class,
 	GoSlice.class,
@@ -25,7 +21,6 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 	GoFunction.class,
 	GoPointerNode.class,
 	GoStruct.class,
-	GoNull.class,
-	Object[].class})
+	GoNull.class})
 public abstract class GoTypes {
 }
