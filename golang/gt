@@ -39,7 +39,8 @@ if [ $verbose -eq 1 ]; then
     cat "$DIRO""${GoOutput}"
     echo "Any diff listed below:"
     diff "$DIRO""${GoOutput}" "$DIRO""${TruffleOutput}"
-    rm *.ast
+    rm -f *.ast
 else
     $JAVACMD $JAVA_ARGS -XX:-UseJVMCIClassLoader -Xbootclasspath/a:$TRUFFLE_LIB/truffle-api.jar:$TRUFFLE_LIB/locator.jar:$TRUFFLE_LIB/truffle-nfi.jar -cp ./target/classes com.oracle.app.GoMain $PROGRAM_ARGS
 fi
+    rm -f *.ast

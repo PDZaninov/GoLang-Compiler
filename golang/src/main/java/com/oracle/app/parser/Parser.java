@@ -81,7 +81,8 @@ public class Parser {
 		//GoVisitor visitor = new GoVisitor();
 		//k.accept(visitor);
 		
-		GoTruffle truffleVisitor = new GoTruffle(language, source).initialize();
+		GoTruffle truffleVisitor = new GoTruffle(language, source);
+		truffleVisitor.initialize();
 		return (GoFileNode) k.accept(truffleVisitor);
 	}
 	
@@ -460,9 +461,6 @@ public class Parser {
 	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
-		
-
-		
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
 		if(lhs.getSize() != rhs.getSize()){
@@ -475,10 +473,11 @@ public class Parser {
 		}
 
 		for(int i = 0; i < size;i++){
-			if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
-				{
+			if(type == null) {
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
-				
+			}
+			else if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType())) {
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 			}
 			else if(((GoIRBasicLitNode) rhs.getChildren().get(i)).getType().equalsIgnoreCase("INT") &&
 					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
@@ -486,7 +485,7 @@ public class Parser {
 				// the above sets the basic lit as an int node, so i need to make a new basiclit node of the correct type
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
-			}else {
+			} else {
 				throw new GoException("cannot use \"" + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString() +
 						"\" (type " + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getType() +") as type " 
 						+ type.getIdentifier() + " in assignment");
