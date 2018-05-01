@@ -20,14 +20,45 @@ public class GoMap extends GoArrayLikeTypes {
 		size = 0;
 	}
 
+	public boolean fieldExist(FieldNode key){
+		String value = key.toString();
+		for(FieldNode k : this.mapp.keySet()){
+			if(k.toString().equals(value)){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public Object fieldGet(FieldNode key){
+		String value = key.toString();
+		for(FieldNode k : this.mapp.keySet()){
+			if(k.toString().equals(value)){
+				return mapp.get(k).read();
+			}
+		}
+		System.out.println("No Key Exists!");
+		return null;
+	}
+
+	public void fieldInsert(FieldNode key, FieldNode value){
+		String value = key.toString();
+		for(FieldNode k : this.mapp.keySet()){
+			if(k.toString().equals(value)){
+				mapp.get(k).insert(((FieldNode) value).read());
+				break
+			}
+		}
+	}
+
 	@Override
 	public int len(){
 		return this.size;
 	}
 
 	@Override
-	public Object read(Object key){
-		return this.mapp.get(key).read();
+	public Object read(FieldNode key){
+		return fieldGet(key);
 	}
 	
 	@Override
@@ -44,12 +75,12 @@ public class GoMap extends GoArrayLikeTypes {
 	}
 
 	@Override
-	public void insert(Object key, Object value){
+	public void insert(FieldNode key, FieldNode value){
 		/** An issue could be that Java hashmap cannot compare (.equals()) on abstract types like key which is a fieldNode
 		 *	Also when you insert the value read from the parameter fieldNode value, it might be a wrong type since we have no type checking.
 		 */
-		if (this.mapp.containsKey(key)){
-			this.mapp.get(key).insert(((FieldNode) value).read());
+		if (fieldExist(key)){
+			fieldInsert(key, value);
 		} else {
 			this.mapp.put((FieldNode) key, (FieldNode) value);
 			size++;
