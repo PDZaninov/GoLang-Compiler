@@ -70,6 +70,17 @@ public class GoRootNode extends RootNode {
     	return 0;
     }
 
+    //returns the type at index, from FuncType
+    public String getIndexResultType(int index) {
+    	if(typeNode != null) {
+    		String[] k =typeNode.getResults();
+    		if(k != null) {
+    			return k[index];
+    		}
+    	}
+    	return "out of bounds";
+    }
+    
     @Override
     public String getName() {
         return name;

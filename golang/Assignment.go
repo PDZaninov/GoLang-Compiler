@@ -10,6 +10,7 @@ return 1
 }
 
 func main() {
+	var yoyo string = me()
 	var x,y  = vals()
 	z := me()
 	println(x)
@@ -25,8 +26,7 @@ func main() {
 	println(d)
 	println(f)
 	println(g)
-	r,t := vals()
-	y := me()
+	y = me()
 	println(me())
 	array := make([]string,5)
 	array = make([]string, 10, 15)

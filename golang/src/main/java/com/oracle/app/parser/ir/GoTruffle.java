@@ -329,13 +329,9 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
-		GoArrayExprNode arguments = null;
 		GoRootNode j = allFunctions.get(node.getFunctionNode().getIdentifier());
-		if(j != null ) {//cant be a builtin
-			if(node.getNumReturns() !=  j.getNumReturns() && !(node.getNumReturns() == 0 && j.getNumReturns()==1)) {
-				throw new GoException("assignment mismatch: " +node.getNumReturns() + " but " + j.getNumReturns()+ " values");
-			}
-		}
+		
+		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
 			arguments = (GoArrayExprNode) node.getArgumentNode().accept(this);
 		}
@@ -380,8 +376,6 @@ public class GoTruffle implements GoIRVisitor {
 			//Temporarily broken as visiting a fieldlist only works for parameters currently or if the returns are named
 			ArrayList<GoBaseIRNode> children = ((GoIRFieldListNode) node.getResults()).getFields().getChildren();
 			results = new String[children.size()];
-			System.out.print("Children size: ");
-			System.out.println(children.size());
 			for(int i = 0; i < children.size(); i++) {
 				// put return names in 2d array
 				results[i] = ((GoIRFieldNode) children.get(i)).getTypeName();
@@ -425,7 +419,6 @@ public class GoTruffle implements GoIRVisitor {
 		int argumentsize = node.getSize();
 		GoExpressionNode[] arguments = new GoExpressionNode[argumentsize];
 		ArrayList<GoBaseIRNode> children = node.getChildren();
-		//System.out.println("------");
 		for(int i = 0; i < argumentsize; i++){
 			arguments[i] = (GoExpressionNode) children.get(i).accept(this);
 		}
@@ -557,7 +550,7 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {	
 		GoBaseIRNode child = node.getLHS();
 		
-		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node);
+		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node,allFunctions);
 		GoExpressionNode result = (GoExpressionNode) miniVisitor.visit(child);
 		return result;
 		

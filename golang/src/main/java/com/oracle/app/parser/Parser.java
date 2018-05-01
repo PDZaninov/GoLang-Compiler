@@ -436,21 +436,18 @@ public class Parser {
 			
 			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
 			{
-				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
-			}else {
-			
-			
-			System.out.println("Parse error uneven assignment");
-			return null;
+			}
+			else {
+				throw new GoException("Parse error uneven assignment");
 			}
 		}
 		
 
 		for(int i = 0; i < size;i++){
+			((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
 			
 			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
 			{
-				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
 				writeto = lhs.getChildren().get(i);
 				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ));
 				continue;
@@ -485,24 +482,25 @@ public class Parser {
 		
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
-		if(lhs.getSize() != rhs.getSize()){
-			//Todo, check for rhs being multiple return of correct size
-			//TODO, to do
-			if(((GoIRInvokeNode) rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
+		
+		if(rhs.getChildren().get(0) instanceof GoIRInvokeNode)
 			{
-				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
 				for(int i = 0; i < size;i++){
+					((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
 					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
 				}
 				return new GoIRArrayListExprNode(result, source);
 			}
+
+		if(lhs.getSize() != rhs.getSize())
+		{
+			throw new GoException("Uneven sides");
 		}
 
 		for(int i = 0; i < size;i++){
-			if(( rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
-			{
-				((GoIRInvokeNode) rhs.getChildren().get(0)).setNumReturns(lhs.getSize());
-			}
+			// setting the number of returns expected. This is for checking the number of variables = number of returns
+			((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
+			
 			if(type==null) {
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
 			}
@@ -519,6 +517,7 @@ public class Parser {
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
 			}
 			else {
+				//ident type did not match basicLit type, so throw error
 				throw new GoException("cannot use \"" + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString() +
 						"\" (type " + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getType() +") as type " 
 						+ type.getIdentifier() + " in assignment");
@@ -538,10 +537,7 @@ public class Parser {
 	 * @return
 	 */
 	public GoIRArrayListExprNode assignNormalize(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r, String source){
-		if(( r.getChildren().get(0)) instanceof GoIRInvokeNode)
-		{
-			((GoIRInvokeNode) r.getChildren().get(0)).setNumReturns(l.getSize());
-		}
+		((GoIRIdentNode) l.getChildren().get(0)).setPos(0);
 		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0),null);
 		r.getChildren().set(0, temp);
 		return createAssignment(l,r,source);

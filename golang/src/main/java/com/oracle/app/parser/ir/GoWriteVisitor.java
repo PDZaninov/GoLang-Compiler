@@ -1,7 +1,10 @@
 package com.oracle.app.parser.ir;
 
+import java.util.Map;
+
 import com.oracle.app.GoException;
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.local.GoArrayWriteNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
@@ -17,6 +20,7 @@ import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRStarNode;
@@ -36,20 +40,41 @@ public class GoWriteVisitor implements GoIRVisitor {
 	private GoTruffle truffleVisitor;
 	private FrameDescriptor frame;
 	private GoIRAssignmentStmtNode assignmentNode;
+	private Map<String, GoRootNode> allFunctions;
 	
-	public GoWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode){
+	public GoWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode, Map<String, GoRootNode> allFunctions){
 		this.scope = scope;
 		truffleVisitor = visitor;
 		this.frame = frame;
 		this.assignmentNode = assignmentNode;
+		this.allFunctions = allFunctions;
 	}
 	
 	public Object visit(GoBaseIRNode node){
 		return node.accept(this);
 	}
 	
-	public boolean typeCheck(GoBaseIRNode rhs, TypeInfo type) {
-		if(!(rhs instanceof GoIRTypes)) {
+	public boolean typeCheck(GoBaseIRNode rhs, TypeInfo type, String name, GoIRIdentNode node) {
+
+		if(rhs instanceof GoIRInvokeNode) 
+		{
+			int pos = node.getAssignPos();
+			
+			GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
+			if(j==null) {//means it is a builtin
+				System.out.println("is this builtin: " + name);
+				return true;
+			}
+			System.out.println("-------");
+			System.out.println(type.getType());
+			System.out.println(j.getIndexResultType(pos));
+			System.out.println("-------");
+			if(type.getType().equalsIgnoreCase(j.getIndexResultType(pos))||(type.getType().equals("object"))) {
+				return true;
+			}
+			throw new GoException("some erorr" + type.getType());
+		}
+		else if(!(rhs instanceof GoIRTypes)) {
 			return true;
 		}
 		String kind = ((GoIRTypes) rhs).getValueType();
@@ -59,8 +84,8 @@ public class GoWriteVisitor implements GoIRVisitor {
 		return false;
 	}
 	
-	public void typeChecker(String name, GoBaseIRNode rhs) {
-		boolean typeCheck = typeCheck(rhs, scope.locals.get(name));
+	public void typeChecker(String name, GoBaseIRNode rhs, GoIRIdentNode node) {
+		boolean typeCheck = typeCheck(rhs, scope.locals.get(name),name,node);
 		if(typeCheck == false) {
 			String kind = scope.locals.get(name).getType();
 			String typeVal = ((GoIRBasicLitNode) rhs).getValString();
@@ -68,6 +93,22 @@ public class GoWriteVisitor implements GoIRVisitor {
 			throw new GoException("cannot use \"" + typeVal + "\" (type " + typeName.toLowerCase() + ") as type " + kind.toLowerCase() + " in assignment");
 		}
 	}
+	
+	public void typeChecker(GoIRIdentNode node, GoBaseIRNode rhs) {
+		boolean result = true;
+		
+		if(node.getChild()!= null) {
+			System.out.println("not null");
+			int pos = node.getAssignPos();
+			GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
+			if(((GoIRBasicLitNode) node.getChild()).getType().equalsIgnoreCase(j.getIndexResultType(pos))) {
+				System.out.println("rip");
+			}
+		}
+
+		System.out.println("end type check");
+	}
+	
 	
 	/**
 	 * Might need to change always inserting into the lexicalscope. Does not check if the name already exists.
@@ -79,23 +120,19 @@ public class GoWriteVisitor implements GoIRVisitor {
 		
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
 		
+		System.out.println("||||||||||||||||||||||||||||");
+		//check if the variable already exists
 		if(scope.locals.get(name) != null) {
-			typeChecker(name, rhs);
+			typeChecker(name, rhs,node);
+		}else {
+			typeChecker(node,rhs);
 		}
+		System.out.println("|||||||||||||||||||||||||||");
 		
 		// Check if the rhs is an instance of types, then just directly get the value type
 		if(rhs instanceof GoIRTypes) {
 			scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) rhs).getValueType(), false, slot));
 		}
-//		else if (rhs instanceof GoIRBinaryExprNode){
-//			GoBaseIRNode child = ((GoIRBinaryExprNode) rhs).getRight();
-//			if(child instanceof GoIRTypes) {
-//				scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) child).getValueType(), false, slot));
-//			}
-//			else {
-//				scope.locals.put(name,  new TypeInfo(name, "object", false, slot));
-//			}
-//		}
 		
 		/*
 		 * Various other instances. Specific to those cases in the IR, get type by the identifier.
@@ -128,7 +165,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		
 		String name = node.getIdentifier();
 		if(scope.locals.get(name) != null) {
-			typeChecker(name, assignmentNode.getRHS());
+			typeChecker(name, assignmentNode.getRHS(),null);
 		}
 		
 		return GoArrayWriteNodeGen.create(index,value, array);
