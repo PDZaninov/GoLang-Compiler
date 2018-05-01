@@ -81,7 +81,8 @@ public class Parser {
 		//GoVisitor visitor = new GoVisitor();
 		//k.accept(visitor);
 		
-		GoTruffle truffleVisitor = new GoTruffle(language, source).initialize();
+		GoTruffle truffleVisitor = new GoTruffle(language, source);
+		truffleVisitor.initialize();
 		return (GoFileNode) k.accept(truffleVisitor);
 	}
 	

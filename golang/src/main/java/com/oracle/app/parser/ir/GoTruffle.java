@@ -87,7 +87,6 @@ public class GoTruffle implements GoIRVisitor {
     static class LexicalScope {
         protected final LexicalScope outer;
         protected final Map<String, FrameSlot> locals;
-        protected LexicalScope global;
 
         LexicalScope(LexicalScope outer) {
         	//Sets the outerscope to be the calling scope
@@ -99,10 +98,7 @@ public class GoTruffle implements GoIRVisitor {
             //into this scope
             if (outer != null) {
                 locals.putAll(outer.locals);
-            }
-            else {
-            	global = this;
-            }
+            } 
         }
     }
     
@@ -111,7 +107,7 @@ public class GoTruffle implements GoIRVisitor {
     private final Source source;
     private final Map<String, GoRootNode> allFunctions;
     private FrameDescriptor frameDescriptor;
-    
+    private LexicalScope global;
     private LexicalScope lexicalscope;
 	
     //Can create a global function block and append writes to the top most node
@@ -122,7 +118,7 @@ public class GoTruffle implements GoIRVisitor {
         frameDescriptor = new FrameDescriptor();
     }
 	
-	public GoTruffle initialize(){
+	public void initialize(){
         startFunction();
         FrameSlot frameSlot;
         frameSlot = frameDescriptor.addFrameSlot("int",FrameSlotKind.Int);
@@ -141,7 +137,7 @@ public class GoTruffle implements GoIRVisitor {
 		lexicalscope.locals.put("string", frameSlot);
 		frameSlot = frameDescriptor.addFrameSlot("_");
 		lexicalscope.locals.put("_", frameSlot);
-		return this;
+		global = lexicalscope;
 	}
 
     public Map<String, GoRootNode> getAllFunctions() {
@@ -844,8 +840,8 @@ public class GoTruffle implements GoIRVisitor {
 		if(functionNode != null) {
 			//Lexical scope issue when calling a function not yet inserted
 			LexicalScope tempLex = lexicalscope;
-			lexicalscope = lexicalscope.global;
-			//finishBlock();
+			lexicalscope = global;
+			
             functionNode.accept(this);
             lexicalscope = tempLex;
         }
