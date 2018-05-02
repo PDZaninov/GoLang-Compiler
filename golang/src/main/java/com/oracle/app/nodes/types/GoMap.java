@@ -100,6 +100,7 @@ public class GoMap extends GoArrayLikeTypes {
 			for(FieldNode k : this.mapp.keySet()){
 				if(k.toString().equals(value)){
 					mapp.remove(key);
+					break;
 				}
 			}
 		}
