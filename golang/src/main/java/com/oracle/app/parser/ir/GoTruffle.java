@@ -437,14 +437,13 @@ public class GoTruffle implements GoIRVisitor {
 		if(node.getChild()!= null) {
 			returnStmtNum = node.getChild().getSize();
 		}
-		if(r != null) {
-			if(returnStmtNum > signatureNum) {
-				throw new GoException("Too many arguments to return");
-			}
-			else if(returnStmtNum < signatureNum) {
-				throw new GoException("Not enough arguments to return");
-			}	
+
+		if(returnStmtNum > signatureNum) {
+			throw new GoException("Too many arguments to return");
 		}
+		else if(returnStmtNum < signatureNum) {
+			throw new GoException("Not enough arguments to return");
+		}	
 
 		//everything above is for type checking
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	

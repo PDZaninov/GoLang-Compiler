@@ -5,7 +5,7 @@ return 5,7,8
 
 }
 
-func me() int {
+func me(){
 return 1
 }
 
