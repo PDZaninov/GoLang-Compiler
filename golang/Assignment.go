@@ -1,12 +1,14 @@
 package main
 
 func vals() (int,int,int){
-return 5,7,8
+x:=0
+return 5,"some",x
 
 }
 
-func me(){
+func me() int {
 return 1
+
 }
 
 func main() {

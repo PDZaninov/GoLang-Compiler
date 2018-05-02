@@ -423,6 +423,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitReturnStmt(GoIRReturnStmtNode node){
 
+		//get correct function type node
 		if(flag == 0) {
 			flag++;
 			curFunctionType = funcOrder.remove();
@@ -443,8 +444,29 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		else if(returnStmtNum < signatureNum) {
 			throw new GoException("Not enough arguments to return");
-		}	
+		}
+		else if(r!=null && node.getChild()!=null) {
+			ArrayList<GoBaseIRNode> expectedTypes = r.getFields().getChildren();
+			ArrayList<GoBaseIRNode> returnVals = ((GoIRArrayListExprNode)node.getChild()).getChildren();
+			
+			for(int i = 0; i < signatureNum; i ++) {
+				GoBaseIRNode val = returnVals.get(i);
+				String valType = "";
+				if(val instanceof GoIRIdentNode) {
+					valType = lexicalscope.locals.get(val.getIdentifier()).getType();
+				}
+				else if(val instanceof GoIRBasicLitNode) {
+					valType = ((GoIRBasicLitNode) val).getType();
+				}
+				String expectedTypeString = ((GoIRFieldNode)expectedTypes.get(i)).getType().getIdentifier(); 
+				if(!(expectedTypeString.equalsIgnoreCase(valType))) {
+					throw new GoException("Cannot use " + val.getIdentifier() + " (type " + valType +") as type " + expectedTypeString +" in return argument");
+				}
+			}
+		}
 
+		 
+		
 		//everything above is for type checking
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	
 	}
