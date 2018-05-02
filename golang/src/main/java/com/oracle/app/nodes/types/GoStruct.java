@@ -59,7 +59,8 @@ public class GoStruct extends GoNonPrimitiveType{
 		if(vals.length != 0){
 			if(vals[0] instanceof GoKeyValueNode){
 				for(int i = 0; i < vals.length; i++){
-					write(((GoKeyValueNode) vals[i]).getKey(), ((GoKeyValueNode) vals[i]).getResult());
+				    //Not sure if you can simply call toString to an Object!!!!!
+					write(((GoKeyValueNode) vals[i]).getKeyResult().toString(), ((GoKeyValueNode) vals[i]).getResult());
 				}
 			}
 			else{
