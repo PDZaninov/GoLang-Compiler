@@ -99,7 +99,7 @@ public class GoMap extends GoArrayLikeTypes {
 			String value = key.toString();
 			for(FieldNode k : this.mapp.keySet()){
 				if(k.toString().equals(value)){
-					mapp.remove(key);
+					mapp.remove(k);
 				}
 			}
 		}
