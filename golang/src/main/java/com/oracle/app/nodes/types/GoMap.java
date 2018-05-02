@@ -56,6 +56,10 @@ public class GoMap extends GoArrayLikeTypes {
 		}
 	}
 
+	public void fieldDelete(FieldNode key){
+
+	}
+
 	@Override
 	public int len(){
 		return this.size;
@@ -90,9 +94,15 @@ public class GoMap extends GoArrayLikeTypes {
 		}
 	}
 	
-	public void deleteElement(Object value) {
-		// TODO Auto-generated method stub
-		
+	public void deleteElement(FieldNode key) {
+		if(fieldExist(key)){
+			String value = key.toString();
+			for(FieldNode k : this.mapp.keySet()){
+				if(k.toString().equals(value)){
+					mapp.remove(key);
+				}
+			}
+		}
 	}
 
 	@Override
