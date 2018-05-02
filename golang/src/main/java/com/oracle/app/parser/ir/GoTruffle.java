@@ -3,7 +3,9 @@ package com.oracle.app.parser.ir;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
@@ -140,6 +142,11 @@ public class GoTruffle implements GoIRVisitor {
     private FrameDescriptor frameDescriptor;
     private LexicalScope global;
     private LexicalScope lexicalscope;
+    
+    //the order of appearance of functions from parser
+    public static Queue<GoIRFuncTypeNode> funcOrder = new LinkedList<GoIRFuncTypeNode>();
+    GoIRFuncTypeNode curFunctionType;
+    int flag = 0;
 	
     //Can create a global function block and append writes to the top most node
 	public GoTruffle(GoLanguage language, Source source) {
@@ -185,6 +192,10 @@ public class GoTruffle implements GoIRVisitor {
     
     public void finishBlock(){
     	lexicalscope = lexicalscope.outer;
+    }
+    
+    public static void addFunc(GoIRFuncTypeNode name) {
+    	funcOrder.add(name);
     }
     
 	@Override
@@ -353,6 +364,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
 		String name = node.getIdentifier();
+		flag = 0;
 		//int start = nameNode.getSourceSection().getCharIndex();
 		//int end = blockNode.getSourceSection().getCharEndIndex();
 		//SourceSection section = source.createSection(start, end);
@@ -410,6 +422,31 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitReturnStmt(GoIRReturnStmtNode node){
+
+		if(flag == 0) {
+			flag++;
+			curFunctionType = funcOrder.remove();
+		}
+		
+		GoIRFieldListNode r = (GoIRFieldListNode) curFunctionType.getResults();
+		int signatureNum = 0;
+		int returnStmtNum = 0;
+		if(r != null) {
+			signatureNum =  r.getFields().getSize();
+		}
+		if(node.getChild()!= null) {
+			returnStmtNum = node.getChild().getSize();
+		}
+		if(r != null) {
+			if(returnStmtNum > signatureNum) {
+				throw new GoException("Too many arguments to return");
+			}
+			else if(returnStmtNum < signatureNum) {
+				throw new GoException("Not enough arguments to return");
+			}	
+		}
+
+		//everything above is for type checking
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	
 	}
 
