@@ -18,6 +18,7 @@ public class GoIRInvokeNode<LexicalScope> extends GoBaseIRNode implements GoIRVi
 	String lparen;
 	String ellipsis;
 	String rparen;
+	int assignLen = 0;
 	
 	public GoIRInvokeNode(GoBaseIRNode functionNode, GoIRArrayListExprNode argumentNodes,String lparen,String ellipsis,String rparen) {
 		super("Call Expr (Invoke)");
@@ -38,8 +39,14 @@ public class GoIRInvokeNode<LexicalScope> extends GoBaseIRNode implements GoIRVi
 	}
 	
 
+	public void incAssignLen() {
+		assignLen++;
+	}
 	
-
+	public int getAssignLen() {
+		return assignLen;
+	}
+	
 	/*
 	 * Maybe not needed
 	 */

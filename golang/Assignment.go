@@ -1,7 +1,7 @@
 package main
 
-func vals() (int,int){
-return 5,7
+func vals() (int,int,int){
+return 5,7,8
 
 }
 
@@ -11,11 +11,13 @@ return 1
 
 func main() {
 	var yoyo int = me()
-	var x,y  = vals()
+	println(yoyo)
+	var x,y,zzz  = vals()
 	z := me()
 	println(x)
 	println(y)
 	println(z)
+	println(zzz)
 	var a,b = 1,2
 	var c = 3
 	println(a)
@@ -26,7 +28,7 @@ func main() {
 	println(d)
 	println(f)
 	println(g)
-	y = me()
+	x = me()
 	println(me())
 	array := make([]string,5)
 	array = make([]string, 10, 15)

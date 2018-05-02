@@ -63,7 +63,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 			
 			GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
 			if(j==null) {//means it is a builtin
-				System.out.println("is this builtin: " + name);
 				return true;
 			}
 			if(type.getType().equalsIgnoreCase(j.getIndexResultType(pos))||(type.getType().equals("object"))) {
@@ -95,29 +94,30 @@ public class GoWriteVisitor implements GoIRVisitor {
 		boolean result = true;
 		
 		if(node.getChild()!= null) {
-			System.out.println("not null");
 			int pos = node.getAssignPos();
 			
 			if(rhs instanceof GoIRInvokeNode) {
-				GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
-				if(j == null) {
-					System.out.println("builtin");
+				String functionName = ((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier();
+				GoRootNode j =  allFunctions.get(functionName);
+				if(j == null) {// invoke is builtin
 					return;
 				}
+				
+				if(j.getNumReturns() != ((GoIRInvokeNode) rhs).getAssignLen()) {
+					throw new GoException("assignment count mismatch: " + ((GoIRInvokeNode) rhs).getAssignLen() + " = " + Integer.toString(j.getNumReturns()));
+					
+				}
+				String rhsType = j.getIndexResultType(pos);
 				if(type == null) {
 					return;
 				}
-				if(!(type.getIdentifier().equalsIgnoreCase(j.getIndexResultType(pos)))) {
-					throw new GoException("Types do not match");
-				}
-				else {
-					System.out.println("made it here");
+				else if(!(type.getIdentifier().equalsIgnoreCase(rhsType))) {
+					throw new GoException("cannot use " + functionName +"() (type " + rhsType + ") as type " +type.getIdentifier() + " in assignment");
 				}
 			}
 
 		}
 
-		System.out.println("end type check");
 	}
 	
 	
@@ -135,9 +135,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		if(scope.locals.get(name) != null) {
 			typeChecker(name, rhs,node);
 		}else {
-			System.out.println("||||||||||||||||||||||||||||");
 			typeCheckInitialization(node,rhs,assignmentNode.getType());
-			System.out.println("|||||||||||||||||||||||||||");
 		}
 		
 		// Check if the rhs is an instance of types, then just directly get the value type

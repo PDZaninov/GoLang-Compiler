@@ -74,11 +74,11 @@ public class GoRootNode extends RootNode {
     public String getIndexResultType(int index) {
     	if(typeNode != null) {
     		String[] k =typeNode.getResults();
-    		if(k != null) {
+    		if(k != null&& index < k.length) {
     			return k[index];
     		}
     	}
-    	return "out of bounds";
+    	return null;
     }
     
     @Override

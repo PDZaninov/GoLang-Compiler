@@ -449,6 +449,7 @@ public class Parser {
 			
 			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
 			{
+				((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
 				writeto = lhs.getChildren().get(i);
 				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ,null));
 				continue;
@@ -488,6 +489,7 @@ public class Parser {
 			{
 				for(int i = 0; i < size;i++){
 					((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
+					((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
 					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0), type ));
 				}
 				return new GoIRArrayListExprNode(result, source);
@@ -501,6 +503,7 @@ public class Parser {
 		for(int i = 0; i < size;i++) {
 			// setting the number of returns expected. This is for checking the number of variables = number of returns
 			((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
+			
 			
 			if(type==null) {
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i),null ));
@@ -537,7 +540,12 @@ public class Parser {
 	 * @return
 	 */
 	public GoIRArrayListExprNode assignNormalize(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r, String source){
+		//for type checking
 		((GoIRIdentNode) l.getChildren().get(0)).setPos(0);
+		if(r.getChildren().get(0) instanceof GoIRInvokeNode) {
+			((GoIRInvokeNode)r.getChildren().get(0)).incAssignLen();
+		}
+		//creating assignment
 		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0),null);
 		r.getChildren().set(0, temp);
 		return createAssignment(l,r,source);
