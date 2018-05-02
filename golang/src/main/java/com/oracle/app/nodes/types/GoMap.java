@@ -3,6 +3,7 @@ package com.oracle.app.nodes.types;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.oracle.app.GoException;
 import com.oracle.app.nodes.expression.GoKeyValueNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
@@ -42,11 +43,11 @@ public class GoMap extends GoArrayLikeTypes {
 	}
 
 	public void fieldInsert(FieldNode key, FieldNode value){
-		String value = key.toString();
+		String valuename = key.toString();
 		for(FieldNode k : this.mapp.keySet()){
-			if(k.toString().equals(value)){
+			if(k.toString().equals(valuename)){
 				mapp.get(k).insert(((FieldNode) value).read());
-				break
+				break;
 			}
 		}
 	}
@@ -56,7 +57,6 @@ public class GoMap extends GoArrayLikeTypes {
 		return this.size;
 	}
 
-	@Override
 	public Object read(FieldNode key){
 		return fieldGet(key);
 	}
@@ -74,7 +74,6 @@ public class GoMap extends GoArrayLikeTypes {
 		return sb.toString();
 	}
 
-	@Override
 	public void insert(FieldNode key, FieldNode value){
 		/** An issue could be that Java hashmap cannot compare (.equals()) on abstract types like key which is a fieldNode
 		 *	Also when you insert the value read from the parameter fieldNode value, it might be a wrong type since we have no type checking.
@@ -110,20 +109,37 @@ public class GoMap extends GoArrayLikeTypes {
 
 	@Override
 	public GoPrimitiveTypes getType() {
-		// TODO Auto-generated method stub
+		// TODO Need to figure out a type or something
 		return null;
 	}
 
 	@Override
 	public int cap() {
-		// TODO Auto-generated method stub
+		//Maps have no capacity
 		return 0;
 	}
 
 	@Override
 	public int lowerBound() {
-		// TODO Auto-generated method stub
+		//Maps have no lowerbound
 		return 0;
+	}
+
+	@Override
+	public Object read(Object index) {
+		//Read is covered by the FieldNode read
+		return null;
+	}
+
+	@Override
+	public void insert(Object index, Object writevalue) {
+		FieldNode key = new FieldNode(index,null);
+		FieldNode value = new FieldNode(writevalue,null);
+		if (fieldExist(key)){
+			fieldInsert(key, value);
+		} else {
+			throw new GoException("Key "+ key + " does not exist");
+		}
 	}
 	
 }
