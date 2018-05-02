@@ -20,6 +20,10 @@ public class GoMap extends GoArrayLikeTypes {
 		this.mapp = new LinkedHashMap<>();
 		size = 0;
 	}
+	
+	public void setNewMapCapacity(int capacity){
+		mapp = new LinkedHashMap<>(capacity);
+	}
 
 	public boolean fieldExist(FieldNode key){
 		String value = key.toString();
@@ -85,9 +89,15 @@ public class GoMap extends GoArrayLikeTypes {
 			size++;
 		}
 	}
+	
+	public void deleteElement(Object value) {
+		// TODO Auto-generated method stub
+		
+	}
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
+		//This currently does not do the intended function of returning a proper copy of itself.
 		return this.deepCopy();
 	}
 
@@ -115,7 +125,7 @@ public class GoMap extends GoArrayLikeTypes {
 
 	@Override
 	public int cap() {
-		//Maps have no capacity
+		//Maps have capacity but it is currently not tracked.
 		return 0;
 	}
 
@@ -138,7 +148,8 @@ public class GoMap extends GoArrayLikeTypes {
 		if (fieldExist(key)){
 			fieldInsert(key, value);
 		} else {
-			throw new GoException("Key "+ key + " does not exist");
+			this.mapp.put((FieldNode) key, (FieldNode) value);
+			size++;
 		}
 	}
 	

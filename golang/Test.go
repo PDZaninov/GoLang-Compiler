@@ -3,7 +3,9 @@ package main
 import "fmt"
 
 func main() {
-    n := map[int]string{1:"foo", 2:"bar"}
-    n[2] = "no"
-    fmt.Println(n)
+m := make(map[string]int)
+    m["k1"] = 7
+    m["k2"] = 13
+    fmt.Println("map:", m)
+
 }
