@@ -13,18 +13,22 @@ import com.oracle.app.builtins.GoLenBuiltinFactory;
 import com.oracle.app.builtins.GoMakeBuiltinFactory;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
-import com.oracle.app.builtins.fmt.GoFmtPrintln;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
+import com.oracle.app.nodes.types.GoStruct;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.instrumentation.AllocationReporter;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.object.DynamicObject;
+import com.oracle.truffle.api.object.Layout;
+import com.oracle.truffle.api.object.Shape;
 import com.oracle.truffle.api.source.Source;
 
 /*
@@ -34,14 +38,15 @@ import com.oracle.truffle.api.source.Source;
 
 public final class GoContext {
 	//private static final Source BUILTIN_SOURCE = Source.newBuilder("").name("Go builtin").mimeType(GoLanguage.MIME_TYPE).build();
-	//private static final Layout LAYOUT = Layout.createLayout();
+	private static final Layout LAYOUT = Layout.createLayout();
 	
 	private final Env env;
 	private final BufferedReader input;
 	private final PrintWriter output;
 	private final GoFunctionRegistry functionRegistry;
-	//private final Shape emptyShape;
+	private final Shape emptyShape;
 	private final GoLanguage language;
+	private final AllocationReporter allocationReporter;
 	
 	public GoContext(GoLanguage language, Env env){
 		this.env = env;
@@ -49,9 +54,10 @@ public final class GoContext {
 		this.output = new PrintWriter(env.out(), true);
 		this.language = language;
 		this.functionRegistry = new GoFunctionRegistry(language);
-		//this.allocationReporter = env.lookup(AllocationReporter.class;
+		this.allocationReporter = env.lookup(AllocationReporter.class);
 		installBuiltins();
 		
+		this.emptyShape = LAYOUT.createShape(GoStruct.SINGLETON);
 	}
     public static Object fromForeignValue(Object a) {
         if (a instanceof Long || a instanceof BigInteger || a instanceof String || a instanceof Boolean) {
@@ -126,6 +132,18 @@ public final class GoContext {
 		
 		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, builtinBodyNode, null, name);
 		getFunctionRegistry().register(name, rootNode);
+	}
+	
+	/**
+	 * Creates a new struct object. Still learning how to use dynamic objects
+	 * but in theory structs are just blank objects until their properties are filled
+	 */
+	public DynamicObject createStruct(){
+		DynamicObject object = null;
+		allocationReporter.onEnter(null, 0, AllocationReporter.SIZE_UNKNOWN);
+		object = emptyShape.newInstance();
+		allocationReporter.onReturnValue(object, 0, AllocationReporter.SIZE_UNKNOWN);
+		return object;
 	}
 	
 	/*
