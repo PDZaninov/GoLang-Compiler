@@ -25,15 +25,17 @@ import com.oracle.truffle.api.frame.FrameSlot;
 public class GoWriteVisitor implements GoIRVisitor {
 
 	private LexicalScope scope;
+	private LexicalScope global;
 	private GoTruffle truffleVisitor;
 	private FrameDescriptor frame;
 	private GoIRAssignmentStmtNode assignmentNode;
 	
-	public GoWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode){
+	public GoWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode, LexicalScope global){
 		this.scope = scope;
 		truffleVisitor = visitor;
 		this.frame = frame;
 		this.assignmentNode = assignmentNode;
+		this.global = global;
 	}
 	
 	public Object visit(GoBaseIRNode node){
@@ -47,7 +49,13 @@ public class GoWriteVisitor implements GoIRVisitor {
 		String name = assignmentNode.getIdentifier();
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		FrameSlot frameSlot = frame.findOrAddFrameSlot(name);
-		scope.locals.put(name,frameSlot);
+		if(global.locals.get(name) != null) {
+			scope.locals.put(name,frameSlot);
+			global.locals.put(name,frameSlot);
+		}
+		else {
+			scope.locals.put(name,frameSlot);
+		}
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 	}
 	

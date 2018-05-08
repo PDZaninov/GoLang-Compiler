@@ -185,7 +185,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode result = null;
 		//System.out.println(name+" "+lexicalscope.locals);
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
-
+	    
 	    if (frameSlot != null) {
 	            /* Read of a local variable. */
 	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
@@ -512,7 +512,7 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {	
 		GoBaseIRNode child = node.getLHS();
 		
-		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node);
+		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node, global);
 		GoExpressionNode result = (GoExpressionNode) miniVisitor.visit(child);
 		return result;
 		
