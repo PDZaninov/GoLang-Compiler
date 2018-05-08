@@ -13,7 +13,7 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 @NodeChild("valueNode")
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class GoWriteLocalVariableNode  extends GoExpressionNode{
-	
+
 	    protected abstract FrameSlot getSlot();
 	    
 	    @Specialization(guards = "isBlank(frame)")

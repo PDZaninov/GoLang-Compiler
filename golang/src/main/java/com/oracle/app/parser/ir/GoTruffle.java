@@ -14,8 +14,6 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNodeGen;
-import com.oracle.app.nodes.SpecDecl.GoTypeSpecNode;
-import com.oracle.app.nodes.SpecDecl.GoTypeSpecNode.GoNewStruct;
 import com.oracle.app.nodes.call.GoFieldNode;
 import com.oracle.app.nodes.call.GoFuncTypeNode;
 import com.oracle.app.nodes.call.GoInvokeNode;
@@ -439,7 +437,10 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
-		GoStatementNode[] body = (GoStatementNode[]) node.getChild().accept(this);
+		GoStatementNode[] body = null;
+		if(node.getChild() != null){
+			body = (GoStatementNode[]) node.getChild().accept(this);
+		}
 		GoBlockNode result = new GoBlockNode(body);
 		/*
 		if(body.length > 0){
@@ -801,11 +802,9 @@ public class GoTruffle implements GoIRVisitor {
 		String name = node.getIdentifier();
 		FrameSlot slot = frameDescriptor.addFrameSlot(name);
 		lexicalscope.locals.put(name,slot);
-		GoNewStruct struct = new GoNewStruct();
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		
-		GoWriteLocalVariableNode structWrite = GoWriteLocalVariableNodeGen.create(struct,slot);
-		GoTypeSpecNode result = new GoTypeSpecNode(structWrite,type);
+		GoWriteLocalVariableNode result = GoWriteLocalVariableNodeGen.create(type,slot);
 		return result;
 	}
 	

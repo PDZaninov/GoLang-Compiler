@@ -10,11 +10,11 @@ import com.oracle.truffle.api.dsl.Specialization;
 
 @NodeChildren({@NodeChild(value="name"),@NodeChild(value="field",type=GoIdentNode.class)})
 public abstract class GoSelectorExprNode extends GoExpressionNode {
-
+	/*
 	@Specialization
 	public Object executeStruct(GoStruct struct, String field){
 		return struct.read(field);
-	}
+	}*/
 	
 	@Specialization
 	public Object executeImport(FmtFunctionList imports, String function){
