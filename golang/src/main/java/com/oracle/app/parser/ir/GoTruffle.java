@@ -70,6 +70,7 @@ import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
+import com.oracle.app.parser.TypeChecking;
 import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -88,9 +89,9 @@ public class GoTruffle implements GoIRVisitor {
 	 * LexicalScope holds the symbol table information when creating the Truffle tree
 	 *
 	 */
-    static class LexicalScope {
+    public static class LexicalScope {
         protected final LexicalScope outer;
-        protected final Map<String, TypeInfo> locals;
+        public final Map<String, TypeInfo> locals;
 
         LexicalScope(LexicalScope outer) {
         	//Sets the outerscope to be the calling scope
@@ -106,7 +107,7 @@ public class GoTruffle implements GoIRVisitor {
         }
     }
     
-    static class TypeInfo {
+    public static class TypeInfo {
     	String name;
     	String type;
     	boolean isConst;
@@ -141,7 +142,7 @@ public class GoTruffle implements GoIRVisitor {
     private final Map<String, GoRootNode> allFunctions;
     private FrameDescriptor frameDescriptor;
     private LexicalScope global;
-    private LexicalScope lexicalscope;
+    public static LexicalScope lexicalscope;
     
     //the order of appearance of functions from parser
     public static ArrayList<GoIRFuncTypeNode> funcOrder = new ArrayList<GoIRFuncTypeNode>();
@@ -345,56 +346,10 @@ public class GoTruffle implements GoIRVisitor {
 		
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
 
-		int signatureParamNum = 0;
-		int argumentNum = 0;
 		GoRootNode j = allFunctions.get(node.getFunctionNode().getIdentifier());
-		if(j!= null) {// can only type check non builtin parameters
-			GoArrayExprNode signatureParams = j.getParameters();
-			GoIRArrayListExprNode argumentNode = node.getArgumentNode();
-			if(signatureParams != null) {
-				signatureParamNum = signatureParams.getSize();
-			}
-			if(argumentNode != null) {
-				argumentNum = argumentNode.getSize();
-			}
-			
-			if(argumentNum < signatureParamNum) {
-				throw new GoException("not enough arguments in call to " + node.getFunctionNode().getIdentifier());
-			}
-			else if(argumentNum > signatureParamNum) {
-				throw new GoException("too many arguments in call to " + node.getFunctionNode().getIdentifier());
-			}
-/*//			else if(argumentNode!= null && signatureParams != null) {
-//				ArrayList<GoBaseIRNode> argChildren = argumentNode.getChildren();
-//				String argString = " lol ";
-//				System.out.println("----------");
-//				for(int index = 0; index < argumentNum; index++) {
-//					
-//					if(argChildren.get(index) instanceof GoIRBasicLitNode) {
-//						System.out.println("1");
-//						argString = ((GoIRBasicLitNode)argChildren.get(index)).getType();
-//					}
-//					else if(argChildren.get(index) instanceof GoIRIdentNode) {
-//						System.out.println("2");
-//						System.out.println(((GoIRIdentNode)argChildren.get(index)).getIdentifier());
-//						System.out.println(lexicalscope.locals.get(((GoIRIdentNode)argChildren.get(index)).getIdentifier()).getType());
-//						argString = lexicalscope.locals.get(((GoIRIdentNode)argChildren.get(index)).getIdentifier()).getType();
-//						
-//					}
-//					///                                                        FuncTypeNode          -> FieldList  -> Arraylistexpr -> ...
-//					GoIRArrayListExprNode some = ((GoIRFieldListNode)(IRFunctions.get(node.getFunctionNode().getIdentifier())).getParams()).getFields();
-//					//                                   ArrayListExpr -> FieldNode -> Ident
-//
-//					System.out.println(node.getFunctionNode().getIdentifier());
-//					System.out.println(argString + " ..");
-//					System.out.println(((GoIRFieldNode)some.getChildren().get(index)).getType().getIdentifier());
-//					String paramName = ((GoIRFieldNode)some.getChildren().get(index)).getType().getIdentifier();
-//					if(!(argString.equalsIgnoreCase(lexicalscope.locals.get(paramName).getType()))) {
-//						throw new GoException(argString + " Type do not match in arguments to paramters" + lexicalscope.locals.get(paramName).getType());
-//					}
-//				}
-//			}
-*/			
+		GoException m = TypeChecking.TCInvokeArgNum(j,node);
+		if(m!=null) {
+			throw m;
 		}
 		
 		GoArrayExprNode arguments = null;
@@ -478,7 +433,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitReturnStmt(GoIRReturnStmtNode node){
 
-		//get correct function type node
+		//get correct corresponding function type node
 		if(flag == 0) {
 			flag++;
 			curFunctionType = funcOrder.get(returnCounter);
@@ -486,41 +441,11 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		
 		GoIRFieldListNode r = (GoIRFieldListNode) curFunctionType.getResults();
-		int signatureNum = 0;
-		int returnStmtNum = 0;
-		if(r != null) {
-			signatureNum =  r.getFields().getSize();
-		}
-		if(node.getChild()!= null) {
-			returnStmtNum = node.getChild().getSize();
-		}
 
-		if(returnStmtNum > signatureNum) {
-			throw new GoException("Too many arguments to return");
+		GoException m = TypeChecking.TCReturnTypes(r,node);
+		if(m != null) {
+			throw m;
 		}
-		else if(returnStmtNum < signatureNum) {
-			throw new GoException("Not enough arguments to return");
-		}
-		else if(r!=null && node.getChild()!=null) {
-			ArrayList<GoBaseIRNode> expectedTypes = r.getFields().getChildren();
-			ArrayList<GoBaseIRNode> returnVals = ((GoIRArrayListExprNode)node.getChild()).getChildren();
-			
-			for(int i = 0; i < signatureNum; i ++) {
-				GoBaseIRNode val = returnVals.get(i);
-				String valType = "";
-				if(val instanceof GoIRIdentNode) {
-					valType = lexicalscope.locals.get(val.getIdentifier()).getType();
-				}
-				else if(val instanceof GoIRBasicLitNode) {
-					valType = ((GoIRBasicLitNode) val).getType();
-				}
-				String expectedTypeString = ((GoIRFieldNode)expectedTypes.get(i)).getType().getIdentifier(); 
-				if(!(expectedTypeString.equalsIgnoreCase(valType))) {
-					throw new GoException("Cannot use " + val.getIdentifier() + " (type " + valType +") as type " + expectedTypeString +" in return argument");
-				}
-			}
-		}
-
 		 
 		
 		//everything above is for type checking
