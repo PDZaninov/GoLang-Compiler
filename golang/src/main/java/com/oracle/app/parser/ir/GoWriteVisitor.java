@@ -73,6 +73,10 @@ public class GoWriteVisitor implements GoIRVisitor {
 		else if(!(rhs instanceof GoIRTypes)) {
 			return true;
 		}
+		else if(type.getType().equalsIgnoreCase("object")) {
+			return true;
+			//fix this later
+		}
 		String kind = ((GoIRTypes) rhs).getValueType();
 		if(kind.equals(type.getType())) {
 			return true;
@@ -109,6 +113,9 @@ public class GoWriteVisitor implements GoIRVisitor {
 				}
 				String rhsType = j.getIndexResultType(pos);
 				if(type == null) {
+					return;
+				}
+				else if(type.getIdentifier().equalsIgnoreCase("object")) {
 					return;
 				}
 				else if(!(type.getIdentifier().equalsIgnoreCase(rhsType))) {

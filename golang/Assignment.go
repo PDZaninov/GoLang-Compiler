@@ -1,21 +1,21 @@
 package main
 
-func vals() (int,int,int){
+func vals(lol int, rofl int) (int,int,int){
 x:=0
-return 5,"some",x
+return lol,rofl,x
 
 }
 
-func me() int {
-return 1
+func me(x int) int {
+return x
 
 }
 
 func main() {
-	var yoyo int = me()
+	var yoyo int = me(3)
 	println(yoyo)
-	var x,y,zzz  = vals()
-	z := me()
+	var x,y,zzz  = vals(5,yoyo)
+	z := me(3)
 	println(x)
 	println(y)
 	println(z)
@@ -30,8 +30,8 @@ func main() {
 	println(d)
 	println(f)
 	println(g)
-	x = me()
-	println(me())
+	x = me(3)
+	println(me(3))
 	array := make([]string,5)
 	array = make([]string, 10, 15)
 	sucker := append(array,"a","b")

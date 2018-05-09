@@ -144,8 +144,10 @@ public class GoTruffle implements GoIRVisitor {
     private LexicalScope lexicalscope;
     
     //the order of appearance of functions from parser
-    public static Queue<GoIRFuncTypeNode> funcOrder = new LinkedList<GoIRFuncTypeNode>();
+    public static ArrayList<GoIRFuncTypeNode> funcOrder = new ArrayList<GoIRFuncTypeNode>();
+    public static Map<String,GoIRFuncTypeNode> IRFunctions = new HashMap<>();
     GoIRFuncTypeNode curFunctionType;
+    int returnCounter = 0;
     int flag = 0;
 	
     //Can create a global function block and append writes to the top most node
@@ -339,8 +341,61 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
+		
+		
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
+
+		int signatureParamNum = 0;
+		int argumentNum = 0;
 		GoRootNode j = allFunctions.get(node.getFunctionNode().getIdentifier());
+		if(j!= null) {// can only type check non builtin parameters
+			GoArrayExprNode signatureParams = j.getParameters();
+			GoIRArrayListExprNode argumentNode = node.getArgumentNode();
+			if(signatureParams != null) {
+				signatureParamNum = signatureParams.getSize();
+			}
+			if(argumentNode != null) {
+				argumentNum = argumentNode.getSize();
+			}
+			
+			if(argumentNum < signatureParamNum) {
+				throw new GoException("not enough arguments in call to " + node.getFunctionNode().getIdentifier());
+			}
+			else if(argumentNum > signatureParamNum) {
+				throw new GoException("too many arguments in call to " + node.getFunctionNode().getIdentifier());
+			}
+/*//			else if(argumentNode!= null && signatureParams != null) {
+//				ArrayList<GoBaseIRNode> argChildren = argumentNode.getChildren();
+//				String argString = " lol ";
+//				System.out.println("----------");
+//				for(int index = 0; index < argumentNum; index++) {
+//					
+//					if(argChildren.get(index) instanceof GoIRBasicLitNode) {
+//						System.out.println("1");
+//						argString = ((GoIRBasicLitNode)argChildren.get(index)).getType();
+//					}
+//					else if(argChildren.get(index) instanceof GoIRIdentNode) {
+//						System.out.println("2");
+//						System.out.println(((GoIRIdentNode)argChildren.get(index)).getIdentifier());
+//						System.out.println(lexicalscope.locals.get(((GoIRIdentNode)argChildren.get(index)).getIdentifier()).getType());
+//						argString = lexicalscope.locals.get(((GoIRIdentNode)argChildren.get(index)).getIdentifier()).getType();
+//						
+//					}
+//					///                                                        FuncTypeNode          -> FieldList  -> Arraylistexpr -> ...
+//					GoIRArrayListExprNode some = ((GoIRFieldListNode)(IRFunctions.get(node.getFunctionNode().getIdentifier())).getParams()).getFields();
+//					//                                   ArrayListExpr -> FieldNode -> Ident
+//
+//					System.out.println(node.getFunctionNode().getIdentifier());
+//					System.out.println(argString + " ..");
+//					System.out.println(((GoIRFieldNode)some.getChildren().get(index)).getType().getIdentifier());
+//					String paramName = ((GoIRFieldNode)some.getChildren().get(index)).getType().getIdentifier();
+//					if(!(argString.equalsIgnoreCase(lexicalscope.locals.get(paramName).getType()))) {
+//						throw new GoException(argString + " Type do not match in arguments to paramters" + lexicalscope.locals.get(paramName).getType());
+//					}
+//				}
+//			}
+*/			
+		}
 		
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
@@ -426,7 +481,8 @@ public class GoTruffle implements GoIRVisitor {
 		//get correct function type node
 		if(flag == 0) {
 			flag++;
-			curFunctionType = funcOrder.remove();
+			curFunctionType = funcOrder.get(returnCounter);
+			returnCounter++;
 		}
 		
 		GoIRFieldListNode r = (GoIRFieldListNode) curFunctionType.getResults();

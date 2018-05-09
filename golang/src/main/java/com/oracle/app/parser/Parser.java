@@ -283,6 +283,9 @@ public class Parser {
 				GoBaseIRNode name = body.get("Name");
 				GoBaseIRNode type = body.get("Type");
 				GoBaseIRNode func_body = body.get("Body");
+				if(type != null&& name != null) {
+					GoTruffle.IRFunctions.put(name.getIdentifier(), (GoIRFuncTypeNode)type);
+				}
 				return new GoIRFuncDeclNode(recv,
 						name,
 						type,
@@ -446,8 +449,9 @@ public class Parser {
 		
 
 		for(int i = 0; i < size;i++){
-			((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
-			
+			if(lhs.getChildren().get(i) instanceof GoIRIdentNode) {
+				((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
+			}
 			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
 			{
 				((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
