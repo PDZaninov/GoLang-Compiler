@@ -500,6 +500,7 @@ public class Parser {
 				return new GoIRArrayListExprNode(result, source);
 			}
 
+		//if rhs not invoke node and sides arent equal throw error
 		if(lhs.getSize() != rhs.getSize())
 		{
 			throw new GoException("Uneven sides");
