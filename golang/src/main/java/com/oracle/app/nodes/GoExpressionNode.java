@@ -79,7 +79,7 @@ public abstract class GoExpressionNode extends GoStatementNode {
     
     /**
      * Implement this method for types so that their identifiers are known
-     * @return
+     * @return The name of the variable
      */
     public String getName(){
     	return "GoExpressionNode";

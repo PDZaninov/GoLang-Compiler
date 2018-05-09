@@ -3,8 +3,10 @@ package com.oracle.app.parser.ir;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.local.GoArrayWriteNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
+import com.oracle.app.nodes.local.GoStructPropertyWriteNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteMemoryNodeGen;
+import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
@@ -67,7 +69,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		String name = node.getName().getIdentifier();
-		return null;
-		//return GoWriteStructNodeGen.create(value, new GoStringNode(name), expr.getSlot());
+		return GoStructPropertyWriteNodeGen.create(expr, new GoStringNode(name), value);
+		
 	}
 }

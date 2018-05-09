@@ -34,6 +34,7 @@ import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
 import com.oracle.app.nodes.expression.GoCompositeLitNode;
+import com.oracle.app.nodes.expression.GoCompositeLitNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
@@ -621,7 +622,6 @@ public class GoTruffle implements GoIRVisitor {
 			max = (GoExpressionNode) node.getMax().accept(this);
 		}
 		GoSliceExprNode result = new GoSliceExprNode(expr,low,high,max);
-		
 
 		//String lbrack = node.getSource();
 		//int startLine = Integer.parseInt(lbrack.split(":")[1]);
@@ -639,7 +639,7 @@ public class GoTruffle implements GoIRVisitor {
 			type = (GoExpressionNode) node.getExpr().accept(this);
 		}
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
-		GoCompositeLitNode result = new GoCompositeLitNode(type, elts);
+		GoCompositeLitNode result = GoCompositeLitNodeGen.create(elts, type);
 		return result;
 	}
 	

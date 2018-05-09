@@ -2,17 +2,16 @@ package com.oracle.app.nodes.expression;
 
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.call.GoFieldNode;
-import com.oracle.app.nodes.local.GoReadLocalVariableNode;
-import com.oracle.app.nodes.types.FieldNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.object.DynamicObject;
+import com.oracle.truffle.api.object.DynamicObjectFactory;
+import com.oracle.truffle.api.object.Shape;
 
 /**
- * Creates the struct dynamic object and defines its fields.
+ * Creates the struct dynamic object and defines its fields. Returns the shape of the struct.
  * Currently fields can only be created if the field is on its own line.
- * TODO Change FieldNodes
+ * TODO Change FieldNodes, possibly make struct a Shape rather then a DynamicObject
  * @author Trevor
  *
  */
@@ -41,7 +40,7 @@ public class GoStructTypeExprNode extends GoExpressionNode{
             }
             */
         }
-    	return struct;
+    	return struct.getShape();
     }
     
     public DynamicObject getNewStruct(){

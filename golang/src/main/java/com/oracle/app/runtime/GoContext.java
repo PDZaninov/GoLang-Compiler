@@ -117,13 +117,10 @@ public final class GoContext {
 
 	public void installBuiltin(NodeFactory<? extends GoBuiltinNode> factory){
 		int argumentCount = factory.getExecutionSignature().size();
-		//System.out.println(factory.toString()+" "+argumentCount);
 		GoExpressionNode[] argumentNodes = new GoExpressionNode[argumentCount];
-		//Gets the parameters of the function, Need GoReadArgumentNode
 		for(int i = 0; i < argumentCount; i++){
 			argumentNodes[i] = new GoReadArgumentsNode(i);
 		}
-		
 		
 		GoBuiltinNode builtinBodyNode = factory.createNode((Object) argumentNodes);
 		builtinBodyNode.addRootTag();
@@ -134,9 +131,13 @@ public final class GoContext {
 		getFunctionRegistry().register(name, rootNode);
 	}
 	
+	public static boolean isGoStruct(TruffleObject value){
+		return LAYOUT.getType().isInstance(value) && LAYOUT.getType().cast(value).getShape().getObjectType() == GoStruct.SINGLETON;
+	}
+	
 	/**
 	 * Creates a new struct object. Still learning how to use dynamic objects
-	 * but in theory structs are just blank objects until their properties are filled
+	 * but in theory structs are just blank Shapes until their properties are filled
 	 */
 	public DynamicObject createStruct(){
 		DynamicObject object = null;
