@@ -17,6 +17,9 @@ public class GoFmtPrintln extends GoExpressionNode {
 		for(int i = 0; i < arguments.length; i++){
 			builder.append(arguments[i].toString() +" ");
 		}
+		if(builder.length() > 1){
+			builder.deleteCharAt(builder.length()-1);
+		}
 		System.out.println(builder);
 		return null;
 	}

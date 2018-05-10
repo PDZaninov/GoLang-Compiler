@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExprNode;
@@ -45,6 +46,7 @@ import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
 import com.oracle.app.nodes.expression.GoLogicalNotNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalOrNode;
+import com.oracle.app.nodes.expression.GoMapTypeExprNode;
 import com.oracle.app.nodes.expression.GoModNodeGen;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
 import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
@@ -95,6 +97,10 @@ import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
+<<<<<<< HEAD
+=======
+import com.oracle.app.parser.ir.nodes.GoIRMapTypeNode;
+>>>>>>> dade39d5038dbf03eb1462b225f54541ba92c189
 import com.oracle.app.parser.ir.nodes.GoIRObjectNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
@@ -309,7 +315,7 @@ public class GoTruffle implements GoIRVisitor {
 			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
 			break;
 		default:
-			throw new RuntimeException("Unexpected Operation: "+op);
+			throw new GoException("Unexpected Operation: "+op);
 		}
 		//int start = leftNode.getSourceSection().getCharIndex();
 		//int end = rightNode.getSourceSection().getCharEndIndex() - start;
@@ -897,9 +903,17 @@ public class GoTruffle implements GoIRVisitor {
 	 * through the lexical scope for it, else it gets a readlocalvariable node if the variable exists.
 	 */
 	public Object visitKeyValue(GoIRKeyValueNode node){
-		String key = node.getIdentifier();
+		GoExpressionNode key = (GoExpressionNode) node.getKey().accept(this);
 		GoExpressionNode value = (GoExpressionNode) node.getValue().accept(this);
 		GoKeyValueNode result = new GoKeyValueNode(key,value);
+		return result;
+	}
+
+	public Object visitMapType(GoIRMapTypeNode node){
+		//Get the types of the map (key, value)
+		GoExpressionNode keyType = (GoExpressionNode) node.getKey().accept(this);
+		GoExpressionNode valueType = (GoExpressionNode) node.getValue().accept(this);
+		GoMapTypeExprNode result = new GoMapTypeExprNode(keyType, valueType);
 		return result;
 	}
 }

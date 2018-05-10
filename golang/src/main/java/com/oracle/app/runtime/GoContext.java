@@ -9,6 +9,7 @@ import com.oracle.app.GoLanguage;
 import com.oracle.app.builtins.GoAppendBuiltin;
 import com.oracle.app.builtins.GoBuiltinNode;
 import com.oracle.app.builtins.GoCapBuiltinFactory;
+import com.oracle.app.builtins.GoDeleteBuiltinFactory;
 import com.oracle.app.builtins.GoLenBuiltinFactory;
 import com.oracle.app.builtins.GoMakeBuiltinFactory;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
@@ -112,6 +113,7 @@ public final class GoContext {
 		installBuiltin(GoLenBuiltinFactory.getInstance());
 		installBuiltin(GoCapBuiltinFactory.getInstance());
 		installBuiltin(GoMakeBuiltinFactory.getInstance());
+		installBuiltin(GoDeleteBuiltinFactory.getInstance());
 		installMultArgsBuiltins();
 	}
 
