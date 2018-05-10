@@ -1,11 +1,13 @@
 package main
 
+import "fmt"
+
 func main() {
-	x := 1
-	if x <= 1 {
-    	x = 4
-    	y := 2
-    }
-    println(x)
-    println(y)
+m := make(map[string]int)
+   m["k1"] = 7
+   m["k2"] = 13
+   fmt.Println("map:", m)
+   delete(m,"k1")
+   fmt.Println(m)
+
 }

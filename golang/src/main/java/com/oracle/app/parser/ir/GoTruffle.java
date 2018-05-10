@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExprNode;
@@ -45,6 +46,7 @@ import com.oracle.app.nodes.expression.GoLessThanNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalAndNode;
 import com.oracle.app.nodes.expression.GoLogicalNotNodeGen;
 import com.oracle.app.nodes.expression.GoLogicalOrNode;
+import com.oracle.app.nodes.expression.GoMapTypeExprNode;
 import com.oracle.app.nodes.expression.GoModNodeGen;
 import com.oracle.app.nodes.expression.GoMulNodeGen;
 import com.oracle.app.nodes.expression.GoNegativeSignNodeGen;
@@ -56,6 +58,7 @@ import com.oracle.app.nodes.expression.GoStructTypeExprNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
 import com.oracle.app.nodes.local.GoArrayReadNode;
+import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
@@ -66,8 +69,47 @@ import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.ir.nodes.*;
-import com.oracle.app.nodes.local.GoArrayReadNodeGen;
+import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
+import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRBranchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
+import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
+import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
+import com.oracle.app.parser.ir.nodes.GoIRFileNode;
+import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
+import com.oracle.app.parser.ir.nodes.GoIRFloat64Node;
+import com.oracle.app.parser.ir.nodes.GoIRForNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
+import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
+import com.oracle.app.parser.ir.nodes.GoIRIfStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRImportSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRIncDecStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
+import com.oracle.app.parser.ir.nodes.GoIRIntNode;
+import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
+import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
+import com.oracle.app.parser.ir.nodes.GoIRMapTypeNode;
+import com.oracle.app.parser.ir.nodes.GoIRObjectNode;
+import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRSliceExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRStarNode;
+import com.oracle.app.parser.ir.nodes.GoIRStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRStringNode;
+import com.oracle.app.parser.ir.nodes.GoIRStructTypeNode;
+import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
+import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
+import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
@@ -267,7 +309,7 @@ public class GoTruffle implements GoIRVisitor {
 			result = GoBitwiseXORNodeGen.create(leftNode, rightNode);
 			break;
 		default:
-			throw new RuntimeException("Unexpected Operation: "+op);
+			throw new GoException("Unexpected Operation: "+op);
 		}
 		//int start = leftNode.getSourceSection().getCharIndex();
 		//int end = rightNode.getSourceSection().getCharEndIndex() - start;
@@ -853,9 +895,17 @@ public class GoTruffle implements GoIRVisitor {
 	 * through the lexical scope for it, else it gets a readlocalvariable node if the variable exists.
 	 */
 	public Object visitKeyValue(GoIRKeyValueNode node){
-		String key = node.getIdentifier();
+		GoExpressionNode key = (GoExpressionNode) node.getKey().accept(this);
 		GoExpressionNode value = (GoExpressionNode) node.getValue().accept(this);
 		GoKeyValueNode result = new GoKeyValueNode(key,value);
+		return result;
+	}
+
+	public Object visitMapType(GoIRMapTypeNode node){
+		//Get the types of the map (key, value)
+		GoExpressionNode keyType = (GoExpressionNode) node.getKey().accept(this);
+		GoExpressionNode valueType = (GoExpressionNode) node.getValue().accept(this);
+		GoMapTypeExprNode result = new GoMapTypeExprNode(keyType, valueType);
 		return result;
 	}
 }
