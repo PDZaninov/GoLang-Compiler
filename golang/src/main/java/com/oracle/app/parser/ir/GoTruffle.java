@@ -369,9 +369,12 @@ public class GoTruffle implements GoIRVisitor {
 		GoRootNode root = new GoRootNode(language,frameDescriptor,nameNode,typeNode,bodyNode,null,name);
 		allFunctions.put(name,root);
 		finishBlock();
-		
+
+		frameSlot slot = frameDescriptor.add(name);
+		lexicalscope.locals.put(name, slot);
+		GoFunctionLiteralNode funcLit = new GoFunctionLiteralNode(language, name);
 		//frameDescriptor = null;
-		return null;
+		return GoWriteLocalVariableNodeGen.create(slot, funcLit);
 	}
 	
 	@Override
