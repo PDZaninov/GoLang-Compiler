@@ -27,6 +27,10 @@ public abstract class GoCompositeLitNode extends GoExpressionNode {
 		return type.doCompositeLit(frame, elements);
 	}
 	
+	/**
+	 * Struct objects can be initialized by keyvalue nodes or by listing out the fields in order.
+	 * There cannot be a mix of the two so if a keyvaluenode shows up then the rest of the values have to be keyvaluenodes
+	 */
 	@Specialization
 	public Object executeStruct(VirtualFrame frame, Shape struct){
 		Object[] elements = elts.gatherResults(frame);
@@ -37,7 +41,7 @@ public abstract class GoCompositeLitNode extends GoExpressionNode {
 			if(elements[0] instanceof GoKeyValueNode){
 				DynamicObject newStruct = struct.newInstance();
 				for(Object value : elements){
-					if(!newStruct.set(((GoKeyValueNode) value).getKey(), ((GoKeyValueNode) value).getResult())){
+					if(!newStruct.set(((GoKeyValueNode) value).getKey().executeGeneric(frame), ((GoKeyValueNode) value).getResult())){
 						throw new GoException("unknown field \'"+((GoKeyValueNode) value).getKey()+"\' in struct literal of type "+ getType().getName());
 					}
 				}

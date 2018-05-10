@@ -251,10 +251,10 @@ public class Parser {
 				
 			case "Field":
 				if(body.size()==2) {
-					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")), (GoIRIdentNode) body.get("Type"));
+					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")), body.get("Type"));
 				}
 				else {
-					return new GoIRFieldNode(nodeType, (GoIRIdentNode) body.get("Type"));
+					return new GoIRFieldNode(nodeType, body.get("Type"));
 				}
 				
 			case "]*ast.Field":
