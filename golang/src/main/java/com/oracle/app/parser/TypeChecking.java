@@ -8,13 +8,16 @@ import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoTruffle;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
+import com.oracle.app.parser.ir.GoTruffle.TypeInfo;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
+import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRTypes;
 
 public class TypeChecking {
 
@@ -119,5 +122,70 @@ public class TypeChecking {
 		return null;
 	}
 	
+	//probably fix some issues here
+	public static GoException TCInitialization(GoIRIdentNode node, GoBaseIRNode rhs, GoIRIdentNode type, GoRootNode j, String functionName) {
+		
+		if(node.getChild()!= null) {
+			int pos = node.getAssignPos();
+			
+			if(j != null) {
+				
+				if(j.getNumReturns() != ((GoIRInvokeNode) rhs).getAssignLen()) {
+					throw new GoException("assignment count mismatch: " + ((GoIRInvokeNode) rhs).getAssignLen() + " = " + Integer.toString(j.getNumReturns()));
+					
+				}
+				String rhsType = j.getIndexResultType(pos);
+				if(type == null) {
+					return null;
+				}
+				else if(type.getIdentifier().equalsIgnoreCase("object")) {
+					return null;
+				}
+				else if(!(type.getIdentifier().equalsIgnoreCase(rhsType))) {
+					return new GoException("cannot use " + functionName +"() (type " + rhsType + ") as type " +type.getIdentifier() + " in assignment");
+				}
+			}
+
+		}
+		return null;
+	}
+	
+	public static boolean TCAssignment(String name, GoBaseIRNode rhs, GoIRIdentNode node, GoRootNode j, TypeInfo type) {
+		if(rhs instanceof GoIRInvokeNode) 
+		{
+			int pos = node.getAssignPos();
+			
+			if(j==null) {//means it is a builtin
+				return true;
+			}
+			if(type.getType().equalsIgnoreCase(j.getIndexResultType(pos))||(type.getType().equals("object"))) {
+				return true;
+			}
+			throw new GoException("some erorr" + type.getType());
+		}
+		else if(!(rhs instanceof GoIRTypes)) {
+			return true;
+		}
+		else if(type.getType().equalsIgnoreCase("object")) {
+			return true;
+			//fix this later
+		}
+		String kind = ((GoIRTypes) rhs).getValueType();
+		if(kind.equals(type.getType())) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static GoException TCAssignmentError(String name, GoBaseIRNode rhs, GoIRIdentNode node, GoRootNode j, TypeInfo type, GoIRAssignmentStmtNode assignmentNode) {
+		boolean typeCheck = TypeChecking.TCAssignment(name, rhs,node, j,type);
+		if(typeCheck == false) {
+			String kind = type.getType();
+			String typeVal = ((GoIRBasicLitNode) rhs).getValString();
+			String typeName = ((GoIRBasicLitNode) assignmentNode.getRHS()).getType();
+			return new GoException("cannot use \"" + typeVal + "\" (type " + typeName.toLowerCase() + ") as type " + kind.toLowerCase() + " in assignment");
+		}
+		return null;
+	}
 	
 }

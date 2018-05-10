@@ -11,6 +11,7 @@ import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteStructNodeGen;
 import com.oracle.app.nodes.local.GoWriteMemoryNodeGen;
 import com.oracle.app.nodes.types.GoStringNode;
+import com.oracle.app.parser.TypeChecking;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.GoTruffle.TypeInfo;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
@@ -55,77 +56,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 		return node.accept(this);
 	}
 	
-	public boolean typeCheck(GoBaseIRNode rhs, TypeInfo type, String name, GoIRIdentNode node) {
-
-		if(rhs instanceof GoIRInvokeNode) 
-		{
-			int pos = node.getAssignPos();
-			
-			GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
-			if(j==null) {//means it is a builtin
-				return true;
-			}
-			if(type.getType().equalsIgnoreCase(j.getIndexResultType(pos))||(type.getType().equals("object"))) {
-				return true;
-			}
-			throw new GoException("some erorr" + type.getType());
-		}
-		else if(!(rhs instanceof GoIRTypes)) {
-			return true;
-		}
-		else if(type.getType().equalsIgnoreCase("object")) {
-			return true;
-			//fix this later
-		}
-		String kind = ((GoIRTypes) rhs).getValueType();
-		if(kind.equals(type.getType())) {
-			return true;
-		}
-		return false;
-	}
-	
-	public void typeChecker(String name, GoBaseIRNode rhs, GoIRIdentNode node) {
-		boolean typeCheck = typeCheck(rhs, scope.locals.get(name),name,node);
-		if(typeCheck == false) {
-			String kind = scope.locals.get(name).getType();
-			String typeVal = ((GoIRBasicLitNode) rhs).getValString();
-			String typeName = ((GoIRBasicLitNode) assignmentNode.getRHS()).getType();
-			throw new GoException("cannot use \"" + typeVal + "\" (type " + typeName.toLowerCase() + ") as type " + kind.toLowerCase() + " in assignment");
-		}
-	}
-	
-	public void typeCheckInitialization(GoIRIdentNode node, GoBaseIRNode rhs, GoIRIdentNode type) {
-		boolean result = true;
-		
-		if(node.getChild()!= null) {
-			int pos = node.getAssignPos();
-			
-			if(rhs instanceof GoIRInvokeNode) {
-				String functionName = ((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier();
-				GoRootNode j =  allFunctions.get(functionName);
-				if(j == null) {// invoke is builtin
-					return;
-				}
-				
-				if(j.getNumReturns() != ((GoIRInvokeNode) rhs).getAssignLen()) {
-					throw new GoException("assignment count mismatch: " + ((GoIRInvokeNode) rhs).getAssignLen() + " = " + Integer.toString(j.getNumReturns()));
-					
-				}
-				String rhsType = j.getIndexResultType(pos);
-				if(type == null) {
-					return;
-				}
-				else if(type.getIdentifier().equalsIgnoreCase("object")) {
-					return;
-				}
-				else if(!(type.getIdentifier().equalsIgnoreCase(rhsType))) {
-					throw new GoException("cannot use " + functionName +"() (type " + rhsType + ") as type " +type.getIdentifier() + " in assignment");
-				}
-			}
-
-		}
-
-	}
 	
 	
 	/**
@@ -140,9 +70,17 @@ public class GoWriteVisitor implements GoIRVisitor {
 		
 		//check if the variable already exists
 		if(scope.locals.get(name) != null) {
-			typeChecker(name, rhs,node);
+			GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
+			
+			TypeChecking.TCAssignmentError(name, rhs,node, j, scope.locals.get(name),assignmentNode);
 		}else {
-			typeCheckInitialization(node,rhs,assignmentNode.getType());
+			if(rhs instanceof GoIRInvokeNode ) {
+				String functionName = ((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier();
+				GoRootNode j =  allFunctions.get(functionName);
+				TypeChecking.TCInitialization(node,rhs,assignmentNode.getType(),j,functionName);
+				
+			}
+			
 		}
 		
 		// Check if the rhs is an instance of types, then just directly get the value type
@@ -178,11 +116,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		GoReadLocalVariableNode array = (GoReadLocalVariableNode) node.getName().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoExpressionNode index = (GoExpressionNode)node.getIndex().accept(truffleVisitor);
-		
-		String name = node.getIdentifier();
-		if(scope.locals.get(name) != null) {
-			typeChecker(name, assignmentNode.getRHS(),null);
-		}
+
 		
 		return GoArrayWriteNodeGen.create(index,value, array);
 	}
