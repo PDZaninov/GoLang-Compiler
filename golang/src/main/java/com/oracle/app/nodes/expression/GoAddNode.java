@@ -8,7 +8,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 @NodeInfo(shortName = "+")
 public abstract class GoAddNode extends GoBinaryNode {
 
-
     @Specialization(rewriteOn = ArithmeticException.class)
     protected int add(int left, int right) {
         return Math.addExact(left, right);

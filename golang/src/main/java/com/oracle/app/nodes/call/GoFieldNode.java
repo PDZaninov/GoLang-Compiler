@@ -26,11 +26,19 @@ public class GoFieldNode extends GoExpressionNode{
 		return (GoIdentNode) names.getArguments()[0];
 	}
 
+	/**
+	 *	Temporary way to get names only when there is one name in the field
+	 * Idea - should create a seperate field node that holds one name and type 
+	 * and separate this field in gotruffle
+	 */
+	@Override
 	public String getName() {
 		return ((GoIdentNode) names.getArguments()[0]).getName();
 	}
 
-	public GoReadLocalVariableNode getType() { return type; }
+	public GoReadLocalVariableNode getType() {
+		return type; 
+	}
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
