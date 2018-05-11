@@ -2,12 +2,13 @@ package main
 
 import "fmt"
 
-func main() {
-m := make(map[string]int)
-   m["k1"] = 7
-   m["k2"] = 13
-   fmt.Println("map:", m)
-   delete(m,"k1")
-   fmt.Println(m)
+type Vertex struct{
+    X int
+    Y int
+}
 
+func main() {
+	s := Vertex{X:1,Y:2}
+    s.X = 4
+    fmt.Println(s.X)
 }

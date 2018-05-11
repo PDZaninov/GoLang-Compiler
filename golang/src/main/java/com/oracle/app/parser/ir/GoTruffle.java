@@ -35,6 +35,7 @@ import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
 import com.oracle.app.nodes.expression.GoCompositeLitNode;
+import com.oracle.app.nodes.expression.GoCompositeLitNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
@@ -97,7 +98,10 @@ import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
+<<<<<<< HEAD
+=======
 import com.oracle.app.parser.ir.nodes.GoIRMapTypeNode;
+>>>>>>> dade39d5038dbf03eb1462b225f54541ba92c189
 import com.oracle.app.parser.ir.nodes.GoIRObjectNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
@@ -160,6 +164,9 @@ public class GoTruffle implements GoIRVisitor {
         frameDescriptor = new FrameDescriptor();
     }
 	
+	/**
+	 * The global scope needs to be initialized with default values before execution
+	 */
 	public void initialize(){
         startFunction();
         FrameSlot frameSlot;
@@ -441,7 +448,10 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
-		GoStatementNode[] body = (GoStatementNode[]) node.getChild().accept(this);
+		GoStatementNode[] body = null;
+		if(node.getChild() != null){
+			body = (GoStatementNode[]) node.getChild().accept(this);
+		}
 		GoBlockNode result = new GoBlockNode(body);
 		/*
 		if(body.length > 0){
@@ -622,7 +632,6 @@ public class GoTruffle implements GoIRVisitor {
 			max = (GoExpressionNode) node.getMax().accept(this);
 		}
 		GoSliceExprNode result = new GoSliceExprNode(expr,low,high,max);
-		
 
 		//String lbrack = node.getSource();
 		//int startLine = Integer.parseInt(lbrack.split(":")[1]);
@@ -640,7 +649,7 @@ public class GoTruffle implements GoIRVisitor {
 			type = (GoExpressionNode) node.getExpr().accept(this);
 		}
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
-		GoCompositeLitNode result = new GoCompositeLitNode(type, elts);
+		GoCompositeLitNode result = GoCompositeLitNodeGen.create(elts, type);
 		return result;
 	}
 	

@@ -1,49 +1,22 @@
 package com.oracle.app.nodes.types;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import com.oracle.app.nodes.GoArrayExprNode;
-import com.oracle.app.nodes.expression.GoKeyValueNode;
-import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.object.ObjectType;
 
 /**
- * Handles only a single field assignment per field.
- * Not available - Multiple identifiers to a field type
- * 				   Anonymous identifiers/no type
+ *	Structs can be modeled off of a simple truffle shape where properties are added during
+ *	type specs, then properties are only modified during selector expressions.
+ *	Still need to read up on how the Truffle Object library works and see if Layouts could be of use
  * @author Trevor
  *
  */
-public class GoStruct extends GoNonPrimitiveType{
-    protected Map<String, FieldNode> symbolTable;
-    protected int size;
-    //protected boolean incomplete;
-
-    public GoStruct(){
-        this.symbolTable = new LinkedHashMap<>();
-        size = 0;
-    }
+public class GoStruct extends ObjectType{
+    public static final ObjectType SINGLETON = new GoStruct();
     
-    @Override
-    public String toString(){
-    	StringBuilder sb = new StringBuilder("{");
-		for(FieldNode field : symbolTable.values()){
-			sb.append(field.toString());
-		}
-		if(sb.length() > 1){
-			sb.deleteCharAt(sb.length()-1);
-		}
-		sb.append("}");
-		return sb.toString();
+    private GoStruct(){
     }
-
-    public Object read(String key){
-        return this.symbolTable.get(key).read();
-    }
-
-    public void write(String key, Object value){
-        this.symbolTable.get(key).insert(value);
-    }
+<<<<<<< HEAD
+    
+=======
 
     public void insertField(String key, FieldNode node){
         this.symbolTable.put(key, node);
@@ -76,4 +49,5 @@ public class GoStruct extends GoNonPrimitiveType{
 		}
 		return this;
 	}
+>>>>>>> dade39d5038dbf03eb1462b225f54541ba92c189
 }
