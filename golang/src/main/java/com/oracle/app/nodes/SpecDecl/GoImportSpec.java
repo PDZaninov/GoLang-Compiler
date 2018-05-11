@@ -5,6 +5,7 @@ import com.oracle.app.builtins.fmt.FmtFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.frame.FrameSlot;
+import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 /**
@@ -28,6 +29,7 @@ public class GoImportSpec extends GoExpressionNode {
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		String name = (String) child.executeGeneric(frame);
+		slot.setKind(FrameSlotKind.Object);
 		switch(name) {
         case "fmt":
         	frame.setObject(slot, new FmtFunctionList(language));

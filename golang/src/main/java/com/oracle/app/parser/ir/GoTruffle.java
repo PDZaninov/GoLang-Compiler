@@ -98,10 +98,7 @@ import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRKeyValueNode;
-<<<<<<< HEAD
-=======
 import com.oracle.app.parser.ir.nodes.GoIRMapTypeNode;
->>>>>>> dade39d5038dbf03eb1462b225f54541ba92c189
 import com.oracle.app.parser.ir.nodes.GoIRObjectNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRSelectorExprNode;
@@ -347,6 +344,9 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
+		if(functionNode instanceof GoReadLocalVariableNode){
+			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
+		}
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
 			arguments = (GoArrayExprNode) node.getArgumentNode().accept(this);

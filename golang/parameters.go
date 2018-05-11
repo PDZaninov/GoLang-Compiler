@@ -1,8 +1,6 @@
 package main
 
-import (
-	"fmt"
-)
+import "fmt"
 
 func add(x int, y int) int {
     fmt.Println("in the function")
@@ -10,5 +8,5 @@ func add(x int, y int) int {
 }
 
 func main() {
-	fmt.Println(add(42, 13))
+	add(42, 13)
 }
