@@ -67,6 +67,7 @@ import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
+import com.oracle.app.nodes.types.GoFunctionLiteralNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
@@ -343,6 +344,9 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
+		if(functionNode instanceof GoReadLocalVariableNode){
+			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
+		}
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
 			arguments = (GoArrayExprNode) node.getArgumentNode().accept(this);
@@ -372,9 +376,12 @@ public class GoTruffle implements GoIRVisitor {
 		GoRootNode root = new GoRootNode(language,frameDescriptor,nameNode,typeNode,bodyNode,null,name);
 		allFunctions.put(name,root);
 		finishBlock();
-		
+
+		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
+		lexicalscope.locals.put(name, slot);
+		GoFunctionLiteralNode funcLit = new GoFunctionLiteralNode(language, name);
 		//frameDescriptor = null;
-		return null;
+		return GoWriteLocalVariableNodeGen.create(funcLit,slot);
 	}
 	
 	@Override
