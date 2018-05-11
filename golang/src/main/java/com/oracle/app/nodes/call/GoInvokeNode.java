@@ -30,7 +30,7 @@ public class GoInvokeNode extends GoExpressionNode {
     @ExplodeLoop
     @Override
     public Object executeGeneric(VirtualFrame frame) {
-        Object function = getFunctionIdentifier(frame);
+        Object function = functionNode.executeGeneric(frame);
 
         CompilerAsserts.compilationConstant(argumentNodes.length);
         Object[] argumentValues = new Object[argumentNodes.length];
@@ -49,15 +49,4 @@ public class GoInvokeNode extends GoExpressionNode {
         return super.isTaggedWith(tag);
     }
     
-    public GoFunction getFunctionIdentifier(VirtualFrame frame) {
-    	GoFunction function = null;
-    	if(functionNode instanceof GoIdentNode){
-    		function = ((GoIdentNode) functionNode).getFunction();
-    	}
-    	else if(functionNode instanceof GoSelectorExprNode){
-    		function = (GoFunction) functionNode.executeGeneric(frame);
-    	}
-        
-        return function;
-    }
 }
