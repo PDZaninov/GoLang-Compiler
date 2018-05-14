@@ -1,6 +1,7 @@
 package com.oracle.app.parser.ir;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.global.GoWriteGlobalVariableNodeGen;
 import com.oracle.app.nodes.local.GoArrayWriteNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
@@ -52,6 +53,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		if(global.locals.get(name) != null) {
 			scope.locals.put(name,frameSlot);
 			global.locals.put(name,frameSlot);
+			return GoWriteGlobalVariableNodeGen.create(value, frameSlot);
 		}
 		else {
 			scope.locals.put(name,frameSlot);

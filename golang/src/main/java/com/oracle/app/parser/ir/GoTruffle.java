@@ -57,6 +57,7 @@ import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoStructTypeExprNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
+import com.oracle.app.nodes.global.GoReadGlobalVariableNodeGen;
 import com.oracle.app.nodes.local.GoArrayReadNode;
 import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
@@ -239,7 +240,10 @@ public class GoTruffle implements GoIRVisitor {
 		//System.out.println(name+" "+lexicalscope.locals);
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
 	    
-	    if (frameSlot != null) {
+	    if(global.locals.get(name) != null && identifier(name)) {
+	    	result = (GoExpressionNode) GoReadGlobalVariableNodeGen.create(frameSlot);
+	    }
+	    else if (frameSlot != null) {
 	            /* Read of a local variable. */
 	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	    } else {
@@ -256,6 +260,28 @@ public class GoTruffle implements GoIRVisitor {
 
 	    //result.setSourceSection(node.getSource(source));
 	    return result;
+	}
+	
+	public boolean identifier(String name) {
+		switch(name) {
+			case "int":
+				return false;
+			case "float64":
+				return false;
+			case "float32":
+				return false;
+			case "bool":
+				return false;
+			case "true":
+				return false;
+			case "false":
+				return false;
+			case "string":
+				return false;
+			case "_":
+				return false;
+		}
+		return true;
 	}
 
 	@Override
