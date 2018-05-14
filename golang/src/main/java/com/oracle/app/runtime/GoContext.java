@@ -45,7 +45,7 @@ public final class GoContext {
 	//private final Shape emptyShape;
 	private final GoLanguage language;
 	
-    private MaterializedFrame globalFrame = Truffle.getRuntime().createMaterializedFrame(new Object[0]);
+    private MaterializedFrame globalFrame;
     private FrameDescriptor globalFrameDescriptor;
 	
 	public GoContext(GoLanguage language, Env env){
