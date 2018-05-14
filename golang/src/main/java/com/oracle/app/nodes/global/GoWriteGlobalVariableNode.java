@@ -1,5 +1,6 @@
 package com.oracle.app.nodes.global;
 
+import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoSlice;
@@ -11,11 +12,14 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.FrameUtil;
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 @NodeChild("valueNode")
 @NodeField(name = "slot", type = FrameSlot.class)
-public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
+public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode {
+	
+		MaterializedFrame globalFrame = GoLanguage.getCurrentContext().getGlobalFrame();
 	
 	    protected abstract FrameSlot getSlot();
 	    
@@ -27,7 +31,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 	    @Specialization(guards = "isIntOrIllegal(frame)")
 	    protected int writeInt(VirtualFrame frame, int value) {
 	        getSlot().setKind(FrameSlotKind.Int);
-	        frame.setInt(getSlot(), value);
+	        globalFrame.setInt(getSlot(), value);
 	        return value;
 	    }
 	    
@@ -35,14 +39,14 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 	    protected GoArray writeArray(VirtualFrame frame, GoArray value) {
 	        getSlot().setKind(FrameSlotKind.Object);
 
-	        frame.setObject(getSlot(), value);
+	        globalFrame.setObject(getSlot(), value);
 	        return value;
 	    }
 	    
 	    @Specialization(guards = "isSliceOrIllegal(frame)")
 	    protected GoSlice writeSlice(VirtualFrame frame, GoSlice value) {
 	        getSlot().setKind(FrameSlotKind.Object);
-	        frame.setObject(getSlot(), value);
+	        globalFrame.setObject(getSlot(), value);
 	        return value;
 	    }
 	    
@@ -51,7 +55,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
 	        getSlot().setKind(FrameSlotKind.Float);
 
-	        frame.setFloat(getSlot(), value);
+	        globalFrame.setFloat(getSlot(), value);
 	        return value;
 	    }
 
@@ -59,7 +63,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 		protected double writeDouble(VirtualFrame frame, double value) {
 			getSlot().setKind(FrameSlotKind.Double);
 
-			frame.setDouble(getSlot(), value);
+			globalFrame.setDouble(getSlot(), value);
 			return value;
 		}
 
@@ -68,7 +72,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 
 	        getSlot().setKind(FrameSlotKind.Long);
 	        
-	        frame.setLong(getSlot(), value);
+	        globalFrame.setLong(getSlot(), value);
 	        return value;
 	    }
 
@@ -76,7 +80,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 	    protected boolean writeBoolean(VirtualFrame frame, boolean value) {
 	        getSlot().setKind(FrameSlotKind.Boolean);
 
-	        frame.setBoolean(getSlot(), value);
+	        globalFrame.setBoolean(getSlot(), value);
 	        return value;
 	    }
 	    
@@ -85,7 +89,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 	        /* Initialize type on first write of the local variable. No-op if kind is already Long. */
 	        getSlot().setKind(FrameSlotKind.Object);
 
-	        frame.setObject(getSlot(), value);
+	        globalFrame.setObject(getSlot(), value);
 	        return value;
 	    }
 
@@ -93,7 +97,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 	    protected Object write(VirtualFrame frame, Object value) {
 	        getSlot().setKind(FrameSlotKind.Object);
 
-	        frame.setObject(getSlot(), value);
+	        globalFrame.setObject(getSlot(), value);
 	        return value;
 	    }
 	    
@@ -138,7 +142,7 @@ public abstract class GoWriteGlobalVariableNode  extends GoExpressionNode{
 	    	
 	    	@Specialization
 	    	public GoStruct writeField(VirtualFrame frame, Object value, String name){
-	    		GoStruct struct = (GoStruct) FrameUtil.getObjectSafe(frame, getSlot());
+	    		GoStruct struct = (GoStruct) FrameUtil.getObjectSafe(globalFrame, getSlot());
 	    		struct.write(name, value);
 	    		return null;
 	    	}

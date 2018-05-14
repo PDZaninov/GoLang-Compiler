@@ -1,5 +1,6 @@
 package com.oracle.app.nodes.global;
 
+import com.oracle.app.GoLanguage;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.dsl.NodeField;
@@ -7,14 +8,17 @@ import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
 import com.oracle.truffle.api.frame.FrameUtil;
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class GoReadGlobalVariableNode extends GoExpressionNode {
+	
+	MaterializedFrame globalFrame = GoLanguage.getCurrentContext().getGlobalFrame();
 
     @Override
 	public String toString() {
-		return "GoReadLocalVariableNode [ "+getSlot()+" ]";
+		return "GoReadGlobalVariableNode [ "+getSlot()+" ]";
 	}
     
     @Override
@@ -27,56 +31,56 @@ public abstract class GoReadGlobalVariableNode extends GoExpressionNode {
     
     @Specialization(guards = "isInt(frame)")
     protected int readInt(VirtualFrame frame){
-    	return FrameUtil.getIntSafe(frame, getSlot());
+    	return FrameUtil.getIntSafe(globalFrame, getSlot());
     }
     
     @Specialization(guards = "isFloat(frame)")
     protected float readFloat(VirtualFrame frame){
-    	return FrameUtil.getFloatSafe(frame, getSlot());
+    	return FrameUtil.getFloatSafe(globalFrame, getSlot());
     }
 
     @Specialization(guards = "isDouble(frame)")
     protected double readDouble(VirtualFrame frame) { 
-    	return FrameUtil.getDoubleSafe(frame, getSlot());
+    	return FrameUtil.getDoubleSafe(globalFrame, getSlot());
     }
 
     @Specialization(guards = "isLong(frame)")
     protected long readLong(VirtualFrame frame) {
-        return FrameUtil.getLongSafe(frame, getSlot());
+        return FrameUtil.getLongSafe(globalFrame, getSlot());
     }
 
     @Specialization(guards = "isBoolean(frame)")
     protected boolean readBoolean(VirtualFrame frame) {
-        return FrameUtil.getBooleanSafe(frame, getSlot());
+        return FrameUtil.getBooleanSafe(globalFrame, getSlot());
     }
     
     @Specialization(guards = "isArray(frame)")
     protected Object readArray(VirtualFrame frame) {
     	
-        return FrameUtil.getObjectSafe(frame, getSlot());
+        return FrameUtil.getObjectSafe(globalFrame, getSlot());
     }
     
     @Specialization(guards = "isSlice(frame)")
     protected Object readSlice(VirtualFrame frame) {
     	
-        return FrameUtil.getObjectSafe(frame, getSlot());
+        return FrameUtil.getObjectSafe(globalFrame, getSlot());
     }
     
     @Specialization(guards = "isString(frame)")
     protected Object readString(VirtualFrame frame) {
-        return FrameUtil.getObjectSafe(frame, getSlot());
+        return FrameUtil.getObjectSafe(globalFrame, getSlot());
     }
 
     @Specialization(replaces = {"readInt", "readFloat","readDouble", "readLong", "readBoolean", "readArray", "readSlice", "readString"})
     protected Object readObject(VirtualFrame frame) {
-        if (!frame.isObject(getSlot())) {
+        if (!globalFrame.isObject(getSlot())) {
             CompilerDirectives.transferToInterpreter();
-            Object result = frame.getValue(getSlot());
-            frame.setObject(getSlot(), result);	
+            Object result = globalFrame.getValue(getSlot());
+            globalFrame.setObject(getSlot(), result);	
             return result;
         }
 
-        return FrameUtil.getObjectSafe(frame, getSlot());
+        return FrameUtil.getObjectSafe(globalFrame, getSlot());
     }
     
     protected boolean isInt(VirtualFrame frame){
