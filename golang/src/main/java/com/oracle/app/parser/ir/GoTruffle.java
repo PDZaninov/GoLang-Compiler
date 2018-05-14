@@ -110,9 +110,11 @@ import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.source.Source;
 
 
@@ -157,7 +159,9 @@ public class GoTruffle implements GoIRVisitor {
 		this.language = language;
 		this.source = source;
         this.allFunctions = new HashMap<>();
-        frameDescriptor = new FrameDescriptor();
+        MaterializedFrame globalFrame = Truffle.getRuntime().createMaterializedFrame(new Object[0]);
+        GoLanguage.getCurrentContext().setGlobalFrame(globalFrame);
+        frameDescriptor = globalFrame.getFrameDescriptor();
     }
 	
 	public void initialize(){

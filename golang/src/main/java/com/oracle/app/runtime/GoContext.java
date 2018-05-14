@@ -14,16 +14,17 @@ import com.oracle.app.builtins.GoLenBuiltinFactory;
 import com.oracle.app.builtins.GoMakeBuiltinFactory;
 import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
-import com.oracle.app.builtins.fmt.GoFmtPrintln;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameDescriptor;
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.source.Source;
@@ -44,6 +45,9 @@ public final class GoContext {
 	//private final Shape emptyShape;
 	private final GoLanguage language;
 	
+    private MaterializedFrame globalFrame = Truffle.getRuntime().createMaterializedFrame(new Object[0]);
+    private FrameDescriptor globalFrameDescriptor;
+	
 	public GoContext(GoLanguage language, Env env){
 		this.env = env;
 		this.input = new BufferedReader(new InputStreamReader(env.in()));
@@ -51,9 +55,25 @@ public final class GoContext {
 		this.language = language;
 		this.functionRegistry = new GoFunctionRegistry(language);
 		//this.allocationReporter = env.lookup(AllocationReporter.class;
-		installBuiltins();
-		
+		installBuiltins();	
 	}
+	
+	public void setGlobalFrame(MaterializedFrame globalFrame) {
+		this.globalFrame = globalFrame;
+	}
+	
+	public MaterializedFrame getGlobalFrame() {
+		return globalFrame;
+	}
+	
+	public void setGlobalFrameDescriptor(FrameDescriptor frameDescriptor) {
+		this.globalFrameDescriptor = frameDescriptor;
+	}
+	
+	public FrameDescriptor getGlobalFrameDescriptor() {
+		return globalFrameDescriptor;
+	}
+	
     public static Object fromForeignValue(Object a) {
         if (a instanceof Long || a instanceof BigInteger || a instanceof String || a instanceof Boolean) {
             return a;
