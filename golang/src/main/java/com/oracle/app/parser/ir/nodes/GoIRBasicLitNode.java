@@ -70,6 +70,10 @@ public abstract class GoIRBasicLitNode extends GoIRTypes {
 		}
 	
 	}
+	
+	public String TCself() {
+		return type;
+	}
 
 
 }

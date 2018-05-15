@@ -1,5 +1,6 @@
 package com.oracle.app.parser.ir.nodes;
 
+import com.oracle.app.GoException;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 import com.oracle.truffle.api.source.Source;
@@ -31,6 +32,15 @@ public class GoIRBinaryExprNode extends GoBaseIRNode {
 	@Override
 	public Object accept(GoIRVisitor visitor) { 
 		return visitor.visitBinaryExpr(this); 
+	}
+	
+	public String TCself() {
+		String leftT = left.TCself();
+		String rightT = right.TCself();
+		if(leftT.equalsIgnoreCase(rightT)) {
+			return leftT;
+		}
+		return "error:" +op+ " does not support " + leftT +" , " + rightT;
 	}
 
 }

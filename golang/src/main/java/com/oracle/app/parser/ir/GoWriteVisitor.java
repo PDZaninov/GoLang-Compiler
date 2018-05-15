@@ -11,7 +11,7 @@ import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteStructNodeGen;
 import com.oracle.app.nodes.local.GoWriteMemoryNodeGen;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.TypeChecking;
+import com.oracle.app.parser.GoTypeCheckingVisitor;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.GoTruffle.TypeInfo;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
@@ -69,17 +69,20 @@ public class GoWriteVisitor implements GoIRVisitor {
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
 		
 		//check if the variable already exists
-		if(scope.locals.get(name) != null) {
-			GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
+		if(rhs instanceof GoIRInvokeNode) {
 			
-			TypeChecking.TCAssignmentError(name, rhs,node, j, scope.locals.get(name),assignmentNode);
-		}else {
-			if(rhs instanceof GoIRInvokeNode ) {
-				String functionName = ((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier();
-				GoRootNode j =  allFunctions.get(functionName);
-				TypeChecking.TCInitialization(node,rhs,assignmentNode.getType(),j,functionName);
+		
+			if(scope.locals.get(name) != null) {
+				GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
 				
-			}
+				GoTypeCheckingVisitor.TCAssignmentError(name, rhs,node, j, scope.locals.get(name),assignmentNode);
+				
+			}else {
+					String functionName = ((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier();
+					GoRootNode j =  allFunctions.get(functionName);
+					GoTypeCheckingVisitor.TCInitialization(node,rhs,assignmentNode.getType(),j,functionName);
+					
+				}
 			
 		}
 		

@@ -16,5 +16,10 @@ public class GoIRFieldListNode extends GoBaseIRNode {
 
     @Override
     public Object accept(GoIRVisitor visitor) { return visitor.visitFieldList(this); }
+    
+    public String TCself() {
+    	System.out.println("//////" +fields.TCself());
+    	return fields.TCself();
+    }
 
 }

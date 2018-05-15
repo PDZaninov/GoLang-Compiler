@@ -41,5 +41,14 @@ public class GoIRArrayListExprNode extends GoBaseIRNode {
 		
 		return children;
 	}
+	
+	public String TCself() {
+		String a = "";
+		for (int i = 0; i <children.size(); i++){
+			a += ","+children.get(i).TCself();
+			System.out.println("aaa" + a);
+		}
+		return a;
+	}
 
 }

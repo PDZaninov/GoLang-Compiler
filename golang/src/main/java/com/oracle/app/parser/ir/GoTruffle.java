@@ -70,7 +70,7 @@ import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
-import com.oracle.app.parser.TypeChecking;
+import com.oracle.app.parser.GoTypeCheckingVisitor;
 import com.oracle.app.parser.ir.nodes.*;
 import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.truffle.api.frame.FrameDescriptor;
@@ -320,21 +320,21 @@ public class GoTruffle implements GoIRVisitor {
 		return result;
 	}
 
-	public GoIntNode visitIRIntNode(GoIRIntNode node){
+	public Object visitIRIntNode(GoIRIntNode node){
 		GoIntNode result = new GoIntNode(node.getValue());
 		//result.setSourceSection(node.getSource(source));
 		return result;
 	}
 
-	public GoFloat32Node visitIRFloat32Node(GoIRFloat32Node node) { 
+	public Object visitIRFloat32Node(GoIRFloat32Node node) { 
 		return new GoFloat32Node(node.getValue());
 	}
 
-	public GoFloat64Node visitIRFloat64Node(GoIRFloat64Node node) { 
+	public Object visitIRFloat64Node(GoIRFloat64Node node) { 
 		return new GoFloat64Node(node.getValue()); 
 	}
 	
-	public GoStringNode visitIRStringNode(GoIRStringNode node){
+	public Object visitIRStringNode(GoIRStringNode node){
 		GoStringNode result = new GoStringNode(node.getValue());
 		//result.setSourceSection(node.getSource(source));
 		return result;
@@ -346,11 +346,16 @@ public class GoTruffle implements GoIRVisitor {
 		
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
 
+		
 		GoRootNode j = allFunctions.get(node.getFunctionNode().getIdentifier());
-		GoException m = TypeChecking.TCInvokeArgNum(j,node);
-		if(m!=null) {
-			throw m;
+		
+		//Type Checking
+		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
+		GoException error = (GoException) miniVisitor.visitInvoke(node);
+		if(error!=null) {
+			throw error;
 		}
+		//end type checking
 		
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
@@ -441,11 +446,19 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		
 		GoIRFieldListNode r = (GoIRFieldListNode) curFunctionType.getResults();
-
-		GoException m = TypeChecking.TCReturnTypes(r,node);
-		if(m != null) {
-			throw m;
+		
+		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
+		String side2 = (String) miniVisitor.visitReturnStmt(node);
+		String side1 = (String) miniVisitor.visitFieldList(r);
+		GoException error = GoTypeCheckingVisitor.Compare(side1,side2);
+		if(error!=null) {
+			throw error;
 		}
+		
+//		GoException m = GoTypeCheckingVisitor.TCReturnTypes(r,node);
+//		if(m != null) {
+//			throw m;
+//		}
 		 
 		
 		//everything above is for type checking

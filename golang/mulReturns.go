@@ -1,7 +1,7 @@
 package main
 
 func vals() (int, int){
-return 5+3,7
+return 5,7
 }
 
 func main(){

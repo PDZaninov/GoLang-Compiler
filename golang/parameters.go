@@ -1,14 +1,15 @@
 package main
 
-import (
-	"fmt"
-)
-
+func me(){
+	return 1
+}
 func add(x int, y int) int {
-    fmt.Println("in the function")
-	return x + y
+    println("in the function")
+	z := x + y
+	return z
 }
 
 func main() {
-	fmt.Println(add(42, 13))
+	println(add(42, 13))
+	println(me())
 }
