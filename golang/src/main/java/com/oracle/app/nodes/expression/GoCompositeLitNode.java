@@ -48,7 +48,8 @@ public abstract class GoCompositeLitNode extends GoExpressionNode {
 				for(Object value : elements){
 					GoKeyValueNode unboxedval = (GoKeyValueNode) value;
 					Object key = unboxedval.getKeyResult();
-					//If the property is the function
+					//If the property is the method receiver, it technically should be not found, but truffle crashes.
+					//It probably needs some location property read.
 					if(!struct.hasProperty(key) || struct.getProperty(key).getFlags() == STRUCT_METHOD){
 						throw new GoException("unknown field \'"+key+"\' in struct literal of type "+ getType().getName());
 					}
@@ -61,6 +62,7 @@ public abstract class GoCompositeLitNode extends GoExpressionNode {
 				return newStruct;
 			}
 			else{
+				//Need to get a list of the struct field keys, struct methods are listed as properties in the shape.
 				List<Object> keylist = struct.getKeyList(getKeyList());
 				if(elements.length != keylist.size()){
 					throw new GoException("too few values in struct initializer");
