@@ -1,14 +1,15 @@
 package com.oracle.app.nodes.call;
 
+import java.util.Arrays;
+
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
-import com.oracle.app.runtime.GoFunction;
 import com.oracle.truffle.api.CompilerAsserts;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.StandardTags;
 import com.oracle.truffle.api.nodes.ExplodeLoop;
 import com.oracle.truffle.api.nodes.NodeInfo;
+import com.oracle.truffle.api.object.DynamicObject;
 
 @NodeInfo(shortName = "invoke")
 public class GoInvokeNode extends GoExpressionNode {
@@ -24,9 +25,6 @@ public class GoInvokeNode extends GoExpressionNode {
         this.dispatchNode = GoGenericDispatchNodeGen.create();
     }
 
-    /*
-     * Executes only the generic function call. So only the slow route is available for function calls
-     */
     @ExplodeLoop
     @Override
     public Object executeGeneric(VirtualFrame frame) {
@@ -38,6 +36,15 @@ public class GoInvokeNode extends GoExpressionNode {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
 
+        if(functionNode instanceof GoSelectorExprNode){
+        	Object selector = ((GoSelectorExprNode) functionNode).getSelector(frame);
+        	if(selector instanceof DynamicObject){
+        		Object[] newargvalues = Arrays.copyOf(argumentValues, argumentNodes.length+1);
+        		newargvalues[argumentNodes.length] = selector;
+        		argumentValues = newargvalues;
+        	}
+        }
+        
         return dispatchNode.executeDispatch(function, argumentValues);
     }
 

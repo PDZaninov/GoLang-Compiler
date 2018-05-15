@@ -75,7 +75,7 @@ public final class GoContext {
         CompilerDirectives.transferToInterpreter();
         throw new IllegalStateException(a + " is not a Truffle value");
     }
-    
+     
     @TruffleBoundary
     private static long fromForeignNumber(Object a) {
         return ((Number) a).longValue();

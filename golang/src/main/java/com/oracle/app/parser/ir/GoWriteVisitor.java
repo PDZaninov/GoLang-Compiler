@@ -69,7 +69,8 @@ public class GoWriteVisitor implements GoIRVisitor {
 		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		String name = node.getName().getIdentifier();
-		return GoStructPropertyWriteNodeGen.create(expr, new GoStringNode(name), value);
+		boolean createProperty = false;
+		return GoStructPropertyWriteNodeGen.create(createProperty, expr, value, name);
 		
 	}
 }

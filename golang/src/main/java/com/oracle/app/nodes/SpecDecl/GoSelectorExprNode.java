@@ -8,10 +8,13 @@ import com.oracle.app.nodes.local.GoReadPropertyNodeGen;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.object.DynamicObject;
 
-@NodeChildren({@NodeChild(value="name"),@NodeChild(value="field",type=GoIdentNode.class)})
+@NodeChildren({@NodeChild(value="varname"),@NodeChild(value="field",type=GoIdentNode.class)})
 public abstract class GoSelectorExprNode extends GoExpressionNode {
+	
+	public abstract GoExpressionNode getVarname();
 	
 	@Specialization
 	public Object executeStruct(DynamicObject struct, String field){
@@ -22,6 +25,10 @@ public abstract class GoSelectorExprNode extends GoExpressionNode {
 	@Specialization
 	public Object executeImport(FmtFunctionList imports, String function){
 		return imports.getFunction(function);
+	}
+	
+	public Object getSelector(VirtualFrame frame){
+		return getVarname().executeGeneric(frame);
 	}
 	
 }

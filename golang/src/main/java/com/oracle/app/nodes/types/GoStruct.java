@@ -14,5 +14,4 @@ public class GoStruct extends ObjectType{
     
     private GoStruct(){
     }
-
 }
