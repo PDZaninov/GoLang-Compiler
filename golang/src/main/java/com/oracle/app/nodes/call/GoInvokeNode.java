@@ -35,7 +35,10 @@ public class GoInvokeNode extends GoExpressionNode {
         for (int i = 0; i < argumentNodes.length; i++) {
             argumentValues[i] = argumentNodes[i].executeGeneric(frame);
         }
-
+        
+        //This is used for struct methods. The struct passes itself as an argument to the method, but this is
+        // a bad way of passing the struct to the function arguments.
+        //TODO This should not be here. Think of a better place to insert the struct object into the arguments
         if(functionNode instanceof GoSelectorExprNode){
         	Object selector = ((GoSelectorExprNode) functionNode).getSelector(frame);
         	if(selector instanceof DynamicObject){
