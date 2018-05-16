@@ -403,8 +403,11 @@ public class GoTruffle implements GoIRVisitor {
 			String side2 = "";
 			GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
 			side1 = (String) f.getParams().accept(miniVisitor);
-			side2 = (String)node.accept(miniVisitor);//idk why but the node.accept(this) was going to default
-			GoException error = GoTypeCheckingVisitor.Compare(side1, side2,"gotruffle, visitInvoke");
+			GoIRArrayListExprNode child = node.getArgumentNode();
+			if(child!= null) {
+				side2 = (String)child.accept(miniVisitor);
+			}
+			GoException error = GoTypeCheckingVisitor.Compare(side1, side2,"gotruffle, visitInvoke (" + side1 + "||||" + side2 + ")");
 			if(error!=null) {
 				throw error;
 			}
@@ -511,6 +514,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
 		String side1 = (String) miniVisitor.visitFieldList(r);
 		String side2 = (String) miniVisitor.visitReturnStmt(node);
+		System.out.println(side1 + "||||||" + side2);
 		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt");
 		if(error!=null) {
 			throw error;

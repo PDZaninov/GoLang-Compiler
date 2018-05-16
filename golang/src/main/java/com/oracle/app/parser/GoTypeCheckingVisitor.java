@@ -53,10 +53,9 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 	public Object visitInvoke(GoIRInvokeNode node){
 			String b = "";
 			
-			if(node != null) {
-				if(node.getArgumentNode()!= null) {
-					b = (String) node.getArgumentNode().accept(this);
-				}
+			GoIRFuncTypeNode t = GoTruffle.IRFunctions.get(node.getFunctionNode().getIdentifier());
+			if(t != null) {
+				b = (String) t.getResults().accept(this);
 			}
 			return b;
 	}	
@@ -197,14 +196,13 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 			side2 = new String[] {""};
 		}
 		if(side1.length != side2.length) {
-			System.out.println(message);
-			return new GoException("Uneven assignment: " + side1.length + "," + side2.length);
+			return new GoException("Uneven assignment: (" + side1.length + "," + side2.length + ") " + message);
 			
 		}
 		for(int i = 0; i < side2.length; i ++) {
 			System.out.println(message + "-- " + side1[i] + "," + side2[i]);
 			if(!(side1[i].equalsIgnoreCase(side2[i]))) {
-				return new GoException("Unequal types: " + side1[i] + "," + side2[i]);
+				return new GoException("Unequal types: (" + side1[i] + "," + side2[i] + ") " + message);
 			}
 		}
 		

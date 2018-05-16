@@ -1,15 +1,12 @@
 package main
 
 func me() int {
-	return 1
+	return add(10,11)
 }
-func add(x int, y int) int {
-    println("in the function")
-	z := x + y
-	return z
+func add() int {
+	return me()
 }
 
 func main() {
-	println(add(42, 13))
 	println(me())
 }
