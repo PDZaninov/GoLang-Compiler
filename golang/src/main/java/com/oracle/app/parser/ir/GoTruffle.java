@@ -399,8 +399,8 @@ public class GoTruffle implements GoIRVisitor {
 		//can only check call expr that arent builtins
 		GoIRFuncTypeNode f = IRFunctions.get(node.getFunctionNode().getIdentifier());
 		if(f!=null) {
-			String side1 = "";
-			String side2 = "";
+			String side1 = "";//types of the function signature
+			String side2 = "";//type of arguments passed in
 			GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
 			side1 = (String) f.getParams().accept(miniVisitor);
 			GoIRArrayListExprNode child = node.getArgumentNode();
@@ -514,7 +514,6 @@ public class GoTruffle implements GoIRVisitor {
 		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
 		String side1 = (String) miniVisitor.visitFieldList(r);
 		String side2 = (String) miniVisitor.visitReturnStmt(node);
-		System.out.println(side1 + "||||||" + side2);
 		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt");
 		if(error!=null) {
 			throw error;
