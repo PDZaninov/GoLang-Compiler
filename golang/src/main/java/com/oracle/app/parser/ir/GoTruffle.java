@@ -345,7 +345,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
-		if(functionNode instanceof GoReadLocalVariableNode){
+		if(functionNode instanceof GoReadLocalVariableNode || functionNode instanceof GoIdentNode){
 			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
 		}
 		GoArrayExprNode arguments = null;
@@ -383,10 +383,12 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
-		startFunction();
-		
 		GoIdentNode nameNode = (GoIdentNode) node.getName().accept(this);
 		String name = node.getIdentifier();
+		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
+		lexicalscope.locals.put(name, slot);
+		startFunction();
+		
 		GoFuncTypeNode typeNode = (GoFuncTypeNode) node.getType().accept(this);
 		GoFieldNode receiver = null;
 		if(node.isReceiver()){
@@ -399,8 +401,6 @@ public class GoTruffle implements GoIRVisitor {
 		allFunctions.put(name,root);
 		finishBlock();
 
-		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
-		lexicalscope.locals.put(name, slot);
 		GoFunctionLiteralNode funcLit = new GoFunctionLiteralNode(language, name);
 
 		if(node.isReceiver()){

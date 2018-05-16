@@ -32,6 +32,7 @@ public class GoIdentNode extends GoExpressionNode{
 		return reference.get().getFunctionRegistry().lookup(name, false);
 	}
 	
+	@Override
 	public String getName(){
 		return name;
 	}
