@@ -2,7 +2,7 @@ package main
 
 func vals(lol int, rofl int) (int,int,int){
 x:=0
-return lol,rofl,x
+return lol,rofl,x+6
 
 }
 
@@ -10,8 +10,12 @@ func me(x int) int {
 return x
 
 }
+func sing(){
+	println("sing")
+}
 
 func main() {
+	sing()
 	var yoyo int = me(3)
 	println(yoyo)
 	var x,y,zzz  = vals(5,yoyo)
@@ -31,12 +35,6 @@ func main() {
 	println(d)
 	println(f)
 	println(g)
-	x = me(3)
 	println(me(3))
-	array := make([]string,5)
-	array = make([]string, 10, 15)
-	sucker := append(array,"a","b")
-	println(len(array))
-	println(cap(sucker))
 	
 }

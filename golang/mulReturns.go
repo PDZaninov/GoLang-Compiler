@@ -4,8 +4,11 @@ func vals() (int, int){
 return 5,7+3
 }
 
+func me() int{
+	var b,c = vals()
+	return b+c
+}
 func main(){
 
-	var a , n = vals()
-	println(a+n)
+	println(me())
 }

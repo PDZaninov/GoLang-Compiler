@@ -19,6 +19,8 @@ import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRCompositeLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
+import com.oracle.app.parser.ir.nodes.GoIRFuncTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRIdentNode;
 import com.oracle.app.parser.ir.nodes.GoIRIndexNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
@@ -38,14 +40,12 @@ import com.oracle.truffle.api.frame.FrameSlot;
  */
 public class GoWriteVisitor implements GoIRVisitor {
 
-	private LexicalScope scope;
 	private GoTruffle truffleVisitor;
 	private FrameDescriptor frame;
 	private GoIRAssignmentStmtNode assignmentNode;
 	private Map<String, GoRootNode> allFunctions;
 	
 	public GoWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode, Map<String, GoRootNode> allFunctions){
-		this.scope = scope;
 		truffleVisitor = visitor;
 		this.frame = frame;
 		this.assignmentNode = assignmentNode;
@@ -69,47 +69,45 @@ public class GoWriteVisitor implements GoIRVisitor {
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
 
 		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-		String side2 = (String) rhs.accept(miniVisitor);
-		if(scope.locals.get(name)!=null) {//variable assigned a type
+		String side2 = "";
+
+		if(rhs instanceof GoIRInvokeNode) {
+			//usually type checking invoke gets arguments passed, but we want return types
+			GoIRFuncTypeNode funcn = GoTruffle.IRFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
+			if(funcn !=null) {
+				side2 = ((String) funcn.getResults().accept(miniVisitor)).split(",")[node.getAssignPos()];
+			}else {//idk how to check builtins TODO
+				GoTruffle.lexicalscope.locals.put(name,new TypeInfo(name, "object", false, slot));
+				return GoWriteLocalVariableNodeGen.create(value, slot);
+			}
+		}else {
+			side2 = (String) rhs.accept(miniVisitor);
+		}
+		if(rhs instanceof GoIRSliceExprNode) {
+			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
+			System.out.println("777:" + GoTruffle.lexicalscope.locals.get(childName).getType());
+			GoTruffle.lexicalscope.locals.put(name,  new TypeInfo(name, GoTruffle.lexicalscope.locals.get(childName).getType(), false, slot));
+		}
+		else {
+			GoTruffle.lexicalscope.locals.put(name,new TypeInfo(name, side2, false, slot));
+		}
+
+		//type checking
+		if(GoTruffle.lexicalscope.locals.get(name)!=null) {//variable assigned a type
 			String side1 = (String) node.accept(miniVisitor);
 			GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"writevisitor, visit ident");
 			if(error != null) {
 				throw error;
 			}
 		}
-		// Check if the rhs is an instance of types, then just directly get the value type
-		if(rhs instanceof GoIRTypes) {
-			scope.locals.put(name,new TypeInfo(name, side2, false, slot));
-		}
-		
-		/*
-		 * Various other instances. Specific to those cases in the IR, get type by the identifier.
-		 */
-		else if(rhs instanceof GoIRCompositeLitNode) {
-			if(((GoIRCompositeLitNode) rhs).getExpr() instanceof GoIRArrayTypeNode) {
-				GoIRArrayTypeNode child = (GoIRArrayTypeNode) ((GoIRCompositeLitNode) rhs).getExpr();
-				System.out.println("555:" + child.getType().getIdentifier().toUpperCase());
-				scope.locals.put(name,  new TypeInfo(name, child.getType().getIdentifier().toUpperCase(), false, slot));
-			}
-			else {
-				String childName = ((GoIRIdentNode) ((GoIRCompositeLitNode) rhs).getExpr()).getIdentifier();
-				System.out.println("666:" + scope.locals.get(childName).getType());
-				scope.locals.put(name,  new TypeInfo(name, scope.locals.get(childName).getType(), false, slot));
-			}
-		}
-		else if(rhs instanceof GoIRSliceExprNode) {
-			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
-			System.out.println("777:" + scope.locals.get(childName).getType());
-			scope.locals.put(name,  new TypeInfo(name, scope.locals.get(childName).getType(), false, slot));
-		}
-		else {
-			scope.locals.put(name,  new TypeInfo(name, side2, false, slot));
-		}
+		GoTruffle.lexicalscope.locals.put(name,new TypeInfo(name, side2, false, slot));
 
 		return GoWriteLocalVariableNodeGen.create(value, slot);
 	}
 	
 	public Object visitIndexNode(GoIRIndexNode node) {
+		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor();
+		node.accept(mini);
 		GoReadLocalVariableNode array = (GoReadLocalVariableNode) node.getName().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoExpressionNode index = (GoExpressionNode)node.getIndex().accept(truffleVisitor);
