@@ -434,7 +434,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
 		String name = node.getIdentifier();
-		GoIRFuncDeclNode popped = funcOrder.pop();
+		funcOrder.pop();
 		//int start = nameNode.getSourceSection().getCharIndex();
 		//int end = blockNode.getSourceSection().getCharEndIndex();
 		//SourceSection section = source.createSection(start, end);
