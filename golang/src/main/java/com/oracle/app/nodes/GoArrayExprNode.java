@@ -18,6 +18,10 @@ public class GoArrayExprNode extends GoExpressionNode {
 		return children.length;
 	}
 
+	public int getSize(){
+		return children.length;
+	}
+	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		for(GoExpressionNode child : children){

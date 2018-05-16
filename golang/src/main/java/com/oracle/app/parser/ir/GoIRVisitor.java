@@ -219,4 +219,9 @@ public interface GoIRVisitor {
 		return null;
 	}
 
+	default Object visitMapType(GoIRMapTypeNode goIRMapTypeNode){
+		System.out.println("Default Map Type visit");
+		return null;
+	}
+
 }

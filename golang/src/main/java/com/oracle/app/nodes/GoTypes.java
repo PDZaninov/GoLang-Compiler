@@ -2,6 +2,7 @@ package com.oracle.app.nodes;
 
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoPointerNode;
+import com.oracle.app.nodes.types.GoMap;
 import com.oracle.app.nodes.types.GoSlice;
 import com.oracle.app.nodes.types.GoStruct;
 import com.oracle.app.runtime.GoFunction;
@@ -15,6 +16,7 @@ import com.oracle.truffle.api.dsl.TypeSystem;
 	boolean.class,
 	GoArray.class,
 	GoSlice.class,
+	GoMap.class,
 	String.class,
 	GoFunction.class,
 	GoPointerNode.class,

@@ -1,11 +1,13 @@
 package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
+import com.oracle.app.nodes.types.FieldNode;
 import com.oracle.app.nodes.types.GoArray.GoFloat32Array;
 import com.oracle.app.nodes.types.GoArray.GoFloat64Array;
 import com.oracle.app.nodes.types.GoArray.GoIntArray;
 import com.oracle.app.nodes.types.GoArray.GoObjectArray;
 import com.oracle.app.nodes.types.GoArray.GoStringArray;
+import com.oracle.app.nodes.types.GoMap;
 import com.oracle.app.nodes.types.GoSlice.GoFloat32Slice;
 import com.oracle.app.nodes.types.GoSlice.GoFloat64Slice;
 import com.oracle.app.nodes.types.GoSlice.GoIntSlice;
@@ -77,6 +79,11 @@ public abstract class GoArrayReadNode extends GoExpressionNode {
 	@Specialization
 	protected Object readObject(VirtualFrame frame, int index, GoObjectSlice array){
 		return array.read(index);
+	}
+	
+	@Specialization
+	protected Object readMap(VirtualFrame frame, Object key, GoMap map){
+		return map.read(new FieldNode(key,null));
 	}
 
 }

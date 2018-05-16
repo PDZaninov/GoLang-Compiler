@@ -3,17 +3,23 @@ package com.oracle.app.nodes.SpecDecl;
 import com.oracle.app.builtins.fmt.FmtFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
-import com.oracle.app.nodes.types.GoStruct;
+import com.oracle.app.nodes.local.GoReadPropertyNode;
+import com.oracle.app.nodes.local.GoReadPropertyNodeGen;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
+import com.oracle.truffle.api.frame.VirtualFrame;
+import com.oracle.truffle.api.object.DynamicObject;
 
-@NodeChildren({@NodeChild(value="name"),@NodeChild(value="field",type=GoIdentNode.class)})
+@NodeChildren({@NodeChild(value="varname"),@NodeChild(value="field",type=GoIdentNode.class)})
 public abstract class GoSelectorExprNode extends GoExpressionNode {
-
+	
+	public abstract GoExpressionNode getVarname();
+	
 	@Specialization
-	public Object executeStruct(GoStruct struct, String field){
-		return struct.read(field);
+	public Object executeStruct(DynamicObject struct, String field){
+		GoReadPropertyNode property = GoReadPropertyNodeGen.create(); 
+		return property.doRead(struct, field);
 	}
 	
 	@Specialization
@@ -21,20 +27,8 @@ public abstract class GoSelectorExprNode extends GoExpressionNode {
 		return imports.getFunction(function);
 	}
 	
-    //Only covering for the case of a struct selector currently
-    //TO-DO Make sure this does not overlap with import selectors
-	/*
-    @Override
-    public Object executeGeneric(VirtualFrame frame) {
-    	GoExpressionNode result = (GoExpressionNode) expr.executeGeneric(frame);
-    	if(result instanceof GoStruct){
-    		return ((GoStruct) result).read(name.getName());
-    	}
-    	else{
-    		//The selector expression variable was not found in the framedescriptor, error
-    		System.out.println("Undefined selector");
-    		return null;
-    	}
-    }
-	*/
+	public Object getSelector(VirtualFrame frame){
+		return getVarname().executeGeneric(frame);
+	}
+	
 }

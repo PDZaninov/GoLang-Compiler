@@ -6,15 +6,15 @@ import com.oracle.app.parser.ir.GoIRVisitor;
 public class GoIRFieldNode extends GoBaseIRNode {
 
 	private GoIRArrayListExprNode names;
-	private GoIRIdentNode type;
+	private GoBaseIRNode type;
 	
-	public GoIRFieldNode(String name,GoIRArrayListExprNode names, GoIRIdentNode type) {
+	public GoIRFieldNode(String name,GoIRArrayListExprNode names, GoBaseIRNode type) {
 		super(name);
 		this.names = names;
 		this.type = type;
 	}
 
-	public GoIRFieldNode(String name, GoIRIdentNode type) {
+	public GoIRFieldNode(String name, GoBaseIRNode type) {
 		super(name);
 		this.type = type;
 	}
@@ -23,7 +23,7 @@ public class GoIRFieldNode extends GoBaseIRNode {
 		return names;
 	}
 	
-	public GoIRIdentNode getType() {
+	public GoBaseIRNode getType() {
 		return type;
 	}
 	

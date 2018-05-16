@@ -251,10 +251,10 @@ public class Parser {
 				
 			case "Field":
 				if(body.size()==2) {
-					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")), (GoIRIdentNode) body.get("Type"));
+					return new GoIRFieldNode(nodeType,((GoIRArrayListExprNode)body.get("Names")), body.get("Type"));
 				}
 				else {
-					return new GoIRFieldNode(nodeType, (GoIRIdentNode) body.get("Type"));
+					return new GoIRFieldNode(nodeType, body.get("Type"));
 				}
 				
 			case "]*ast.Field":
@@ -339,6 +339,8 @@ public class Parser {
 						);
 			case "KeyValueExpr":
 				return new GoIRKeyValueNode(body.get("Key"),attrs.get("Colon"),body.get("Value"));
+			case "MapType":
+				return new GoIRMapTypeNode(body.get("Key"),body.get("Value"));
 			case "Object":
 				return new GoIRObjectNode(body.get("Decl"), attrs.get("Kind"));
 				
@@ -485,15 +487,11 @@ public class Parser {
 
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
-		
-		if(rhs.getChildren().get(0) instanceof GoIRInvokeNode)
-			{
-				for(int i = 0; i < size;i++){
-					((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
-					((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
-					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0), type ));
-				}
-				return new GoIRArrayListExprNode(result, source);
+		if(lhs.getSize() != rhs.getSize()){
+			//TODO, REDO ALL OF THIS
+			//TODO, to do
+			for(int i = 0; i < size;i++){
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
 			}
 
 		if(lhs.getSize() != rhs.getSize())
