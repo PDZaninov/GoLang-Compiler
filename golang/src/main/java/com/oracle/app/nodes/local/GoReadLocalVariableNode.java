@@ -1,9 +1,7 @@
 package com.oracle.app.nodes.local;
 
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.types.GoArray.GoIntArray;
 import com.oracle.truffle.api.CompilerDirectives;
-import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeField;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -13,7 +11,12 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 
 @NodeField(name = "slot", type = FrameSlot.class)
 public abstract class GoReadLocalVariableNode extends GoExpressionNode {
-
+	
+	@Override
+	public String getName(){
+		return (String) getSlot().getIdentifier();
+	}
+	
     @Override
 	public String toString() {
 		return "GoReadLocalVariableNode [ "+getSlot()+" ]";
@@ -52,24 +55,12 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
         return FrameUtil.getBooleanSafe(frame, getSlot());
     }
     
-    @Specialization(guards = "isArray(frame)")
-    protected Object readArray(VirtualFrame frame) {
-    	
-        return FrameUtil.getObjectSafe(frame, getSlot());
-    }
-    
-    @Specialization(guards = "isSlice(frame)")
-    protected Object readSlice(VirtualFrame frame) {
-    	
-        return FrameUtil.getObjectSafe(frame, getSlot());
-    }
-    
     @Specialization(guards = "isString(frame)")
     protected Object readString(VirtualFrame frame) {
         return FrameUtil.getObjectSafe(frame, getSlot());
     }
 
-    @Specialization(replaces = {"readInt", "readFloat","readDouble", "readLong", "readBoolean", "readArray", "readSlice", "readString"})
+    @Specialization(replaces = {"readInt", "readFloat","readDouble", "readLong", "readBoolean", "readString"})
     protected Object readObject(VirtualFrame frame) {
         if (!frame.isObject(getSlot())) {
             CompilerDirectives.transferToInterpreter();
@@ -102,14 +93,6 @@ public abstract class GoReadLocalVariableNode extends GoExpressionNode {
     }
     
     protected boolean isString( VirtualFrame frame) {
-        return getSlot().getKind() == FrameSlotKind.Object;
-    }
-    
-    protected boolean isArray( VirtualFrame frame) {
-        return getSlot().getKind() == FrameSlotKind.Object;
-    }
-    
-    protected boolean isSlice( VirtualFrame frame) {
         return getSlot().getKind() == FrameSlotKind.Object;
     }
    

@@ -14,7 +14,6 @@ import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
-import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNodeGen;
 import com.oracle.app.nodes.call.GoFieldNode;
 import com.oracle.app.nodes.call.GoFuncTypeNode;
@@ -36,6 +35,7 @@ import com.oracle.app.nodes.expression.GoBitwiseComplementNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseOrNodeGen;
 import com.oracle.app.nodes.expression.GoBitwiseXORNodeGen;
 import com.oracle.app.nodes.expression.GoCompositeLitNode;
+import com.oracle.app.nodes.expression.GoCompositeLitNodeGen;
 import com.oracle.app.nodes.expression.GoDivNodeGen;
 import com.oracle.app.nodes.expression.GoEqualNodeGen;
 import com.oracle.app.nodes.expression.GoGreaterOrEqualNodeGen;
@@ -62,11 +62,13 @@ import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
 import com.oracle.app.nodes.local.GoReadLocalVariableNodeGen;
+import com.oracle.app.nodes.local.GoStructPropertyWriteNodeGen;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNode;
 import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoFloat32Node;
 import com.oracle.app.nodes.types.GoFloat64Node;
+import com.oracle.app.nodes.types.GoFunctionLiteralNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
@@ -160,6 +162,9 @@ public class GoTruffle implements GoIRVisitor {
         frameDescriptor = new FrameDescriptor();
     }
 	
+	/**
+	 * The global scope needs to be initialized with default values before execution
+	 */
 	public void initialize(){
         startFunction();
         FrameSlot frameSlot;
@@ -340,6 +345,9 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
+		if(functionNode instanceof GoReadLocalVariableNode || functionNode instanceof GoIdentNode){
+			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
+		}
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
 			arguments = (GoArrayExprNode) node.getArgumentNode().accept(this);
@@ -353,25 +361,53 @@ public class GoTruffle implements GoIRVisitor {
 		//result.setSourceSection(source.createSection(start,end));
 		return result;
 	}
+	
+	public GoFieldNode appendReceiver(GoIRFuncDeclNode node, GoFuncTypeNode typeNode){
+		GoFieldNode receiver = handleStructFieldList((GoIRFieldListNode) node.getReceiver())[0];
+		//Receivers will only have one field. Multiple fields are not allowed.
+		//TODO error check on multiple receivers
+		FrameSlot slot = frameDescriptor.addFrameSlot(receiver.getName());
+		lexicalscope.locals.put(receiver.getName(), slot);
+		int structargcount;
+		if(typeNode.getParams() == null){
+			structargcount = 0;
+		}
+		else{
+			structargcount = typeNode.getParams().getSize();
+		}
+		GoReadArgumentsNode value = new GoReadArgumentsNode(structargcount);
+		GoWriteLocalVariableNode structToAppend = GoWriteLocalVariableNodeGen.create(value, slot);
+		typeNode.appendReceiverStruct(structToAppend);
+		return receiver;
+	}
 
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
-		startFunction();
 		GoIdentNode nameNode = (GoIdentNode) node.getName().accept(this);
+		String name = node.getIdentifier();
+		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
+		lexicalscope.locals.put(name, slot);
+		startFunction();
+		
 		GoFuncTypeNode typeNode = (GoFuncTypeNode) node.getType().accept(this);
+		GoFieldNode receiver = null;
+		if(node.isReceiver()){
+			receiver = appendReceiver(node,typeNode);
+		}
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
-		String name = node.getIdentifier();
-		//int start = nameNode.getSourceSection().getCharIndex();
-		//int end = blockNode.getSourceSection().getCharEndIndex();
-		//SourceSection section = source.createSection(start, end);
-		//System.out.println(section);
+		
 		GoRootNode root = new GoRootNode(language,frameDescriptor,nameNode,typeNode,bodyNode,null,name);
 		allFunctions.put(name,root);
 		finishBlock();
-		
-		//frameDescriptor = null;
-		return null;
+
+		GoFunctionLiteralNode funcLit = new GoFunctionLiteralNode(language, name);
+
+		if(node.isReceiver()){
+			boolean createProperty = true;
+			return GoStructPropertyWriteNodeGen.create(createProperty, receiver.getType(), funcLit, name);
+		}
+		return GoWriteLocalVariableNodeGen.create(funcLit,slot);
 	}
 	
 	@Override
@@ -382,7 +418,7 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		GoArrayExprNode results = null;
 		if(node.getResults() != null) {
-			//Temporarily broken as visiting a fieldlist only works for parameters currently or if the returns are named
+			//TODO Temporarily broken as visiting a fieldlist only works for parameters currently or if the returns are named
 			//results = (GoArrayExprNode) node.getResults().accept(this);
 		}
 		return new GoFuncTypeNode(params, results);
@@ -390,25 +426,25 @@ public class GoTruffle implements GoIRVisitor {
 	
 	@Override
 	public Object visitField(GoIRFieldNode node){
-		GoArrayExprNode names = null;
 		GoReadLocalVariableNode typename = (GoReadLocalVariableNode) node.getType().accept(this);
+		GoFieldNode[] result = null;
 		if(node.getNames() != null) {
-            names = (GoArrayExprNode) node.getNames().accept(this);
-
             ArrayList<GoBaseIRNode> children = node.getNames().getChildren();
+            result = new GoFieldNode[children.size()];
             for (int i = 0; i < children.size(); i++) {
                 String name = children.get(i).getIdentifier();
                 FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
                 lexicalscope.locals.put(name, slot);
+                result[i] = new GoFieldNode(name,typename);
             }
         }
-
+		
 		// TODO 
 		// return types like "int". However they're ident nodes, and int is already in hashmap
 		// so accept ident returns read node but can't cast to ident
 		//GoIdentNode type = (GoIdentNode) node.getType().accept(this);
 		//String typeName = node.getTypeName();
-		return new GoFieldNode(names, typename);
+		return new GoArrayExprNode(result);
 	}
 	
 	@Override
@@ -438,7 +474,10 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBlockStmt(GoIRBlockStmtNode node) {
-		GoStatementNode[] body = (GoStatementNode[]) node.getChild().accept(this);
+		GoStatementNode[] body = null;
+		if(node.getChild() != null){
+			body = (GoStatementNode[]) node.getChild().accept(this);
+		}
 		GoBlockNode result = new GoBlockNode(body);
 		/*
 		if(body.length > 0){
@@ -619,7 +658,6 @@ public class GoTruffle implements GoIRVisitor {
 			max = (GoExpressionNode) node.getMax().accept(this);
 		}
 		GoSliceExprNode result = new GoSliceExprNode(expr,low,high,max);
-		
 
 		//String lbrack = node.getSource();
 		//int startLine = Integer.parseInt(lbrack.split(":")[1]);
@@ -637,7 +675,7 @@ public class GoTruffle implements GoIRVisitor {
 			type = (GoExpressionNode) node.getExpr().accept(this);
 		}
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
-		GoCompositeLitNode result = new GoCompositeLitNode(type, elts);
+		GoCompositeLitNode result = GoCompositeLitNodeGen.create(elts, type);
 		return result;
 	}
 	
@@ -818,29 +856,41 @@ public class GoTruffle implements GoIRVisitor {
 	/**
 	 * This is a seperate fieldlist visitor then the normal one because we do not write this fieldlist into the framedescriptor
 	 * The fieldlist needs to be returned and written inside a struct type.
-	 * Assumes that the fields will only be one field per line
+	 * TODO I think this covers for multiple fields on a line
 	 * @param node
 	 * @return A list of field nodes
 	 */
 	public GoFieldNode[] handleStructFieldList(GoIRFieldListNode node){
 		ArrayList<GoBaseIRNode> fields = node.getFields().getChildren();
-		GoFieldNode[] result = new GoFieldNode[fields.size()];
+		ArrayList<GoFieldNode> tempresult = new ArrayList<>();
+		for(int i = 0; i < fields.size(); i++){
+			GoFieldNode[] field = handleStructField((GoIRFieldNode) fields.get(i));
+			for(GoFieldNode child : field){
+				tempresult.add(child);
+			}
+		}
+		GoFieldNode[] result = new GoFieldNode[tempresult.size()];
 		for(int i = 0; i < result.length; i++){
-			result[i] = handleStructField((GoIRFieldNode) fields.get(i));
+			result[i] = tempresult.get(i);
 		}
 		return result;
 	}
 	
 	//Temporary function. Struct fields are not supposed to be added to the frame descriptor.
 	//This function is basically the same as the original visit without adding to the frame descriptor
-	//TO-DO Remove this function for a proper visit?
-	public GoFieldNode handleStructField(GoIRFieldNode node){
-		GoArrayExprNode names = null;
+	//TODO Remove this function for a proper visit? Also cover for blank identifier fields
+	public GoFieldNode[] handleStructField(GoIRFieldNode node){
 		GoReadLocalVariableNode typename = (GoReadLocalVariableNode) node.getType().accept(this);
+		GoFieldNode[] result = null;
 		if(node.getNames() != null) {
-            names = (GoArrayExprNode) node.getNames().accept(this);
+            ArrayList<GoBaseIRNode> children = node.getNames().getChildren();
+            result = new GoFieldNode[children.size()];
+            for(int i = 0; i < result.length; i++){
+            	String name = children.get(i).getIdentifier();
+            	result[i] = new GoFieldNode(name,typename);
+            }
         }
-		return new GoFieldNode(names, typename);
+		return result;
 	}
 	
 	/**
@@ -849,18 +899,19 @@ public class GoTruffle implements GoIRVisitor {
 	 * contain multiple idents and there are many fields in a fieldlist. So we need to go through every field
 	 * then every ident contained in a field. For every ident it finds it assigns a frameslot and a write from the readarguments.
 	 * 
-	 * This does not run through the return results yet.....
+	 * TODO This does not run through the return results yet.....
 	 */
 	@Override
 	public Object visitFieldList(GoIRFieldListNode node){
 		if(node.getFields() != null){
 			ArrayList<GoWriteLocalVariableNode> result = new ArrayList<>();
-			GoArrayExprNode args = (GoArrayExprNode) node.getFields().accept(this);
-			GoExpressionNode[] fields = (GoExpressionNode[]) args.getArguments();
+			GoExpressionNode[] fields =  ((GoArrayExprNode) node.getFields().accept(this)).getArguments();
+			//GoExpressionNode[] fields = (GoExpressionNode[]) args.getArguments();
 			int argumentindex = 0;
 			for(GoExpressionNode child : fields){
-				for(GoExpressionNode name : ((GoFieldNode) child).getNames()){
-					String fieldname = ((GoIdentNode) name).getName();
+				GoArrayExprNode boxedFields = (GoArrayExprNode) child;
+				for(GoExpressionNode unboxedfield : boxedFields.getArguments()){
+					String fieldname = unboxedfield.getName();
 					FrameSlot slot = lexicalscope.locals.get(fieldname);
 					GoReadArgumentsNode value = new GoReadArgumentsNode(argumentindex++);
 					result.add(GoWriteLocalVariableNodeGen.create(value, slot));

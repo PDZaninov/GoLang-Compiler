@@ -45,6 +45,7 @@ import java.math.BigInteger;
 
 import com.oracle.app.nodes.types.GoArray;
 import com.oracle.app.nodes.types.GoSlice;
+import com.oracle.app.runtime.GoContext;
 import com.oracle.truffle.api.dsl.TypeSystemReference;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.instrumentation.Instrumentable;
@@ -74,6 +75,14 @@ public abstract class GoExpressionNode extends GoStatementNode {
     @Override
     public void executeVoid(VirtualFrame frame) {
         executeGeneric(frame);
+    }
+    
+    /**
+     * Implement this method for types so that their identifiers are known
+     * @return The name of the variable
+     */
+    public String getName(){
+    	return "GoExpressionNode";
     }
 
     /*
