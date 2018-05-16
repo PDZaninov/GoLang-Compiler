@@ -342,6 +342,8 @@ public class Parser {
 						);
 			case "KeyValueExpr":
 				return new GoIRKeyValueNode(body.get("Key"),attrs.get("Colon"),body.get("Value"));
+			case "MapType":
+				return new GoIRMapTypeNode(body.get("Key"),body.get("Value"));
 			case "Object":
 				return new GoIRObjectNode(body.get("Decl"), attrs.get("Kind"));
 				

@@ -36,12 +36,19 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		
 	}
 	
+	/* returns a string of its children types
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitReturnStmt(com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode)
+	 */
 	public Object visitReturnStmt(GoIRReturnStmtNode node) {
 		 	return node.getChild().accept(this);
 	}
 	
-	
-	 public Object visitInvoke(GoIRInvokeNode node){
+	/* returns a string of its passed argument types
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitInvoke(com.oracle.app.parser.ir.nodes.GoIRInvokeNode)
+	 */
+	public Object visitInvoke(GoIRInvokeNode node){
 			String b = "";
 			
 			if(node != null) {
@@ -54,7 +61,10 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 	}	
 	 
 
-	
+	/* returns a concatenation of types by "," from its children
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitArrayListExpr(com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode)
+	 */
 	public Object visitArrayListExpr(GoIRArrayListExprNode node) {
 		String z = "";
 		if(node != null) {
@@ -73,7 +83,10 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		return z;
 	}
 	
-	
+	/* Returns the arraylistexpr string of types
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitFieldList(com.oracle.app.parser.ir.nodes.GoIRFieldListNode)
+	 */
 	public Object visitFieldList(GoIRFieldListNode node){
 		if(node!= null) {
 			if(node.getFields()!= null) {
@@ -83,11 +96,19 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		return "";
 	}
 	
+	/* Returns the type in the field
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitField(com.oracle.app.parser.ir.nodes.GoIRFieldNode)
+	 */
 	public Object visitField(GoIRFieldNode node)
 	{
 		return node.getType().getIdentifier();
 	}
 	
+	/* returns type of variable
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitIdent(com.oracle.app.parser.ir.nodes.GoIRIdentNode)
+	 */
 	public Object visitIdent(GoIRIdentNode node){
 		TypeInfo m = GoTruffle.lexicalscope.locals.get(node.getIdentifier());
 		if(m != null) {
@@ -96,72 +117,6 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		return "";
 	}
 	
-	
-	//probably fix some issues here
-	public static GoException TCInitialization(GoIRIdentNode node, GoBaseIRNode rhs, GoIRIdentNode type, GoRootNode j, String functionName) {
-		
-		if(node.getChild()!= null) {
-			int pos = node.getAssignPos();
-			
-			if(j != null) {
-				
-				if(j.getNumReturns() != ((GoIRInvokeNode) rhs).getAssignLen()) {
-					throw new GoException("assignment count mismatch: " + ((GoIRInvokeNode) rhs).getAssignLen() + " = " + Integer.toString(j.getNumReturns()));
-					
-				}
-				String rhsType = j.getIndexResultType(pos);
-				if(type == null) {
-					return null;
-				}
-				else if(type.getIdentifier().equalsIgnoreCase("object")) {
-					return null;
-				}
-				else if(!(type.getIdentifier().equalsIgnoreCase(rhsType))) {
-					return new GoException("cannot use " + functionName +"() (type " + rhsType + ") as type " +type.getIdentifier() + " in assignment");
-				}
-			}
-
-		}
-		return null;
-	}
-	
-	public static boolean TCAssignment(String name, GoBaseIRNode rhs, GoIRIdentNode node, GoRootNode j, TypeInfo type) {
-		if(rhs instanceof GoIRInvokeNode) 
-		{
-			int pos = node.getAssignPos();
-			
-			if(j==null) {//means it is a builtin
-				return true;
-			}
-			if(type.getType().equalsIgnoreCase(j.getIndexResultType(pos))||(type.getType().equals("object"))) {
-				return true;
-			}
-			throw new GoException("some erorr" + type.getType());
-		}
-		else if(!(rhs instanceof GoIRTypes)) {
-			return true;
-		}
-		else if(type.getType().equalsIgnoreCase("object")) {
-			return true;
-			//fix this later
-		}
-		String kind = ((GoIRTypes) rhs).getValueType();
-		if(kind.equals(type.getType())) {
-			return true;
-		}
-		return false;
-	}
-	
-	public static GoException TCAssignmentError(String name, GoBaseIRNode rhs, GoIRIdentNode node, GoRootNode j, TypeInfo type, GoIRAssignmentStmtNode assignmentNode) {
-		boolean typeCheck = GoTypeCheckingVisitor.TCAssignment(name, rhs,node, j,type);
-		if(typeCheck == false) {
-			String kind = type.getType();
-			String typeVal = ((GoIRBasicLitNode) rhs).getValString();
-			String typeName = ((GoIRBasicLitNode) assignmentNode.getRHS()).getType();
-			return new GoException("cannot use \"" + typeVal + "\" (type " + typeName.toLowerCase() + ") as type " + kind.toLowerCase() + " in assignment");
-		}
-		return null;
-	}
 	
 	
 	public Object visitIRIntNode(GoIRIntNode node){
@@ -180,6 +135,12 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		return node.getType();
 	}
 	
+	/* TODO must figure out proper promotion of types
+	 * and other actual typechecking, for now only check if they
+	 * are of the same type
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitBinaryExpr(com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode)
+	 */
 	public Object visitBinaryExpr(GoIRBinaryExprNode node){
 		String l = node.getType();
 		if(l!= null) {//already discovered type of children
@@ -196,6 +157,11 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		return l;
 	}
 	
+	/* Compares 2 strings in length then .equalsIgnoreCase
+	 * if not equal in length or content, return GoException
+	 * Prints out message for debugging
+	 * 
+	 */
 	public static GoException Compare(String a,String b, String message) {
 		String[] side1 = null;
 		String[] side2 = null;

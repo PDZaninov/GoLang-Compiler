@@ -67,20 +67,19 @@ public class GoWriteVisitor implements GoIRVisitor {
 		GoExpressionNode value = (GoExpressionNode) rhs.accept(truffleVisitor);
 		
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
-		
+
+		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
+		String side2 = (String) rhs.accept(miniVisitor);
 		if(scope.locals.get(name)!=null) {//variable assigned a type
-			GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
 			String side1 = (String) node.accept(miniVisitor);
-			String side2 = (String) rhs.accept(miniVisitor);
 			GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"writevisitor, visit ident");
 			if(error != null) {
 				throw error;
 			}
 		}
-		
 		// Check if the rhs is an instance of types, then just directly get the value type
 		if(rhs instanceof GoIRTypes) {
-			scope.locals.put(name,new TypeInfo(name, ((GoIRTypes) rhs).getValueType(), false, slot));
+			scope.locals.put(name,new TypeInfo(name, side2, false, slot));
 		}
 		
 		/*
@@ -89,19 +88,22 @@ public class GoWriteVisitor implements GoIRVisitor {
 		else if(rhs instanceof GoIRCompositeLitNode) {
 			if(((GoIRCompositeLitNode) rhs).getExpr() instanceof GoIRArrayTypeNode) {
 				GoIRArrayTypeNode child = (GoIRArrayTypeNode) ((GoIRCompositeLitNode) rhs).getExpr();
+				System.out.println("555:" + child.getType().getIdentifier().toUpperCase());
 				scope.locals.put(name,  new TypeInfo(name, child.getType().getIdentifier().toUpperCase(), false, slot));
 			}
 			else {
 				String childName = ((GoIRIdentNode) ((GoIRCompositeLitNode) rhs).getExpr()).getIdentifier();
+				System.out.println("666:" + scope.locals.get(childName).getType());
 				scope.locals.put(name,  new TypeInfo(name, scope.locals.get(childName).getType(), false, slot));
 			}
 		}
 		else if(rhs instanceof GoIRSliceExprNode) {
 			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
+			System.out.println("777:" + scope.locals.get(childName).getType());
 			scope.locals.put(name,  new TypeInfo(name, scope.locals.get(childName).getType(), false, slot));
 		}
 		else {
-			scope.locals.put(name,  new TypeInfo(name, "object", false, slot));
+			scope.locals.put(name,  new TypeInfo(name, side2, false, slot));
 		}
 
 		return GoWriteLocalVariableNodeGen.create(value, slot);
