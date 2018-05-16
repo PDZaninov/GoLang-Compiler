@@ -1,7 +1,6 @@
 package com.oracle.app.parser;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import com.oracle.app.GoException;
 import com.oracle.app.nodes.GoArrayExprNode;
@@ -13,11 +12,11 @@ import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 import com.oracle.app.parser.ir.GoTruffle;
-import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.GoTruffle.TypeInfo;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
+import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
 import com.oracle.app.parser.ir.nodes.GoIRFloat32Node;
@@ -37,33 +36,24 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		
 	}
 	
-	 public Object visitReturnStmt(GoIRReturnStmtNode node) {
+	public Object visitReturnStmt(GoIRReturnStmtNode node) {
 		 	return node.getChild().accept(this);
 	}
 	
 	
-	
-	public Object visitInvoke(GoIRInvokeNode node) {
-		String a = "";
-		String b = "";
-		
-		if(node != null) {
-			GoIRFuncTypeNode funcTypeNode = GoTruffle.IRFunctions.get(node.getFunctionNode().getIdentifier());
-			if(funcTypeNode != null) {
-				a = (String) funcTypeNode.getParams().accept(this);
-				
-			}else {
-				//is builting function idk what to do
-				return null;
-			}
-			if(node.getArgumentNode()!= null) {
-				b = (String) node.getArgumentNode().accept(this);
-			}
+	 public Object visitInvoke(GoIRInvokeNode node){
+			String b = "";
 			
-		}
-		
-		return Compare(a,b);
-	}
+			if(node != null) {
+				if(node.getArgumentNode()!= null) {
+					b = (String) node.getArgumentNode().accept(this);
+				}
+				
+			}
+			return b;
+	}	
+	 
+
 	
 	public Object visitArrayListExpr(GoIRArrayListExprNode node) {
 		String z = "";
@@ -85,8 +75,10 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 	
 	
 	public Object visitFieldList(GoIRFieldListNode node){
-		if(node.getFields()!= null) {
-			return node.getFields().accept(this);
+		if(node!= null) {
+			if(node.getFields()!= null) {
+				return node.getFields().accept(this);
+			}
 		}
 		return "";
 	}
@@ -97,7 +89,11 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 	}
 	
 	public Object visitIdent(GoIRIdentNode node){
-		return GoTruffle.lexicalscope.locals.get(node.getIdentifier()).getType();
+		TypeInfo m = GoTruffle.lexicalscope.locals.get(node.getIdentifier());
+		if(m != null) {
+			return m.getType();
+		}
+		return "";
 	}
 	
 	
@@ -184,19 +180,47 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		return node.getType();
 	}
 	
-	public static GoException Compare(String a,String b) {
+	public Object visitBinaryExpr(GoIRBinaryExprNode node){
+		String l = node.getType();
+		if(l!= null) {//already discovered type of children
+			return l;
+		}
+		l = (String) node.getLeft().accept(this);
+		String r = (String) node.getRight().accept(this);
+		GoException error = Compare(l,r,"visitbinary");
+		if(error != null) {
+			throw error;
+		}
+		node.setType(l);//so it doesnt have to repeatedly check
+		// like 3+3+3+3+3... would make a big tree and we dont need to repeatedly check
+		return l;
+	}
+	
+	public static GoException Compare(String a,String b, String message) {
+		String[] side1 = null;
+		String[] side2 = null;
 		if(a == null && b == null) {
 			return null;
 		}
-		String[] side1 = a.split(",");
-		String[] side2 = b.split(",");
-		
+		if(a!=null){
+			side1 = a.split(",");
+		}
+		else {
+			side1 = new String[] {""};
+		}
+		if(b!=null){
+			side2 = b.split(",");
+		}
+		else {
+			side2 = new String[] {""};
+		}
 		if(side1.length != side2.length) {
+			System.out.println(message);
 			return new GoException("Uneven assignment: " + side1.length + "," + side2.length);
 			
 		}
 		for(int i = 0; i < side2.length; i ++) {
-			System.out.println("-- " + side1[i] + "," + side2[i]);
+			System.out.println(message + "-- " + side1[i] + "," + side2[i]);
 			if(!(side1[i].equalsIgnoreCase(side2[i]))) {
 				return new GoException("Unequal types: " + side1[i] + "," + side2[i]);
 			}

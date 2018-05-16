@@ -1,6 +1,6 @@
 package main
 
-func me(){
+func me() int {
 	return 1
 }
 func add(x int, y int) int {

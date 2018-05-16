@@ -68,22 +68,14 @@ public class GoWriteVisitor implements GoIRVisitor {
 		
 		FrameSlot slot = frame.findOrAddFrameSlot(name);
 		
-		//check if the variable already exists
-		if(rhs instanceof GoIRInvokeNode) {
-			
-		
-			if(scope.locals.get(name) != null) {
-				GoRootNode j =  allFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
-				
-				GoTypeCheckingVisitor.TCAssignmentError(name, rhs,node, j, scope.locals.get(name),assignmentNode);
-				
-			}else {
-					String functionName = ((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier();
-					GoRootNode j =  allFunctions.get(functionName);
-					GoTypeCheckingVisitor.TCInitialization(node,rhs,assignmentNode.getType(),j,functionName);
-					
-				}
-			
+		if(scope.locals.get(name)!=null) {//variable assigned a type
+			GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
+			String side1 = (String) node.accept(miniVisitor);
+			String side2 = (String) rhs.accept(miniVisitor);
+			GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"writevisitor, visit ident");
+			if(error != null) {
+				throw error;
+			}
 		}
 		
 		// Check if the rhs is an instance of types, then just directly get the value type

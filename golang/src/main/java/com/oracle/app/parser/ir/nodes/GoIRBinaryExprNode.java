@@ -12,6 +12,7 @@ public class GoIRBinaryExprNode extends GoBaseIRNode {
 	GoBaseIRNode left;
 	GoBaseIRNode right;
 	String source;
+	String type = null;
 	
 	public GoIRBinaryExprNode(String op, GoBaseIRNode left, GoBaseIRNode right, String source) {
 		super("BinaryExpr");
@@ -34,13 +35,13 @@ public class GoIRBinaryExprNode extends GoBaseIRNode {
 		return visitor.visitBinaryExpr(this); 
 	}
 	
-	public String TCself() {
-		String leftT = left.TCself();
-		String rightT = right.TCself();
-		if(leftT.equalsIgnoreCase(rightT)) {
-			return leftT;
-		}
-		return "error:" +op+ " does not support " + leftT +" , " + rightT;
+	public String getType() {
+		return type;
 	}
+	
+	public void setType(String a) {
+		type = a;
+	}
+
 
 }

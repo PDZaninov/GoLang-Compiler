@@ -22,12 +22,12 @@ public interface GoIRVisitor {
 	}
 	
 	default Object visitBinaryExpr(GoIRBinaryExprNode node){
-		System.out.println("Default Binary Expression Visit");
+		System.out.println("Default Binary Expression Visit, op = " + node.getOp());
 		return null;
 	}
 	
 	default Object visitInvoke(GoIRInvokeNode node){
-		System.out.println("Default Invoke Visit");
+		System.out.println("Default Invoke Visit: " + node.getFunctionNode().getIdentifier() );
 		return null;
 	}	
 

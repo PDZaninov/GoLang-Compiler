@@ -252,6 +252,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
+		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor();
+		node.accept(mini);//type check children before making a truffle node
 		GoExpressionNode rightNode = (GoExpressionNode) node.getRight().accept(this);
 		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
 		String op = node.getOp();
@@ -340,20 +342,29 @@ public class GoTruffle implements GoIRVisitor {
 		return result;
 	}
 	
+	/* Each invoke, aka call expr, must check the arguments passed match the function signature
+	 * 
+	 */
 	@Override
 	public Object visitInvoke(GoIRInvokeNode node) {
 		
 		
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
-
-		
-		GoRootNode j = allFunctions.get(node.getFunctionNode().getIdentifier());
 		
 		//Type Checking
-		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-		GoException error = (GoException) miniVisitor.visitInvoke(node);
-		if(error!=null) {
-			throw error;
+
+		//can only check call expr that arent builtins
+		GoIRFuncTypeNode f = IRFunctions.get(node.getFunctionNode().getIdentifier());
+		if(f!=null) {
+			String side1 = "";
+			String side2 = "";
+			GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
+			side1 = (String) f.getParams().accept(miniVisitor);
+			side2 = (String)node.accept(miniVisitor);//idk why but the node.accept(this) was going to default
+			GoException error = GoTypeCheckingVisitor.Compare(side1, side2,"gotruffle, visitInvoke");
+			if(error!=null) {
+				throw error;
+			}
 		}
 		//end type checking
 		
@@ -434,7 +445,13 @@ public class GoTruffle implements GoIRVisitor {
 		//String typeName = node.getTypeName();
 		return new GoFieldNode(names, typename);
 	}
-	
+	/*
+	 * Each returnstmt must check function signature for matching return types/length
+	 * This creates a GoReturnNode
+	 * 
+	 * (non-Javadoc)
+	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitReturnStmt(com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode)
+	 */
 	@Override
 	public Object visitReturnStmt(GoIRReturnStmtNode node){
 
@@ -445,23 +462,18 @@ public class GoTruffle implements GoIRVisitor {
 			returnCounter++;
 		}
 		
+		//type checking
 		GoIRFieldListNode r = (GoIRFieldListNode) curFunctionType.getResults();
 		
 		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-		String side2 = (String) miniVisitor.visitReturnStmt(node);
 		String side1 = (String) miniVisitor.visitFieldList(r);
-		GoException error = GoTypeCheckingVisitor.Compare(side1,side2);
+		String side2 = (String) miniVisitor.visitReturnStmt(node);
+		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt");
 		if(error!=null) {
 			throw error;
 		}
+		//end of type checking
 		
-//		GoException m = GoTypeCheckingVisitor.TCReturnTypes(r,node);
-//		if(m != null) {
-//			throw m;
-//		}
-		 
-		
-		//everything above is for type checking
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	
 	}
 

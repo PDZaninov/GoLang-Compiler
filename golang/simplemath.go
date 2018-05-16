@@ -14,6 +14,7 @@ func main() {
 		x *=b
 	}
 	println(x + y)
-	var z = x + "lol"
+	var z = x + y
+	
 	println(z)
 }
