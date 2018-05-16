@@ -188,11 +188,10 @@ public class GoTruffle implements GoIRVisitor {
     public static LexicalScope lexicalscope;
     
     //the order of appearance of functions from parser
-    public static ArrayList<GoIRFuncTypeNode> funcOrder = new ArrayList<GoIRFuncTypeNode>();
+    public static LinkedList<GoIRFuncDeclNode> funcOrder = new LinkedList<GoIRFuncDeclNode>();
     public static Map<String,GoIRFuncTypeNode> IRFunctions = new HashMap<>();
-    GoIRFuncTypeNode curFunctionType;
+    GoIRFuncDeclNode curFunctionDecl;
     int returnCounter = 0;
-    int flag = 0;
 	
     //Can create a global function block and append writes to the top most node
 	public GoTruffle(GoLanguage language, Source source) {
@@ -240,9 +239,6 @@ public class GoTruffle implements GoIRVisitor {
     	lexicalscope = lexicalscope.outer;
     }
     
-    public static void addFunc(GoIRFuncTypeNode name) {
-    	funcOrder.add(name);
-    }
     
 	@Override
 	public Object visitObject(GoTempIRNode node) {
@@ -431,12 +427,14 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
 		startFunction();
+		funcOrder.push(node);
 		GoIdentNode nameNode = (GoIdentNode) node.getName().accept(this);
+		
 		GoFuncTypeNode typeNode = (GoFuncTypeNode) node.getType().accept(this);
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
 		String name = node.getIdentifier();
-		flag = 0;
+		GoIRFuncDeclNode popped = funcOrder.pop();
 		//int start = nameNode.getSourceSection().getCharIndex();
 		//int end = blockNode.getSourceSection().getCharEndIndex();
 		//SourceSection section = source.createSection(start, end);
@@ -500,21 +498,15 @@ public class GoTruffle implements GoIRVisitor {
 	 */
 	@Override
 	public Object visitReturnStmt(GoIRReturnStmtNode node){
-
-		//get correct corresponding function type node
-		if(flag == 0) {
-			flag++;
-			curFunctionType = funcOrder.get(returnCounter);
-			returnCounter++;
-		}
+		curFunctionDecl = funcOrder.getFirst();//top of stack is the first element, who knew
 		
 		//type checking
-		GoIRFieldListNode r = (GoIRFieldListNode) curFunctionType.getResults();
+		GoIRFieldListNode r = (GoIRFieldListNode) ((GoIRFuncTypeNode) curFunctionDecl.getType()).getResults();
 		
 		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-		String side1 = (String) miniVisitor.visitFieldList(r);
+		String side1 = (String) r.accept(miniVisitor);
 		String side2 = (String) miniVisitor.visitReturnStmt(node);
-		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt");
+		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt (" + side1 + "|||" + side2 +")");
 		if(error!=null) {
 			throw error;
 		}

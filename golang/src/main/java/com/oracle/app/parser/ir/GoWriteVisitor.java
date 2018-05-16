@@ -70,7 +70,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 
 		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
 		String side2 = "";
-		System.out.println(node.getIdentifier() + "----------" );
 		if(rhs instanceof GoIRInvokeNode) {
 			//usually type checking invoke gets arguments passed, but we want return types
 			GoIRFuncTypeNode funcn = GoTruffle.IRFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());

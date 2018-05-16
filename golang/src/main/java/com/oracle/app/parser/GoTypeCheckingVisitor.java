@@ -46,7 +46,7 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 		 	return node.getChild().accept(this);
 	}
 	
-	/* returns a string of its passed argument types
+	/* returns a string of its return types
 	 * (non-Javadoc)
 	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitInvoke(com.oracle.app.parser.ir.nodes.GoIRInvokeNode)
 	 */
@@ -57,6 +57,7 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 			if(t != null) {
 				b = (String) t.getResults().accept(this);
 			}
+			System.out.println("-here-" +b);
 			return b;
 	}	
 	 

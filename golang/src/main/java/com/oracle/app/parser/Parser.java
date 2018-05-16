@@ -278,7 +278,6 @@ public class Parser {
 						attrs.get("For"));
 				
 			case "FuncDecl"://(GoBaseIRNode receiver, GoBaseIRNode name, GoBaseIRNode type, GoBaseIRNode body)
-				GoTruffle.addFunc(((GoIRFuncTypeNode) body.get("Type")));
 				GoBaseIRNode recv = body.get("Recv");
 				GoBaseIRNode name = body.get("Name");
 				GoBaseIRNode type = body.get("Type");

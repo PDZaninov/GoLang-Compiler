@@ -1,17 +1,16 @@
 package main
 
 func vals() (int,int){
-return 5,7
-
+	return 5,me()
 }
 
 func me() int {
-return 1
+	return 1
 }
 
 func main() {
-	 var x,y  = vals()
-	 z := me()
+	var x,y  = vals()
+	z := me()
 	println(x)
 	println(y)
 	println(z)
