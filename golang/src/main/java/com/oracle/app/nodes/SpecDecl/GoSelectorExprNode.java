@@ -2,16 +2,16 @@ package com.oracle.app.nodes.SpecDecl;
 
 import com.oracle.app.builtins.fmt.FmtFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.local.GoReadPropertyNode;
 import com.oracle.app.nodes.local.GoReadPropertyNodeGen;
+import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.NodeChildren;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.object.DynamicObject;
 
-@NodeChildren({@NodeChild(value="varname"),@NodeChild(value="field",type=GoIdentNode.class)})
+@NodeChildren({@NodeChild(value="varname"),@NodeChild(value="field",type=GoStringNode.class)})
 public abstract class GoSelectorExprNode extends GoExpressionNode {
 	
 	public abstract GoExpressionNode getVarname();

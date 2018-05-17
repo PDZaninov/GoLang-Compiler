@@ -237,7 +237,7 @@ public class GoTruffle implements GoIRVisitor {
 	            /* Read of a local variable. */
 	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	    } else {
-	    	result = new GoIdentNode(language, name, result);
+	    	result = new GoIdentNode(name, result);
 	    }
 
 	    if(node.getChild() != null) {
@@ -829,7 +829,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
 		GoExpressionNode expr = (GoExpressionNode) goIRSelectorExprNode.getExpr().accept(this);
-		GoIdentNode name = new GoIdentNode(language, goIRSelectorExprNode.getName().getIdentifier(),null);
+		GoStringNode name = new GoStringNode(goIRSelectorExprNode.getName().getIdentifier());
 		return GoSelectorExprNodeGen.create(expr, name);
 	}
 	
