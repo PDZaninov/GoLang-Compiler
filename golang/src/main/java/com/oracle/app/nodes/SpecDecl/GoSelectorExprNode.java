@@ -1,6 +1,7 @@
 package com.oracle.app.nodes.SpecDecl;
 
 import com.oracle.app.builtins.fmt.FmtFunctionList;
+import com.oracle.app.builtins.time.TimeFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.local.GoReadPropertyNode;
@@ -24,6 +25,11 @@ public abstract class GoSelectorExprNode extends GoExpressionNode {
 	
 	@Specialization
 	public Object executeImport(FmtFunctionList imports, String function){
+		return imports.getFunction(function);
+	}
+	
+	@Specialization
+	public Object executeImport(TimeFunctionList imports, String function){
 		return imports.getFunction(function);
 	}
 	

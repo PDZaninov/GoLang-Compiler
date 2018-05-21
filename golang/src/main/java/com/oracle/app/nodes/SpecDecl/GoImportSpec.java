@@ -2,6 +2,7 @@ package com.oracle.app.nodes.SpecDecl;
 
 import com.oracle.app.GoLanguage;
 import com.oracle.app.builtins.fmt.FmtFunctionList;
+import com.oracle.app.builtins.time.TimeFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.truffle.api.frame.FrameSlot;
@@ -34,6 +35,9 @@ public class GoImportSpec extends GoExpressionNode {
         case "fmt":
         	frame.setObject(slot, new FmtFunctionList(language));
             break;
+        case "time":
+        	frame.setObject(slot, new TimeFunctionList(language));
+        	break;
         default:
             System.out.println("Package not yet done");
 		}
