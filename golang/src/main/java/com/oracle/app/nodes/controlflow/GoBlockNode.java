@@ -39,6 +39,9 @@ public final class GoBlockNode extends GoStatementNode {
         /*
          * This assertion illustrates that the array length is really a constant during compilation.
          */
+    	if(bodyNodes == null){
+    		return;
+    	}
         CompilerAsserts.compilationConstant(bodyNodes.length);
 
         for (GoStatementNode statement : bodyNodes) {

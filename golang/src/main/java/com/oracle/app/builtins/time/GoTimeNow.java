@@ -14,7 +14,7 @@ public class GoTimeNow extends GoExpressionNode{
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		return System.currentTimeMillis();
+		return System.nanoTime();
 	}
 
 }
