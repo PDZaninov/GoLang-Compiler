@@ -9,13 +9,13 @@ public class GoIRFloat32Node extends GoIRBasicLitNode{
     private float value;
 
     public GoIRFloat32Node(String value) {
-    	super("Float32 Node");
+    	super("Float32 Node", "FLOAT32", value);
         this.value = Float.valueOf(value);
         this.type = "FLOAT32";
     }
 
     public GoIRFloat32Node(float value){
-    	super("Float32 Node");
+    	super("Float32 Node", "FLOAT32", Float.toString(value));
         this.value = value;
     }
 

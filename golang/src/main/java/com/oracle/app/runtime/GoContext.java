@@ -100,7 +100,7 @@ public final class GoContext {
 	public void installMultArgsBuiltins(){
 		GoExpressionNode bodyNode = GoAppendBuiltin.getAppendBuiltin();
 		String name = lookupNodeInfo(bodyNode.getClass()).shortName();
-		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, bodyNode, null, name);
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(),  null, bodyNode, null, name);
 		getFunctionRegistry().register(name, rootNode);
 	}
 	
@@ -129,7 +129,7 @@ public final class GoContext {
 		String name = lookupNodeInfo(builtinBodyNode.getClass()).shortName();
 		//Source section goes here and into the rootnode where null is at
 		
-		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, builtinBodyNode, null, name);
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, builtinBodyNode, null, name);
 		getFunctionRegistry().register(name, rootNode);
 	}
 	

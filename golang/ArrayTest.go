@@ -1,16 +1,14 @@
 package main
-
-import "fmt"
-
-func main() {
-	s := make([]string, 3)
-    	s[0] = "a"
-   	s[1] = "b"
-   	s[2] = "c"
-
-    	b := []string{"d","e","f"}
-	s = append(s[:1], b[1:]...)
-	fmt.Println(s)
-   	 m := map[string]int{"a":1,"b":2,"c":3}
-   	 println(m["a"])
+func main() { 
+	var a [5] int 
+	result := 0 
+	for i := 0; i < len(a); i++{ 
+		result += a[i] 
+	}
+	b := [5]int{1 , 2, 3, 4, 5} 
+	b[4] = 10 
+	for j := 0; j < len(b); j++ { 
+		result += b[j] 
+	} 
+	println(result)
 }

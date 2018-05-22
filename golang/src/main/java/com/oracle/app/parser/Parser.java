@@ -318,6 +318,9 @@ public class Parser {
 				GoBaseIRNode name = body.get("Name");
 				GoBaseIRNode type = body.get("Type");
 				GoBaseIRNode func_body = body.get("Body");
+				if(type != null&& name != null) {
+					GoTruffle.IRFunctions.put(name.getIdentifier(), (GoIRFuncTypeNode)type);
+				}
 				return new GoIRFuncDeclNode(recv,
 						name,
 						type,
@@ -467,16 +470,36 @@ public class Parser {
 	 * 
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoIRArrayListExprNode rhs, String source){
-		if(lhs.getSize() != rhs.getSize()){
-			System.out.println("Parse error uneven assignment");
-			return null;
-		}
-		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
 		GoBaseIRNode writeto;
+		ArrayList<GoBaseIRNode> result = new ArrayList<>();
+		
+		if(size != rhs.getSize()){
+			
+			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
+			{
+			}
+			else {
+				throw new GoException("Parse error uneven assignment");
+			}
+		}
+		
+
 		for(int i = 0; i < size;i++){
+			if(lhs.getChildren().get(i) instanceof GoIRIdentNode) {
+				((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
+			}
+			if((rhs.getChildren().get(0)) instanceof GoIRInvokeNode)
+			{
+				((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
+				writeto = lhs.getChildren().get(i);
+				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ,null));
+				continue;
+				
+			}
+			
 			writeto = lhs.getChildren().get(i);
-			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i) ));
+			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i),null ));
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}
@@ -488,7 +511,7 @@ public class Parser {
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, String source){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		for(GoBaseIRNode node : lhs.getChildren()){
-			result.add(new GoIRAssignmentStmtNode(node,type));
+			result.add(new GoIRAssignmentStmtNode(node,type,type));
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}
@@ -497,33 +520,50 @@ public class Parser {
 	 * Given a type and a right hand side, the right hand side should match the type given
 	 * Assuming that the type matches the right hand side always for now
 	 * Called by valuespec
+	 * var x = vals()
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, GoIRArrayListExprNode rhs, String source){
+
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		int size = lhs.getSize();
-		if(lhs.getSize() != rhs.getSize()){
-			//TODO, REDO ALL OF THIS
-			//TODO, to do
-			for(int i = 0; i < size;i++){
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0) ));
+		
+		if(rhs.getChildren().get(0) instanceof GoIRInvokeNode)
+			{
+				for(int i = 0; i < size;i++){
+					((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
+					((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
+					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0), type ));
+				}
+				return new GoIRArrayListExprNode(result, source);
 			}
-			return new GoIRArrayListExprNode(result, source);
+
+		//if rhs not invoke node and sides arent equal throw error
+		if(lhs.getSize() != rhs.getSize())
+		{
+			throw new GoException("Uneven sides");
 		}
 
-		for(int i = 0; i < size;i++){
-			if(type == null) {
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+		for(int i = 0; i < size;i++) {
+			// setting the number of returns expected. This is for checking the number of variables = number of returns
+			((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
+			
+			
+			if(type==null) {
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i),null ));
 			}
-			else if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType())) {
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) ));
+			else if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
+				{
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) , type));
 			}
 			else if(((GoIRBasicLitNode) rhs.getChildren().get(i)).getType().equalsIgnoreCase("INT") &&
 					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
-				// var c float32 = 3
-				// the above sets the basic lit as an int node, so i need to make a new basiclit node of the correct type
+				// var c float32 = 3 -- example of this case
+				// the above sets the basic lit as an int node, so I need to make a new basiclit node of the correct type
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ));
-			} else {
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ,type));
+
+			}
+			else {
 				throw new GoException("cannot use \"" + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString() +
 						"\" (type " + ((GoIRBasicLitNode) rhs.getChildren().get(i)).getType() +") as type " 
 						+ type.getIdentifier() + " in assignment");
@@ -543,6 +583,12 @@ public class Parser {
 	 * @return
 	 */
 	public GoIRArrayListExprNode assignNormalize(String op,GoIRArrayListExprNode l, GoIRArrayListExprNode r, String source){
+		//for type checking
+		((GoIRIdentNode) l.getChildren().get(0)).setPos(0);
+		if(r.getChildren().get(0) instanceof GoIRInvokeNode) {
+			((GoIRInvokeNode)r.getChildren().get(0)).incAssignLen();
+		}
+		//creating assignment
 		GoBaseIRNode temp = new GoIRBinaryExprNode(op,l.getChildren().get(0),r.getChildren().get(0),null);
 		r.getChildren().set(0, temp);
 		return createAssignment(l,r,source);

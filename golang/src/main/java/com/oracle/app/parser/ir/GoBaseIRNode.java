@@ -1,5 +1,6 @@
 package com.oracle.app.parser.ir;
 
+import com.oracle.app.GoException;
 import com.oracle.truffle.api.source.Source;
 import com.oracle.truffle.api.source.SourceSection;
 
@@ -13,5 +14,8 @@ public abstract class GoBaseIRNode implements GoIRVisitable {
 
 	public abstract Object accept(GoIRVisitor visitor);
 	
+	public String TCself() {
+		return "";
+	}
 	
 }
