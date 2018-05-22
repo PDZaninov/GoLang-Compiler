@@ -10,13 +10,13 @@ import com.oracle.truffle.api.frame.VirtualFrame;
 public class GoFuncTypeNode extends GoExpressionNode{
 
 	GoArrayExprNode params;
-	GoArrayExprNode results;
+	String[] results;
 	
 	String type;
 	
-	public GoFuncTypeNode(GoArrayExprNode params, GoArrayExprNode results) {
+	public GoFuncTypeNode(GoArrayExprNode params, String[] results2) {
 		this.params = params;
-		this.results = results;
+		this.results = results2;
 	}
 	
 	public void appendReceiverStruct(GoWriteLocalVariableNode receiver){
@@ -35,6 +35,10 @@ public class GoFuncTypeNode extends GoExpressionNode{
 	
 	public GoArrayExprNode getParams() {
 		return params;
+	}
+	
+	public String[] getResults() {
+		return results;
 	}
 	
 	@Override

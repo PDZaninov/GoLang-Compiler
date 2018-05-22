@@ -16,5 +16,6 @@ public class GoIRFieldListNode extends GoBaseIRNode {
 
     @Override
     public Object accept(GoIRVisitor visitor) { return visitor.visitFieldList(this); }
+    
 
 }

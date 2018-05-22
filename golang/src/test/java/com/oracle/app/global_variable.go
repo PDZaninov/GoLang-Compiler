@@ -6,7 +6,7 @@ func set() {
     global = 7
 }
 
-func main() {
+func main() int{
     set()
     return global
 }

@@ -1,14 +1,12 @@
 package main
 
-import "fmt"
-
-var global int = 2
-
-func add() {
-    global = 7
+func me() int {
+	return add(10,11)
+}
+func add(x int, y int) int {
+	return x + y
 }
 
 func main() {
-    add()
-	fmt.Println(global)
+	println(me())
 }

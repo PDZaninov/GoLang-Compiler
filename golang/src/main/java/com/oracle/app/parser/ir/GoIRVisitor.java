@@ -22,12 +22,12 @@ public interface GoIRVisitor {
 	}
 	
 	default Object visitBinaryExpr(GoIRBinaryExprNode node){
-		System.out.println("Default Binary Expression Visit");
+		System.out.println("Default Binary Expression Visit, op = " + node.getOp());
 		return null;
 	}
 	
 	default Object visitInvoke(GoIRInvokeNode node){
-		System.out.println("Default Invoke Visit");
+		System.out.println("Default Invoke Visit: " + node.getFunctionNode().getIdentifier() );
 		return null;
 	}	
 
@@ -116,22 +116,22 @@ public interface GoIRVisitor {
 		return null;
 	}
 
-	default GoIntNode visitIRIntNode(GoIRIntNode goIRIntNode){
+	default Object visitIRIntNode(GoIRIntNode goIRIntNode){
 		System.out.println("Default Basic Int Visit");
 		return null;
 	}
 
-	default GoFloat32Node visitIRFloat32Node(GoIRFloat32Node goIRFloat32Node){
+	default Object visitIRFloat32Node(GoIRFloat32Node goIRFloat32Node){
 		System.out.println("Default Basic Float 32 visit");
 		return null;
 	}
 
-	default GoFloat64Node visitIRFloat64Node(GoIRFloat64Node goIRFloat64Node){
+	default Object visitIRFloat64Node(GoIRFloat64Node goIRFloat64Node){
 		System.out.println("Default Basic Float 64 visit");
 		return null;
 	}
 
-	default GoStringNode visitIRStringNode(GoIRStringNode goIRStringNode){
+	default Object visitIRStringNode(GoIRStringNode goIRStringNode){
 		System.out.println("Default Basic String Visit");
 		return null;
 	}
