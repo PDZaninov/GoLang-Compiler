@@ -4,8 +4,7 @@ import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.global.GoWriteGlobalVariableNodeGen;
 import com.oracle.app.nodes.local.GoArrayWriteNodeGen;
 import com.oracle.app.nodes.local.GoReadLocalVariableNode;
-import com.oracle.app.nodes.local.GoStructPropertyWriteNodeGen;
-import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen;
+import com.oracle.app.nodes.local.GoWriteLocalVariableNodeGen.GoWriteStructNodeGen;
 import com.oracle.app.nodes.local.GoWriteMemoryNodeGen;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
@@ -23,7 +22,7 @@ import com.oracle.truffle.api.frame.FrameSlot;
  * @author Trevor
  *
  */
-public class GoWriteVisitor implements GoIRVisitor {
+public class GoGlobalWriteVisitor implements GoIRVisitor {
 
 	private LexicalScope scope;
 	private LexicalScope global;
@@ -31,7 +30,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 	private FrameDescriptor frame;
 	private GoIRAssignmentStmtNode assignmentNode;
 	
-	public GoWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode, LexicalScope global){
+	public GoGlobalWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode, LexicalScope global){
 		this.scope = scope;
 		truffleVisitor = visitor;
 		this.frame = frame;
@@ -53,12 +52,11 @@ public class GoWriteVisitor implements GoIRVisitor {
 		if(global.locals.get(name) != null) {
 			scope.locals.put(name,frameSlot);
 			global.locals.put(name,frameSlot);
-			return GoWriteGlobalVariableNodeGen.create(value, frameSlot);
 		}
 		else {
 			scope.locals.put(name,frameSlot);
 		}
-		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
+		return GoWriteGlobalVariableNodeGen.create(value, frameSlot);
 	}
 	
 	public Object visitIndexNode(GoIRIndexNode node){
@@ -79,8 +77,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 		GoReadLocalVariableNode expr = (GoReadLocalVariableNode) node.getExpr().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		String name = node.getName().getIdentifier();
-		boolean createProperty = false;
-		return GoStructPropertyWriteNodeGen.create(createProperty, expr, value, name);
-		
+		return GoWriteStructNodeGen.create(value, new GoStringNode(name), expr.getSlot());
 	}
 }

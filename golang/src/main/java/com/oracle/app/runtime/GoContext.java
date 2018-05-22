@@ -21,10 +21,12 @@ import com.oracle.app.nodes.types.GoStruct;
 import com.oracle.truffle.api.CallTarget;
 import com.oracle.truffle.api.CompilerDirectives;
 import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.TruffleLanguage.Env;
 import com.oracle.truffle.api.dsl.NodeFactory;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.instrumentation.AllocationReporter;
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.interop.TruffleObject;
 import com.oracle.truffle.api.nodes.NodeInfo;
 import com.oracle.truffle.api.object.DynamicObject;
@@ -49,6 +51,9 @@ public final class GoContext {
 	private final GoLanguage language;
 	private final AllocationReporter allocationReporter;
 	
+    private MaterializedFrame globalFrame;
+    private FrameDescriptor globalFrameDescriptor;
+	
 	public GoContext(GoLanguage language, Env env){
 		this.env = env;
 		this.input = new BufferedReader(new InputStreamReader(env.in()));
@@ -59,7 +64,25 @@ public final class GoContext {
 		installBuiltins();
 		
 		this.emptyShape = LAYOUT.createShape(GoStruct.SINGLETON);
+		installBuiltins();	
 	}
+	
+	public void setGlobalFrame(MaterializedFrame globalFrame) {
+		this.globalFrame = globalFrame;
+	}
+	
+	public MaterializedFrame getGlobalFrame() {
+		return globalFrame;
+	}
+	
+	public void setGlobalFrameDescriptor(FrameDescriptor frameDescriptor) {
+		this.globalFrameDescriptor = frameDescriptor;
+	}
+	
+	public FrameDescriptor getGlobalFrameDescriptor() {
+		return globalFrameDescriptor;
+	}
+	
     public static Object fromForeignValue(Object a) {
         if (a instanceof Long || a instanceof BigInteger || a instanceof String || a instanceof Boolean) {
             return a;

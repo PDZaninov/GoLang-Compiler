@@ -57,6 +57,7 @@ import com.oracle.app.nodes.expression.GoStarExpressionNode;
 import com.oracle.app.nodes.expression.GoStructTypeExprNode;
 import com.oracle.app.nodes.expression.GoSubNodeGen;
 import com.oracle.app.nodes.expression.GoUnaryAddressNode;
+import com.oracle.app.nodes.global.GoReadGlobalVariableNodeGen;
 import com.oracle.app.nodes.local.GoArrayReadNode;
 import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.nodes.local.GoReadArgumentsNode;
@@ -112,9 +113,12 @@ import com.oracle.app.parser.ir.nodes.GoIRSwitchStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRTypeSpecNode;
 import com.oracle.app.parser.ir.nodes.GoIRUnaryNode;
 import com.oracle.app.parser.ir.nodes.GoTempIRNode;
+import com.oracle.app.runtime.GoContext;
+import com.oracle.truffle.api.Truffle;
 import com.oracle.truffle.api.frame.FrameDescriptor;
 import com.oracle.truffle.api.frame.FrameSlot;
 import com.oracle.truffle.api.frame.FrameSlotKind;
+import com.oracle.truffle.api.frame.MaterializedFrame;
 import com.oracle.truffle.api.source.Source;
 
 
@@ -159,8 +163,16 @@ public class GoTruffle implements GoIRVisitor {
 		this.language = language;
 		this.source = source;
         this.allFunctions = new HashMap<>();
-        frameDescriptor = new FrameDescriptor();
+        initializeGlobalFrame();
     }
+	
+	public void initializeGlobalFrame() {
+        MaterializedFrame globalFrame = Truffle.getRuntime().createMaterializedFrame(new Object[0]);
+        frameDescriptor = globalFrame.getFrameDescriptor();
+        GoContext context = GoLanguage.getCurrentContext();
+        context.setGlobalFrame(globalFrame);
+        context.setGlobalFrameDescriptor(frameDescriptor);
+	}
 	
 	/**
 	 * The global scope needs to be initialized with default values before execution
@@ -232,8 +244,11 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode result = null;
 		//System.out.println(name+" "+lexicalscope.locals);
 	    final FrameSlot frameSlot = lexicalscope.locals.get(name);
-
-	    if (frameSlot != null) {
+	    
+	    if(global.locals.get(name) != null && identifier(name)) {
+	    	result = (GoExpressionNode) GoReadGlobalVariableNodeGen.create(frameSlot);
+	    }
+	    else if (frameSlot != null) {
 	            /* Read of a local variable. */
 	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(frameSlot);
 	    } else {
@@ -250,6 +265,28 @@ public class GoTruffle implements GoIRVisitor {
 
 	    //result.setSourceSection(node.getSource(source));
 	    return result;
+	}
+	
+	public boolean identifier(String name) {
+		switch(name) {
+			case "int":
+				return false;
+			case "float64":
+				return false;
+			case "float32":
+				return false;
+			case "bool":
+				return false;
+			case "true":
+				return false;
+			case "false":
+				return false;
+			case "string":
+				return false;
+			case "_":
+				return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -593,7 +630,7 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {	
 		GoBaseIRNode child = node.getLHS();
 		
-		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node);
+		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node, global);
 		GoExpressionNode result = (GoExpressionNode) miniVisitor.visit(child);
 		return result;
 		
