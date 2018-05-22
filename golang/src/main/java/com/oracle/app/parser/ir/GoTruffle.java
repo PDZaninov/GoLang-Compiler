@@ -454,7 +454,6 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitFuncDecl(GoIRFuncDeclNode node) {
 		funcOrder.push(node);
-		GoIdentNode nameNode = (GoIdentNode) node.getName().accept(this);
 		String name = node.getIdentifier();
 		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
 		lexicalscope.locals.put(name, new TypeInfo(name , "FuncLiteral",false, slot));
@@ -472,7 +471,7 @@ public class GoTruffle implements GoIRVisitor {
 		//int end = blockNode.getSourceSection().getCharEndIndex();
 		//SourceSection section = source.createSection(start, end);
 		//System.out.println(section);
-		GoRootNode root = new GoRootNode(language,frameDescriptor,nameNode,typeNode,bodyNode,null,name);
+		GoRootNode root = new GoRootNode(language,frameDescriptor,typeNode,bodyNode,null,name);
 		allFunctions.put(name,root);
 		finishBlock();
 

@@ -21,7 +21,7 @@ import com.oracle.truffle.api.source.SourceSection;
 public final class GoEvalRootNode extends GoRootNode {
 
     public GoEvalRootNode(GoLanguage language, FrameDescriptor frameDescriptor, GoExpressionNode bodyNode, SourceSection sourceSection, String name) {
-        super(language, frameDescriptor, null,null, bodyNode, sourceSection, name);
+        super(language, frameDescriptor, null, bodyNode, sourceSection, name);
     }
 
     @Override
