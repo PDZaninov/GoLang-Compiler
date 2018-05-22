@@ -1,5 +1,6 @@
 package com.oracle.app.parser.ir;
 
+import com.oracle.app.nodes.GoFileNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRBlockStmtNode;
@@ -8,6 +9,7 @@ import com.oracle.app.parser.ir.nodes.GoIRCaseClauseNode;
 import com.oracle.app.parser.ir.nodes.GoIRDeclStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRExprStmtNode;
+import com.oracle.app.parser.ir.nodes.GoIRFileNode;
 import com.oracle.app.parser.ir.nodes.GoIRForNode;
 import com.oracle.app.parser.ir.nodes.GoIRFuncDeclNode;
 import com.oracle.app.parser.ir.nodes.GoIRGenDeclNode;
@@ -22,7 +24,12 @@ import com.oracle.app.parser.ir.nodes.GoTempIRNode;
 
 public class GoVisitor implements GoIRVisitor {
 
-
+	@Override
+	public GoFileNode visitFile(GoIRFileNode node){
+		System.out.println("File node: "+ node);
+		node.getDecls().accept(this);
+		return null;
+	}
 
 	@Override
 	public Object visitObject(GoTempIRNode node) {

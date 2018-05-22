@@ -1,6 +1,7 @@
 package com.oracle.app.nodes.SpecDecl;
 
 import com.oracle.app.builtins.fmt.FmtFunctionList;
+import com.oracle.app.builtins.time.GoTimeNow;
 import com.oracle.app.builtins.time.TimeFunctionList;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoIdentNode;
@@ -32,7 +33,14 @@ public abstract class GoSelectorExprNode extends GoExpressionNode {
 	public Object executeImport(TimeFunctionList imports, String function){
 		return imports.getFunction(function);
 	}
-	
+	//Brute forced timer function. Used to time the go program assuming the function is
+	//UnixNano, EpochSecond is the most equivalent.
+	@Specialization
+	public Object executeTimer(GoTimeNow timer, String function){
+		
+		return timer.getUnixNano();
+	}
+
 	public Object getSelector(VirtualFrame frame){
 		return getVarname().executeGeneric(frame);
 	}

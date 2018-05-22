@@ -24,12 +24,11 @@ import com.oracle.truffle.api.nodes.Node;
 public abstract class GoGenericDispatchNode extends Node {
 
 	public static final int INLINE_CACHE_SIZE = 2;
-	//@Child private IndirectCallNode callNode = Truffle.getRuntime().createIndirectCallNode();
 	
 	public abstract Object executeDispatch(Object function, Object[] arguments);
 	
-	 @Specialization(limit = "INLINE_CACHE_SIZE", //
-             		guards = "function.getCallTarget() == cachedTarget", //
+	 @Specialization(limit = "INLINE_CACHE_SIZE",
+             		guards = "function.getCallTarget() == cachedTarget",
              		assumptions = "callTargetStable")
 	 protected static Object doDirect(GoFunction function, Object[] arguments,
              @Cached("function.getCallTargetStable()") Assumption callTargetStable,

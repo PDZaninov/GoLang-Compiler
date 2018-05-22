@@ -37,6 +37,11 @@ public abstract class GoDivNode extends GoBinaryNode {
         return result;
     }
     
+    @Specialization
+    protected long div(long left, int right){
+    	return left / right;
+    }
+    
     @Specialization(rewriteOn = ArithmeticException.class)
     protected float div(float left, float right) throws ArithmeticException {
         float result = left / right;
