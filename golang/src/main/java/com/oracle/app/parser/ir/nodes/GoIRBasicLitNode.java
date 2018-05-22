@@ -16,15 +16,16 @@ import com.oracle.truffle.api.source.SourceSection;
  * @author Trevor
  *
  */
-public abstract class GoIRBasicLitNode extends GoBaseIRNode {
+public abstract class GoIRBasicLitNode extends GoIRTypes {
 
 	String type;
 	String source;
 	String val;
 	
-	public GoIRBasicLitNode(String source) {
-		super("Basic Lit Node");
+	public GoIRBasicLitNode(String source, String type, String value) {
+		super("Basic Lit Node", type, value);
 		this.source = source;
+		this.type = type;
 	}
 	
 	public String getType() {

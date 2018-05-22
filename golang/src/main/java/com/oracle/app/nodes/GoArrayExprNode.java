@@ -13,6 +13,10 @@ public class GoArrayExprNode extends GoExpressionNode {
 	public GoExpressionNode[] getArguments(){
 		return children;
 	}
+	
+	public int getSize() {
+		return children.length;
+	}
 
 	public int getSize(){
 		return children.length;

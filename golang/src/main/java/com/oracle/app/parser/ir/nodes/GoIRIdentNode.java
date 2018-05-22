@@ -10,6 +10,9 @@ public class GoIRIdentNode extends GoBaseIRNode {
 	String ident;
 	GoBaseIRNode child;
 	String namepos;
+	// var x,y = multipleReturn()
+	//assign pos tells which position it is in the above
+	private int assignPos;
 	
 	public GoIRIdentNode(String ident, GoBaseIRNode child, String namepos) {
 		super("Ident");
@@ -30,6 +33,14 @@ public class GoIRIdentNode extends GoBaseIRNode {
 	
 	public GoBaseIRNode getChild() {
 		return child;
+	}
+	
+	public void setPos(int a) {
+		assignPos = a;
+	}
+	
+	public int getAssignPos() {
+		return assignPos;
 	}
 	
 	@Override
