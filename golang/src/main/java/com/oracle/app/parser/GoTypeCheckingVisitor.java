@@ -57,7 +57,6 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 			if(t != null) {
 				b = (String) t.getResults().accept(this);
 			}
-			System.out.println("-here-" +b);
 			return b;
 	}	
 	 
@@ -201,7 +200,7 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 			
 		}
 		for(int i = 0; i < side2.length; i ++) {
-			System.out.println(message + "-- " + side1[i] + "," + side2[i]);
+			//System.out.println(message + "-- " + side1[i] + "," + side2[i]);
 			if(!(side1[i].equalsIgnoreCase(side2[i]))) {
 				return new GoException("Unequal types: (" + side1[i] + "," + side2[i] + ") " + message);
 			}
