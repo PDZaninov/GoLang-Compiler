@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>TruffleGoLang compiler</title>
+	<title>TruffleGoLang Compiler</title>
 </head>
 <body>
 	<div id="wrapper" class="toggled">
-
-        <!-- Sidebar -->
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
@@ -74,9 +72,23 @@
 								<p>import "fmt"</p>
 								<p>
 									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
+									<span class="indent">fmt.Println("Hello World!")</span> 
 									<span>}</span>
 								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div class="col-md-12 col-sm-12">
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">
+        					To run the program, put the code into your favorite text editor and save the file as <em>hello-world.go</em>. Then, use the command <em>./gt hello-world.go</em>. If you would like to see the Go output alongside the Truffle output, use the flag <em>-go</em>.
+
+        				</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>$ ./gt hello-world.go <span>Hello World!</span></p>
 							</div>
         				</div>
         			</div>
@@ -85,14 +97,17 @@
         		<div id="values" class="col-md-12 col-sm-12">
         			<h2>Values</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">Go has several types including strings, integers, floats, and booleans.</div>
         				<div class="col-md-6 col-sm-6">
         					<div class="box">        					
 	        					<p>package main</p>
 								<p>import "fmt"</p>
 								<p>
 									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
+									<span class="indent">fmt.Println("Hello" + " World!")</span> 
+									<span class="indent">fmt.Println("4 + 2 = ", 4 + 2)</span>
+									<span class="indent">fmt.Println("1.0/3.0 = ", 1.0/3.0)</span>
+									<span class="indent">fmt.Println(true)</span>
 									<span>}</span>
 								</p>
 							</div>
