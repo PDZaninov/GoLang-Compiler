@@ -68,8 +68,10 @@
         				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
         				<div class="col-md-6 col-sm-6">
         					<div class="box">        					
-	        					<p>package main</p>
-								<p>import "fmt"</p>
+	        					<p>
+	        						<span>package main</span>
+	        						<span>import "fmt"</span>
+	        					</p>
 								<p>
 									<span>func main() {</span> 
 									<span class="indent">fmt.Println("Hello World!")</span> 
@@ -83,12 +85,19 @@
         		<div class="col-md-12 col-sm-12">
         			<div class="row">
         				<div class="col-md-6 col-sm-6">
-        					To run the program, put the code into your favorite text editor and save the file as <em>hello-world.go</em>. Then, use the command <em>./gt hello-world.go</em>. If you would like to see the Go output alongside the Truffle output, use the flag <em>-go</em>.
+        					To run the program, put the code into your favorite text editor and save the file as <em>hello-world.go</em>. Then, use the command <em>./gt hello-world.go</em>. If you would like to see the Go output alongside the Truffle output, use the flag <em>-go</em>. It will print out any difference.
 
         				</div>
         				<div class="col-md-6 col-sm-6">
         					<div class="box">        					
 	        					<p>$ ./gt hello-world.go <span>Hello World!</span></p>
+	        					<p>$ ./gt hello-world.go 
+	        						<span>TruffleOutput:</span>
+	        						<span>Hello World!</span>
+	        						<span>Go Output:</span>
+	        						<span>Hello World!</span>
+	        						<span>Any diff listed below:</span>
+	        					</p>
 							</div>
         				</div>
         			</div>
@@ -100,16 +109,35 @@
         				<div class="col-md-6 col-sm-6">Go has several types including strings, integers, floats, and booleans.</div>
         				<div class="col-md-6 col-sm-6">
         					<div class="box">        					
-	        					<p>package main</p>
-								<p>import "fmt"</p>
+	        					<p>
+	        						<span>package main</span>
+	        						<span>import "fmt"</span>
+	        					</p>
 								<p>
 									<span>func main() {</span> 
 									<span class="indent">fmt.Println("Hello" + " World!")</span> 
-									<span class="indent">fmt.Println("4 + 2 = ", 4 + 2)</span>
-									<span class="indent">fmt.Println("1.0/3.0 = ", 1.0/3.0)</span>
+									<span class="indent">fmt.Println("4 + 2 =", 4 + 2)</span>
+									<span class="indent">fmt.Println("1.0/3.0 =", 1.0/3.0)</span>
 									<span class="indent">fmt.Println(true)</span>
 									<span>}</span>
 								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div class="col-md-12 col-sm-12">
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6"></div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>
+	        						$ ./gt values.go 
+	        						<span>Hello World!</span>
+									<span>4 + 2 = 6</span>
+									<span>1.0/3.0 = 0.33333334</span>
+									<span>true</span>
+	        					</p>
 							</div>
         				</div>
         			</div>
