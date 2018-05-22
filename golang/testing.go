@@ -1,6 +1,6 @@
 package main
 
-func main(){
+func main() int{
     var k int = 1
     var x,y  = 8,9
     z := 7
@@ -12,5 +12,5 @@ func main(){
     array := make([]int,5)
     array[0] = 2
     sum := a + b + c + d + f + g + k + x + y + z + array[0]
-   println(sum)
+    return sum
 }

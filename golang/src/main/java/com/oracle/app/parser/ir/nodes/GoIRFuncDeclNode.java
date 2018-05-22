@@ -33,8 +33,12 @@ public class GoIRFuncDeclNode extends GoBaseIRNode {
 		return name.getIdentifier();
 	}
 	
+	public boolean isReceiver(){
+		return receiver != null;
+	}
+	
 	public GoBaseIRNode getReceiver(){
-		if(receiver != null){
+		if(isReceiver()){
 			return receiver;
 		}
 		return null;
