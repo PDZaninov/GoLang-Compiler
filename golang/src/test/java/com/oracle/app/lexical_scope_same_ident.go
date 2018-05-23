@@ -5,7 +5,7 @@ func scoping(x int) int {
 	return x
 }
 
-func main() {
+func main() int{
 	x := 2
 	y := scoping(x)	
 	return x

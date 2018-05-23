@@ -1,6 +1,6 @@
 package main
 
-func main() {
+func main() int{
     var k int = 1
     var x,y  = 8,9
     z := 7

@@ -34,5 +34,9 @@ public class GoIRUnaryNode extends GoBaseIRNode {
 	public Object accept(GoIRVisitor visitor) { 
 		return visitor.visitUnary(this); 
 	}
+	
+	public String TCself() {
+		return child.TCself();
+	}
 
 }

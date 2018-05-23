@@ -13,10 +13,11 @@ public class GoArrayExprNode extends GoExpressionNode {
 	public GoExpressionNode[] getArguments(){
 		return children;
 	}
-
-	public int getSize(){
+	
+	public int getSize() {
 		return children.length;
 	}
+
 	
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {

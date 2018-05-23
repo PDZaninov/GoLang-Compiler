@@ -28,13 +28,13 @@ public abstract class GoPrintlnBuiltin extends GoBuiltinNode {
 
     @Specialization
     public double println(double value) {
-		System.out.printf("%e\n", value);
+		System.out.printf("%+e\n", value);
         return value;
     }
     
     @Specialization
     public float println(float value) {
-    	System.out.printf("%e\n", value);
+    	System.out.printf("%+e\n", value);
         return value;
     }
     

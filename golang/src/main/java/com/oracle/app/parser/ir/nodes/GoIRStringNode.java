@@ -8,7 +8,7 @@ import com.oracle.truffle.api.source.SourceSection;
 public class GoIRStringNode extends GoIRBasicLitNode{
 		private String value;
 		public GoIRStringNode(String value, String source) {
-			super(source);
+			super(source, "STRING", value);
 			if(value.length() > 2){
 				value = value.substring(2, value.length()-2);
 				value = value.replace("\\\\", "\\");

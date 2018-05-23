@@ -23,7 +23,7 @@ func something(a int) int {
 }
 
 
-func main() {
+func main() int {
 	x := add(2, 3)
 	return x
 }
