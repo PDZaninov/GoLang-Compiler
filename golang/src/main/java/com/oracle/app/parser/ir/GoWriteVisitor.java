@@ -92,13 +92,13 @@ public class GoWriteVisitor implements GoIRVisitor {
 		if(rhs instanceof GoIRSliceExprNode) {
 			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
 			if(slot == null){
-				frameSlot = frame.addFrameSlot(name);
+				frameSlot = frame.findOrAddFrameSlot(name);
 				type = new TypeInfo(name, lexicalscope.get(childName).getType(), false, frameSlot);
 			}
 		}
 		else {
 			if(slot == null){
-				frameSlot = frame.addFrameSlot(name);
+				frameSlot = frame.findOrAddFrameSlot(name);
 				type = new TypeInfo(name, side2, false, frameSlot);
 			}
 		}
