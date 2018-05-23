@@ -225,7 +225,7 @@ public class GoTruffle implements GoIRVisitor {
     private final Map<String, GoRootNode> allFunctions;
     private FrameDescriptor frameDescriptor;
     private LexicalScope global;
-    public static LexicalScope lexicalscope;
+    private LexicalScope lexicalscope;
     
     //the order of appearance of functions from parser
     public static LinkedList<GoIRFuncDeclNode> funcOrder = new LinkedList<GoIRFuncDeclNode>();
@@ -263,7 +263,6 @@ public class GoTruffle implements GoIRVisitor {
 		lexicalscope.put("string", new TypeInfo("string", "string", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("_");
 		lexicalscope.put("_", new TypeInfo("_", "_", false, frameSlot));
-
 		global = lexicalscope;
 	}
 
@@ -339,8 +338,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
-		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor();
-		node.accept(mini);//type check children before making a truffle node
+		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
+		node.accept(typevisitor);//type check children before making a truffle node
 		GoExpressionNode rightNode = (GoExpressionNode) node.getRight().accept(this);
 		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
 		String op = node.getOp();
@@ -441,17 +440,16 @@ public class GoTruffle implements GoIRVisitor {
 			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
 		}
 		//Type Checking
-
+		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
 		//can only check call expr that arent builtins
 		GoIRFuncTypeNode f = IRFunctions.get(node.getFunctionNode().getIdentifier());
 		if(f!=null) {
 			String side1 = "";//types of the function signature
 			String side2 = "";//type of arguments passed in
-			GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-			side1 = (String) f.getParams().accept(miniVisitor);
+			side1 = (String) f.getParams().accept(typevisitor);
 			GoIRArrayListExprNode child = node.getArgumentNode();
 			if(child!= null) {
-				side2 = (String)child.accept(miniVisitor);
+				side2 = (String)child.accept(typevisitor);
 			}
 			GoException error = GoTypeCheckingVisitor.Compare(side1, side2,"gotruffle, visitInvoke (" + side1 + "||||" + side2 + ")");
 			if(error!=null) {
@@ -581,10 +579,9 @@ public class GoTruffle implements GoIRVisitor {
 		
 		//type checking
 		GoIRFieldListNode r = (GoIRFieldListNode) ((GoIRFuncTypeNode) curFunctionDecl.getType()).getResults();
-		
-		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-		String side1 = (String) r.accept(miniVisitor);
-		String side2 = (String) miniVisitor.visitReturnStmt(node);
+		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
+		String side1 = (String) r.accept(typevisitor);
+		String side2 = (String) typevisitor.visitReturnStmt(node);
 		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt (" + side1 + "|||" + side2 +")");
 		if(error!=null) {
 			throw error;
@@ -914,8 +911,9 @@ public class GoTruffle implements GoIRVisitor {
 			Init = (GoStatementNode) node.getInit().accept(this);
 		
 		CondNode = (GoExpressionNode) node.getCond().accept(this);
+		startBlock();
 		Body = (GoStatementNode)node.getBody().accept(this);
-		
+		finishBlock();
 		if(node.getElse() != null)
 			Else = (GoStatementNode)node.getElse().accept(this);
 		finishBlock();
