@@ -1,23 +1,29 @@
 package main
-
-import "fmt"
-
-type rect struct{
-    width int
-    height int
-}
-
-//func (r *rect) area() int {
-//    return r.width * r.height
-//}
-
-func (r rect) perim() int {
-    return 2*r.width + 2*r.height
-}
-
-func main() {
-    r := rect{width:10, height:5}
-    
-    //fmt.Println("area: ", r.area())
-    fmt.Println("perim: ", r.perim())
-}
+			
+            
+			func main(){  
+				a := 1  
+				if a == 2 {  
+					a = 2  
+				} else if num := 10; num < 0 {  
+					a = 3  
+				} else {  
+					a = 4  
+				}  
+			 
+				i := 3  
+				for i <= 5 {  
+					a += 1  
+					i += 1  
+				}  
+			 
+				switch a {  
+					case 7:  
+						a = 100  
+					case 5:  
+						a = 50  
+					default:  
+						a = 10  
+					}  
+				println(a)  
+			}

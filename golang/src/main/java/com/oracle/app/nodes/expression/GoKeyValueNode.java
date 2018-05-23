@@ -20,7 +20,7 @@ public class GoKeyValueNode extends GoExpressionNode {
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		result = value.executeGeneric(frame);
-		keyResult = key.executeGeneric(frame);
+		keyResult = key.getName();
 		return this;
 	}
 

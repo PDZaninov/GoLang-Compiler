@@ -44,19 +44,19 @@ public class GoWriteVisitor implements GoIRVisitor {
 	private FrameDescriptor frame;
 	private GoIRAssignmentStmtNode assignmentNode;
 	private Map<String, GoRootNode> allFunctions;
+	private LexicalScope lexicalscope;
 	
 	public GoWriteVisitor(LexicalScope scope, GoTruffle visitor, FrameDescriptor frame, GoIRAssignmentStmtNode assignmentNode, Map<String, GoRootNode> allFunctions){
 		truffleVisitor = visitor;
 		this.frame = frame;
 		this.assignmentNode = assignmentNode;
 		this.allFunctions = allFunctions;
+		lexicalscope = scope;
 	}
 	
 	public Object visit(GoBaseIRNode node){
 		return node.accept(this);
 	}
-	
-	
 	
 	/**
 	 * Might need to change always inserting into the lexicalscope. Does not check if the name already exists.
@@ -66,9 +66,10 @@ public class GoWriteVisitor implements GoIRVisitor {
 		String name = assignmentNode.getIdentifier();
 		GoExpressionNode value = (GoExpressionNode) rhs.accept(truffleVisitor);
 		
-		FrameSlot slot = frame.findOrAddFrameSlot(name);
-
-		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
+		TypeInfo slot = lexicalscope.get(name);
+		FrameSlot frameSlot = null;
+		TypeInfo type = null;
+		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor(lexicalscope);
 		String side2 = "";
 		if(rhs instanceof GoIRInvokeNode) {
 			//usually type checking invoke gets arguments passed, but we want return types
@@ -76,36 +77,52 @@ public class GoWriteVisitor implements GoIRVisitor {
 			if(funcn !=null) {
 				side2 = ((String) funcn.getResults().accept(miniVisitor)).split(",")[node.getAssignPos()];
 			}else {//idk how to check builtins TODO
-				GoTruffle.lexicalscope.locals.put(name,new TypeInfo(name, "object", false, slot));
-				return GoWriteLocalVariableNodeGen.create(value, slot);
+				if(slot == null){
+					 frameSlot = frame.findOrAddFrameSlot(name);
+					lexicalscope.put(name,new TypeInfo(name, "object", false, frameSlot));
+				}
+				else{
+					frameSlot = slot.getSlot();
+				}
+				return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 			}
 		}else {
 			side2 = (String) rhs.accept(miniVisitor);
 		}
 		if(rhs instanceof GoIRSliceExprNode) {
 			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
-			System.out.println("777:" + GoTruffle.lexicalscope.locals.get(childName).getType());
-			GoTruffle.lexicalscope.locals.put(name,  new TypeInfo(name, GoTruffle.lexicalscope.locals.get(childName).getType(), false, slot));
+			if(slot == null){
+				frameSlot = frame.findOrAddFrameSlot(name);
+				type = new TypeInfo(name, lexicalscope.get(childName).getType(), false, frameSlot);
+			}
 		}
 		else {
-			GoTruffle.lexicalscope.locals.put(name,new TypeInfo(name, side2, false, slot));
+			if(slot == null){
+				frameSlot = frame.findOrAddFrameSlot(name);
+				type = new TypeInfo(name, side2, false, frameSlot);
+			}
 		}
 
 		//type checking
-		if(GoTruffle.lexicalscope.locals.get(name)!=null) {//variable assigned a type
+		if(lexicalscope.get(name)!=null) {//variable assigned a type
 			String side1 = (String) node.accept(miniVisitor);
 			GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"writevisitor, visit ident");
 			if(error != null) {
 				throw error;
 			}
 		}
-		GoTruffle.lexicalscope.locals.put(name,new TypeInfo(name, side2, false, slot));
+		if(slot == null){
+			lexicalscope.put(name, type);
+		}
+		else{
+			frameSlot = slot.getSlot();
+		}
 
-		return GoWriteLocalVariableNodeGen.create(value, slot);
+		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 	}
 	
 	public Object visitIndexNode(GoIRIndexNode node) {
-		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor();
+		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor(lexicalscope);
 		node.accept(mini);
 		GoReadLocalVariableNode array = (GoReadLocalVariableNode) node.getName().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);

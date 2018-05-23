@@ -3,20 +3,13 @@ package com.oracle.app.parser;
 import java.util.ArrayList;
 
 import com.oracle.app.GoException;
-import com.oracle.app.nodes.GoArrayExprNode;
-import com.oracle.app.nodes.GoRootNode;
-import com.oracle.app.nodes.types.GoFloat32Node;
-import com.oracle.app.nodes.types.GoFloat64Node;
-import com.oracle.app.nodes.types.GoIntNode;
-import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
 import com.oracle.app.parser.ir.GoIRVisitor;
 import com.oracle.app.parser.ir.GoTruffle;
+import com.oracle.app.parser.ir.GoTruffle.LexicalScope;
 import com.oracle.app.parser.ir.GoTruffle.TypeInfo;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
-import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
-import com.oracle.app.parser.ir.nodes.GoIRBasicLitNode;
 import com.oracle.app.parser.ir.nodes.GoIRBinaryExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldListNode;
 import com.oracle.app.parser.ir.nodes.GoIRFieldNode;
@@ -29,13 +22,13 @@ import com.oracle.app.parser.ir.nodes.GoIRIntNode;
 import com.oracle.app.parser.ir.nodes.GoIRInvokeNode;
 import com.oracle.app.parser.ir.nodes.GoIRReturnStmtNode;
 import com.oracle.app.parser.ir.nodes.GoIRStringNode;
-import com.oracle.app.parser.ir.nodes.GoIRTypes;
 
 public class GoTypeCheckingVisitor implements GoIRVisitor{
 	
+	private final LexicalScope lexicalscope;
 
-	public GoTypeCheckingVisitor() {
-		
+	public GoTypeCheckingVisitor(LexicalScope lexicalscope) {
+		this.lexicalscope = lexicalscope;
 	}
 	
 	/* returns a string of its children types
@@ -110,7 +103,7 @@ public class GoTypeCheckingVisitor implements GoIRVisitor{
 	 * @see com.oracle.app.parser.ir.GoIRVisitor#visitIdent(com.oracle.app.parser.ir.nodes.GoIRIdentNode)
 	 */
 	public Object visitIdent(GoIRIdentNode node){
-		TypeInfo m = GoTruffle.lexicalscope.locals.get(node.getIdentifier());
+		TypeInfo m = lexicalscope.get(node.getIdentifier());
 		if(m != null) {
 			return m.getType();
 		}

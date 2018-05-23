@@ -56,8 +56,4 @@ public class GoIRIdentNode extends GoBaseIRNode {
 		return source.createSection(linenum,charindex,ident.length());
 	}
 	
-	public String TCself() {
-		return GoTruffle.lexicalscope.locals.get(ident).getType();
-	}
-	
 }

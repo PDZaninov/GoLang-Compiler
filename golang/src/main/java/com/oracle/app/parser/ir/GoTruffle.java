@@ -2,10 +2,10 @@ package com.oracle.app.parser.ir;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Set;
 
 import com.oracle.app.GoException;
 import com.oracle.app.GoLanguage;
@@ -75,8 +75,6 @@ import com.oracle.app.nodes.types.GoFunctionLiteralNode;
 import com.oracle.app.nodes.types.GoIntNode;
 import com.oracle.app.nodes.types.GoStringNode;
 import com.oracle.app.parser.GoTypeCheckingVisitor;
-import com.oracle.app.parser.ir.nodes.*;
-import com.oracle.app.nodes.local.GoArrayReadNodeGen;
 import com.oracle.app.parser.ir.nodes.GoIRArrayListExprNode;
 import com.oracle.app.parser.ir.nodes.GoIRArrayTypeNode;
 import com.oracle.app.parser.ir.nodes.GoIRAssignmentStmtNode;
@@ -136,6 +134,7 @@ public class GoTruffle implements GoIRVisitor {
 	 */
     public static class LexicalScope {
         protected final LexicalScope outer;
+        protected final Set<String> unusedVars;
         public final Map<String, TypeInfo> locals;
 
         LexicalScope(LexicalScope outer) {
@@ -143,12 +142,51 @@ public class GoTruffle implements GoIRVisitor {
             this.outer = outer;
             //Creates the local scope
             this.locals = new HashMap<>();
+            this.unusedVars = new HashSet<>();
             
             //If there is an outerscope then put all the variables in there
             //into this scope
+            /*
             if (outer != null) {
                 locals.putAll(outer.locals);
             } 
+            */
+        }
+        
+        public boolean checkForUnusedVars(){
+        	if(outer == null){
+        		return true;
+        	}
+        	return unusedVars.isEmpty();
+        }
+        
+        public void put(String name, TypeInfo slot){
+        	unusedVars.add(name);
+        	locals.put(name, slot);
+        }
+        
+        public TypeInfo get(String name){
+        	Map<String, TypeInfo> templocals = locals;
+        	Set<String> tempset = unusedVars;
+        	TypeInfo result = templocals.get(name);
+        	if(result != null){
+        		tempset.remove(name);
+        		return result;
+        	}
+        	LexicalScope tempouter = outer;
+        	while(tempouter != null){
+        		templocals = tempouter.locals;
+        		tempset = tempouter.unusedVars;
+        		result = templocals.get(name);
+        		if(result != null){
+        			tempset.remove(name);
+        			return result;
+        		}
+        		else{
+        			tempouter = tempouter.outer;
+        		}
+        	}
+        	return null;
         }
     }
     
@@ -187,7 +225,7 @@ public class GoTruffle implements GoIRVisitor {
     private final Map<String, GoRootNode> allFunctions;
     private FrameDescriptor frameDescriptor;
     private LexicalScope global;
-    public static LexicalScope lexicalscope;
+    private LexicalScope lexicalscope;
     
     //the order of appearance of functions from parser
     public static LinkedList<GoIRFuncDeclNode> funcOrder = new LinkedList<GoIRFuncDeclNode>();
@@ -210,21 +248,21 @@ public class GoTruffle implements GoIRVisitor {
         startFunction();
         FrameSlot frameSlot;
         frameSlot = frameDescriptor.addFrameSlot("int",FrameSlotKind.Int);
-		lexicalscope.locals.put("int", new TypeInfo("int", "int", false, frameSlot));
+		lexicalscope.put("int", new TypeInfo("int", "int", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("float64", FrameSlotKind.Double);
-		lexicalscope.locals.put("float64", new TypeInfo("float64", "float64", false, frameSlot));
+		lexicalscope.put("float64", new TypeInfo("float64", "float64", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("float32", FrameSlotKind.Float);
-		lexicalscope.locals.put("float32", new TypeInfo("float32", "float32", false, frameSlot));
+		lexicalscope.put("float32", new TypeInfo("float32", "float32", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("bool", FrameSlotKind.Boolean);
-		lexicalscope.locals.put("bool", new TypeInfo("bool", "bool", false, frameSlot));
+		lexicalscope.put("bool", new TypeInfo("bool", "bool", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("true", FrameSlotKind.Boolean);
-		lexicalscope.locals.put("true", new TypeInfo("true", "true", false, frameSlot));
+		lexicalscope.put("true", new TypeInfo("true", "true", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("false", FrameSlotKind.Boolean);
-		lexicalscope.locals.put("false", new TypeInfo("false", "false", false, frameSlot));
+		lexicalscope.put("false", new TypeInfo("false", "false", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("string", FrameSlotKind.Object);
-		lexicalscope.locals.put("string", new TypeInfo("string", "string", false, frameSlot));
+		lexicalscope.put("string", new TypeInfo("string", "string", false, frameSlot));
 		frameSlot = frameDescriptor.addFrameSlot("_");
-		lexicalscope.locals.put("_", new TypeInfo("_", "_", false, frameSlot));
+		lexicalscope.put("_", new TypeInfo("_", "_", false, frameSlot));
 		global = lexicalscope;
 	}
 
@@ -241,6 +279,10 @@ public class GoTruffle implements GoIRVisitor {
     }
     
     public void finishBlock(){
+    	//TODO Does not specify the variable that is declared and only outputs one error
+    	if(!lexicalscope.checkForUnusedVars()){
+    		throw new GoException("Declared variable and not used");
+    	}
     	lexicalscope = lexicalscope.outer;
     }
     
@@ -273,13 +315,13 @@ public class GoTruffle implements GoIRVisitor {
 		String name = node.getIdentifier();
 		GoExpressionNode result = null;
 		//System.out.println(name+" "+lexicalscope.locals);
-		final TypeInfo info = lexicalscope.locals.get(name);
+		final TypeInfo info = lexicalscope.get(name);
 
 	    if (info != null) {
 	            /* Read of a local variable. */
 	    	result = (GoExpressionNode)GoReadLocalVariableNodeGen.create(info.getSlot());
 	    } else {
-	    	result = new GoIdentNode(language, name, result);
+	    	result = new GoIdentNode(name, result);
 	    }
 
 	    if(node.getChild() != null) {
@@ -296,8 +338,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
-		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor();
-		node.accept(mini);//type check children before making a truffle node
+		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
+		node.accept(typevisitor);//type check children before making a truffle node
 		GoExpressionNode rightNode = (GoExpressionNode) node.getRight().accept(this);
 		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
 		String op = node.getOp();
@@ -398,17 +440,16 @@ public class GoTruffle implements GoIRVisitor {
 			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
 		}
 		//Type Checking
-
+		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
 		//can only check call expr that arent builtins
 		GoIRFuncTypeNode f = IRFunctions.get(node.getFunctionNode().getIdentifier());
 		if(f!=null) {
 			String side1 = "";//types of the function signature
 			String side2 = "";//type of arguments passed in
-			GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-			side1 = (String) f.getParams().accept(miniVisitor);
+			side1 = (String) f.getParams().accept(typevisitor);
 			GoIRArrayListExprNode child = node.getArgumentNode();
 			if(child!= null) {
-				side2 = (String)child.accept(miniVisitor);
+				side2 = (String)child.accept(typevisitor);
 			}
 			GoException error = GoTypeCheckingVisitor.Compare(side1, side2,"gotruffle, visitInvoke (" + side1 + "||||" + side2 + ")");
 			if(error!=null) {
@@ -437,7 +478,7 @@ public class GoTruffle implements GoIRVisitor {
 		//Receivers will only have one field. Multiple fields are not allowed.
 		//TODO error check on multiple receivers
 		FrameSlot slot = frameDescriptor.addFrameSlot(receiver.getName());
-		lexicalscope.locals.put(receiver.getName(),new TypeInfo(receiver.getName(),"struct class TODO" ,false,slot));
+		lexicalscope.put(receiver.getName(),new TypeInfo(receiver.getName(),"struct class TODO" ,false,slot));
 		int structargcount;
 		if(typeNode.getParams() == null){
 			structargcount = 0;
@@ -456,7 +497,7 @@ public class GoTruffle implements GoIRVisitor {
 		funcOrder.push(node);
 		String name = node.getIdentifier();
 		FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
-		lexicalscope.locals.put(name, new TypeInfo(name , "FuncLiteral",false, slot));
+		lexicalscope.put(name, new TypeInfo(name , "FuncLiteral",false, slot));
 		startFunction();
 		
 		GoFuncTypeNode typeNode = (GoFuncTypeNode) node.getType().accept(this);
@@ -513,7 +554,7 @@ public class GoTruffle implements GoIRVisitor {
             for (int i = 0; i < children.size(); i++) {
                 String name = children.get(i).getIdentifier();
                 FrameSlot slot = frameDescriptor.findOrAddFrameSlot(name);
-                lexicalscope.locals.put(name, new TypeInfo(name, node.getTypeName(), false, slot));
+                lexicalscope.put(name, new TypeInfo(name, node.getTypeName(), false, slot));
                 result[i] = new GoFieldNode(name,typename);
             }
         }
@@ -538,10 +579,9 @@ public class GoTruffle implements GoIRVisitor {
 		
 		//type checking
 		GoIRFieldListNode r = (GoIRFieldListNode) ((GoIRFuncTypeNode) curFunctionDecl.getType()).getResults();
-		
-		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-		String side1 = (String) r.accept(miniVisitor);
-		String side2 = (String) miniVisitor.visitReturnStmt(node);
+		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
+		String side1 = (String) r.accept(typevisitor);
+		String side2 = (String) typevisitor.visitReturnStmt(node);
 		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt (" + side1 + "|||" + side2 +")");
 		if(error!=null) {
 			throw error;
@@ -871,8 +911,9 @@ public class GoTruffle implements GoIRVisitor {
 			Init = (GoStatementNode) node.getInit().accept(this);
 		
 		CondNode = (GoExpressionNode) node.getCond().accept(this);
+		startBlock();
 		Body = (GoStatementNode)node.getBody().accept(this);
-		
+		finishBlock();
 		if(node.getElse() != null)
 			Else = (GoStatementNode)node.getElse().accept(this);
 		finishBlock();
@@ -920,7 +961,7 @@ public class GoTruffle implements GoIRVisitor {
 		FrameSlot frameSlot = frameDescriptor.findOrAddFrameSlot(name);
 		//TO DO fix typeInfo
 		//TODO
-		lexicalscope.locals.put(name, new TypeInfo(name, name, false, frameSlot));
+		lexicalscope.put(name, new TypeInfo(name, name, false, frameSlot));
 		
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
 		return new GoImportSpec(ident, language, frameSlot);
@@ -929,7 +970,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
 		GoExpressionNode expr = (GoExpressionNode) goIRSelectorExprNode.getExpr().accept(this);
-		GoIdentNode name = new GoIdentNode(language, goIRSelectorExprNode.getName().getIdentifier(),null);
+		GoStringNode name = new GoStringNode(goIRSelectorExprNode.getName().getIdentifier());
 		return GoSelectorExprNodeGen.create(expr, name);
 	}
 	
@@ -937,7 +978,7 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitTypeSpec(GoIRTypeSpecNode node){
 		String name = node.getIdentifier();
 		FrameSlot slot = frameDescriptor.addFrameSlot(name);
-		lexicalscope.locals.put(name,new TypeInfo(name, node.getTypeName(), false, slot));
+		lexicalscope.put(name,new TypeInfo(name, node.getTypeName(), false, slot));
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		
 		GoWriteLocalVariableNode result = GoWriteLocalVariableNodeGen.create(type,slot);
