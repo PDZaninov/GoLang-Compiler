@@ -47,7 +47,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 		String name = assignmentNode.getIdentifier();
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		FrameSlot frameSlot = frame.findOrAddFrameSlot(name);
-		scope.locals.put(name,frameSlot);
+		scope.put(name,frameSlot);
 		return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 	}
 	
