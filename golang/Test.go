@@ -3,6 +3,9 @@ package main
 import "fmt"
 
 func main() {
-    //Unused var scenario 1: just initialized in a function
-    x := 2
+    var a, n int = 1, 5
+    for x := 1; x <= n; x++{
+        a *= x
+        }
+    fmt.Println(a)
 }
