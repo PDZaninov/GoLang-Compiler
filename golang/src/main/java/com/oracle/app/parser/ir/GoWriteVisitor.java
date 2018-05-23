@@ -40,9 +40,6 @@ public class GoWriteVisitor implements GoIRVisitor {
 		return node.accept(this);
 	}
 	
-	/**
-	 * Might need to change always inserting into the lexicalscope. Does not check if the name already exists.
-	 */
 	public Object visitIdent(GoIRIdentNode node){
 		String name = assignmentNode.getIdentifier();
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
