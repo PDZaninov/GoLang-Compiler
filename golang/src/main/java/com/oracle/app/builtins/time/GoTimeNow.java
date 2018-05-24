@@ -32,7 +32,7 @@ public class GoTimeNow extends GoExpressionNode{
 	public Object executeGeneric(VirtualFrame frame) {
 		GoExpressionNode body = GoUnixNano.getUnixNano();
 		String name = GoContext.lookupNodeInfo(body.getClass()).shortName();
-		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, body, null, name);
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, body, null, name);
 		GoFunction function = new GoFunction(language, name);
 		RootCallTarget callTarget = Truffle.getRuntime().createCallTarget(rootNode);
         function.setCallTarget(callTarget);

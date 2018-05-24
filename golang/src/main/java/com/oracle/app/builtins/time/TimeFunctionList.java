@@ -36,7 +36,7 @@ public class TimeFunctionList extends GoExpressionNode {
 	public void installBuiltins(){
 		GoExpressionNode bodyNode = GoTimeNow.getTimeNow(language);
 		String name = GoContext.lookupNodeInfo(bodyNode.getClass()).shortName();
-		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, null, bodyNode, null, name);
+		GoRootNode rootNode = new GoRootNode(language, new FrameDescriptor(), null, bodyNode, null, name);
 		register(name,rootNode);
 	}
 

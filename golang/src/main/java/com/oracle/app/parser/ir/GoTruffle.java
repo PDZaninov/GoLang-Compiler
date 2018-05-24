@@ -296,8 +296,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
-		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor();
-		node.accept(mini);//type check children before making a truffle node
+		//GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor();
+		//node.accept(mini);//type check children before making a truffle node
 		GoExpressionNode rightNode = (GoExpressionNode) node.getRight().accept(this);
 		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
 		String op = node.getOp();
@@ -539,13 +539,13 @@ public class GoTruffle implements GoIRVisitor {
 		//type checking
 		GoIRFieldListNode r = (GoIRFieldListNode) ((GoIRFuncTypeNode) curFunctionDecl.getType()).getResults();
 		
-		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
-		String side1 = (String) r.accept(miniVisitor);
-		String side2 = (String) miniVisitor.visitReturnStmt(node);
-		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt (" + side1 + "|||" + side2 +")");
-		if(error!=null) {
-			throw error;
-		}
+		//GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor();
+		//String side1 = (String) r.accept(miniVisitor);
+		//String side2 = (String) miniVisitor.visitReturnStmt(node);
+		//GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt (" + side1 + "|||" + side2 +")");
+		//if(error!=null) {
+		//	throw error;
+		//}
 		//end of type checking
 		
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	

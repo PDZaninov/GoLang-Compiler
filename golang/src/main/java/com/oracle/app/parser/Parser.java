@@ -509,12 +509,18 @@ public class Parser {
 	 * Called by valuespec
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, String source){
-		ArrayList<GoBaseIRNode> result = new ArrayList<>();
-		for(GoBaseIRNode node : lhs.getChildren()){
-			result.add(new GoIRAssignmentStmtNode(node,type,type));
-		}
-		return new GoIRArrayListExprNode(result, source);
-	}
+        ArrayList<GoBaseIRNode> result = new ArrayList<>();
+        GoBaseIRNode typeS;
+        for(GoBaseIRNode node : lhs.getChildren()){
+            if(type instanceof GoIRArrayTypeNode) {
+                typeS = ((GoIRArrayTypeNode) type).getType();
+            }else {
+                typeS = type;
+            }
+            result.add(new GoIRAssignmentStmtNode(node,type,typeS));
+        }
+        return new GoIRArrayListExprNode(result, source);
+    }
 	
 	/*
 	 * Given a type and a right hand side, the right hand side should match the type given
