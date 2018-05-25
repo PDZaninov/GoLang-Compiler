@@ -8,14 +8,12 @@ public class GoIRIntNode extends GoIRBasicLitNode{
 		
 		int value;
 		int valuelen;
-		String source;
 		
 		public GoIRIntNode(String value, String source) {
-			super("IR Int Node", "INT", value);
+			super(source, "INT", value);
 			this.value = Integer.parseInt(value);
 			valuelen = value.length();
 			this.type = "INT";
-			this.source = source;
 		}
 		
 		public GoIRIntNode(int value,String source){

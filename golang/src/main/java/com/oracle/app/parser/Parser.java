@@ -291,7 +291,7 @@ public class Parser {
 						func_body);
 				
 			case "FuncType":
-				return new GoIRFuncTypeNode(body.get("Params"), body.get("Results"));
+				return new GoIRFuncTypeNode(body.get("Params"), body.get("Results"),attrs.get("Func"));
 				
 			case "GenDecl":
 				return new GoIRGenDeclNode(attrs.get("Tok"),
@@ -354,7 +354,7 @@ public class Parser {
 			case "RangeStmt":
 				return null;
 			case "ReturnStmt":
-				return new GoIRReturnStmtNode((GoIRArrayListExprNode)body.get("Results"));
+				return new GoIRReturnStmtNode((GoIRArrayListExprNode)body.get("Results"),attrs.get("Return"));
 				
 			case "Scope":
 				return new GoTempIRNode(nodeType,attrs,body);
@@ -407,10 +407,10 @@ public class Parser {
 				GoBaseIRNode valuetype = body.get("Type");
 				GoIRArrayListExprNode values = (GoIRArrayListExprNode) body.get("Values");
 				if(values == null){
-					return createAssignment(names, valuetype, null);
+					return createAssignment(names, valuetype, attrs.get("TokPos"));
 				}
 				else{
-					return createAssignment(names,valuetype,values,null);
+					return createAssignment(names,valuetype,values,attrs.get("TokPos"));
 				}
 			//Idk if comments are supposed to do anything technically so they are just null
 			case "Comment":
@@ -457,13 +457,13 @@ public class Parser {
 			{
 				((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
 				writeto = lhs.getChildren().get(i);
-				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ,null));
+				result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(0) ,null,source));
 				continue;
 				
 			}
 			
 			writeto = lhs.getChildren().get(i);
-			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i),null ));
+			result.add(new GoIRAssignmentStmtNode(writeto,rhs.getChildren().get(i),null,source));
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}
@@ -475,7 +475,7 @@ public class Parser {
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, String source){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
 		for(GoBaseIRNode node : lhs.getChildren()){
-			result.add(new GoIRAssignmentStmtNode(node,type,type));
+			result.add(new GoIRAssignmentStmtNode(node,type,type,source));
 		}
 		return new GoIRArrayListExprNode(result, source);
 	}
@@ -496,7 +496,7 @@ public class Parser {
 				for(int i = 0; i < size;i++){
 					((GoIRIdentNode) lhs.getChildren().get(i)).setPos(i);
 					((GoIRInvokeNode)rhs.getChildren().get(0)).incAssignLen();
-					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0), type ));
+					result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(0), type,source));
 				}
 				return new GoIRArrayListExprNode(result, source);
 			}
@@ -513,18 +513,18 @@ public class Parser {
 			
 			
 			if(type==null) {
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i),null ));
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i),null,source));
 			}
 			else if(type.getIdentifier().equalsIgnoreCase(((GoIRBasicLitNode) (rhs.getChildren().get(i))).getType()))
 				{
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) , type));
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i),rhs.getChildren().get(i) , type,source));
 			}
 			else if(((GoIRBasicLitNode) rhs.getChildren().get(i)).getType().equalsIgnoreCase("INT") &&
 					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
 				// var c float32 = 3 -- example of this case
 				// the above sets the basic lit as an int node, so I need to make a new basiclit node of the correct type
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
-				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ,type));
+				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ,type,source));
 
 			}
 			else {
