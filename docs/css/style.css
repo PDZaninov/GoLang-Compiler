@@ -92,6 +92,10 @@ p span {
   text-indent: 16px;
 }
 
+.dblIndent {
+  text-indent: 32px;
+}
+
 .box {
   background-color: #dcdbdb;
   border-radius: 6px;
