@@ -9,7 +9,7 @@ func forloopfib(x int) {
     a := 0
     b := 1
     c := 0
-    for i:=0; i < x; i++ {
+    for i:=1; i < x; i++ {
         c = a + b
         a = b
         b = c
@@ -33,9 +33,17 @@ func main() {
         if(i == 10000){
             x = time.Now().UnixNano()
         }
-        forloopfib(5)
-        //fib(5)
+        y := 13
+        a := 0
+        b := 1
+        c := 0
+        for j:=1; j < y; j++ {
+            c = a + b
+            a = b
+            b = c
+        }
     }
+    
     b := time.Now().UnixNano()
     fmt.Println(b-x, "nanoseconds")
     fmt.Println((b-x)/1000000, "milliseconds")
