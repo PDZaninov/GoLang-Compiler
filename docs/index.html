@@ -1,9 +1,372 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>TruffleGoLang compiler</title>
+	<title>TruffleGoLang Compiler</title>
 </head>
 <body>
-<h1>This is a test</h1>
+	<div id="wrapper" class="toggled">
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        TruffleGo
+                    </a>
+                </li>
+                <li>
+                    <a href="#helloWorld">Hello World</a>
+                </li>
+                <li>
+                    <a href="#values">Values</a>
+                </li>
+                <li>
+                    <a href="#variables">Variables</a>
+                </li>
+                <li>
+                    <a href="#for">For</a>
+                </li>
+                <li>
+                    <a href="#switch">Switch</a>
+                </li>
+                <li>
+                    <a href="#ifelse">If/Else</a>
+                </li>
+                <li>
+                    <a href="#arrays">Arrays</a>
+                </li>
+                <li>
+                    <a href="#slices">Slices</a>
+                </li>
+                <li>
+                    <a href="#maps">Maps</a>
+                </li>
+                <li>
+                    <a href="#functions">Functions</a>
+                </li>
+                <li>
+                    <a href="#multipleReturns">Multiple Returns</a>
+                </li>
+                <li>
+                	<a href="#recursion">Recursion</a>
+                </li>
+                <li>
+                    <a href="#structs">Structs</a>
+                </li>
+                <li>
+                    <a href="#structMethods">Struct Methods</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="container-fluid">
+        	<div class="jumbotron">
+        		TruffleGo Compiler
+        	</div>
+        	<div class="row">
+        		<div id="helloWorld" class="col-md-12 col-sm-12">
+        			<h2>Hello World</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>
+	        						<span>package main</span>
+	        						<span>import "fmt"</span>
+	        					</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World!")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div class="col-md-12 col-sm-12">
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">
+        					To run the program, put the code into your favorite text editor and save the file as <em>hello-world.go</em>. Then, use the command <em>./gt hello-world.go</em>. If you would like to see the Go output alongside the Truffle output, use the flag <em>-go</em>. It will print out any difference.
+
+        				</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>$ ./gt hello-world.go <span>Hello World!</span></p>
+	        					<p>$ ./gt hello-world.go 
+	        						<span>TruffleOutput:</span>
+	        						<span>Hello World!</span>
+	        						<span>Go Output:</span>
+	        						<span>Hello World!</span>
+	        						<span>Any diff listed below:</span>
+	        					</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="values" class="col-md-12 col-sm-12">
+        			<h2>Values</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">Go has several types including strings, integers, floats, and booleans.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>
+	        						<span>package main</span>
+	        						<span>import "fmt"</span>
+	        					</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello" + " World!")</span> 
+									<span class="indent">fmt.Println("4 + 2 =", 4 + 2)</span>
+									<span class="indent">fmt.Println("1.0/3.0 =", 1.0/3.0)</span>
+									<span class="indent">fmt.Println(true)</span>
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div class="col-md-12 col-sm-12">
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6"></div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>
+	        						$ ./gt values.go 
+	        						<span>Hello World!</span>
+									<span>4 + 2 = 6</span>
+									<span>1.0/3.0 = 0.33333334</span>
+									<span>true</span>
+	        					</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="variables" class="col-md-12 col-sm-12">
+        			<h2>Variables</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="for" class="col-md-12 col-sm-12">
+        			<h2>For</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="switch" class="col-md-12 col-sm-12">
+        			<h2>Switch</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="ifelse" class="col-md-12 col-sm-12">
+        			<h2>If/Else</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="arrays" class="col-md-12 col-sm-12">
+        			<h2>Arrays</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="slices" class="col-md-12 col-sm-12">
+        			<h2>Slices</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="maps" class="col-md-12 col-sm-12">
+        			<h2>Maps</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="functions" class="col-md-12 col-sm-12">
+        			<h2>Functions</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="multipleReturns" class="col-md-12 col-sm-12">
+        			<h2>Multiple Returns</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="recursion" class="col-md-12 col-sm-12">
+        			<h2>Recursion</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="structs" class="col-md-12 col-sm-12">
+        			<h2>Structs</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+
+        		<div id="structMethods" class="col-md-12 col-sm-12">
+        			<h2>Struct Methods</h2>
+        			<div class="row">
+        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">
+        					<div class="box">        					
+	        					<p>package main</p>
+								<p>import "fmt"</p>
+								<p>
+									<span>func main() {</span> 
+									<span class="indent">fmt.Println("Hello World")</span> 
+									<span>}</span>
+								</p>
+							</div>
+        				</div>
+        			</div>
+        		</div>
+        	</div>
+        </div>
+	</div>
+
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
 </body>
 </html>
