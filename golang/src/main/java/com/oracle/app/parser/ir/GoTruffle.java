@@ -17,6 +17,7 @@ import com.oracle.app.nodes.GoIdentNode;
 import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.nodes.GoStatementNode;
 import com.oracle.app.nodes.SpecDecl.GoImportSpec;
+import com.oracle.app.nodes.SpecDecl.GoSelectorExprNode;
 import com.oracle.app.nodes.SpecDecl.GoSelectorExprNodeGen;
 import com.oracle.app.nodes.call.GoFieldNode;
 import com.oracle.app.nodes.call.GoFuncTypeNode;
@@ -443,7 +444,9 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitInvoke(GoIRInvokeNode node) {
 		GoExpressionNode functionNode = (GoExpressionNode) node.getFunctionNode().accept(this);
 		if(functionNode instanceof GoReadLocalVariableNode || functionNode instanceof GoIdentNode){
+			GoExpressionNode tempsourcenode = functionNode;
 			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
+			functionNode.setSourceSection(tempsourcenode.getSourceSection());
 		}
 		//Type Checking
 		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
@@ -524,12 +527,16 @@ public class GoTruffle implements GoIRVisitor {
 		finishBlock();
 
 		GoFunctionLiteralNode funcLit = new GoFunctionLiteralNode(language, name);
-
+		GoExpressionNode result = null;
 		if(node.isReceiver()){
 			boolean createProperty = true;
-			return GoStructPropertyWriteNodeGen.create(createProperty, receiver.getType(), funcLit, name);
+			result = GoStructPropertyWriteNodeGen.create(createProperty, receiver.getType(), funcLit, name);
 		}
-		return GoWriteLocalVariableNodeGen.create(funcLit,slot);
+		else{
+			result = GoWriteLocalVariableNodeGen.create(funcLit,slot);
+		}
+		result.setSourceSection(source.createSection(typeNode.getSourceSection().getStartLine()));
+		return result;
 	}
 	
 	@Override
@@ -639,8 +646,8 @@ public class GoTruffle implements GoIRVisitor {
 		
 		if(argumentsize > 0 && arguments[0] != null){
 			int linenum = arguments[0].getSourceSection().getStartLine();
-			int start = arguments[0].getSourceSection().getCharIndex();
-			int end = arguments[argumentsize-1].getSourceSection().getCharEndIndex();
+			int start = arguments[0].getSourceSection().getStartColumn();
+			int end = arguments[argumentsize-1].getSourceSection().getEndColumn();
 			createThreePartSource(result,linenum,start,end);
 		}
 		return result;
@@ -765,10 +772,10 @@ public class GoTruffle implements GoIRVisitor {
 	public Object visitAssignment(GoIRAssignmentStmtNode node) {	
 		GoBaseIRNode child = node.getLHS();
 		
-		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node,allFunctions);
+		GoWriteVisitor miniVisitor = new GoWriteVisitor(lexicalscope,this,frameDescriptor,node,source);
 		GoExpressionNode result = (GoExpressionNode) miniVisitor.visit(child);
-		int linenum = node.getTokPosLineNum();
-		result.setSourceSection(source.createSection(linenum));
+		//int linenum = node.getTokPosLineNum();
+		//result.setSourceSection(source.createSection(linenum));
 		return result;
 		
 	}
@@ -814,9 +821,12 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		//String type = node.getType().getIdentifier();
-		//Catch error where length is not an int node or possibly an int const
+		//TODO Catch error where length is not an int node or possibly an int const
 		GoArray result = new GoArray((GoIntNode) length,type);
-
+		int linenum = node.getLBrackStartLine();
+		int start = node.getLBrackStartColumn();
+		int end = type.getSourceSection().getEndColumn();
+		createThreePartSource(result,linenum,start,end);
 		return result;
 	}
 	
@@ -837,12 +847,10 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		GoSliceExprNode result = new GoSliceExprNode(expr,low,high,max);
 
-		//String lbrack = node.getSource();
-		//int startLine = Integer.parseInt(lbrack.split(":")[1]);
-		//int start = Integer.parseInt(lbrack.split(":")[2]);
-		//int len = type.getSourceSection().getEndColumn();
-		//int len = 3;
-		//result.setSourceSection(source.createSection(startLine, start, len));
+		int linenum = node.getRbrackLineNum();
+		int start = expr.getSourceSection().getStartColumn();
+		int end = node.getRbrackStartColumn();
+		createThreePartSource(result,linenum,start,end);
 		return result;
 	}
 	
@@ -854,6 +862,18 @@ public class GoTruffle implements GoIRVisitor {
 		}
 		GoArrayExprNode elts = (GoArrayExprNode) node.getElts().accept(this);
 		GoCompositeLitNode result = GoCompositeLitNodeGen.create(elts, type);
+		int linenum;
+		int start;
+		if(type != null){
+			linenum = type.getSourceSection().getStartLine();
+			start = type.getSourceSection().getStartColumn();
+		}
+		else{
+			linenum = node.getLBraceLineNum();
+			start = node.getLBraceStartColumn();
+		}
+		int end = node.getRBraceEndColumn();
+		createThreePartSource(result,linenum,start,end);
 		return result;
 	}
 	
@@ -869,10 +889,10 @@ public class GoTruffle implements GoIRVisitor {
 			body = (GoStatementNode[]) node.getBody().accept(this);
 		}
 		GoCaseClauseNode result = new GoCaseClauseNode(list, body);
-		//int startLine = node.getSourceLine();
-		//int start = node.getCaseStart();
-		//int length = node.getSourceLength();
-		//result.setSourceSection(source.createSection(startLine,start,length));
+		int startLine = node.getSourceLine();
+		int start = node.getCaseStart();
+		int end = node.getSourceLength();
+		createThreePartSource(result,startLine,start,end);
 		return result;
 	}
 
@@ -893,8 +913,8 @@ public class GoTruffle implements GoIRVisitor {
 		}
 
 		GoSwitchNode result = new GoSwitchNode(init, tag, body);
-		//int line = node.getSourceLine();
-		//result.setSourceSection(source.createSection(line));
+		int line = node.getSourceLine();
+		result.setSourceSection(source.createSection(line));
 		return result;
 	}
 
@@ -916,7 +936,7 @@ public class GoTruffle implements GoIRVisitor {
 		finishBlock();
 		
 		GoForNode result = new GoForNode(init, cond, post, body);
-		//result.setSourceSection(source.createSection(node.getSourceLine()));
+		result.setSourceSection(source.createSection(node.getSourceLine()));
 		return result;
 	}
 
@@ -930,7 +950,7 @@ public class GoTruffle implements GoIRVisitor {
 		String op = node.getOp();
 		final GoIRBinaryExprNode binary_expr = new GoIRBinaryExprNode(op.substring(0,1), ident, one, null);
 
-		GoIRAssignmentStmtNode res = new GoIRAssignmentStmtNode(ident,binary_expr,null);
+		GoIRAssignmentStmtNode res = new GoIRAssignmentStmtNode(ident,binary_expr,null,node.getTokPos());
 		result = (GoExpressionNode) res.accept(this);
 		return result;
 	}
@@ -958,7 +978,7 @@ public class GoTruffle implements GoIRVisitor {
 			Else = (GoStatementNode)node.getElse().accept(this);
 		finishBlock();
 		GoIfStmtNode result = new GoIfStmtNode(Init,CondNode,Body,Else);
-		//result.setSourceSection(source.createSection(node.getSourceLine()));
+		result.setSourceSection(source.createSection(node.getSourceLine()));
 		return result;
 	}
 
@@ -990,7 +1010,7 @@ public class GoTruffle implements GoIRVisitor {
 			default:
 				throw new RuntimeException("Unexpected BranchStmt: " + type);
 		}
-		//result.setSourceSection(source.createSection(node.getSourceLine()));
+		result.setSourceSection(source.createSection(node.getSourceLine()));
 		return result;
 	}
 
@@ -1004,27 +1024,37 @@ public class GoTruffle implements GoIRVisitor {
 		lexicalscope.put(name, new TypeInfo(name, name, false, frameSlot));
 		
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
+		//TODO Source section?
 		return new GoImportSpec(ident, language, frameSlot);
 	}
 
 	@Override
 	public Object visitSelectorExpr(GoIRSelectorExprNode goIRSelectorExprNode){
 		GoExpressionNode expr = (GoExpressionNode) goIRSelectorExprNode.getExpr().accept(this);
+		GoExpressionNode namenode = (GoExpressionNode) goIRSelectorExprNode.getName().accept(this);
 		GoStringNode name = new GoStringNode(goIRSelectorExprNode.getName().getIdentifier());
-		return GoSelectorExprNodeGen.create(expr, name);
+		GoSelectorExprNode result = GoSelectorExprNodeGen.create(expr, name);
+		int linenum = expr.getSourceSection().getStartLine();
+		int start = expr.getSourceSection().getStartColumn();
+		int end = namenode.getSourceSection().getEndColumn();
+		createThreePartSource(result,linenum,start,end);
+		return result;
 	}
 	
 	@Override
 	public Object visitTypeSpec(GoIRTypeSpecNode node){
 		String name = node.getIdentifier();
+		GoExpressionNode namenode = (GoExpressionNode) node.getName().accept(this);
 		FrameSlot slot = frameDescriptor.addFrameSlot(name);
 		lexicalscope.put(name,new TypeInfo(name, node.getTypeName(), false, slot));
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		
 		GoWriteLocalVariableNode result = GoWriteLocalVariableNodeGen.create(type,slot);
+		result.setSourceSection(source.createSection(namenode.getSourceSection().getStartLine()));
 		return result;
 	}
 	
+	//TODO Source section for everything below this line LOL
 	@Override
 	public Object visitStructType(GoIRStructTypeNode node){
 		//GoArrayExprNode fields = (GoArrayExprNode) node.getFieldListNode().accept(this);

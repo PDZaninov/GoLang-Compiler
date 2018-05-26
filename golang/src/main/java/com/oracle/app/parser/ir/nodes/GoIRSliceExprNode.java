@@ -31,8 +31,14 @@ public class GoIRSliceExprNode extends GoBaseIRNode {
 		return expr;
 	}
 
-	public String getLbrack() {
-		return lbrack;
+	public int getRbrackLineNum() {
+		String[] split = rbrack.split(":");
+		return Integer.parseInt(split[1]);
+	}
+	
+	public int getRbrackStartColumn(){
+		String[] split = rbrack.split(":");
+		return Integer.parseInt(split[2]);
 	}
 
 	public GoBaseIRNode getLow() {

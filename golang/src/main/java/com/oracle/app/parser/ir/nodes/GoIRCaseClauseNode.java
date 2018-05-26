@@ -27,9 +27,7 @@ public class GoIRCaseClauseNode extends GoBaseIRNode {
     }
     
     public int getSourceLength(){
-    	int start = Integer.parseInt(casetok.split(":")[2]);
-    	int end = Integer.parseInt(colon.split(":")[2]);
-    	return end - start;
+    	return Integer.parseInt(colon.split(":")[2]);
     }
     
     public GoIRStmtNode getBody() {
