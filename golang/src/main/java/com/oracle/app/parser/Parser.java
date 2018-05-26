@@ -83,7 +83,11 @@ public class Parser {
 		
 		GoTruffle truffleVisitor = new GoTruffle(language, source);
 		truffleVisitor.initialize();
-		return (GoFileNode) k.accept(truffleVisitor);
+		GoFileNode result = (GoFileNode) k.accept(truffleVisitor);
+		if(truffleVisitor.checkForCompileErrors()){
+			throw new GoException("");
+		}
+		return result;
 	}
 	
 	/**

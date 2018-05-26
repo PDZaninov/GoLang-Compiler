@@ -49,6 +49,9 @@ public class GoMain
     		}
     	}
     	//All errors end up here
+    	catch(GoException e){
+    		
+    	}
     	catch (Throwable ex){
 
     		ex.printStackTrace(out);

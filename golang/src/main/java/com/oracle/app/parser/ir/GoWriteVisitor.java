@@ -73,7 +73,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 			}else {//idk how to check builtins TODO
 				if(slot == null){
 					 frameSlot = frame.findOrAddFrameSlot(name);
-					lexicalscope.put(name,new TypeInfo(name, "object", false, frameSlot));
+					lexicalscope.put(name,new TypeInfo(name, "object", false, frameSlot, namenode));
 				}
 				else{
 					frameSlot = slot.getSlot();
@@ -89,13 +89,13 @@ public class GoWriteVisitor implements GoIRVisitor {
 			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
 			if(slot == null){
 				frameSlot = frame.findOrAddFrameSlot(name);
-				type = new TypeInfo(name, lexicalscope.get(childName).getType(), false, frameSlot);
+				type = new TypeInfo(name, lexicalscope.get(childName).getType(), false, frameSlot, namenode);
 			}
 		}
 		else {
 			if(slot == null){
 				frameSlot = frame.findOrAddFrameSlot(name);
-				type = new TypeInfo(name, side2, false, frameSlot);
+				type = new TypeInfo(name, side2, false, frameSlot, namenode);
 			}
 		}
 
