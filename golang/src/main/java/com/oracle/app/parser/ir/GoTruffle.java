@@ -294,8 +294,7 @@ public class GoTruffle implements GoIRVisitor {
     			GoExpressionNode original = lexicalscope.get((String) var).getOriginalDefinition();
     			int linenum = original.getSourceSection().getStartLine();
     			int start = original.getSourceSection().getStartColumn();
-    			String msg = source.getName() + ":" + linenum + ":" + start + ": " + var +" declared and not used";
-    			createCompileError(msg);
+    			createCompileError(linenum,start,"declared and not used");
     		}
     	}
     	lexicalscope = lexicalscope.outer;
@@ -305,9 +304,9 @@ public class GoTruffle implements GoIRVisitor {
 		node.setSourceSection(source.createSection(linenum,start,length - start));
     }
     
-    public void createCompileError(String msg){
+    public void createCompileError(int linenum, int charcol, String msg){
     	compileerrors = true;
-    	System.err.println(msg);
+    	System.err.println(source.getName()+":"+linenum+":"+charcol+": "+msg);
     }
     
     public boolean checkForCompileErrors(){
@@ -512,17 +511,17 @@ public class GoTruffle implements GoIRVisitor {
 	public GoFieldNode appendReceiver(GoIRFuncDeclNode node, GoFuncTypeNode typeNode){
 		GoFieldNode[] receiverlist = handleStructFieldList((GoIRFieldListNode) node.getReceiver());
 		if(receiverlist.length > 1){
-			createCompileError("method has multiple receivers");
+			int linenum = typeNode.getSourceSection().getStartLine();
+			int start = typeNode.getSourceSection().getEndColumn();
+			createCompileError(linenum,start,"method has multiple receivers");
 		}
 		else if(receiverlist.length == 0){
 			int linenum = typeNode.getSourceSection().getStartLine();
 			int start = typeNode.getSourceSection().getEndColumn();
-			createCompileError(source.getName()+":"+linenum+":"+start+": method has no receiver");
+			createCompileError(linenum,start,"method has no receiver");
 			return null;
 		}
 		GoFieldNode receiver = receiverlist[0];
-		//Receivers will only have one field. Multiple fields are not allowed.
-		//TODO error check on multiple receivers
 		FrameSlot slot = frameDescriptor.addFrameSlot(receiver.getName());
 		lexicalscope.put(receiver.getName(),new TypeInfo(receiver.getName(),"struct class TODO" ,false,slot,null));
 		int structargcount;
@@ -858,10 +857,23 @@ public class GoTruffle implements GoIRVisitor {
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
 		//String type = node.getType().getIdentifier();
 		//TODO Catch error where length is not an int node or possibly an int const
-		GoArray result = new GoArray((GoIntNode) length,type);
+		
 		int linenum = node.getLBrackStartLine();
 		int start = node.getLBrackStartColumn();
 		int end = type.getSourceSection().getEndColumn();
+		if(!(length instanceof GoIntNode)){
+			if(length instanceof GoReadLocalVariableNode){
+				boolean isconst = lexicalscope.get(length.getName()).getConst();
+				if(!isconst){
+					createCompileError(linenum,start,"non-constant array bound" + length.getName());
+				}
+			}
+			else{
+				createCompileError(linenum,start,"invalid array bound \""+length.getName()+"\"");
+			}
+		}
+		//TODO GoArray is defined only to take in an Intnode, but can also take a goreadlocalvariable
+		GoArray result = new GoArray((GoIntNode) length,type);
 		createThreePartSource(result,linenum,start,end);
 		return result;
 	}
@@ -1007,9 +1019,7 @@ public class GoTruffle implements GoIRVisitor {
 			Init = (GoStatementNode) node.getInit().accept(this);
 		
 		CondNode = (GoExpressionNode) node.getCond().accept(this);
-		startBlock();
-		Body = (GoStatementNode)node.getBody().accept(this);
-		finishBlock();
+		Body = (GoStatementNode)node.getBody().accept(this); 
 		if(node.getElse() != null)
 			Else = (GoStatementNode)node.getElse().accept(this);
 		finishBlock();
