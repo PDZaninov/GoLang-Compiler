@@ -510,7 +510,17 @@ public class GoTruffle implements GoIRVisitor {
 	}
 	
 	public GoFieldNode appendReceiver(GoIRFuncDeclNode node, GoFuncTypeNode typeNode){
-		GoFieldNode receiver = handleStructFieldList((GoIRFieldListNode) node.getReceiver())[0];
+		GoFieldNode[] receiverlist = handleStructFieldList((GoIRFieldListNode) node.getReceiver());
+		if(receiverlist.length > 1){
+			createCompileError("method has multiple receivers");
+		}
+		else if(receiverlist.length == 0){
+			int linenum = typeNode.getSourceSection().getStartLine();
+			int start = typeNode.getSourceSection().getEndColumn();
+			createCompileError(source.getName()+":"+linenum+":"+start+": method has no receiver");
+			return null;
+		}
+		GoFieldNode receiver = receiverlist[0];
 		//Receivers will only have one field. Multiple fields are not allowed.
 		//TODO error check on multiple receivers
 		FrameSlot slot = frameDescriptor.addFrameSlot(receiver.getName());
@@ -540,14 +550,14 @@ public class GoTruffle implements GoIRVisitor {
 		GoFieldNode receiver = null;
 		if(node.isReceiver()){
 			receiver = appendReceiver(node,typeNode);
+			if(receiver == null){
+				return null;
+			}
 		}
 		GoBlockNode blockNode = (GoBlockNode) node.getBody().accept(this);
 		GoFunctionBodyNode bodyNode = new GoFunctionBodyNode(blockNode);
 		funcOrder.pop();
-		//int start = nameNode.getSourceSection().getCharIndex();
-		//int end = blockNode.getSourceSection().getCharEndIndex();
-		//SourceSection section = source.createSection(start, end);
-		//System.out.println(section);
+
 		GoRootNode root = new GoRootNode(language,frameDescriptor,typeNode,bodyNode,null,name);
 		allFunctions.put(name,root);
 		finishBlock();
@@ -1050,8 +1060,12 @@ public class GoTruffle implements GoIRVisitor {
 		lexicalscope.put(name, new TypeInfo(name, name, false, frameSlot, null));
 		
 		GoStringNode ident = (GoStringNode) goIRImportSpecNode.getChild().accept(this);
-		//TODO Source section?
-		return new GoImportSpec(ident, language, frameSlot);
+		GoImportSpec result = new GoImportSpec(ident, language, frameSlot);
+		int linenum = ident.getSourceSection().getStartLine();
+		int start = ident.getSourceSection().getStartColumn();
+		int end = ident.getSourceSection().getCharLength() + start;
+		createThreePartSource(result,linenum,start,end);
+		return result;
 	}
 
 	@Override
@@ -1098,6 +1112,9 @@ public class GoTruffle implements GoIRVisitor {
 	 * @return A list of field nodes
 	 */
 	public GoFieldNode[] handleStructFieldList(GoIRFieldListNode node){
+		if(node.getFields() == null){
+			return new GoFieldNode[0];
+		}
 		ArrayList<GoBaseIRNode> fields = node.getFields().getChildren();
 		ArrayList<GoFieldNode> tempresult = new ArrayList<>();
 		for(int i = 0; i < fields.size(); i++){
@@ -1127,6 +1144,9 @@ public class GoTruffle implements GoIRVisitor {
             	result[i] = new GoFieldNode(name,typename);
             }
         }
+		else{
+			result = new GoFieldNode[0];
+		}
 		return result;
 	}
 	
