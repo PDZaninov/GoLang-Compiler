@@ -145,21 +145,54 @@
 
         		<div id="variables" class="col-md-12 col-sm-12">
         			<h2>Variables</h2>
-        			<div class="row">
-        				<div class="col-md-6 col-sm-6">Variables</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>package main</p>
-								<p>import "fmt"</p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">In Go, there are several ways to declare variables.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    <span>package main</span>
+                                    <span>import "fmt"</span>
+                                </p>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">var x = "Hello"</span> 
+                                    <span class="indent">fmt.Println(x)</span>
+                                    <br>
+                                    <span class="indent">var a, b int = 4, 2</span>
+                                    <span class="indent">fmt.Println(a, b)</span>
+                                    <br>
+                                    <span class="indent">var y = true</span>
+                                    <span class="indent">fmt.Println(y)</span>
+                                    <br>
+                                    <span class="indent">var z int</span>
+                                    <span class="indent">fmt.Println(z)</span>
+                                    <br>
+                                    <span class="indent">g := 7</span>
+                                    <span class="indent">fmt.Println(g)</span>
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt variables.go 
+                                    <span>Hello</span>
+                                    <span>4 2</span>
+                                    <span>true</span>
+                                    <span>0</span>
+                                    <span>7</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="for" class="col-md-12 col-sm-12">
         			<h2>For</h2>
@@ -217,22 +250,46 @@
         		<div id="switch" class="col-md-12 col-sm-12">
         			<h2>Switch</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                        <div class="col-md-6 col-sm-6"><em>Switch statements</em> are a way of writing conditionals.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">i := 1</span> 
+                                    <span class="indent">switch i {</span> 
+                                    <span class="indent">case 1:</span>
+                                    <span class="dblIndent">fmt.Println("one")</span>
+                                    <span class="indent">case 2:</span>
+                                    <span class="dblIndent">fmt.Println("two")</span>
+                                    <span class="indent">case 3:</span>
+                                    <span class="dblIndent">fmt.Println("three")</span>
+                                    <span class="indent">default:</span>
+                                    <span class="dblIndent">fmt.Println("Not one, two, or three")</span>
+                                    <span class="indent">}</span>     
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt switch.go 
+                                    <span>one</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="ifelse" class="col-md-12 col-sm-12">
         			<h2>If/Else</h2>
