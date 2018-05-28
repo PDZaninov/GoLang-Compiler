@@ -294,7 +294,7 @@
         		<div id="ifelse" class="col-md-12 col-sm-12">
         			<h2>If/Else</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">If statements in Go are the another way to write conditionals.</div>
         				<div class="col-md-6 col-sm-6">
         					<div class="box">        					
 	        					<p>
@@ -303,7 +303,23 @@
                                 </p>
 								<p>
 									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
+                                    <span class="indent">if 8%2 == 0 {</span> 
+                                    <span class="dblIndent">fmt.Println("Eight is even")</span> 
+                                    <span class="indent">} else {</span> 
+                                    <span class="dblIndent">fmt.Println("Eight is odd")</span> 
+                                    <span class="indent">}</span> 
+                                    <br>
+                                    <span class="indent">if 10 % 3 != 0 {</span> 
+                                    <span class="dblIndent">fmt.Println("Ten is not divisible by three")</span> 
+                                    <span class="indent">}</span> 
+                                    <br>
+                                    <span class="indent">if x := 3; x < 0 {</span> 
+                                    <span class="dblIndent">fmt.Println("x is negative")</span> 
+                                    <span class="indent">} else if x < 2 {</span> 
+                                    <span class="dblIndent">fmt.Println("x is less than two")</span> 
+                                    <span class="indent">} else {</span> 
+                                    <span class="dblIndent">fmt.Println("x is greater than two")</span> 
+									<span class="indent">}</span> 
 									<span>}</span>
 								</p>
 							</div>
@@ -311,10 +327,26 @@
         			</div>
         		</div>
 
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt if.go 
+                                    <span>Eight is even</span>
+                                    <span>Ten is not divisible by three</span>
+                                    <span>x is greater than two</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
         		<div id="arrays" class="col-md-12 col-sm-12">
         			<h2>Arrays</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
+        				<div class="col-md-6 col-sm-6">An array is a sequence of elements of predetermined length.</div>
         				<div class="col-md-6 col-sm-6">
         					<div class="box">        					
 	        					<p>
@@ -323,7 +355,13 @@
                                 </p>
 								<p>
 									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
+                                    <span class="indent">var arr [7]int</span> 
+                                    <span class="indent">fmt.Println(arr)</span> 
+                                    <span class="indent">arr[0] = 10</span> 
+                                    <span class="indent">arr[4] = 70</span> 
+                                    <span class="indent">fmt.Println("Length: ", len(arr))</span> 
+                                    <span class="indent">x := [10]int{10,9,8,7,6,5,4,3,2,1}</span> 
+									<span class="indent">fmt.Println(x)</span> 
 									<span>}</span>
 								</p>
 							</div>
@@ -374,102 +412,223 @@
         		<div id="functions" class="col-md-12 col-sm-12">
         			<h2>Functions</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                        <div class="col-md-6 col-sm-6">Functions in Go are fairly simple. You explicitly declare types for each variable.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>func sum(x int, y int) int {</span> 
+                                    <span class="indent">return x + y</span>  
+                                    <span>}</span>
+                                </p>
+                                <p>
+                                    <span>func threeSum(x int, y int, z int) int {</span> 
+                                    <span class="indent">return x + y + z</span>  
+                                    <span>}</span>
+                                </p>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">a := sum(2,4)</span> 
+                                    <span class="indent">b := threeSum(2,4, a)</span> 
+                                    <span class="indent">fmt.Println(a)</span> 
+                                    <span class="indent">fmt.Println(b)</span>
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt functions.go 
+                                    <span>6</span>
+                                    <span>12</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="multipleReturns" class="col-md-12 col-sm-12">
         			<h2>Multiple Returns</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                        <div class="col-md-6 col-sm-6">Functions in Go can have multiple returns.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>func vals() (int, int) {</span> 
+                                    <span class="indent">return 4, 2</span>  
+                                    <span>}</span>
+                                </p>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">a, b := vals()</span> 
+                                    <span class="indent">fmt.Println(a, b)</span>
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt multipleReturns.go 
+                                    <span>4 2</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="recursion" class="col-md-12 col-sm-12">
         			<h2>Recursion</h2>
-        			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">Go supports recursive functions.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>func fib(x int) int {</span> 
+                                    <span class="indent">if x == 0 {</span> 
+                                    <span class="dblIndent">return 0</span> 
+                                    <span class="indent">}</span> 
+                                    <br>
+                                    <span class="indent">if x == 1 {</span> 
+                                    <span class="dblIndent">return 1</span> 
+                                    <span class="indent">}</span> 
+                                    <span class="indent">return fib(x-1) + fib(x-2)</span> 
+                                    <span>}</span>
+                                </p>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">fmt.Println(fib(7))</span>
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt recursion.go 
+                                    <span>13</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="structs" class="col-md-12 col-sm-12">
         			<h2>Structs</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                        <div class="col-md-6 col-sm-6">Go supports structs.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>type Vertex struct {</span> 
+                                    <span class="indent">X int</span> 
+                                    <span class="indent">Y int</span> 
+                                    <span>}</span>
+                                </p>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">v := Vertex{X:1, Y:2}</span>
+                                    <span class="indent">fmt.Println(v.X)</span>
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt struct.go 
+                                    <span>1</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="structMethods" class="col-md-12 col-sm-12">
         			<h2>Struct Methods</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                        <div class="col-md-6 col-sm-6">Struct methods are defined on struct types.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>type Rectangle struct {</span> 
+                                    <span class="indent">width int</span> 
+                                    <span class="indent">height int</span> 
+                                    <span>}</span>
+                                </p>
+                                <p>
+                                    <span>func (r Rectangle) area() int {</span> 
+                                    <span class="indent">return r.width * r.height</span> 
+                                    <span>}</span>
+                                </p>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">r := Rectangle{width:4, height:6}</span>
+                                    <span class="indent">fmt.Println(r.area())</span>
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt structMethods.go 
+                                    <span>24</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         	</div>
         </div>
 	</div>
