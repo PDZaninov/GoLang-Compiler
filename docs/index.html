@@ -369,45 +369,110 @@
         			</div>
         		</div>
 
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt array.go 
+                                    <span>[0 0 0 0 0 0 0]</span>
+                                    <span>Length:  7</span>
+                                    <span>[10 9 8 7 6 5 4 3 2 1]</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
         		<div id="slices" class="col-md-12 col-sm-12">
         			<h2>Slices</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                        <div class="col-md-6 col-sm-6">Slices are like arrays, except slices support several more operators. A slice can have a value appended to it, and support the "slice" operator with the syntax <em>slice[low:high]</em>.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">s := make([]string, 3)</span> 
+                                    <span class="indent">s[0] = "a"</span> 
+                                    <span class="indent">s[1] = "b"</span> 
+                                    <span class="indent">s[2] = "c"</span> 
+                                    <span class="indent">s = append(s, "d")</span> 
+                                    <span class="indent">fmt.Println(s)</span> 
+                                    <br>
+                                    <span class="indent">x := s[1:3]</span>  
+                                    <span class="indent">fmt.Println(x)</span> 
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt slice.go 
+                                    <span>[a b c d]</span>
+                                    <span>[b c]</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="maps" class="col-md-12 col-sm-12">
         			<h2>Maps</h2>
         			<div class="row">
-        				<div class="col-md-6 col-sm-6">First, here's the classic "Hello World" program.</div>
-        				<div class="col-md-6 col-sm-6">
-        					<div class="box">        					
-	        					<p>
+                        <div class="col-md-6 col-sm-6">Maps store key/value pairs.</div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
                                     <span>package main</span>
                                     <span>import "fmt"</span>
                                 </p>
-								<p>
-									<span>func main() {</span> 
-									<span class="indent">fmt.Println("Hello World")</span> 
-									<span>}</span>
-								</p>
-							</div>
-        				</div>
-        			</div>
-        		</div>
+                                <p>
+                                    <span>func main() {</span> 
+                                    <span class="indent">m := make(map[string]int)</span> 
+                                    <span class="indent">m["k1"] = 7</span> 
+                                    <span class="indent">m["k2"] = 13</span> 
+                                    <span class="indent">fmt.Println("map:", m)</span> 
+                                    <span class="indent">delete(m,"k1")</span> 
+                                    <span class="indent">fmt.Println(m)</span> 
+                                    <br>
+                                    <span class="indent">a := map[string]int{"foo": 1, "bar": 2}</span>  
+                                    <span class="indent">a["foo"] = 10</span> 
+                                    <span class="indent">a["bar"] = 3</span> 
+                                    <span class="indent">fmt.Println(a)</span> 
+                                    <span>}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 col-sm-12">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6"></div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="box">                           
+                                <p>
+                                    $ ./gt map.go
+                                    <span>map: map[k1:7 k2:13]</span>
+                                    <span>map[k2:13]</span>
+                                    <span>map[foo:3 bar:2 stuff:10]</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
         		<div id="functions" class="col-md-12 col-sm-12">
         			<h2>Functions</h2>
