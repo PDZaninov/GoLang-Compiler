@@ -7,12 +7,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 @NodeInfo(shortName = "<<")
 public abstract class GoBinaryLeftShiftNode extends GoBinaryNode{
-
-    @Specialization
-    protected long leftShift(long left, long right) {
-        return left << right;
-    }
-
     
     @Specialization
     protected int  leftShift(int left, int right) {

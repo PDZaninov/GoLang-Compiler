@@ -1,10 +1,7 @@
 package main
-
 import "fmt"
 
-func main(){
-	y := 45
-	var x [y]int
-	fmt.Println(x)
-
+func main() {
+	var x float64 = 10.3
+    fmt.Println(3.2 + x)
 }

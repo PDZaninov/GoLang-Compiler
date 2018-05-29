@@ -7,12 +7,7 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 //shares same shortname as add node
 @NodeInfo(shortName = "+")
 public abstract class GoPositiveSignNode extends GoUnaryNode{
-    @Specialization
-    protected long positiveSign(long value) {
-        return 0 + value;
-    }
 
-    
     @Specialization
     protected int positiveSign(int value) {
         return 0 + value;

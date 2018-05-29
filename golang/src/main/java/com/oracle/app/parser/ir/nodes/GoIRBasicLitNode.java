@@ -52,6 +52,7 @@ public abstract class GoIRBasicLitNode extends GoIRTypes {
 				return new GoIRIntNode(value,source);
 			case "string":
 				return new GoIRStringNode(value,source);
+			case "float":
 			case "float32":
 				return new GoIRFloat32Node(value, source);
 			case "float64":

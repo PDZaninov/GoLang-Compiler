@@ -475,6 +475,7 @@ public class Parser {
 	/*
 	 * Given no right hand side, set default values of the type to each ident
 	 * Called by valuespec
+	 * TODO this function is broken for arraytype types.
 	 */
 	public GoIRArrayListExprNode createAssignment(GoIRArrayListExprNode lhs, GoBaseIRNode type, String source){
 		ArrayList<GoBaseIRNode> result = new ArrayList<>();
@@ -527,6 +528,7 @@ public class Parser {
 					(type.getIdentifier().equals("float32")||type.getIdentifier().equals("float64"))){
 				// var c float32 = 3 -- example of this case
 				// the above sets the basic lit as an int node, so I need to make a new basiclit node of the correct type
+				//TODO Errors out when a float64 var is assigned a float value
 				GoIRBasicLitNode m = GoIRBasicLitNode.createBasicLit(type.getIdentifier(),((GoIRBasicLitNode) rhs.getChildren().get(i)).getValString(), "");
 				result.add(new GoIRAssignmentStmtNode(lhs.getChildren().get(i), m ,type,source));
 

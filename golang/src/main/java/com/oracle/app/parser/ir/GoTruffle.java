@@ -363,8 +363,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
-		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
-		node.accept(typevisitor);//type check children before making a truffle node
+		//GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
+		//node.accept(typevisitor);//type check children before making a truffle node
 		GoExpressionNode rightNode = (GoExpressionNode) node.getRight().accept(this);
 		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
 		String op = node.getOp();
@@ -473,8 +473,9 @@ public class GoTruffle implements GoIRVisitor {
 			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
 			functionNode.setSourceSection(tempsourcenode.getSourceSection());
 		}
+		/*
 		//Type Checking
-		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
+		//GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
 		//can only check call expr that arent builtins
 		//TODO less use of static functions
 		GoIRFuncTypeNode f = IRFunctions.get(node.getFunctionNode().getIdentifier());
@@ -492,7 +493,7 @@ public class GoTruffle implements GoIRVisitor {
 			}
 		}
 		//end type checking
-		
+		*/
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
 			arguments = (GoArrayExprNode) node.getArgumentNode().accept(this);
@@ -648,7 +649,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitReturnStmt(GoIRReturnStmtNode node){
 		curFunctionDecl = funcOrder.getFirst();//top of stack is the first element, who knew
-		
+		/*
 		//type checking
 		GoIRFieldListNode r = (GoIRFieldListNode) ((GoIRFuncTypeNode) curFunctionDecl.getType()).getResults();
 		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
@@ -657,7 +658,7 @@ public class GoTruffle implements GoIRVisitor {
 		GoException error = GoTypeCheckingVisitor.Compare(side1,side2,"gotruffle, visitReturnStmt (" + side1 + "|||" + side2 +")");
 		if(error!=null) {
 			throw error;
-		}
+		}*/
 		//end of type checking
 		GoExpressionNode resultexpressions = (GoExpressionNode)node.getChild().accept(this);
 		GoReturnNode result = new GoReturnNode(resultexpressions);	
@@ -855,8 +856,6 @@ public class GoTruffle implements GoIRVisitor {
 			length = (GoExpressionNode) node.getLength().accept(this);
 		}
 		GoExpressionNode type = (GoExpressionNode) node.getType().accept(this);
-		//String type = node.getType().getIdentifier();
-		//TODO Catch error where length is not an int node or possibly an int const
 		
 		int linenum = node.getLBrackStartLine();
 		int start = node.getLBrackStartColumn();
