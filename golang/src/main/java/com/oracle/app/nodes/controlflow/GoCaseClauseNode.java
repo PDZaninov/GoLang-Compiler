@@ -56,7 +56,6 @@ public final class GoCaseClauseNode extends GoStatementNode {
 					    return true;
 					}
 				} catch (UnexpectedResultException e) {
-					// TODO Auto-generated catch block
 					return false;
 				}
             }
