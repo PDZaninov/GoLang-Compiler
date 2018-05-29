@@ -1,4 +1,4 @@
-package com.oracle.app.nodes.types;
+	package com.oracle.app.nodes.types;
 
 import java.util.Arrays;
 
@@ -129,14 +129,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, int value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public int read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
 		}
@@ -188,14 +188,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, float value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public float read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
 		}
@@ -247,14 +247,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, double value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public double read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
 		}
@@ -307,14 +307,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, String value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public String read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
 		}
@@ -366,14 +366,14 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, Object value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public Object read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
 		}
