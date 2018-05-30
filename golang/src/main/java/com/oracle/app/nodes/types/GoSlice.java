@@ -168,6 +168,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoIntArray newArray = new GoIntArray(cap);
 				for(int index = 0; index < len; index++){
@@ -282,6 +285,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoFloat32Array newArray = new GoFloat32Array(cap);
 				for(int index = 0; index < len; index++){
@@ -396,6 +402,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoFloat64Array newArray = new GoFloat64Array(cap);
 				for(int index = 0; index < len; index++){
@@ -510,6 +519,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoStringArray newArray = new GoStringArray(cap);
 				for(int index = 0; index < len; index++){
@@ -624,6 +636,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoObjectArray newArray = new GoObjectArray(cap);
 				for(int index = 0; index < len; index++){
