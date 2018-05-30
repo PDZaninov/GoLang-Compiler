@@ -12,7 +12,6 @@ import com.oracle.app.builtins.GoCapBuiltinFactory;
 import com.oracle.app.builtins.GoDeleteBuiltinFactory;
 import com.oracle.app.builtins.GoLenBuiltinFactory;
 import com.oracle.app.builtins.GoMakeBuiltinFactory;
-import com.oracle.app.builtins.GoPrintfBuiltinFactory;
 import com.oracle.app.builtins.GoPrintlnBuiltinFactory;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.GoRootNode;
@@ -108,7 +107,6 @@ public final class GoContext {
 	 * Builtin functions get installed in this class
 	 */
 	private void installBuiltins(){
-		installBuiltin(GoPrintfBuiltinFactory.getInstance());
 		installBuiltin(GoPrintlnBuiltinFactory.getInstance());
 		installBuiltin(GoLenBuiltinFactory.getInstance());
 		installBuiltin(GoCapBuiltinFactory.getInstance());

@@ -398,7 +398,7 @@ public class GoTruffle implements GoIRVisitor {
 			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
 		}
 		//Type Checking
-
+		/*
 		//can only check call expr that arent builtins
 		GoIRFuncTypeNode f = IRFunctions.get(node.getFunctionNode().getIdentifier());
 		if(f!=null) {
@@ -415,6 +415,7 @@ public class GoTruffle implements GoIRVisitor {
 				throw error;
 			}
 		}
+		*/
 		//end type checking
 		
 
