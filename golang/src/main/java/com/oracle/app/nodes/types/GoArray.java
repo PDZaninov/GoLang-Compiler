@@ -58,6 +58,10 @@ public class GoArray extends GoArrayLikeTypes{
 	public void insert(Object index, Object value) {
 	}
 	
+	public boolean compare(GoArray other){
+		throw new GoException("Undefind GoArray");
+	}
+	
 	@Override
 	public Object executeGeneric(VirtualFrame frame){
 		length = lengthnode.executeInteger(frame);
@@ -140,6 +144,11 @@ public class GoArray extends GoArrayLikeTypes{
 			}
 			return array[index];
 		}
+
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoIntArray;
+		}
 		
 	}
 	
@@ -200,6 +209,11 @@ public class GoArray extends GoArrayLikeTypes{
 			return array[index];
 		}
 		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoFloat32Array;
+		}
+		
 	}
 	
 	public static class GoFloat64Array extends GoArray{
@@ -257,6 +271,11 @@ public class GoArray extends GoArrayLikeTypes{
 				throw new GoException("Index out of range");
 			}
 			return array[index];
+		}
+		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoFloat64Array;
 		}
 		
 	}
@@ -319,6 +338,11 @@ public class GoArray extends GoArrayLikeTypes{
 			return array[index];
 		}
 		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoStringArray;
+		}
+		
 	}
 	
 	public static class GoObjectArray extends GoArray{
@@ -378,8 +402,11 @@ public class GoArray extends GoArrayLikeTypes{
 			return array[index];
 		}
 		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoObjectArray;
+		}
+		
 	}
-
-	
 
 }
