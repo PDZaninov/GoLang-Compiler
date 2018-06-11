@@ -427,7 +427,6 @@ public class Parser {
 				return null;
 			default:
 				System.out.println("Error, in default: " + nodeType);
-				System.out.println(attrs);
 				
 		}
 		return new GoTempIRNode(nodeType,attrs,body);

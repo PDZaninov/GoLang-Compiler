@@ -8,6 +8,5 @@ func scoping(x int) int {
 func main() int{
 	x := 2
 	y := scoping(x)	
-	println(y)
-	return x
+	return y
 }
