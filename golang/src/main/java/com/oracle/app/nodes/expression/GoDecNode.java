@@ -6,11 +6,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 
 @NodeInfo(shortName = "--")
 public abstract class GoDecNode extends GoIncDecStmtNode {
-	
-    @Specialization
-    protected long decrement(long value) {
-        return value--;
-    }
 
     @Specialization
     protected int decrement(int value) {

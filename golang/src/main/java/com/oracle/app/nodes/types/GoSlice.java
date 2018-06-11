@@ -1,5 +1,6 @@
  package com.oracle.app.nodes.types;
 
+import com.oracle.app.GoException;
 import com.oracle.app.nodes.types.GoArray.GoFloat32Array;
 import com.oracle.app.nodes.types.GoArray.GoFloat64Array;
 import com.oracle.app.nodes.types.GoArray.GoIntArray;
@@ -107,7 +108,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -116,8 +117,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return;
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -150,8 +150,8 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public Object read(Object index) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return null;
+				throw new GoException("index out of range");
+				
 			}
 			return array.read(realindex);
 		}
@@ -160,7 +160,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public void insert(Object index, Object value) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -168,6 +168,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoIntArray newArray = new GoIntArray(cap);
 				for(int index = 0; index < len; index++){
@@ -221,7 +224,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -230,8 +233,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return;
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -264,8 +266,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public Object read(Object index) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return null;
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -274,7 +275,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public void insert(Object index, Object value) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -282,6 +283,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoFloat32Array newArray = new GoFloat32Array(cap);
 				for(int index = 0; index < len; index++){
@@ -335,7 +339,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -344,8 +348,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return;
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -378,8 +381,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public Object read(Object index) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return null;
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -388,7 +390,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public void insert(Object index, Object value) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -396,6 +398,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoFloat64Array newArray = new GoFloat64Array(cap);
 				for(int index = 0; index < len; index++){
@@ -449,7 +454,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -458,8 +463,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return;
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -492,8 +496,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public Object read(Object index) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return null;
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -502,7 +505,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public void insert(Object index, Object value) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -510,6 +513,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoStringArray newArray = new GoStringArray(cap);
 				for(int index = 0; index < len; index++){
@@ -563,7 +569,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -572,8 +578,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 			int realindex = index + low;
 			//Error out, index out of bounds
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return;
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -606,8 +611,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public Object read(Object index) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
-				return null;
+				throw new GoException("index out of range");
 			}
 			return array.read(realindex);
 		}
@@ -616,7 +620,7 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		public void insert(Object index, Object value) {
 			int realindex = (int)index + low;
 			if(realindex < low || realindex > high || realindex > cap){
-				System.out.println("Slice index out of bounds");
+				throw new GoException("index out of range");
 			}
 			array.insert(realindex, value);
 		}
@@ -624,6 +628,9 @@ public abstract class GoSlice extends GoArrayLikeTypes {
 		@Override
 		public void insert(Object value) {
 			if(high == cap || len == cap){
+				if(cap == 0){
+					cap = 1;
+				}
 				cap *= 2;
 				GoObjectArray newArray = new GoObjectArray(cap);
 				for(int index = 0; index < len; index++){

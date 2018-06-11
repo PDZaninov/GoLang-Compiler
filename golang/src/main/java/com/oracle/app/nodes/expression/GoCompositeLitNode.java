@@ -6,19 +6,17 @@ import com.oracle.app.GoException;
 import com.oracle.app.nodes.GoArrayExprNode;
 import com.oracle.app.nodes.GoExpressionNode;
 import com.oracle.app.nodes.types.GoNonPrimitiveType;
+import com.oracle.app.nodes.types.GoStruct;
 import com.oracle.truffle.api.dsl.NodeChild;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.frame.VirtualFrame;
 import com.oracle.truffle.api.object.DynamicObject;
-import com.oracle.truffle.api.object.Property;
 import com.oracle.truffle.api.object.Shape;
 
 @NodeChild("type")
 public abstract class GoCompositeLitNode extends GoExpressionNode {
 
 	private GoArrayExprNode elts;
-	private final int STRUCT_FIELD = 0;
-	private final int STRUCT_METHOD = 1;
 	
 	public GoCompositeLitNode(GoArrayExprNode elts) {
 		this.elts = elts;
@@ -50,7 +48,7 @@ public abstract class GoCompositeLitNode extends GoExpressionNode {
 					Object key = unboxedval.getKeyResult();
 					//If the property is the method receiver, it technically should be not found, but truffle crashes.
 					//It probably needs some location property read.
-					if(!struct.hasProperty(key) || struct.getProperty(key).getFlags() == STRUCT_METHOD){
+					if(!struct.hasProperty(key) || struct.getProperty(key).getFlags() == GoStruct.STRUCT_METHOD){
 						throw new GoException("unknown field \'"+key+"\' in struct literal of type "+ getType().getName());
 					}
 					newStruct.set(key, unboxedval.getResult());
@@ -63,16 +61,12 @@ public abstract class GoCompositeLitNode extends GoExpressionNode {
 			}
 			else{
 				//Need to get a list of the struct field keys, struct methods are listed as properties in the shape.
-				List<Object> keylist = struct.getKeyList(getKeyList());
+				List<Object> keylist = struct.getKeyList(GoStruct.getKeyList());
 				if(elements.length != keylist.size()){
 					throw new GoException("too few values in struct initializer");
 				}
 				return struct.createFactory().newInstance(elements);
 			}
 		}
-	}
-	
-	protected Shape.Pred<Property> getKeyList(){
-		return p -> p.getFlags() == STRUCT_FIELD;
 	}
 }

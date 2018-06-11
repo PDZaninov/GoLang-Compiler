@@ -50,8 +50,13 @@ public final class GoLanguage extends TruffleLanguage<GoContext> implements Scop
 	@Override
 	protected CallTarget parse(ParsingRequest request) throws Exception{
 		Source source = request.getSource();
-		GoFileNode mainfile = Parser.parseGo(this, source);
-		return Truffle.getRuntime().createCallTarget(mainfile);
+		try{
+			GoFileNode mainfile = Parser.parseGo(this, source);
+			return Truffle.getRuntime().createCallTarget(mainfile);
+		}
+		catch(GoException e){
+			throw e;
+		}
 		/*
 		Map<String, GoRootNode> function;
 		

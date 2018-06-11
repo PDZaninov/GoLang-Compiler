@@ -10,6 +10,7 @@ import com.oracle.truffle.api.nodes.UnexpectedResultException;
  * value of the enclosed (child) expression. It is represented separately in the AST for the purpose
  * of correct source attribution; this preserves the lexical relationship between the two
  * parentheses and allows a tool to describe the expression as distinct from its contents.
+ * TODO This is probably useless. When parsing through gotruffle return the child instead of this node.
  */
 @NodeInfo(description = "A parenthesized expression")
 public class GoParenExpressionNode extends GoExpressionNode {

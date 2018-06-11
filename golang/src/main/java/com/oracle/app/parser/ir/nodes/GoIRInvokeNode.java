@@ -1,17 +1,9 @@
 package com.oracle.app.parser.ir.nodes;
 
-import java.util.ArrayList;
-import java.util.Map;
-
-import com.oracle.app.GoException;
-import com.oracle.app.nodes.GoExpressionNode;
-import com.oracle.app.nodes.GoRootNode;
 import com.oracle.app.parser.ir.GoBaseIRNode;
-import com.oracle.app.parser.ir.GoIRVisitable;
 import com.oracle.app.parser.ir.GoIRVisitor;
-import com.oracle.app.parser.ir.GoTruffle;
 
-public class GoIRInvokeNode<LexicalScope> extends GoBaseIRNode implements GoIRVisitable {
+public class GoIRInvokeNode extends GoBaseIRNode {
 
 	GoBaseIRNode functionNode;
 	GoIRArrayListExprNode argumentNodes;
@@ -37,7 +29,6 @@ public class GoIRInvokeNode<LexicalScope> extends GoBaseIRNode implements GoIRVi
 		int endpos = Integer.parseInt(rparen.split(":")[2]);
 		return endpos;
 	}
-	
 
 	public void incAssignLen() {
 		assignLen++;
@@ -45,6 +36,11 @@ public class GoIRInvokeNode<LexicalScope> extends GoBaseIRNode implements GoIRVi
 	
 	public int getAssignLen() {
 		return assignLen;
+	}
+	
+	public int getPositionOfRightParen(){
+		String[] split = rparen.split(":");
+		return Integer.parseInt(split[2]);
 	}
 	
 	/*

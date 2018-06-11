@@ -27,16 +27,23 @@ public class GoIRCompositeLitNode extends GoBaseIRNode {
 		return expr;
 	}
 
-	public String getLbrace() {
-		return lbrace;
+	public int getLBraceLineNum() {
+		String[] split = lbrace.split(":");
+		return Integer.parseInt(split[1]);
+	}
+	
+	public int getLBraceStartColumn(){
+		String[] split = lbrace.split(":");
+		return Integer.parseInt(split[2]);
 	}
 
 	public GoIRArrayListExprNode getElts() {
 		return elts;
 	}
 
-	public String getRbrace() {
-		return rbrace;
+	public int getRBraceEndColumn() {
+		String[] split = rbrace.split(":");
+		return Integer.parseInt(split[2]);
 	}
 
 }

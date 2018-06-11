@@ -15,8 +15,14 @@ public class GoIRArrayTypeNode extends GoIRTypes {
 		this.source = source;
 	}
 	
-	public String getSource(){
-		return source;
+	public int getLBrackStartLine(){
+		String[] split = source.split(":");
+		return Integer.parseInt(split[1]);
+	}
+	
+	public int getLBrackStartColumn(){
+		String[] split = source.split(":");
+		return Integer.parseInt(split[2]);
 	}
 	
 	public GoBaseIRNode getLength(){

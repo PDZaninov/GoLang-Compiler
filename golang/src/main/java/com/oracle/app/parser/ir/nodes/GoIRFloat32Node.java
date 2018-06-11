@@ -7,9 +7,11 @@ import com.oracle.truffle.api.source.SourceSection;
 public class GoIRFloat32Node extends GoIRBasicLitNode{
 
     private float value;
-
-    public GoIRFloat32Node(String value) {
-    	super("Float32 Node", "FLOAT32", value);
+    private int valuelen;
+    
+    public GoIRFloat32Node(String value, String source) {
+    	super(source, "FLOAT32", value);
+    	this.valuelen = value.length();
         this.value = Float.valueOf(value);
         this.type = "FLOAT32";
     }
@@ -31,8 +33,10 @@ public class GoIRFloat32Node extends GoIRBasicLitNode{
 
 	@Override
 	public SourceSection getSource(Source section) {
-		// TODO Auto-generated method stub
-		return null;
+		String[] split = source.split(":");
+		int linenum = Integer.parseInt(split[1]);
+		int charindex = Integer.parseInt(split[2]);
+		return section.createSection(linenum,charindex,valuelen);
 	}
 
 	@Override

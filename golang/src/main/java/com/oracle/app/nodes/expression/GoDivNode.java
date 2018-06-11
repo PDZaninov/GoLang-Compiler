@@ -7,25 +7,18 @@ import com.oracle.truffle.api.CompilerDirectives.TruffleBoundary;
 import com.oracle.truffle.api.dsl.Specialization;
 import com.oracle.truffle.api.nodes.NodeInfo;
 
-/**
- * This class is similar to the extensively documented {@link SLAddNode}. Divisions by 0 throw the
- * same {@link ArithmeticException exception} as in Java, SL has no special handling for it to keep
- * the code simple.
+//Should throw a runtime GoException when dividing by 0
+/*
+ * package main
+import "fmt"
+
+func main() {
+	x := 0
+    fmt.Println(3/x)
+}
  */
 @NodeInfo(shortName = "/")
 public abstract class GoDivNode extends GoBinaryNode {
-
-    @Specialization(rewriteOn = ArithmeticException.class)
-    protected long div(long left, long right) throws ArithmeticException {
-        long result = left / right;
-        /*
-         * The division overflows if left is Long.MIN_VALUE and right is -1.
-         */
-        if ((left & right & result) < 0) {
-            throw new ArithmeticException("long overflow");
-        }
-        return result;
-    }
     
     @Specialization(rewriteOn = ArithmeticException.class)
     protected int div(int left, int right) throws ArithmeticException {

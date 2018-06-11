@@ -1,4 +1,4 @@
-package com.oracle.app.nodes.types;
+	package com.oracle.app.nodes.types;
 
 import java.util.Arrays;
 
@@ -56,6 +56,10 @@ public class GoArray extends GoArrayLikeTypes{
 	
 	@Override
 	public void insert(Object index, Object value) {
+	}
+	
+	public boolean compare(GoArray other){
+		throw new GoException("Undefind GoArray");
 	}
 	
 	@Override
@@ -129,16 +133,21 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, int value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public int read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
+		}
+
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoIntArray;
 		}
 		
 	}
@@ -188,16 +197,21 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, float value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public float read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
+		}
+		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoFloat32Array;
 		}
 		
 	}
@@ -247,16 +261,21 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, double value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public double read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
+		}
+		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoFloat64Array;
 		}
 		
 	}
@@ -307,16 +326,21 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, String value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public String read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
+		}
+		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoStringArray;
 		}
 		
 	}
@@ -366,20 +390,23 @@ public class GoArray extends GoArrayLikeTypes{
 		
 		public void insert(int index, Object value){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			array[index] = value;
 		}
 		
 		public Object read(int index){
 			if(index < 0 || index > array.length){
-				throw new GoException("Index out of bounds");
+				throw new GoException("Index out of range");
 			}
 			return array[index];
 		}
 		
+		@Override
+		public boolean compare(GoArray other) {
+			return other instanceof GoObjectArray;
+		}
+		
 	}
-
-	
 
 }

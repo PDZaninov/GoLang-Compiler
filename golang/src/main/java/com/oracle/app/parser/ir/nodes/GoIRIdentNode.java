@@ -27,10 +27,6 @@ public class GoIRIdentNode extends GoBaseIRNode {
 	public String getIdentifier(){
 		return ident;
 	}
-	@Deprecated
-	public String getIdent() {
-		return ident;
-	}
 	
 	public GoBaseIRNode getChild() {
 		return child;

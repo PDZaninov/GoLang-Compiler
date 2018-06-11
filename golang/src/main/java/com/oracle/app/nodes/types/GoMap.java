@@ -3,7 +3,6 @@ package com.oracle.app.nodes.types;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.oracle.app.GoException;
 import com.oracle.app.nodes.expression.GoKeyValueNode;
 import com.oracle.truffle.api.frame.VirtualFrame;
 
@@ -18,6 +17,13 @@ public class GoMap extends GoArrayLikeTypes {
 		this.keyType = keyType;
 		this.valueType = valueType;
 		this.mapp = new LinkedHashMap<>();
+		size = 0;
+	}
+	
+	private GoMap(Object keyType, Object valueType, Map<FieldNode,FieldNode> mapp){
+		this.keyType = keyType;
+		this.valueType = valueType;
+		this.mapp = mapp;
 		size = 0;
 	}
 	
@@ -54,10 +60,6 @@ public class GoMap extends GoArrayLikeTypes {
 				break;
 			}
 		}
-	}
-
-	public void fieldDelete(FieldNode key){
-
 	}
 
 	@Override
@@ -108,8 +110,12 @@ public class GoMap extends GoArrayLikeTypes {
 
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
-		//This currently does not do the intended function of returning a proper copy of itself.
-		return this.deepCopy();
+		//TODO Possibly does not work properly because the fieldnodes could possibly be copied over by reference
+		Map<FieldNode,FieldNode> newmap = new LinkedHashMap<>();
+		for(FieldNode name : mapp.keySet()){
+			newmap.put(name, mapp.get(name));
+		}
+		return new GoMap(keyType,valueType,newmap);
 	}
 
 	@Override
