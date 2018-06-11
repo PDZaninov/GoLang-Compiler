@@ -26,13 +26,6 @@ public class GoForNode extends GoStatementNode {
     }
 
     @Override
-    public void setSourceSection(SourceSection section) {
-        super.setSourceSection(section);
-        /* Propagate the SourceSection also to the repeated loop body node. */
-        ((GoForRepeatingNode) loopNode.getRepeatingNode()).setSourceSection(section);
-    }
-
-    @Override
     public void executeVoid(VirtualFrame frame) {
     	if(init != null)
     		init.executeVoid(frame);

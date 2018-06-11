@@ -18,6 +18,16 @@ public class GoIRStarNode extends GoBaseIRNode {
 		return expr;
 	}	
 	
+	public int getStarLineNum(){
+		String[] split = star.split(":");
+		return Integer.parseInt(split[1]);
+	}
+	
+	public int getStarColumn(){
+		String[] split = star.split(":");
+		return Integer.parseInt(split[2]);
+	}
+	
 	@Override
 	public String getIdentifier() {
 		return expr.getIdentifier();

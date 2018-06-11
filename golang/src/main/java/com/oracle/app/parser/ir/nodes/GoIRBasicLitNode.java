@@ -31,7 +31,7 @@ public abstract class GoIRBasicLitNode extends GoIRTypes {
 	public String getType() {
 		return type;
 	}
-	
+	//TODO GET RID OF THIS, ITS USED ONCE IN PARSER AND I DONT EVEN LIKE THAT METHOD THAT I MADE
 	public abstract String getValString();
 	
 	/**
@@ -47,35 +47,22 @@ public abstract class GoIRBasicLitNode extends GoIRTypes {
 	 * TODO Make the switch case on name.toLower() or seomthing like that
 	 */
 	public static GoIRBasicLitNode createBasicLit(String name, String value,String source){
-		switch(name){
-			case "INT":
-				return new GoIRIntNode(value,source);
+		switch(name.toLowerCase()){
 			case "int":
 				return new GoIRIntNode(value,source);
-			case "STRING":
-				return new GoIRStringNode(value,source);
 			case "string":
 				return new GoIRStringNode(value,source);
-			case "float32":
-				return new GoIRFloat32Node(value);
-			case "float64":
-				return new GoIRFloat64Node(value);
-			case "FLOAT":
-				return new GoIRFloat32Node(value);
 			case "float":
-				return new GoIRFloat32Node(value);
+			case "float32":
+				return new GoIRFloat32Node(value, source);
+			case "float64":
+				return new GoIRFloat64Node(value, source);
 			default:
 				System.out.println("Unimplemented Basic Lit type: " + name);
 				return null;
 		}
 	
 	}
-	
-	public String TCself() {
-		return type;
-	}
-
-
 }
 
 

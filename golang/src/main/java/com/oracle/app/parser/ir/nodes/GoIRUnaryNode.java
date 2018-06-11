@@ -20,10 +20,14 @@ public class GoIRUnaryNode extends GoBaseIRNode {
 		return child; 
 	}
 	
-	public int getOpTok(){
+	public int getOpTokLineNum(){
 		String[] split = source.split(":");
-		int endindex = Integer.parseInt(split[1]);
-		return endindex;
+		return Integer.parseInt(split[1]);
+	}
+	
+	public int getOptTokStartCol(){
+		String[] split = source.split(":");
+		return Integer.parseInt(split[2]);
 	}
 	
 	public String getOp() {

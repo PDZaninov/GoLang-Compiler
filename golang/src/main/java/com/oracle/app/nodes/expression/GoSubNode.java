@@ -14,11 +14,6 @@ import com.oracle.truffle.api.nodes.NodeInfo;
 public abstract class GoSubNode extends GoBinaryNode {
 
     @Specialization(rewriteOn = ArithmeticException.class)
-    protected long sub(long left, long right) {
-        return Math.subtractExact(left, right);
-    }
-
-    @Specialization(rewriteOn = ArithmeticException.class)
     protected int sub(int left, int right) {
         return Math.subtractExact(left, right);
     }
@@ -31,11 +26,5 @@ public abstract class GoSubNode extends GoBinaryNode {
     @Specialization(rewriteOn = ArithmeticException.class)
     protected double sub(double left, double right) {
         return left - right;
-    }
-    
-    @Specialization
-    @TruffleBoundary
-    protected BigInteger sub(BigInteger left, BigInteger right) {
-        return left.subtract(right);
     }
 }

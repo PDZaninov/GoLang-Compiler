@@ -27,6 +27,7 @@ public class GoSliceExprNode extends GoExpressionNode {
 		this.max = max;
 	}
 
+	//TODO Could probably do specialization on null values and change the exceptions into goexceptions
 	@Override
 	public Object executeGeneric(VirtualFrame frame) {
 		GoArrayLikeTypes array = (GoArrayLikeTypes) expr.executeGeneric(frame);
