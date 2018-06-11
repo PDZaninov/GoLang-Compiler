@@ -69,13 +69,13 @@ public class GoWriteVisitor implements GoIRVisitor {
 		TypeInfo slot = lexicalscope.get(name);
 		FrameSlot frameSlot = null;
 		TypeInfo type = null;
-		GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor(lexicalscope);
+		//GoTypeCheckingVisitor miniVisitor = new GoTypeCheckingVisitor(lexicalscope);
 		String side2 = "";
 		if(rhs instanceof GoIRInvokeNode) {
 			//usually type checking invoke gets arguments passed, but we want return types
 			GoIRFuncTypeNode funcn = GoTruffle.IRFunctions.get(((GoIRInvokeNode) rhs).getFunctionNode().getIdentifier());
 			if(funcn !=null) {
-				side2 = ((String) funcn.getResults().accept(miniVisitor)).split(",")[node.getAssignPos()];
+				//side2 = ((String) funcn.getResults().accept(miniVisitor)).split(",")[node.getAssignPos()];
 			}else {//idk how to check builtins TODO
 				if(slot == null){
 					 frameSlot = frame.findOrAddFrameSlot(name);
@@ -87,7 +87,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 				return GoWriteLocalVariableNodeGen.create(value, frameSlot);
 			}
 		}else {
-			side2 = (String) rhs.accept(miniVisitor);
+			//side2 = (String) rhs.accept(miniVisitor);
 		}
 		if(rhs instanceof GoIRSliceExprNode) {
 			String childName = ((GoIRIdentNode) ((GoIRSliceExprNode)rhs).getExpr()).getIdentifier();
@@ -102,7 +102,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 				type = new TypeInfo(name, side2, false, frameSlot);
 			}
 		}
-
+/*
 		//type checking
 		if(lexicalscope.get(name)!=null) {//variable assigned a type
 			String side1 = (String) node.accept(miniVisitor);
@@ -110,7 +110,7 @@ public class GoWriteVisitor implements GoIRVisitor {
 			if(error != null) {
 				throw error;
 			}
-		}
+		} */
 		if(slot == null){
 			lexicalscope.put(name, type);
 		}
@@ -122,8 +122,8 @@ public class GoWriteVisitor implements GoIRVisitor {
 	}
 	
 	public Object visitIndexNode(GoIRIndexNode node) {
-		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor(lexicalscope);
-		node.accept(mini);
+//		GoTypeCheckingVisitor mini = new GoTypeCheckingVisitor(lexicalscope);
+//		node.accept(mini);
 		GoReadLocalVariableNode array = (GoReadLocalVariableNode) node.getName().accept(truffleVisitor);
 		GoExpressionNode value = (GoExpressionNode) assignmentNode.getRHS().accept(truffleVisitor);
 		GoExpressionNode index = (GoExpressionNode)node.getIndex().accept(truffleVisitor);

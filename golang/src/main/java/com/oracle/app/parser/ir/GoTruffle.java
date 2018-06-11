@@ -338,8 +338,8 @@ public class GoTruffle implements GoIRVisitor {
 
 	@Override
 	public Object visitBinaryExpr(GoIRBinaryExprNode node) {
-		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
-		node.accept(typevisitor);//type check children before making a truffle node
+		//GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
+		//node.accept(typevisitor);//type check children before making a truffle node
 		GoExpressionNode rightNode = (GoExpressionNode) node.getRight().accept(this);
 		GoExpressionNode leftNode = (GoExpressionNode) node.getLeft().accept(this);
 		String op = node.getOp();
@@ -439,6 +439,7 @@ public class GoTruffle implements GoIRVisitor {
 		if(functionNode instanceof GoReadLocalVariableNode || functionNode instanceof GoIdentNode){
 			functionNode = new GoFunctionLiteralNode(language,functionNode.getName());
 		}
+		/*
 		//Type Checking
 		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
 		//can only check call expr that arent builtins
@@ -457,7 +458,7 @@ public class GoTruffle implements GoIRVisitor {
 			}
 		}
 		//end type checking
-		
+		*/
 
 		GoArrayExprNode arguments = null;
 		if(node.getArgumentNode() != null){
@@ -576,7 +577,7 @@ public class GoTruffle implements GoIRVisitor {
 	@Override
 	public Object visitReturnStmt(GoIRReturnStmtNode node){
 		curFunctionDecl = funcOrder.getFirst();//top of stack is the first element, who knew
-		
+		/*
 		//type checking
 		GoIRFieldListNode r = (GoIRFieldListNode) ((GoIRFuncTypeNode) curFunctionDecl.getType()).getResults();
 		GoTypeCheckingVisitor typevisitor = new GoTypeCheckingVisitor(lexicalscope);
@@ -587,7 +588,7 @@ public class GoTruffle implements GoIRVisitor {
 			throw error;
 		}
 		//end of type checking
-		
+		*/
 		return new GoReturnNode((GoExpressionNode)node.getChild().accept(this));	
 	}
 
